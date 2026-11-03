@@ -24,8 +24,10 @@
     "typecheck:e2e": "tsc -p e2e/tsconfig.json",
     "test:e2e": "playwright test",
     "test:operations": "node --test scripts/*.test.mjs supabase/functions/discovery-moderation/*.test.mjs apps/web/src/moderation/*.test.mjs",
-    "audit:data": "node scripts/audit-parking.mjs && node scripts/osm-snapshot-sql.mjs --check",
-    "typecheck:edge": "tsc -p supabase/functions/tsconfig.json"
+    "audit:data": "node scripts/audit-parking.mjs --check && node scripts/parking-review-queue.mjs --check && node scripts/osm-snapshot-sql.mjs --check && node scripts/generate-import-db-test.mjs --check",
+    "typecheck:edge": "tsc -p supabase/functions/tsconfig.json",
+    "data:refresh": "node scripts/audit-parking.mjs --write && node scripts/parking-review-queue.mjs && node scripts/osm-snapshot-sql.mjs && node scripts/generate-import-db-test.mjs",
+    "test:data": "node --test scripts/*.test.mjs && node scripts/run-python-tests.mjs"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",

@@ -99,8 +99,9 @@ export function MapInformation({
         </View>
         <Text style={ui.heading}>Parking data</Text>
         <Text style={ui.muted}>
-          Coverage varies by area. Each parking location includes its source and
-          last update date. Check posted signs when you arrive.
+          Coverage varies by area. Source import and OSM edit dates are not
+          field verification dates. Check posted signs and current access when
+          you arrive.
         </Text>
         <Text style={ui.small}>
           Street parking appears only where a source identifies it. Many streets

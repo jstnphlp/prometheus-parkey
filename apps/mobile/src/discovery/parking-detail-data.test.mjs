@@ -121,3 +121,47 @@ test('import geometry warnings do not expand a sparse spot; import date is not e
   assert.equal(detail.sparse, true)
   assert.equal(detail.updated, undefined)
 })
+
+test('snapshot import, source edit and field verification dates remain distinct', () => {
+  const now = new Date('2026-11-03T00:00:00Z')
+  const record = {
+    ...minimal,
+    sourceKind: 'osm',
+    sourceUpdatedAt: '2026-11-02T03:15:22Z',
+    osmEditedAt: '2013-02-03T00:33:12Z',
+    verification: 'unverified',
+    verifiedAt: null,
+  }
+  const details = parkingDetailData(record, null, now)
+  assert.equal(details.verification, 'Not field verified')
+  assert.match(details.sourceDate, /^Snapshot imported .*2026/)
+  assert.equal(details.updated, 'OSM edited Feb 2013')
+  assert.match(details.freshness, /last edited over a year ago/)
+  const missing = parkingDetailData(
+    { ...record, sourceUpdatedAt: null, osmEditedAt: null },
+    null,
+    now,
+  )
+  assert.equal(missing.sourceDate, 'Source date unknown')
+  assert.equal(missing.updated, undefined)
+  assert.equal(missing.freshness, undefined)
+  const oldImport = parkingDetailData(
+    { ...record, sourceUpdatedAt: '2026-09-01T00:00:00Z' },
+    null,
+    now,
+  )
+  assert.match(oldImport.freshness, /over 30 days old/)
+})
+
+test('a mapped point, a mapped entrance and a street extent make different directions claims', () => {
+  const unknownEntrance = parkingDetailData({ ...minimal, entrances: [] }, null)
+  assert.match(unknownEntrance.geometryNote, /Entrance not mapped/)
+  const mappedEntrance = parkingDetailData(
+    { ...minimal, entrances: [[121.03, 14.56]] },
+    null,
+  )
+  assert.match(mappedEntrance.geometryNote, /^Mapped entrance/)
+  const street = parkingDetailData({ ...sampleParking[2], entrances: [] }, null)
+  assert.match(street.geometryNote, /^Mapped street extent/)
+  assert.match(street.geometryNote, /check signs and parking restrictions/)
+})

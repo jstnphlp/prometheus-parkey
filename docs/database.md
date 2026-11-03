@@ -63,7 +63,13 @@ a report must not silently verify parking. No admin dashboard is included.
 `seed-discovery.sql` loads the actual attributed OSM pilot snapshot, unverified,
 using the new schema. Both are **local-only**, configured in `config.toml`.
 No sample street fixture is inserted into Postgres. Regenerate the discovery seed
-with `node scripts/osm-snapshot-sql.mjs` after refreshing the OSM JSON.
+with `pnpm data:refresh` after a reviewed OSM JSON refresh. Run `pnpm audit:data`
+to detect stale audit/queue/seed artifacts. See [data preparation](parking-data-quality.md)
+for the offline candidate and immutable seed replay workflow. The seed validates
+the entire snapshot before SQL generation and fails closed if an existing record,
+attribution, publication/verification state, or regulation differs. Repeated identical
+imports are safe; changed data requires explicit human reconciliation. It does
+not update or delete existing records and never imports the research queue.
 
 With an available local Supabase stack:
 

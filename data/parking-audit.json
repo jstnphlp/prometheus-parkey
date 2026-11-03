@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "asOf": "2026-11-03T00:00:00Z",
+  "snapshotSha256": "c84d0d5c05d1caab533372788de5ff99ac6e2962d002eda396f34f85c9c981df",
+  "records": 43,
+  "kinds": {
+    "lot": 35,
+    "garage": 2,
+    "street": 6
+  },
+  "missing": {
+    "address": 35,
+    "fees": 41,
+    "hours": 43,
+    "facilityEntrances": 36,
+    "osmEditedAt": 0,
+    "checkDate": 43
+  },
+  "unnamed": 24,
+  "access": {
+    "private": 3,
+    "customers": 7,
+    "no": 0,
+    "unknown": 33,
+    "other": 0
+  },
+  "independentlyVerified": 0,
+  "sourceUrls": 43,
+  "duplicateIds": 0,
+  "snapshotDates": ["2026-11-02T03:15:22.149242+00:00"],
+  "snapshotOlderThan30Days": 0,
+  "osmEditOlderThan365Days": 34,
+  "osmEditOlderThan730Days": 25,
+  "oldestOsmEdit": "2013-02-03T00:33:12Z",
+  "newestOsmEdit": "2026-10-29T11:29:11Z",
+  "pilotBounds": {
+    "west": 121.024,
+    "south": 14.558,
+    "east": 121.041,
+    "north": 14.572
+  },
+  "geometryEnvelope": {
+    "west": 121.0225241,
+    "south": 14.5586352,
+    "east": 121.039644875,
+    "north": 14.570941499999998
+  },
+  "recordsWithVerticesOutsidePilot": ["osm:way/1067286270", "osm:way/97081380"],
+  "verticesOutsidePilot": 5,
+  "nearbyFacilitiesWithin50m": [
+    {
+      "ids": ["osm:node/11801472766", "osm:node/7082724750"],
+      "distanceMeters": 39.2
+    },
+    {
+      "ids": ["osm:way/1232847106", "osm:way/1232847111"],
+      "distanceMeters": 45.6
+    },
+    {
+      "ids": ["osm:way/1233233402", "osm:way/406692390"],
+      "distanceMeters": 44.4
+    }
+  ],
+  "nearbyFacilitiesWithin30m": 0,
+  "notes": [
+    "Snapshot age and OSM edit age are not field-verification age or proof of current conditions.",
+    "The pilot rectangle covers Poblacion and nearby streets; it is not an official barangay boundary or a completeness claim.",
+    "Nearby facilities are review hints, not automatic duplicates. OSM node/way duplicates and multi-level facilities require human review.",
+    "Recorded access and parking tags do not establish legal permission, public access, or vacancy."
+  ]
+}

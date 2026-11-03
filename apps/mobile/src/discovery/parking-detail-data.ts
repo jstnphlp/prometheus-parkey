@@ -20,6 +20,10 @@ export type SpotDetails = {
   week?: WeekDay[]
   rows: ParkingDetailRow[]
   updated?: string
+  verification: string
+  sourceDate: string
+  freshness?: string
+  geometryNote: string
   sparse: boolean
   fee?: string
   access?: string
@@ -137,7 +141,13 @@ export function parkingDetailData(
       icon: 'clock',
       today: day.today,
     })
-  add('Fee', fee === 'Free' ? 'Free' : (charge ?? fees ?? fee), 'fees')
+  add(
+    'Fee',
+    fee === 'Free'
+      ? 'Source records no fee; check posted signs'
+      : (charge ?? fees ?? fee),
+    'fees',
+  )
   const payments = Object.entries(tags)
     .filter(([key, value]) => key.startsWith('payment:') && value === 'yes')
     .map(([key]) => key.slice(8).replaceAll('_', ' '))
@@ -219,13 +229,41 @@ export function parkingDetailData(
   const edited = parking.osmEditedAt
   const updated =
     edited && Number.isFinite(Date.parse(edited))
-      ? `Updated ${new Date(edited).toLocaleDateString('en-US', { month: 'short', year: 'numeric', timeZone: 'UTC' })}`
+      ? `OSM edited ${new Date(edited).toLocaleDateString('en-US', { month: 'short', year: 'numeric', timeZone: 'UTC' })}`
       : undefined
+  const sourceTime = Date.parse(parking.sourceUpdatedAt ?? '')
+  const sourceDate = Number.isFinite(sourceTime)
+    ? `${parking.sourceKind === 'osm' ? 'Snapshot imported' : 'Source recorded'} ${new Date(sourceTime).toLocaleDateString('en-PH', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'Asia/Manila' })}`
+    : 'Source date unknown'
+  const freshness =
+    Number.isFinite(sourceTime) && now.getTime() - sourceTime > 30 * 86400000
+      ? 'Source information is over 30 days old. Check current signs and access.'
+      : edited &&
+          Number.isFinite(Date.parse(edited)) &&
+          now.getTime() - Date.parse(edited) > 365 * 86400000
+        ? 'OSM record last edited over a year ago. Current conditions are unconfirmed.'
+        : undefined
+  const verification =
+    parking.sourceKind === 'sample'
+      ? 'Development sample'
+      : parking.verification === 'verified'
+        ? `Verified ${new Date(parking.verifiedAt ?? '').toLocaleDateString('en-PH', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'Asia/Manila' })}`
+        : 'Not field verified'
+  const geometryNote =
+    parking.kind === 'street'
+      ? 'Mapped street extent. Directions use an approximate point; check signs and parking restrictions.'
+      : parking.entrances?.length
+        ? 'Mapped entrance. Confirm current vehicle access on arrival.'
+        : 'Entrance not mapped. Directions use a map point; confirm access on arrival.'
   const distance = location
     ? detailDistance(distanceMeters(location, anchor(parking.geometry)))
     : undefined
   const type = kindLabels[parking.kind]
   return {
+    verification,
+    sourceDate,
+    geometryNote,
+    ...(freshness ? { freshness } : {}),
     maxStay: get('maxstay'),
     heightLimit: get('maxheight'),
     parkingType: get('parking'),

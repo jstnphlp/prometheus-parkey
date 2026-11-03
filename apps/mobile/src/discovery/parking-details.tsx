@@ -44,7 +44,14 @@ export function ParkingDetails({
       value: hours === 'Open 24 hours' ? 'Open 24h' : (hours ?? 'Not recorded'),
       icon: 'clock',
     },
-    { label: 'Fee', value: details.fee ?? 'Fee unknown', icon: 'fees' },
+    {
+      label: 'Fee',
+      value:
+        details.fee === 'Free'
+          ? 'Recorded no fee'
+          : (details.fee ?? 'Fee unknown'),
+      icon: 'fees',
+    },
     {
       label: 'Spaces',
       value: details.capacity?.toLocaleString('en-US') ?? 'Not recorded',
@@ -108,6 +115,10 @@ export function ParkingDetails({
           </View>
           <ParkingStatus details={details} />
         </View>
+        <Text testID="parking-verification" style={[ui.small, styles.inset]}>
+          {details.verification}. No live availability
+        </Text>
+        <Text style={[ui.small, styles.inset]}>{details.geometryNote}</Text>
         {details.warning ? (
           <Text accessibilityRole="alert" style={[ui.small, styles.warning]}>
             {details.warning}
@@ -151,7 +162,9 @@ export function ParkingDetails({
                 </View>
                 <View style={ui.flex}>
                   <Text style={ui.heading}>No photos yet</Text>
-                  <Text style={ui.small}>Add one to help other drivers</Text>
+                  <Text style={ui.small}>
+                    Save a photo in a private device draft
+                  </Text>
                 </View>
                 <MotionPressable
                   accessibilityRole="button"
@@ -172,8 +185,33 @@ export function ParkingDetails({
                     {parking.sourceLabel} ·{' '}
                     {parking.verification === 'verified'
                       ? 'Verified'
-                      : 'Unverified'}
+                      : 'Not field verified'}
                   </Text>
+                  <Text style={ui.small}>{details.sourceDate}</Text>
+                  <Text style={ui.small}>
+                    Source dates do not confirm current fees, hours or access.
+                  </Text>
+                  {details.freshness ? (
+                    <Text style={[ui.small, ui.error]}>
+                      {details.freshness}
+                    </Text>
+                  ) : null}
+                  {parking.sourceUrl ? (
+                    <MotionPressable
+                      accessibilityRole="link"
+                      onPress={() => {
+                        if (parking.sourceUrl)
+                          void Linking.openURL(parking.sourceUrl).catch(
+                            () => undefined,
+                          )
+                      }}
+                      style={styles.sourceLink}
+                    >
+                      <Text style={[ui.small, ui.link]}>
+                        View source record
+                      </Text>
+                    </MotionPressable>
+                  ) : null}
                   {details.updated ? (
                     <Text style={ui.small}>{details.updated}</Text>
                   ) : null}
@@ -189,7 +227,12 @@ export function ParkingDetails({
                 ]}
               >
                 <FigmaAsset name="pencil-brand" size={24} />
-                <Text style={ui.heading}>Suggest a correction</Text>
+                <View style={ui.flex}>
+                  <Text style={ui.heading}>Suggest a correction</Text>
+                  <Text style={ui.small}>
+                    Saved on this device only; not sent for review
+                  </Text>
+                </View>
               </MotionPressable>
             </View>
             {details.rows
@@ -231,6 +274,7 @@ export function ParkingDetails({
 }
 const styles = StyleSheet.create({
   content: { gap: 14, paddingBottom: 2 },
+  sourceLink: { minHeight: 44, justifyContent: 'center' },
   inset: { marginHorizontal: 16 },
   summary: {
     paddingHorizontal: 16,

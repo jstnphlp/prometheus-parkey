@@ -70,7 +70,7 @@ export function ContributionForm({
         saved
           ? 'Draft saved on this device'
           : form.intent === 'correction'
-            ? 'Report information'
+            ? 'Draft a correction'
             : 'Add parking'
       }
       onClose={onClose}
@@ -88,7 +88,8 @@ export function ContributionForm({
             <View style={{ gap: 16 }}>
               <Text style={ui.title}>Private draft saved</Text>
               <Text style={ui.body}>
-                Saved on this device. Not published or verified.
+                Saved on this device only. Not sent for review, published or
+                verified.
               </Text>
               <Button onPress={onClose}>Show on map</Button>
             </View>
@@ -150,6 +151,10 @@ export function ContributionForm({
             </>
           ) : (
             <>
+              <Text style={ui.small}>
+                Private draft only. This correction is not sent to Parkey or
+                other drivers.
+              </Text>
               <Field
                 label="Parking name"
                 value={form.name}

@@ -10,13 +10,13 @@ const records = JSON.parse(
     new URL('../apps/mobile/src/discovery/osm-pilot.json', import.meta.url),
   ),
 )
-const now = Date.parse('2030-01-01T00:00:00Z')
+const now = '2030-01-01T00:00:00Z'
 test('audits actual records without treating import age as independent verification', () => {
   const report = auditParking(records, now)
   assert.equal(report.records, records.length)
   assert.equal(report.independentlyVerified, 0)
   assert.equal(
-    report.missingHours,
+    report.missing.hours,
     records.filter((r) => r.hours === null).length,
   )
   assert.equal(report.snapshotOlderThan30Days, records.length)

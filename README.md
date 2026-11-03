@@ -99,3 +99,8 @@ submission service are deployed by this repository.
 Read [mobile setup, providers, licensing, and limitations](docs/mobile-discovery.md),
 [development](docs/development.md), [architecture](docs/architecture.md),
 [discovery database](docs/database.md), and [preserved legacy schema](docs/legacy-reservation-schema.md).
+
+Read the [parking data preparation report](docs/parking-data-quality.md) for exact
+audit counts, candidate evidence, the unpublished review queue and validated
+offline refresh steps. `pnpm audit:data` checks generated data integrity;
+`pnpm data:refresh` regenerates local artifacts after review.

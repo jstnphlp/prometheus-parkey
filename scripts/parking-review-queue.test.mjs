@@ -1,7 +1,9 @@
 import assert from 'node:assert/strict'
+import { spawnSync } from 'node:child_process'
+import { execPath } from 'node:process'
 import { readFileSync } from 'node:fs'
 import test from 'node:test'
-import { URL } from 'node:url'
+import { fileURLToPath, URL } from 'node:url'
 
 import { AUDIT_AS_OF, auditParking, contentHash } from './audit-parking.mjs'
 import { buildReviewQueue, validateResearch } from './parking-review-queue.mjs'
@@ -243,5 +245,28 @@ test('OSM research validates calendar, edit chronology, version and canonical ev
       ],
     }).length,
     1,
+  )
+})
+
+test('audit CLI honors candidate input and date without overwriting bundled artifacts', () => {
+  const script = fileURLToPath(new URL('./audit-parking.mjs', import.meta.url))
+  const input = fileURLToPath(
+    new URL('../apps/mobile/src/discovery/osm-pilot.json', import.meta.url),
+  )
+  const result = spawnSync(
+    execPath,
+    [script, input, '--as-of', '2026-11-03T11:01:00Z'],
+    { encoding: 'utf8' },
+  )
+  assert.equal(result.status, 0, result.stderr)
+  assert.equal(JSON.parse(result.stdout).asOf, '2026-11-03T11:01:00Z')
+  assert.notEqual(spawnSync(execPath, [script, input, '--write']).status, 0)
+  assert.notEqual(
+    spawnSync(execPath, [script, '--as-of', '2026-02-30T00:00:00Z']).status,
+    0,
+  )
+  assert.notEqual(
+    spawnSync(execPath, [script, 'missing-parking-input.json']).status,
+    0,
   )
 })

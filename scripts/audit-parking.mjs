@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto'
 import { readFileSync, writeFileSync } from 'node:fs'
 import process from 'node:process'
 import { pathToFileURL, URL } from 'node:url'
+import { parseArgs } from 'node:util'
 
 import {
   anchor,
@@ -154,17 +155,37 @@ if (
   process.argv[1] &&
   import.meta.url === pathToFileURL(process.argv[1]).href
 ) {
+  const { values, positionals } = parseArgs({
+    options: {
+      write: { type: 'boolean' },
+      check: { type: 'boolean' },
+      'as-of': { type: 'string' },
+    },
+    allowPositionals: true,
+  })
+  if (
+    positionals.length > 1 ||
+    (values.write && values.check) ||
+    ((values.write || values.check) && (positionals.length || values['as-of']))
+  )
+    throw new Error(
+      'Use --write/--check only with the bundled snapshot and saved audit configuration.',
+    )
+  const asOf = values['as-of'] ?? readAuditAsOf()
+  if (!strictTimestamp(asOf, Date.now()))
+    throw new Error('Expected a valid nonfuture --as-of timestamp.')
   const snapshot = JSON.parse(
     readFileSync(
-      new URL('../apps/mobile/src/discovery/osm-pilot.json', import.meta.url),
+      positionals[0] ??
+        new URL('../apps/mobile/src/discovery/osm-pilot.json', import.meta.url),
       'utf8',
     ),
   )
-  const report = auditParking(snapshot, readAuditAsOf())
+  const report = auditParking(snapshot, asOf)
   const target = new URL('../data/parking-audit.json', import.meta.url)
-  if (process.argv.includes('--write'))
+  if (values.write)
     writeFileSync(target, JSON.stringify(report, null, 2) + '\n')
-  else if (process.argv.includes('--check')) {
+  else if (values.check) {
     if (
       JSON.stringify(JSON.parse(readFileSync(target, 'utf8'))) !==
       JSON.stringify(report)

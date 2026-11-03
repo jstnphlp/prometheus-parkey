@@ -2,7 +2,8 @@
 
 Reference audit date: 2026-11-03T00:00:00Z. Scope: discovery only; no production writes,
 bookings, payments, or deletion of legacy/user data. Work is isolated on
-`feat/poblacion-data-quality` from main `5313e646`.
+`feat/poblacion-data-quality`, initially from `5313e646` and rebased onto
+main `8ca64f4` after its operations changes landed.
 
 ## P0: Establish an honest baseline
 

@@ -1,7 +1,7 @@
 # Architecture
 
 Parkey uses one pnpm monorepo and a modular monolith. The Expo mobile application
-and TanStack Start operator preview are independent frontends. Shared contracts
+and TanStack Start moderation workspace are independent frontends. Shared contracts
 are type-only. PostgreSQL/PostGIS owns geographic records; privileged writes
 belong behind trusted server boundaries.
 
@@ -52,12 +52,14 @@ function, auth bypass, or payment service was created. See [database design](dat
 
 ## Web and shared contracts
 
-The existing React/TanStack Start/Router/Vite/Tailwind operator application is
-unchanged. It retains its session-only fictional workspace, file routing in
-`src/routes`, and CLI-generated `routeTree.gen.ts`. It does not use discovery or
-make production booking requests. Its old reservation vocabularies remain in
-`@parkey/shared-types` for compatibility alongside new discovery API contracts.
-All shared imports remain `import type`; the package exports no runtime code.
+The React/TanStack Start/Router/Vite/Tailwind workspace now reviews discovery
+reports through a trusted Edge Function. Supabase Auth validates the session;
+MFA and a private reviewer allowlist protect review operations. Publication is
+separate from acceptance and always creates an unverified record. Public uploads
+remain gated. File routing in `src/routes` and the CLI-generated route tree remain.
+Legacy demo code and reservation types are retained for compatibility but are no
+longer the workspace route. Shared contracts export no runtime code.
+See [operations readiness](operations-readiness.md) for integration and launch gates.
 
 ## Validation and deployment boundaries
 

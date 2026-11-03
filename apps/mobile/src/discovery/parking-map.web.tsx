@@ -140,6 +140,28 @@ export default function ParkingMap(props: ParkingMapProps) {
     }
     instance.jumpTo(initialCamera)
     map.current = instance
+    const markerAssets = new globalThis.Map<string, number>([
+      ['parking-pin', selectedSpot],
+      ['parking-pin-selected', selectedSpot],
+      ['pin-free', freePin],
+      ['pin-paid', paidPin],
+      ['pin-unknown', unknownPin],
+      ['map-label', mapLabel],
+      ['nav-up', navUp],
+    ])
+    // MapLibre awaits this resolver before treating an image as missing.
+    // Parking, route, and location sources can still initialize immediately.
+    instance.setMissingStyleImageResolver(async (name) => {
+      const asset = markerAssets.get(name)
+      if (asset === undefined) return
+      try {
+        const marker = await instance.loadImage(Asset.fromModule(asset).uri)
+        if (map.current === instance && !instance.hasImage(name))
+          instance.addImage(name, marker.data, { pixelRatio: 3 })
+      } catch {
+        if (map.current === instance) status('error')
+      }
+    })
     instance.on('load', () => {
       instance.addSource('route', {
         type: 'geojson',
@@ -388,26 +410,6 @@ export default function ParkingMap(props: ParkingMapProps) {
       setLoaded(true)
       status('ready')
       moved()
-      // Marker artwork must not block parking, routes, or location layers.
-      void Promise.all(
-        (
-          [
-            ['parking-pin', selectedSpot],
-            ['parking-pin-selected', selectedSpot],
-            ['pin-free', freePin],
-            ['pin-paid', paidPin],
-            ['pin-unknown', unknownPin],
-            ['map-label', mapLabel],
-            ['nav-up', navUp],
-          ] as const
-        ).map(async ([name, asset]) => {
-          const marker = await instance.loadImage(Asset.fromModule(asset).uri)
-          if (map.current === instance)
-            instance.addImage(name, marker.data, { pixelRatio: 3 })
-        }),
-      ).catch(() => {
-        if (map.current === instance) status('error')
-      })
     })
     instance.on('click', pressed)
     instance.on('moveend', moved)

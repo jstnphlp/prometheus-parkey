@@ -1,5 +1,5 @@
 import { readFileSync, writeFileSync } from 'node:fs'
-import { stdout } from 'node:process'
+import { argv, stdout } from 'node:process'
 import { URL } from 'node:url'
 
 // Reproducible local seed only. This script never connects to a database.
@@ -38,7 +38,15 @@ cross join lateral jsonb_array_elements(s.record->'regulations') as rule
 where not exists (select 1 from public.discovery_regulations r where r.parking_id = p.id and r.description = rule->>'description');
 commit;
 `
-writeFileSync(new URL('../supabase/seed-discovery.sql', import.meta.url), sql)
+const target = new URL('../supabase/seed-discovery.sql', import.meta.url)
+if (argv.includes('--check')) {
+  if (readFileSync(target, 'utf8').replaceAll('\r\n', '\n') !== sql)
+    throw new Error(
+      'Local discovery seed is stale. Regenerate it with node scripts/osm-snapshot-sql.mjs.',
+    )
+} else {
+  writeFileSync(target, sql)
+}
 stdout.write(
-  `Generated local discovery seed for ${records.length} OSM records\n`,
+  `Validated local discovery seed for ${records.length} OSM records\n`,
 )

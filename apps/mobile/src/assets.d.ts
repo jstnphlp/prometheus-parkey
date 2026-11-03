@@ -1,3 +1,5 @@
+declare module 'maplibre-gl/dist/maplibre-gl.css'
+
 declare module '*.ttf' {
   const source: number
   export default source

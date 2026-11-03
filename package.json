@@ -9,19 +9,23 @@
     "pnpm": ">=11.25.0 <12"
   },
   "scripts": {
+    "start": "pnpm --filter @parkey/mobile web",
     "dev:mobile": "pnpm --filter @parkey/mobile start",
     "dev:web": "pnpm --filter @parkey/web dev",
     "lint": "eslint . --max-warnings 0",
-    "typecheck": "pnpm -r typecheck && pnpm typecheck:e2e",
+    "typecheck": "pnpm -r typecheck && pnpm typecheck:e2e && pnpm typecheck:edge",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "build:web": "pnpm --filter @parkey/web build",
     "supabase:start": "supabase start",
     "supabase:stop": "supabase stop",
     "supabase:status": "supabase status",
-    "test": "node --test apps/mobile/src/discovery/*.test.mjs apps/web/src/demo/workspace.test.mjs && python3 scripts/test-osm-extract.py",
+    "test": "node --test apps/mobile/src/discovery/*.test.mjs apps/web/src/demo/workspace.test.mjs && pnpm test:operations && node scripts/run-python-tests.mjs",
     "typecheck:e2e": "tsc -p e2e/tsconfig.json",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "test:operations": "node --test scripts/*.test.mjs supabase/functions/discovery-moderation/*.test.mjs apps/web/src/moderation/*.test.mjs",
+    "audit:data": "node scripts/audit-parking.mjs && node scripts/osm-snapshot-sql.mjs --check",
+    "typecheck:edge": "tsc -p supabase/functions/tsconfig.json"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",

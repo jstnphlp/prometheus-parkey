@@ -44,6 +44,8 @@ export function MotionPressable({
     }).start()
   }
 
+  const interactionState = { pressed: pressed && !disabled, hovered }
+
   return (
     <AnimatedPressable
       {...props}
@@ -77,9 +79,7 @@ export function MotionPressable({
         onBlur?.(event)
       }}
       style={[
-        typeof style === 'function'
-          ? style({ pressed: pressed && !disabled, hovered })
-          : style,
+        typeof style === 'function' ? style(interactionState) : style,
         { transform: [{ scale }] },
       ]}
     />

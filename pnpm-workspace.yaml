@@ -2,6 +2,9 @@ packages:
   - apps/*
   - packages/*
 
+# Keep Android CMake/Ninja paths below Windows' legacy 260-character limit.
+nodeLinker: hoisted
+
 # Only these packages may run dependency build scripts.
 allowBuilds:
   # Reviewed binary downloader; source-map upload tooling is not used.

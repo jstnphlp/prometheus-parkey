@@ -126,7 +126,11 @@ test('map filters and rendering preserve street line geometry and selection', ()
   assert.equal(feature.properties.muted, false)
   const selectedMap = parkingGeoJSON(sampleParking, sampleParking[0].id)
   assert.equal(selectedMap.features[1].properties.muted, true)
-  assert.ok(selectedMap.features.every((item) => item.properties.label === 'P'))
+  for (const item of selectedMap.features) {
+    assert.equal(item.properties.label, 'Fee ?')
+    assert.equal(item.properties.knownFee, false)
+    assert.equal(item.properties.free, false)
+  }
   assert.equal(
     parkingGeoJSON(sampleParking, null).features.some(
       (item) => item.properties.muted,

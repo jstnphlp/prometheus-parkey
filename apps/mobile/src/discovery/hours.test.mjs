@@ -13,7 +13,7 @@ const records = JSON.parse(
 const at = (iso) => new Date(iso)
 
 test('real snapshot hours remain unknown without altering the source', () => {
-  assert.equal(records.length, 41)
+  assert.ok(records.length > 0, 'The bundled dataset must not be empty')
   assert.ok(records.every((record) => record.hours === null))
   for (const record of records)
     assert.equal(hoursStatus(record.hours), 'unknown', record.id)

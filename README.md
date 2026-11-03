@@ -5,10 +5,32 @@ search a destination, inspect a facility or street segment, and get directions.
 Discovery requires no account. Unknown parking rules, fees, hours, and verification
 are explicit; Parkey does not promise a vacant space or permission to park.
 
+## Run locally
+
+Install **Node 24 LTS** (this project requires Node 24, not Node 22), then open
+a new terminal in this folder. On Windows PowerShell, run:
+
+```powershell
+npm.cmd install --global pnpm@11.25.0
+pnpm.cmd install --frozen-lockfile
+pnpm.cmd start
+```
+
+This opens the parking discovery app in your browser. If it does not open
+automatically, use the local URL printed by Expo (normally `http://localhost:8081`).
+No `.env` file, API keys, account, Docker, or database setup is required.
+Internet access is needed for map tiles, destination search, and driving routes.
+Stop the app with `Ctrl+C`. On later runs, just use `pnpm.cmd start`.
+
+On macOS/Linux, use `npm` and `pnpm` in place of `npm.cmd` and `pnpm.cmd`.
+The `.cmd` suffix avoids Windows PowerShell's script execution policy restriction.
+For the separate moderation workspace, run `pnpm.cmd dev:web` and open
+`http://localhost:3000`. Native Android/iOS setup is described below.
+
 ## Workspace
 
 - `apps/mobile`: Expo 58, React Native, Expo Router, MapLibre Native and GL JS.
-- `apps/web`: independent TanStack Start operator preview, unchanged by V2.
+- `apps/web`: independent TanStack Start discovery moderation workspace.
 - `packages/shared-types`: type-only workspace contracts.
 - `supabase`: PostGIS discovery schema, preserved legacy schema, local seeds/tests.
 
@@ -25,7 +47,7 @@ pnpm dev:web                          # separate operator web preview
 
 **Expo Go is not supported by the native map.** Build the development client.
 No keys are needed for the default basemap, modest development search, or the
-unverified OSM pilot snapshot (41 records, 6 street segments). In-app directions
+unverified OSM pilot snapshot (43 records, 6 street segments). In-app directions
 show a driving route, distance, estimated travel time, and written instructions.
 Development builds default to the OSRM demo for non-commercial testing only;
 production builds require an owned/licensed `EXPO_PUBLIC_OSRM_URL`. See the setup
@@ -69,8 +91,9 @@ Android, or the separate operator web preview.
 CI runs both browser projects and uploads reports, failure screenshots, and
 traces when tests fail. Local artifacts are ignored under `output/playwright/`.
 
-The operator preview still contains fictional reservation workflows; these are
-absent from the mobile application. No hosted resources, migrations, or production
+The web workspace now uses Supabase reviewer sign-in/MFA and a private moderation
+queue. Public uploads remain gated; mobile drafts stay on-device. See
+[operations readiness and remaining launch gates](docs/operations-readiness.md). No hosted resources, migrations, or production
 submission service are deployed by this repository.
 
 Read [mobile setup, providers, licensing, and limitations](docs/mobile-discovery.md),

@@ -12,23 +12,21 @@ function About() {
         About Parkey
       </p>
       <h1 className="mt-5 text-4xl font-semibold leading-tight tracking-tight md:text-5xl">
-        Explore the Parkey frontend.
+        Review parking information.
       </h1>
       <p className="mt-6 text-lg leading-relaxed text-muted">
-        Parkey is a parking reservation platform taking shape in Poblacion,
-        Makati, Philippines.
+        Parkey helps people discover parking around Poblacion, Makati.
       </p>
       <p className="mt-5 leading-relaxed text-muted">
-        This workspace uses fictional drivers, reservations, and a fictional
-        parking lot. Search bookings, preview check-in and check-out, and change
-        unassigned space availability. Changes last only for this page session;
-        refresh or use Reset demo to start again.
+        Authorized reviewers use this workspace to accept or reject private
+        community reports. Publishers separately review public provenance before
+        adding an unverified discovery record. Acceptance never establishes
+        current availability or permission to park.
       </p>
       <p className="mt-5 leading-relaxed text-muted">
-        No authentication, real-time availability, payment processing, or
-        backend services are connected. The independent mobile frontend previews
-        driver discovery, vehicles, and trips. The two previews do not
-        synchronize.
+        Sign-in requires an authenticator and reviewer authorization. Reports
+        come from the configured Supabase service. Mobile contributions remain
+        on-device while public submission and private photo handling are gated.
       </p>
       <Link
         to="/"

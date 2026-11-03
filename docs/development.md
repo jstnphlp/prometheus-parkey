@@ -6,6 +6,12 @@ never commit an actual `.env` or a privileged key.
 
 ## Mobile
 
+The workspace uses pnpm's hoisted dependency layout to keep Android CMake/Ninja
+paths within Windows' path-length limit. After pulling a dependency-layout change,
+run `pnpm install --frozen-lockfile` before rebuilding Android. On Windows, use a
+current Ninja build tool with long-path support; the Ninja 1.10.2 bundled with
+Android SDK CMake 3.22.1 can still fail on generated React Native object paths.
+
 The Expo SDK 58 app is a map-first discovery app. **Use a development build, not
 Expo Go**, because MapLibre is a native dependency. No Google Maps keys are needed.
 See [map and routing provider setup](mobile-discovery.md). Xcode/CocoaPods are required
@@ -17,7 +23,7 @@ pnpm --filter @parkey/mobile android
 # Already-installed development client:
 pnpm dev:mobile
 # Same application in a browser:
-pnpm --filter @parkey/mobile web
+pnpm start
 ```
 
 Explore starts without authentication or configuration. Basemap tiles and search
@@ -26,12 +32,13 @@ does not require Supabase. Search is an explicit Photon API request. Contributio
 are clearly labeled local previews, never server submissions.
 See [mobile implementation and provider configuration](mobile-discovery.md).
 
-## Operator web preview
+## Discovery moderation workspace
 
-`pnpm dev:web` starts the unchanged TanStack Start operator preview, normally at
-port 3000. Its fictional booking/bay state is session-only and unrelated to the
-new discovery API. `pnpm build:web` builds its client and SSR server.
-No production deployment adapter or external integration is configured.
+`pnpm dev:web` starts the TanStack Start workspace at port 3000. Configure its
+public Supabase URL/key, run the local migrations and moderation Edge Function,
+and provision an authorized reviewer to use the queue. The workspace requires
+TOTP MFA and keeps sessions in memory. See [operations readiness](operations-readiness.md).
+`pnpm build:web` builds the client and SSR server. No deployment was performed.
 
 ## Local database
 

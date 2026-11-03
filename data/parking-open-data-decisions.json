@@ -1,0 +1,172 @@
+{
+  "schemaVersion": 1,
+  "scope": "2026-11-03 Poblacion Overture Places pilot",
+  "policy": "Human research decisions are independent of Overture exports and generated data. Online Google Maps name searches corroborate possible listing presence only, never field verification, public parking rights or current operation. No Google Maps coordinates, descriptive content, URLs or reviews were copied into these records. Excluded records are retained pending documented reasons. No automatic publication.",
+  "decisions": [
+    {
+      "id": "overture:040fdf1c-ec10-455d-a750-2613c0883f96",
+      "sourceName": "SM Cyberone Smoking Area",
+      "reviewStatus": "excluded_pending_reason",
+      "reviewedOn": "2026-11-03",
+      "method": null,
+      "evidenceReference": null,
+      "evidenceNote": "Removed from the owner's shortlist; reason not provided. Preserve for audit rather than silently dropping it.",
+      "siteVisitAt": null,
+      "publicationApproved": false
+    },
+    {
+      "id": "overture:28ca9423-0891-4a29-a71e-beb4465c36c9",
+      "sourceName": "Creative Parking Inc.",
+      "reviewStatus": "online_corroborated",
+      "reviewedOn": "2026-11-03",
+      "method": "google_maps_name_search",
+      "evidenceReference": null,
+      "evidenceNote": "Project owner reports finding a Google Maps result when searching this parking name. Name/listing corroboration only; precise location, public access, entrance, fees, hours and operating status not independently confirmed.",
+      "siteVisitAt": null,
+      "publicationApproved": false
+    },
+    {
+      "id": "overture:2910fe66-02b8-4230-a422-3f408202fd82",
+      "sourceName": "Mercedes Steel Parking",
+      "reviewStatus": "online_corroborated",
+      "reviewedOn": "2026-11-03",
+      "method": "google_maps_name_search",
+      "evidenceReference": null,
+      "evidenceNote": "Project owner reports finding a Google Maps result when searching this parking name. Name/listing corroboration only; precise location, public access, entrance, fees, hours and operating status not independently confirmed.",
+      "siteVisitAt": null,
+      "publicationApproved": false
+    },
+    {
+      "id": "overture:2a081d44-ce03-437c-a8d1-827df826a084",
+      "sourceName": "Valet Parking",
+      "reviewStatus": "excluded_pending_reason",
+      "reviewedOn": "2026-11-03",
+      "method": null,
+      "evidenceReference": null,
+      "evidenceNote": "Removed from the owner's shortlist; reason not provided. Preserve for audit rather than silently dropping it.",
+      "siteVisitAt": null,
+      "publicationApproved": false
+    },
+    {
+      "id": "overture:38024824-5637-48f6-a42e-147ed4d01cd4",
+      "sourceName": "PNB Open Parking (Global Parking Management, Inc.)",
+      "reviewStatus": "needs_site_visit",
+      "reviewedOn": "2026-11-03",
+      "method": null,
+      "evidenceReference": null,
+      "evidenceNote": "Project owner flagged this candidate for physical confirmation. No site visit recorded.",
+      "siteVisitAt": null,
+      "publicationApproved": false
+    },
+    {
+      "id": "overture:620ef9f8-b42c-441f-8761-e3add2216d41",
+      "sourceName": "Riki Carreon Parking Lot",
+      "reviewStatus": "online_corroborated",
+      "reviewedOn": "2026-11-03",
+      "method": "google_maps_name_search",
+      "evidenceReference": null,
+      "evidenceNote": "Project owner reports finding a Google Maps result when searching this parking name. Name/listing corroboration only; precise location, public access, entrance, fees, hours and operating status not independently confirmed.",
+      "siteVisitAt": null,
+      "publicationApproved": false
+    },
+    {
+      "id": "overture:7fabad6f-f325-4893-912e-4cb137964c6b",
+      "sourceName": "Osmeña St",
+      "reviewStatus": "needs_site_visit",
+      "reviewedOn": "2026-11-03",
+      "method": null,
+      "evidenceReference": null,
+      "evidenceNote": "Project owner flagged this candidate for physical confirmation. No site visit recorded.",
+      "siteVisitAt": null,
+      "publicationApproved": false
+    },
+    {
+      "id": "overture:806d86ba-28ad-4bc7-8d89-e54b37d62db5",
+      "sourceName": "PYC Albert St. Parking",
+      "reviewStatus": "online_corroborated",
+      "reviewedOn": "2026-11-03",
+      "method": "google_maps_name_search",
+      "evidenceReference": null,
+      "evidenceNote": "Project owner reports finding a Google Maps result when searching this parking name. Name/listing corroboration only; precise location, public access, entrance, fees, hours and operating status not independently confirmed.",
+      "siteVisitAt": null,
+      "publicationApproved": false
+    },
+    {
+      "id": "overture:80b88711-7452-454f-931d-f817d060e337",
+      "sourceName": "Bourbon / Cantina / Kartel Parking Lot",
+      "reviewStatus": "online_corroborated",
+      "reviewedOn": "2026-11-03",
+      "method": "google_maps_name_search",
+      "evidenceReference": null,
+      "evidenceNote": "Project owner reports finding a Google Maps result when searching this parking name. Name/listing corroboration only; precise location, public access, entrance, fees, hours and operating status not independently confirmed.",
+      "siteVisitAt": null,
+      "publicationApproved": false
+    },
+    {
+      "id": "overture:9525f048-4c7b-4f40-9441-78f3fe1bacc3",
+      "sourceName": "Buendia Ext'n Service Road",
+      "reviewStatus": "needs_site_visit",
+      "reviewedOn": "2026-11-03",
+      "method": null,
+      "evidenceReference": null,
+      "evidenceNote": "Project owner flagged this candidate for physical confirmation. No site visit recorded.",
+      "siteVisitAt": null,
+      "publicationApproved": false
+    },
+    {
+      "id": "overture:a429005d-b629-4e95-a508-283972be28a0",
+      "sourceName": "Antel Platinum Tower Parking Entrance",
+      "reviewStatus": "online_corroborated",
+      "reviewedOn": "2026-11-03",
+      "method": "google_maps_name_search",
+      "evidenceReference": null,
+      "evidenceNote": "Project owner reports finding a Google Maps result when searching this parking name. Name/listing corroboration only; precise location, public access, entrance, fees, hours and operating status not independently confirmed.",
+      "siteVisitAt": null,
+      "publicationApproved": false
+    },
+    {
+      "id": "overture:bb11755f-b787-4b40-97cd-fa40f87c02b2",
+      "sourceName": "Parking lot",
+      "reviewStatus": "needs_site_visit",
+      "reviewedOn": "2026-11-03",
+      "method": null,
+      "evidenceReference": null,
+      "evidenceNote": "Project owner flagged this candidate for physical confirmation. No site visit recorded.",
+      "siteVisitAt": null,
+      "publicationApproved": false
+    },
+    {
+      "id": "overture:cc3d1478-11cf-44b0-b8ee-4b1be6b904c7",
+      "sourceName": "Classica 1 Parking Garage",
+      "reviewStatus": "needs_site_visit",
+      "reviewedOn": "2026-11-03",
+      "method": null,
+      "evidenceReference": null,
+      "evidenceNote": "Project owner flagged this candidate for physical confirmation. No site visit recorded.",
+      "siteVisitAt": null,
+      "publicationApproved": false
+    },
+    {
+      "id": "overture:e3390a4d-2364-4d12-b7c3-72e51aa39ba3",
+      "sourceName": "Tordesillas cor Bautista Parking",
+      "reviewStatus": "online_corroborated",
+      "reviewedOn": "2026-11-03",
+      "method": "google_maps_name_search",
+      "evidenceReference": null,
+      "evidenceNote": "Project owner reports finding a Google Maps result when searching this parking name. Name/listing corroboration only; precise location, public access, entrance, fees, hours and operating status not independently confirmed.",
+      "siteVisitAt": null,
+      "publicationApproved": false
+    },
+    {
+      "id": "overture:fe48dd98-182c-4a98-8cf9-64edadd80f2f",
+      "sourceName": "Valero Parking Lot",
+      "reviewStatus": "online_corroborated",
+      "reviewedOn": "2026-11-03",
+      "method": "google_maps_name_search",
+      "evidenceReference": null,
+      "evidenceNote": "Project owner reports finding a Google Maps result when searching this parking name. Name/listing corroboration only; precise location, public access, entrance, fees, hours and operating status not independently confirmed.",
+      "siteVisitAt": null,
+      "publicationApproved": false
+    }
+  ]
+}

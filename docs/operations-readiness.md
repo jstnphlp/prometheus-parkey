@@ -44,26 +44,34 @@ licensing, reachability, GPS or store acceptance.
 
 ## Parking data maintenance
 
-Run `pnpm audit:data` for contract/identity/provenance checks and actual coverage,
-missing details, entrances and snapshot age. The present snapshot has 43 records
-and six street segments; none are independently verified. Import freshness is not
-field verification. Do not invent fees, hours, entrances or legality to fill gaps.
+Run `pnpm audit:data` to check validated provenance and generated audit, review
+queue, local seed and database-test consistency. Read the exact baseline and
+coverage in [parking data preparation](parking-data-quality.md) and
+[the source audit](parking-source-audit.md). `node scripts/audit-parking.mjs`
+prints metrics. The present snapshot has 43 records and six street segments;
+none are independently verified. Import freshness is not field verification.
 
-For a refresh, obtain a licensed OSM export covering the existing pilot bounds,
-retain its retrieval date and attribution, then extract to a temporary candidate:
+For a refresh, obtain a licensed OSM export and retain its retrieval date and
+attribution. Extract to an unpublished candidate with explicit provenance:
 
 ```sh
-python scripts/extract-osm-parking.py export.osm candidate.json
-node scripts/audit-parking.mjs candidate.json
+python scripts/extract-osm-parking.py export.osm candidate.json \
+  --observed-at ACTUAL_EXPORT_TIME_ISO8601 \
+  --source-url 'https://api.openstreetmap.org/api/0.6/map?bbox=121.024,14.558,121.041,14.572'
+node scripts/audit-parking.mjs candidate.json --as-of ACTUAL_AUDIT_TIME_ISO8601
 ```
 
-Review additions, deletions, source identities, geometry, restrictions and license
-before replacing the bundled JSON. Keep all OSM records unverified. After replacing
-the reviewed snapshot, regenerate the **local-only** SQL seed with
-`node scripts/osm-snapshot-sql.mjs`, rerun the audit and importer/mobile tests, and
-review both diffs together. The local seed is not a hosted refresh mechanism: it
-does not update existing rows or remove stale records. A hosted refresh needs a
-separate reviewed transactional import preserving field verification and edits.
+Review additions, omissions, identities, geometry, restrictions and license.
+After approval, replace the bundled JSON together with its matching manifest,
+update `data/parking-audit-config.json` to the actual audit timestamp at or after
+the export observation, and run `pnpm data:refresh` and `pnpm audit:data`.
+Changed or new snapshots require a valid manifest. Preserve extractor bytes;
+formatting and checkout rules keep hashes stable across platforms.
+
+The local-only seed accepts identical replay and aborts on existing record,
+verification/publication, source or regulation drift for human reconciliation.
+It never updates/deletes existing records or imports the research queue. A hosted
+refresh needs a separately reviewed transactional process preserving human edits.
 
 ## Private moderation
 

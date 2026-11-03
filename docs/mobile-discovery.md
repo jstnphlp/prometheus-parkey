@@ -302,7 +302,7 @@ The bundled JSON contains **43 real OSM records, including 6 street segments**,
 from the WGS84 box `[121.024, 14.558, 121.041, 14.572]` around Poblacion and nearby
 Makati streets. Its source snapshot date is recorded on every record. These are
 not field-verified records. OSM geometry and tags may be outdated or incomplete.
-All 41 bundled records currently have unknown hours. The hours parser is tested
+All 43 bundled records currently have unknown hours. The hours parser is tested
 with those real missing values and clearly synthetic normal, overnight, 24/7, and
 malformed schedules; no source values are fabricated. Unsupported syntax stays
 unknown. Daily/weekly schedules refresh while the app is active and on resume. Facility centroids are not guaranteed entrances.
@@ -314,14 +314,21 @@ extract; do not repeatedly download data during app sessions:
 
 ```sh
 # Supply a licensed local .osm XML export of the pilot box.
-python3 scripts/extract-osm-parking.py pilot.osm apps/mobile/src/discovery/osm-pilot.json
-node scripts/osm-snapshot-sql.mjs
+python3 scripts/extract-osm-parking.py pilot.osm candidate-snapshot.json \
+  --observed-at ACTUAL_EXPORT_TIME_ISO8601 \
+  --source-url https://api.openstreetmap.org/api/0.6/map?bbox=121.024,14.558,121.041,14.572
+# Review candidate-snapshot.json and its manifest before replacing the bundled snapshot.
+# After an approved replacement, refresh the audit, queue and local seed:
+pnpm data:refresh
+pnpm audit:data
 ```
 
 The extractor preserves source identity and links. It accepts explicitly tagged
-parking facilities and street lanes, excludes private/no-access facilities,
-construction, unsupported conditional-only lanes, and street-parking point tags
-without line geometry. It skips relations until member/polygon assembly is added.
+parking facilities and street lanes, retains explicitly tagged restricted-access
+facilities with source restrictions, excludes construction, unsupported
+conditional-only lanes, and street-parking point tags
+without line geometry. Restricted-access mapping does not establish public access
+or permission to park. It skips relations until member/polygon assembly is added.
 It never infers parking from an untagged road. Source restrictions and unknown
 sides are retained. No capacity tags become vacancy counts.
 

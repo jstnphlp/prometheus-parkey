@@ -6,12 +6,11 @@ import { fonts } from './typography'
 
 export function ParkingStatus({ details }: { details: SpotDetails }) {
   const free = details.fee === 'Free'
-  const open = details.chips.some((chip) => /^Open\b/.test(chip))
   return (
     <Text
       style={[styles.chip, free && styles.free, !details.fee && styles.unknown]}
     >
-      {free && open ? 'Free now' : (details.fee ?? 'Fee unknown')}
+      {free ? 'Recorded no fee' : (details.fee ?? 'Fee unknown')}
     </Text>
   )
 }

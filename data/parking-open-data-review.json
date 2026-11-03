@@ -1,0 +1,562 @@
+{
+  "schemaVersion": 1,
+  "asOf": "2026-11-03T13:23:54Z",
+  "pilotBounds": {
+    "west": 121.024,
+    "south": 14.558,
+    "east": 121.041,
+    "north": 14.572
+  },
+  "sourceHashes": {
+    "bundledOsm": "4e7d511df06c52dc2a803e244f14f4c78717b450aaf12862d68524acee5b7012",
+    "overture": "66b63adfad7a085a71a004ef5e0c6927eda8693c7199c1b3fb20ecdda81a99cf"
+  },
+  "counts": {
+    "existing": 43,
+    "existingUnnamed": 24,
+    "overtureCandidates": 15,
+    "foursquareCandidates": 0,
+    "stagedCandidates": 15,
+    "potentialNewFacilities": 7,
+    "potentiallyMatchingUnnamed": 7,
+    "verified": 0,
+    "published": 0
+  },
+  "policy": "Offline research only. Nearby points are not proven to be the same parking facility. Overture may already contain Foursquare data, so cross-provider matches are not independent corroboration. All candidate names, access, operating status and entrances require human verification. This script never publishes parking records.",
+  "candidates": [
+    {
+      "id": "overture:28ca9423-0891-4a29-a71e-beb4465c36c9",
+      "name": "Creative Parking Inc.",
+      "category": "parking",
+      "coordinate": [
+        121.04067769,
+        14.57137406
+      ],
+      "address": null,
+      "sourceKind": "overture",
+      "sourceId": "28ca9423-0891-4a29-a71e-beb4465c36c9",
+      "sourceUrl": "https://explore.overturemaps.org/",
+      "sourceLicense": "unknown",
+      "sourceAttribution": "Overture Maps Foundation; review individual record source licenses",
+      "sourceRecordConfidence": 0.25767913460731506,
+      "sourceRecordRefreshedAt": null,
+      "status": "researched",
+      "verification": "verified",
+      "verifiedAt": null,
+      "fees": null,
+      "hours": null,
+      "entrance": null,
+      "access": null,
+      "possibleBundledMatches": [],
+      "possibleOtherSourceMatches": [],
+      "flags": [
+        "field_verification_required",
+        "public_access_unknown",
+        "entrance_unknown",
+        "fees_unknown",
+        "hours_unknown",
+        "license_review_required"
+      ]
+    },
+    {
+      "id": "overture:2910fe66-02b8-4230-a422-3f408202fd82",
+      "name": "Mercedes Steel Parking",
+      "category": "parking",
+      "coordinate": [
+        121.0288365,
+        14.56497893
+      ],
+      "address": null,
+      "sourceKind": "overture",
+      "sourceId": "2910fe66-02b8-4230-a422-3f408202fd82",
+      "sourceUrl": "https://explore.overturemaps.org/",
+      "sourceLicense": "unknown",
+      "sourceAttribution": "Overture Maps Foundation; review individual record source licenses",
+      "sourceRecordConfidence": 0.2739957869052887,
+      "sourceRecordRefreshedAt": null,
+      "status": "researched",
+      "verification": "verified",
+      "verifiedAt": null,
+      "fees": null,
+      "hours": null,
+      "entrance": null,
+      "access": null,
+      "possibleBundledMatches": [
+        {
+          "id": "osm:way/387624518",
+          "name": "Unnamed parking · OpenStreetMap",
+          "distanceMeters": 71,
+          "isUnnamed": true
+        }
+      ],
+      "possibleOtherSourceMatches": [],
+      "flags": [
+        "field_verification_required",
+        "public_access_unknown",
+        "entrance_unknown",
+        "fees_unknown",
+        "hours_unknown",
+        "license_review_required",
+        "existing_facility_match_requires_review"
+      ]
+    },
+    {
+      "id": "overture:38024824-5637-48f6-a42e-147ed4d01cd4",
+      "name": "PNB Open Parking (Global Parking Management, Inc.)",
+      "category": "parking",
+      "coordinate": [
+        121.02931275,
+        14.55963283
+      ],
+      "address": null,
+      "sourceKind": "overture",
+      "sourceId": "38024824-5637-48f6-a42e-147ed4d01cd4",
+      "sourceUrl": "https://explore.overturemaps.org/",
+      "sourceLicense": "unknown",
+      "sourceAttribution": "Overture Maps Foundation; review individual record source licenses",
+      "sourceRecordConfidence": 0.503107488155365,
+      "sourceRecordRefreshedAt": null,
+      "status": "confirm_physically",
+      "verification": "unverified",
+      "verifiedAt": null,
+      "fees": null,
+      "hours": null,
+      "entrance": null,
+      "access": null,
+      "possibleBundledMatches": [
+        {
+          "id": "osm:way/32946575",
+          "name": "Unnamed parking · OpenStreetMap",
+          "distanceMeters": 65,
+          "isUnnamed": true
+        }
+      ],
+      "possibleOtherSourceMatches": [],
+      "flags": [
+        "field_verification_required",
+        "public_access_unknown",
+        "entrance_unknown",
+        "fees_unknown",
+        "hours_unknown",
+        "license_review_required",
+        "existing_facility_match_requires_review"
+      ]
+    },
+    {
+      "id": "overture:620ef9f8-b42c-441f-8761-e3add2216d41",
+      "name": "Riki Carreon Parking Lot",
+      "category": "parking",
+      "coordinate": [
+        121.03067135,
+        14.5671261
+      ],
+      "address": null,
+      "sourceKind": "overture",
+      "sourceId": "620ef9f8-b42c-441f-8761-e3add2216d41",
+      "sourceUrl": "https://explore.overturemaps.org/",
+      "sourceLicense": "unknown",
+      "sourceAttribution": "Overture Maps Foundation; review individual record source licenses",
+      "sourceRecordConfidence": 0.22319117188453674,
+      "sourceRecordRefreshedAt": null,
+      "status": "researched",
+      "verification": "verified",
+      "verifiedAt": null,
+      "fees": null,
+      "hours": null,
+      "entrance": null,
+      "access": null,
+      "possibleBundledMatches": [
+        {
+          "id": "osm:node/6614510827",
+          "name": "Unnamed parking · OpenStreetMap",
+          "distanceMeters": 50,
+          "isUnnamed": true
+        },
+        {
+          "id": "osm:way/309392252",
+          "name": "Unnamed parking · OpenStreetMap",
+          "distanceMeters": 66,
+          "isUnnamed": true
+        }
+      ],
+      "possibleOtherSourceMatches": [],
+      "flags": [
+        "field_verification_required",
+        "public_access_unknown",
+        "entrance_unknown",
+        "fees_unknown",
+        "hours_unknown",
+        "license_review_required",
+        "existing_facility_match_requires_review"
+      ]
+    },
+    {
+      "id": "overture:7fabad6f-f325-4893-912e-4cb137964c6b",
+      "name": "Osmeña St",
+      "category": "parking",
+      "coordinate": [
+        121.030627,
+        14.568952
+      ],
+      "address": null,
+      "sourceKind": "overture",
+      "sourceId": "7fabad6f-f325-4893-912e-4cb137964c6b",
+      "sourceUrl": "https://explore.overturemaps.org/",
+      "sourceLicense": "unknown",
+      "sourceAttribution": "Overture Maps Foundation; review individual record source licenses",
+      "sourceRecordConfidence": 0.6188178658485413,
+      "sourceRecordRefreshedAt": null,
+      "status": "confirm_physically",
+      "verification": "unverified",
+      "verifiedAt": null,
+      "fees": null,
+      "hours": null,
+      "entrance": null,
+      "access": null,
+      "possibleBundledMatches": [],
+      "possibleOtherSourceMatches": [],
+      "flags": [
+        "field_verification_required",
+        "public_access_unknown",
+        "entrance_unknown",
+        "fees_unknown",
+        "hours_unknown",
+        "license_review_required"
+      ]
+    },
+    {
+      "id": "overture:806d86ba-28ad-4bc7-8d89-e54b37d62db5",
+      "name": "PYC Albert St. Parking",
+      "category": "parking",
+      "coordinate": [
+        121.03377054,
+        14.56583211
+      ],
+      "address": null,
+      "sourceKind": "overture",
+      "sourceId": "806d86ba-28ad-4bc7-8d89-e54b37d62db5",
+      "sourceUrl": "https://explore.overturemaps.org/",
+      "sourceLicense": "unknown",
+      "sourceAttribution": "Overture Maps Foundation; review individual record source licenses",
+      "sourceRecordConfidence": 0.5347532033920288,
+      "sourceRecordRefreshedAt": null,
+      "status": "researched",
+      "verification": "verified",
+      "verifiedAt": null,
+      "fees": null,
+      "hours": null,
+      "entrance": null,
+      "access": null,
+      "possibleBundledMatches": [],
+      "possibleOtherSourceMatches": [],
+      "flags": [
+        "field_verification_required",
+        "public_access_unknown",
+        "entrance_unknown",
+        "fees_unknown",
+        "hours_unknown",
+        "license_review_required"
+      ]
+    },
+    {
+      "id": "overture:80b88711-7452-454f-931d-f817d060e337",
+      "name": "Bourbon / Cantina / Kartel Parking Lot",
+      "category": "parking",
+      "coordinate": [
+        121.02997093,
+        14.56245311
+      ],
+      "address": null,
+      "sourceKind": "overture",
+      "sourceId": "80b88711-7452-454f-931d-f817d060e337",
+      "sourceUrl": "https://explore.overturemaps.org/",
+      "sourceLicense": "unknown",
+      "sourceAttribution": "Overture Maps Foundation; review individual record source licenses",
+      "sourceRecordConfidence": 0.3377232551574707,
+      "sourceRecordRefreshedAt": null,
+      "status": "researched",
+      "verification": "verified",
+      "verifiedAt": null,
+      "fees": null,
+      "hours": null,
+      "entrance": null,
+      "access": null,
+      "possibleBundledMatches": [],
+      "possibleOtherSourceMatches": [],
+      "flags": [
+        "field_verification_required",
+        "public_access_unknown",
+        "entrance_unknown",
+        "fees_unknown",
+        "hours_unknown",
+        "license_review_required"
+      ]
+    },
+    {
+      "id": "overture:9525f048-4c7b-4f40-9441-78f3fe1bacc3",
+      "name": "Buendia Ext'n Service Road",
+      "category": "parking",
+      "coordinate": [
+        121.02624477048,
+        14.561345273705
+      ],
+      "address": null,
+      "sourceKind": "overture",
+      "sourceId": "9525f048-4c7b-4f40-9441-78f3fe1bacc3",
+      "sourceUrl": "https://explore.overturemaps.org/",
+      "sourceLicense": "unknown",
+      "sourceAttribution": "Overture Maps Foundation; review individual record source licenses",
+      "sourceRecordConfidence": 0.5867707133293152,
+      "sourceRecordRefreshedAt": null,
+      "status": "confirm_physically",
+      "verification": "unverified",
+      "verifiedAt": null,
+      "fees": null,
+      "hours": null,
+      "entrance": null,
+      "access": null,
+      "possibleBundledMatches": [
+        {
+          "id": "osm:way/29005200",
+          "name": "BDO Corporate Center Parking",
+          "distanceMeters": 82,
+          "isUnnamed": false
+        },
+        {
+          "id": "osm:node/3504836087",
+          "name": "Unnamed parking · OpenStreetMap",
+          "distanceMeters": 87,
+          "isUnnamed": true
+        }
+      ],
+      "possibleOtherSourceMatches": [],
+      "flags": [
+        "field_verification_required",
+        "public_access_unknown",
+        "entrance_unknown",
+        "fees_unknown",
+        "hours_unknown",
+        "license_review_required",
+        "existing_facility_match_requires_review"
+      ]
+    },
+    {
+      "id": "overture:a429005d-b629-4e95-a508-283972be28a0",
+      "name": "Antel Platinum Tower Parking Entrance",
+      "category": "parking",
+      "coordinate": [
+        121.02407702,
+        14.55918536
+      ],
+      "address": null,
+      "sourceKind": "overture",
+      "sourceId": "a429005d-b629-4e95-a508-283972be28a0",
+      "sourceUrl": "https://explore.overturemaps.org/",
+      "sourceLicense": "unknown",
+      "sourceAttribution": "Overture Maps Foundation; review individual record source licenses",
+      "sourceRecordConfidence": 0.9435792464017868,
+      "sourceRecordRefreshedAt": null,
+      "status": "researched",
+      "verification": "verified",
+      "verifiedAt": null,
+      "fees": null,
+      "hours": null,
+      "entrance": null,
+      "access": null,
+      "possibleBundledMatches": [],
+      "possibleOtherSourceMatches": [],
+      "flags": [
+        "field_verification_required",
+        "public_access_unknown",
+        "entrance_unknown",
+        "fees_unknown",
+        "hours_unknown",
+        "license_review_required"
+      ]
+    },
+    {
+      "id": "overture:bb11755f-b787-4b40-97cd-fa40f87c02b2",
+      "name": "Parking lot",
+      "category": "parking",
+      "coordinate": [
+        121.02786011,
+        14.55942293
+      ],
+      "address": null,
+      "sourceKind": "overture",
+      "sourceId": "bb11755f-b787-4b40-97cd-fa40f87c02b2",
+      "sourceUrl": "https://explore.overturemaps.org/",
+      "sourceLicense": "unknown",
+      "sourceAttribution": "Overture Maps Foundation; review individual record source licenses",
+      "sourceRecordConfidence": 0.6289853453636169,
+      "sourceRecordRefreshedAt": null,
+      "status": "confirm_physically",
+      "verification": "unverified",
+      "verifiedAt": null,
+      "fees": null,
+      "hours": null,
+      "entrance": null,
+      "access": null,
+      "possibleBundledMatches": [],
+      "possibleOtherSourceMatches": [],
+      "flags": [
+        "field_verification_required",
+        "public_access_unknown",
+        "entrance_unknown",
+        "fees_unknown",
+        "hours_unknown",
+        "license_review_required"
+      ]
+    },
+    {
+      "id": "overture:cc3d1478-11cf-44b0-b8ee-4b1be6b904c7",
+      "name": "Classica 1 Parking Garage",
+      "category": "parking",
+      "coordinate": [
+        121.02405134,
+        14.56122542
+      ],
+      "address": null,
+      "sourceKind": "overture",
+      "sourceId": "cc3d1478-11cf-44b0-b8ee-4b1be6b904c7",
+      "sourceUrl": "https://explore.overturemaps.org/",
+      "sourceLicense": "unknown",
+      "sourceAttribution": "Overture Maps Foundation; review individual record source licenses",
+      "sourceRecordConfidence": 0.7824117541313171,
+      "sourceRecordRefreshedAt": null,
+      "status": "researched",
+      "verification": "confirm_physically",
+      "verifiedAt": null,
+      "fees": null,
+      "hours": null,
+      "entrance": null,
+      "access": null,
+      "possibleBundledMatches": [
+        {
+          "id": "osm:way/35462242",
+          "name": "Metro Parking",
+          "distanceMeters": 76,
+          "isUnnamed": false
+        }
+      ],
+      "possibleOtherSourceMatches": [],
+      "flags": [
+        "field_verification_required",
+        "public_access_unknown",
+        "entrance_unknown",
+        "fees_unknown",
+        "hours_unknown",
+        "license_review_required",
+        "existing_facility_match_requires_review"
+      ]
+    },
+    {
+      "id": "overture:e3390a4d-2364-4d12-b7c3-72e51aa39ba3",
+      "name": "Tordesillas cor Bautista Parking",
+      "category": "parking",
+      "coordinate": [
+        121.02406474947895,
+        14.560914350758376
+      ],
+      "address": null,
+      "sourceKind": "overture",
+      "sourceId": "e3390a4d-2364-4d12-b7c3-72e51aa39ba3",
+      "sourceUrl": "https://explore.overturemaps.org/",
+      "sourceLicense": "unknown",
+      "sourceAttribution": "Overture Maps Foundation; review individual record source licenses",
+      "sourceRecordConfidence": 0.5980739593505859,
+      "sourceRecordRefreshedAt": null,
+      "status": "researched",
+      "verification": "verified",
+      "verifiedAt": null,
+      "fees": null,
+      "hours": null,
+      "entrance": null,
+      "access": null,
+      "possibleBundledMatches": [
+        {
+          "id": "osm:way/35462242",
+          "name": "Metro Parking",
+          "distanceMeters": 42,
+          "isUnnamed": false
+        }
+      ],
+      "possibleOtherSourceMatches": [],
+      "flags": [
+        "field_verification_required",
+        "public_access_unknown",
+        "entrance_unknown",
+        "fees_unknown",
+        "hours_unknown",
+        "license_review_required",
+        "existing_facility_match_requires_review"
+      ]
+    },
+    {
+      "id": "overture:fe48dd98-182c-4a98-8cf9-64edadd80f2f",
+      "name": "Valero Parking Lot",
+      "category": "parking",
+      "coordinate": [
+        121.02589394,
+        14.55939505
+      ],
+      "address": null,
+      "sourceKind": "overture",
+      "sourceId": "fe48dd98-182c-4a98-8cf9-64edadd80f2f",
+      "sourceUrl": "https://explore.overturemaps.org/",
+      "sourceLicense": "unknown",
+      "sourceAttribution": "Overture Maps Foundation; review individual record source licenses",
+      "sourceRecordConfidence": 0.7589746713638306,
+      "sourceRecordRefreshedAt": null,
+      "status": "researched",
+      "verification": "verified",
+      "verifiedAt": null,
+      "fees": null,
+      "hours": null,
+      "entrance": null,
+      "access": null,
+      "possibleBundledMatches": [
+        {
+          "id": "osm:way/396538036",
+          "name": "109 Two Central Condominium",
+          "distanceMeters": 6,
+          "isUnnamed": false
+        },
+        {
+          "id": "osm:node/13112369052",
+          "name": "Unnamed parking · OpenStreetMap",
+          "distanceMeters": 67,
+          "isUnnamed": true
+        },
+        {
+          "id": "osm:way/35024619",
+          "name": "Metro Parking",
+          "distanceMeters": 84,
+          "isUnnamed": false
+        },
+        {
+          "id": "osm:way/35024629",
+          "name": "Metro Parking",
+          "distanceMeters": 89,
+          "isUnnamed": false
+        },
+        {
+          "id": "osm:way/35166298",
+          "name": "L. P. Leviste Street parking",
+          "distanceMeters": 98,
+          "isUnnamed": false
+        }
+      ],
+      "possibleOtherSourceMatches": [],
+      "flags": [
+        "field_verification_required",
+        "public_access_unknown",
+        "entrance_unknown",
+        "fees_unknown",
+        "hours_unknown",
+        "license_review_required",
+        "existing_facility_match_requires_review"
+      ]
+    }
+  ]
+}

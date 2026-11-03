@@ -1,0 +1,22 @@
+{
+"type": "FeatureCollection",
+"name": "poblacion-places",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC::CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "id": "fe48dd98-182c-4a98-8cf9-64edadd80f2f", "name": "Valero Parking Lot", "basic_category": "parking", "confidence": 0.75897467136383057 }, "geometry": { "type": "Point", "coordinates": [ 121.02589394, 14.55939505 ] } },
+{ "type": "Feature", "properties": { "id": "a429005d-b629-4e95-a508-283972be28a0", "name": "Antel Platinum Tower Parking Entrance", "basic_category": "parking", "confidence": 0.94357924640178681 }, "geometry": { "type": "Point", "coordinates": [ 121.02407702, 14.55918536 ] } },
+{ "type": "Feature", "properties": { "id": "e3390a4d-2364-4d12-b7c3-72e51aa39ba3", "name": "Tordesillas cor Bautista Parking", "basic_category": "parking", "confidence": 0.59807395935058594 }, "geometry": { "type": "Point", "coordinates": [ 121.024064749478953, 14.560914350758376 ] } },
+{ "type": "Feature", "properties": { "id": "cc3d1478-11cf-44b0-b8ee-4b1be6b904c7", "name": "Classica 1 Parking Garage", "basic_category": "parking", "confidence": 0.78241175413131714 }, "geometry": { "type": "Point", "coordinates": [ 121.02405134, 14.56122542 ] } },
+{ "type": "Feature", "properties": { "id": "9525f048-4c7b-4f40-9441-78f3fe1bacc3", "name": "Buendia Ext'n Service Road", "basic_category": "parking", "confidence": 0.58677071332931519 }, "geometry": { "type": "Point", "coordinates": [ 121.026244770480005, 14.561345273704999 ] } },
+{ "type": "Feature", "properties": { "id": "80b88711-7452-454f-931d-f817d060e337", "name": "Bourbon / Cantina / Kartel Parking Lot", "basic_category": "parking", "confidence": 0.3377232551574707 }, "geometry": { "type": "Point", "coordinates": [ 121.02997093, 14.56245311 ] } },
+{ "type": "Feature", "properties": { "id": "040fdf1c-ec10-455d-a750-2613c0883f96", "name": "SM Cyberone Smoking Area", "basic_category": "parking", "confidence": 0.47835329174995422 }, "geometry": { "type": "Point", "coordinates": [ 121.029419, 14.561008 ] } },
+{ "type": "Feature", "properties": { "id": "38024824-5637-48f6-a42e-147ed4d01cd4", "name": "PNB Open Parking (Global Parking Management, Inc.)", "basic_category": "parking", "confidence": 0.50310748815536499 }, "geometry": { "type": "Point", "coordinates": [ 121.02931275, 14.55963283 ] } },
+{ "type": "Feature", "properties": { "id": "bb11755f-b787-4b40-97cd-fa40f87c02b2", "name": "Parking lot", "basic_category": "parking", "confidence": 0.62898534536361694 }, "geometry": { "type": "Point", "coordinates": [ 121.02786011, 14.55942293 ] } },
+{ "type": "Feature", "properties": { "id": "2a081d44-ce03-437c-a8d1-827df826a084", "name": "Valet Parking", "basic_category": "parking", "confidence": 0.71004533767700195 }, "geometry": { "type": "Point", "coordinates": [ 121.03606592, 14.56387893 ] } },
+{ "type": "Feature", "properties": { "id": "7fabad6f-f325-4893-912e-4cb137964c6b", "name": "Osmeña St", "basic_category": "parking", "confidence": 0.61881786584854126 }, "geometry": { "type": "Point", "coordinates": [ 121.030627, 14.568952 ] } },
+{ "type": "Feature", "properties": { "id": "620ef9f8-b42c-441f-8761-e3add2216d41", "name": "Riki Carreon Parking Lot", "basic_category": "parking", "confidence": 0.22319117188453674 }, "geometry": { "type": "Point", "coordinates": [ 121.03067135, 14.5671261 ] } },
+{ "type": "Feature", "properties": { "id": "2910fe66-02b8-4230-a422-3f408202fd82", "name": "Mercedes Steel Parking", "basic_category": "parking", "confidence": 0.2739957869052887 }, "geometry": { "type": "Point", "coordinates": [ 121.0288365, 14.56497893 ] } },
+{ "type": "Feature", "properties": { "id": "806d86ba-28ad-4bc7-8d89-e54b37d62db5", "name": "PYC Albert St. Parking", "basic_category": "parking", "confidence": 0.53475320339202881 }, "geometry": { "type": "Point", "coordinates": [ 121.03377054, 14.56583211 ] } },
+{ "type": "Feature", "properties": { "id": "28ca9423-0891-4a29-a71e-beb4465c36c9", "name": "Creative Parking Inc.", "basic_category": "parking", "confidence": 0.25767913460731506 }, "geometry": { "type": "Point", "coordinates": [ 121.04067769, 14.57137406 ] } }
+]
+}

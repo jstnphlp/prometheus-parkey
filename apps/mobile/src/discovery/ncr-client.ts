@@ -148,6 +148,28 @@ function validGeometry(value: unknown) {
     value.coordinates.every(polygon)
   )
 }
+function validDestinationLabel(value: unknown): boolean {
+  return (
+    isObject(value) &&
+    typeof value.label === 'string' &&
+    value.label.startsWith('Parking near ') &&
+    value.label.length <= 100 &&
+    typeof value.destination === 'string' &&
+    value.destination.length > 0 &&
+    typeof value.category === 'string' &&
+    /^osm:(node|way|relation)\/[1-9]\d*$/.test(String(value.sourceId)) &&
+    safeUrl(value.sourceRecordUrl) &&
+    typeof value.approximateStraightLineMeters === 'number' &&
+    Number.isFinite(value.approximateStraightLineMeters) &&
+    value.approximateStraightLineMeters >= 0 &&
+    typeof value.insideSourcePropertyFootprint === 'boolean' &&
+    value.status === 'research_context_only' &&
+    value.parkingNameConfirmed === false &&
+    value.visitorAccessConfirmed === false &&
+    value.navigationEntranceConfirmed === false &&
+    value.publicationApproved === false
+  )
+}
 function validItem(value: unknown): value is NcrDiscoveryItem {
   if (
     !isObject(value) ||
@@ -174,6 +196,8 @@ function validItem(value: unknown): value is NcrDiscoveryItem {
         ].includes(String(value.nameReview.status)) &&
         typeof value.nameReview.sourceNameIsDistinctive === 'boolean' &&
         typeof value.nameReview.crossSourceCandidate === 'boolean' &&
+        (value.nameReview.destinationLabel === undefined ||
+          validDestinationLabel(value.nameReview.destinationLabel)) &&
         (value.nameReview.enrichment === undefined ||
           validEnrichment(value.nameReview.enrichment)))) &&
     typeof value.featureType === 'string' &&
@@ -228,6 +252,7 @@ export function ncrResponseCanDisplay(
       value.items.every(
         (item) =>
           item.nameReview?.enrichment === undefined &&
+          item.nameReview?.destinationLabel === undefined &&
           item.evidence.publicationApproved &&
           !item.restrictedAccess &&
           item.reviewIssueIds.length === 0 &&
@@ -257,7 +282,11 @@ export function isNcrResponse(value: unknown): value is NcrDiscoveryResponse {
     value.items.length <= 500 &&
     value.items.every(validItem) &&
     (value.mode !== 'public' ||
-      value.items.every((item) => item.nameReview?.enrichment === undefined)) &&
+      value.items.every(
+        (item) =>
+          item.nameReview?.enrichment === undefined &&
+          item.nameReview?.destinationLabel === undefined,
+      )) &&
     Array.isArray(value.clusters) &&
     value.clusters.length <= 2000 &&
     value.clusters.every(

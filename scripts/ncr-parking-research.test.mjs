@@ -35,7 +35,7 @@ const overture=geo({
   type:'Feature',
   properties:{id:'over-a',name:'Test Garage',basic_category:'parking',
     confidence:0.4},
-  geometry:point(120.943,14.509),
+  geometry:point(120.943,14.510),
 })
 const asOf='2026-11-03T13:23:54Z'
 const run=(patch={})=>buildNcrResearch({

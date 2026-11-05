@@ -190,6 +190,21 @@ Completed locally on the integrated stack:
   the existing contracts; the nine Python tests pass locally. Both fixes are
   included in prerequisite PR #11.
 
+The full legacy browser run reached all 36 desktop/mobile cases: 33 passed and
+three exposed stale search text and a phone viewport without garage coverage.
+After those fixture/selector fixes, all four affected cases passed in targeted
+checks. Other maintenance fixes align profile/saved-place controls with the
+current UI and feed uninterrupted synthetic GPS into the arrival test. Tracing
+confirmed Chromium emits POSITION_UNAVAILABLE while replacing a geolocation
+override; production arrival evidence correctly resets on that error and was
+not changed. Independent review confirmed persistence, undo, recovery, consent
+and arrival assertions remain substantive.
+
+PR #11 now precedes the six-PR stack; #5 explicitly targets its branch, then each
+PR targets its predecessor. Verified prerequisite commits were propagated using
+ordinary branch merges without rewriting history or merging main. Check the PR
+pages for the final hosted CI results; all seven remain reviewable separately.
+
 CI includes the same synthetic-only database setup and both Phase 2 browser
 modes. Repository visibility was confirmed public; standard ubuntu-latest runners
 are free for public repositories. New verification commits can therefore run CI

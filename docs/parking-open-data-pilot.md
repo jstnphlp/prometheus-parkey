@@ -102,3 +102,27 @@ node scripts/parking-reviewed-data.mjs --write
 Site reviewers should later record independent dated evidence for operation, correct vehicle entrance and parking restrictions in a separate verified-publication workflow. Any Google Maps confirmation here remains research evidence only, not an importable Google Maps Places dataset. Do not copy Google Maps listings, coordinates, reviews or opening hours into Overture/OSM records.
 
 **Local Supabase config note:** Port overrides on a developer's Windows machine do not imply a hosted Parkey database migration or production publication.
+
+## November 5: user-provided map pins for site visits
+
+Three Google Maps **coordinate-pin URLs supplied directly by the project owner** have been linked to existing Overture review IDs in \`data/parking-open-data-decisions.json\` and the derived review report. These are navigation aids for future field checks, **not** a Google Places API import or evidence that parking is legal, publicly accessible, open, or available.
+
+| Source candidate | Approximate Overture coordinates (longitude, latitude) | Review interpretation |
+| --- | --- | --- |
+| Riki Carreon Parking Lot | 121.03067135, 14.5671261 | Earlier Google Maps name corroboration retained; **now also queued for a physical visit** |
+| Osmeña St | 121.030627, 14.568952 | Existing needs-site-visit record with owner-supplied pin |
+| Classica 1 Parking Garage | 121.02405134, 14.56122542 | Existing needs-site-visit record with owner-supplied pin |
+
+The pin validation requires the URL to be a Google Maps coordinate link no more than 100 metres from the Overture candidate; it **does not** establish that the map pin depicts an actual parking entrance. Riki and Classica pins match their Overture points to within rounding precision; Osmeña's is about 2 metres away.
+
+The total physical-visit queue is now **6 candidates** (5 originally needing a visit, plus Riki's additional visit requirement), while the eight online name checks remain recorded as before. Three of those six have owner-supplied location links. Nobody has conducted or recorded these site visits yet, so **0 are physically verified or approved for publication**.
+
+For each visit, photograph signage only where permitted, check parking eligibility and operating status, note the usable vehicle entrance, restrictions, rate and hours if available, and preserve dated evidence. Use an independent first-party source or on-site inspection for those claims. Do not copy Google Maps business content into open-data records.
+
+After updating the human ledger, regenerate and validate the derived report:
+
+\`\`\`powershell
+node scripts/parking-reviewed-data.mjs --write
+node scripts/parking-reviewed-data.mjs --check
+node --test scripts/parking-reviewed-data.test.mjs
+\`\`\`

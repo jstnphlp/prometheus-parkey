@@ -39,6 +39,7 @@ There are no site visits, measured capacities, validated entrances or occupancy
 claims in this package. Names and coordinates are sourced from OSM/Overture;
 the three existing owner navigation links are references only. No Google Maps
 data was scraped or imported into the research source dataset.
+
 ## Offline aggregate preview
 
 Generate a local research heatmap from the frozen `coverage.json`:

@@ -18,6 +18,7 @@ import {
   validatePublicationLedger,
 } from './ncr-publication.mjs'
 import { validateReviewLedger } from './ncr-quality-review.mjs'
+import { meaningfulParkingName } from './ncr-name-reconciliation.mjs'
 
 export const NCR_FEATURE_TYPES = [
   'lot',
@@ -91,7 +92,7 @@ export function geometryIntersectsViewport(geometry, box) {
 }
 
 export function parseNcrQuery(searchParams) {
-  const allowed = new Set(['bbox', 'zoom', 'category', 'limit', 'cursor'])
+  const allowed = new Set(['bbox', 'zoom', 'category', 'limit', 'cursor', 'names'])
   for (const key of searchParams.keys())
     if (!allowed.has(key) || searchParams.getAll(key).length !== 1)
       throw badQuery('Unsupported or repeated query parameter.')
@@ -132,7 +133,10 @@ export function parseNcrQuery(searchParams) {
     limit > 500
   )
     throw badQuery('Unsupported category or result limit.')
-  return { bbox, zoom, category, limit, cursor: searchParams.get('cursor') }
+  const names = searchParams.get('names') || 'all'
+  if (!['all','named'].includes(names))
+    throw badQuery('Unsupported name filter.')
+  return { bbox, zoom, category, limit, cursor: searchParams.get('cursor'), names }
 }
 
 function projection(candidate, state, research, preview) {
@@ -174,6 +178,9 @@ function projection(candidate, state, research, preview) {
           : []),
         ...(candidate.type === 'street_segment'
           ? ['Street parking legality and time restrictions need review.']
+          : []),
+        ...(preview && meaningfulParkingName(candidate.name)
+          ? ['Source name is a research lead, not independently verified or a confirmed parking business.']
           : []),
         ...(candidate.flags || []),
       ]),
@@ -246,6 +253,14 @@ export function queryNcrResearch(
   }
   const matched = []
   for (const candidate of research.candidates) {
+    const sourceNameIsDistinctive = meaningfulParkingName(candidate.name)
+    // Public results cannot offer a generic parking name even with an
+    // otherwise valid human publication event. Private all-research mode
+    // deliberately preserves the old, full source inventory for reviewers.
+    if ((!preview && !sourceNameIsDistinctive) ||
+      (query.names === 'named' &&
+        (!facilityTypes.has(candidate.type) || !sourceNameIsDistinctive)))
+      continue
     if (
       (query.category !== 'all' && candidate.type !== query.category) ||
       !geometryIntersectsViewport(candidate.geometry, query.bbox)
@@ -351,7 +366,9 @@ export function queryNcrResearch(
       },
     ],
     notice: preview
-      ? 'Private local research preview. These candidates are unpublished, unverified and not guaranteed usable parking.'
+      ? query.names === 'named'
+        ? 'Private name-filtered research: only distinctive source-named facilities. Names, operation and visitor access remain unverified; this is not a public parking listing.'
+        : 'Private local research preview. These candidates are unpublished, unverified and not guaranteed usable parking.'
       : 'Only currently approved NCR display records are returned. Empty results do not establish that parking is absent.',
   }
 }

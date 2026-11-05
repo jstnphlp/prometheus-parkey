@@ -52,10 +52,16 @@ test('unknown/invalid coverage and any approved publication status fail closed',
   assert.throws(() => buildResearchHeatmap(wrongTotal), /Grid\/source totals/)
   const invalidAccess = coverage()
   invalidAccess.grid.cells[0].restricted = 5
-  assert.throws(() => buildResearchHeatmap(invalidAccess), /Grid\/source totals/)
+  assert.throws(
+    () => buildResearchHeatmap(invalidAccess),
+    /Grid\/source totals/,
+  )
   const missingGeometry = coverage()
   missingGeometry.grid.cells[1].bbox = null
-  assert.throws(() => buildResearchHeatmap(missingGeometry), /Grid\/source totals/)
+  assert.throws(
+    () => buildResearchHeatmap(missingGeometry),
+    /Grid\/source totals/,
+  )
 })
 test('preview is repeatable and does not mutate input', () => {
   const input = coverage()

@@ -27,6 +27,17 @@ export type NcrEvidenceState = {
 export type NcrDiscoveryItem = {
   id: string
   name: string
+  /** Research-only name provenance; never a current-business verification. */
+  nameReview?: {
+    status:
+      | 'cross_source_name_candidate'
+      | 'source_named_requires_cross_reference'
+      | 'unnamed_pending_reference'
+      | 'identity_or_name_conflict'
+      | 'not_independent_facility'
+    sourceNameIsDistinctive: boolean
+    crossSourceCandidate: boolean
+  }
   featureType: NcrFeatureType
   geometry: NcrGeometry
   representativePoint: Coordinate

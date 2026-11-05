@@ -18,6 +18,7 @@ import {
   validatePublicationLedger,
 } from './ncr-publication.mjs'
 import { validateReviewLedger } from './ncr-quality-review.mjs'
+import { chooseNearbyDestinationLabel } from './ncr-destination-labels.mjs'
 import {
   buildNameReconciliation,
   meaningfulParkingName,
@@ -242,7 +243,22 @@ function projection(
         nameIndex.get(candidate.id) === 'cross_source_name_candidate' &&
         meaningfulParkingName(candidate.name),
       ...(preview && enrichmentIndex?.has(candidate.id)
-        ? { enrichment: enrichmentIndex.get(candidate.id) }
+        ? {
+            enrichment: enrichmentIndex.get(candidate.id),
+            ...(chooseNearbyDestinationLabel(
+              candidate,
+              enrichmentIndex.get(candidate.id),
+              { privatePreview: true },
+            ) instanceof Object
+              ? {
+                  destinationLabel: chooseNearbyDestinationLabel(
+                    candidate,
+                    enrichmentIndex.get(candidate.id),
+                    { privatePreview: true },
+                  ),
+                }
+              : {}),
+          }
         : {}),
     },
     featureType: candidate.type,

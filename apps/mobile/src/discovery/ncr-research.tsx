@@ -89,11 +89,21 @@ function ItemFacts({
 }) {
   const e = item.evidence
   const enrichment = privateReview ? item.nameReview?.enrichment : undefined
+  const destinationLabel = privateReview ? item.nameReview?.destinationLabel : undefined
   return (
     <View style={styles.detail} testID="ncr-selected-details">
       <Text accessibilityRole="header" selectable style={styles.title}>
-        {item.name}
+        {destinationLabel?.label || item.name}
       </Text>
+      {destinationLabel ? (
+        <Text selectable style={styles.warning}>
+          Descriptive label from nearby OpenStreetMap destination only, not the
+          parking facility's official name. Original source: {item.name}.
+          Straight-line source distance: approximately{' '}
+          {Math.round(destinationLabel.approximateStraightLineMeters)} m;
+          actual walking access unverified.
+        </Text>
+      ) : null}
       <Text selectable>
         {item.id} · {item.featureType}
       </Text>
@@ -323,8 +333,8 @@ export default function NcrResearch() {
   }, [])
   const [category, setCategory] = useState<'all' | NcrFeatureType>('all')
   const [nameFilter, setNameFilter] = useState<
-    'cross_source' | 'source_named' | 'all'
-  >('cross_source')
+    'named_or_nearby' | 'cross_source' | 'source_named' | 'all'
+  >('named_or_nearby')
   const [mode, setMode] = useState<'public' | 'research_preview'>('public')
   const [storedData, setData] = useState<NcrDiscoveryResponse | null>(null)
   const privateCache = useRef<NcrDiscoveryResponse | null>(null)
@@ -339,6 +349,9 @@ export default function NcrResearch() {
                 (category === 'all' || item.featureType === category) &&
                 (mode === 'public' ||
                   nameFilter === 'all' ||
+                  (nameFilter === 'named_or_nearby' &&
+                    (item.nameReview?.sourceNameIsDistinctive === true ||
+                      item.nameReview?.destinationLabel !== undefined)) ||
                   (item.nameReview?.sourceNameIsDistinctive === true &&
                     (nameFilter === 'source_named' ||
                       item.nameReview?.crossSourceCandidate === true))),
@@ -469,6 +482,8 @@ export default function NcrResearch() {
       (item) =>
         !term ||
         item.name.toLocaleLowerCase().includes(term) ||
+        (mode === 'research_preview' &&
+          item.nameReview?.destinationLabel?.label.toLocaleLowerCase().includes(term)) ||
         item.id.toLocaleLowerCase().includes(term),
     )
   }, [data, search])
@@ -595,7 +610,9 @@ export default function NcrResearch() {
                 <Text style={styles.warning}>
                   Unverified research ·{' '}
                   {mode === 'research_preview'
-                    ? nameFilter === 'cross_source'
+                    ? nameFilter === 'named_or_nearby'
+                      ? 'Source names or nearby-destination context only; visitor access not verified'
+                      : nameFilter === 'cross_source'
                       ? 'Cross-source name agreement only; identity not verified'
                       : nameFilter === 'source_named'
                         ? 'Source names only; not independently confirmed'
@@ -701,6 +718,15 @@ export default function NcrResearch() {
               research.
             </Text>
             <Action
+              title="Named or near destinations (research)"
+              selected={nameFilter === 'named_or_nearby'}
+              onPress={() => {
+                setNameFilter('named_or_nearby')
+                setSelectedId(null)
+                setPanel(null)
+              }}
+            />
+            <Action
               title="Cross-source name matches"
               selected={nameFilter === 'cross_source'}
               onPress={() => {
@@ -776,7 +802,7 @@ export default function NcrResearch() {
             renderItem={({ item }) => (
               <Pressable
                 accessibilityRole="button"
-                accessibilityLabel={`Research details for ${item.name}`}
+                accessibilityLabel={`Research details for ${mode === 'research_preview' ? item.nameReview?.destinationLabel?.label || item.name : item.name}`}
                 onPress={() => {
                   setPanel(null)
                   setSelectedId(item.id)
@@ -784,7 +810,11 @@ export default function NcrResearch() {
                 }}
                 style={styles.row}
               >
-                <Text style={styles.rowName}>{item.name}</Text>
+                <Text style={styles.rowName}>
+                  {mode === 'research_preview'
+                    ? item.nameReview?.destinationLabel?.label || item.name
+                    : item.name}
+                </Text>
                 <Text style={styles.caption}>
                   {item.featureType} ·{' '}
                   {item.restrictedAccess

@@ -494,30 +494,36 @@ test('private API provides destination context without changing source name or p
   const enrichment = enrichmentReport(source)
   enrichment.records[0].classification = 'nearby_named_property_only'
   enrichment.records[0].proposedName = null
-  enrichment.records[0].contextClues = [{
-    name: 'The Community Mall',
-    sourceId: 'osm:way/987',
-    sourceRecordUrl: 'https://www.openstreetmap.org/way/987',
-    sourceLicense: 'ODbL-1.0',
-    placeKind: 'shop:mall',
-    relation: 'nearby_named_property_only',
-    approximateMeters: 42,
-    usableAsParkingName: false,
-  }]
+  enrichment.records[0].contextClues = [
+    {
+      name: 'The Community Mall',
+      sourceId: 'osm:way/987',
+      sourceRecordUrl: 'https://www.openstreetmap.org/way/987',
+      sourceLicense: 'ODbL-1.0',
+      placeKind: 'shop:mall',
+      relation: 'nearby_named_property_only',
+      approximateMeters: 42,
+      usableAsParkingName: false,
+    },
+  ]
   const privateData = queryNcrResearch(source, query(), {
-    ...queryOptions(), enrichment,
+    ...queryOptions(),
+    enrichment,
   })
   const named = privateData.items.find((item) => item.id === 'a')
   assert.equal(named.name, 'Unnamed parking facility')
-  assert.equal(named.nameReview.destinationLabel.label,
-    'Parking near The Community Mall')
+  assert.equal(
+    named.nameReview.destinationLabel.label,
+    'Parking near The Community Mall',
+  )
   assert.equal(named.nameReview.destinationLabel.parkingNameConfirmed, false)
   assert.equal(named.nameReview.destinationLabel.publicationApproved, false)
   assert.equal(named.canNavigate, false)
   const other = privateData.items.find((item) => item.id === 'd')
   assert.equal(other.nameReview.destinationLabel, undefined)
   const publicData = queryNcrResearch(source, query(), {
-    ...queryOptions(false), enrichment,
+    ...queryOptions(false),
+    enrichment,
   })
   assert.equal(publicData.totalMatched, 0)
   assert.equal(publicData.items.length, 0)

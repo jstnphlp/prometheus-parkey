@@ -89,7 +89,9 @@ function ItemFacts({
 }) {
   const e = item.evidence
   const enrichment = privateReview ? item.nameReview?.enrichment : undefined
-  const destinationLabel = privateReview ? item.nameReview?.destinationLabel : undefined
+  const destinationLabel = privateReview
+    ? item.nameReview?.destinationLabel
+    : undefined
   return (
     <View style={styles.detail} testID="ncr-selected-details">
       <Text accessibilityRole="header" selectable style={styles.title}>
@@ -100,8 +102,8 @@ function ItemFacts({
           Descriptive label from nearby OpenStreetMap destination only, not the
           parking facility's official name. Original source: {item.name}.
           Straight-line source distance: approximately{' '}
-          {Math.round(destinationLabel.approximateStraightLineMeters)} m;
-          actual walking access unverified.
+          {Math.round(destinationLabel.approximateStraightLineMeters)} m; actual
+          walking access unverified.
         </Text>
       ) : null}
       <Text selectable>
@@ -483,7 +485,9 @@ export default function NcrResearch() {
         !term ||
         item.name.toLocaleLowerCase().includes(term) ||
         (mode === 'research_preview' &&
-          item.nameReview?.destinationLabel?.label.toLocaleLowerCase().includes(term)) ||
+          item.nameReview?.destinationLabel?.label
+            .toLocaleLowerCase()
+            .includes(term)) ||
         item.id.toLocaleLowerCase().includes(term),
     )
   }, [data, search])
@@ -613,10 +617,10 @@ export default function NcrResearch() {
                     ? nameFilter === 'named_or_nearby'
                       ? 'Source names or nearby-destination context only; visitor access not verified'
                       : nameFilter === 'cross_source'
-                      ? 'Cross-source name agreement only; identity not verified'
-                      : nameFilter === 'source_named'
-                        ? 'Source names only; not independently confirmed'
-                        : 'All original research including unnamed locations'
+                        ? 'Cross-source name agreement only; identity not verified'
+                        : nameFilter === 'source_named'
+                          ? 'Source names only; not independently confirmed'
+                          : 'All original research including unnamed locations'
                     : 'Check access and posted restrictions'}
                 </Text>
               )}

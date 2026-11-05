@@ -169,8 +169,10 @@ test('private destination labels are type-checked and rejected in public mode', 
   assert.equal(isNcrResponse(response), true)
   assert.equal(response.items[0].name, 'Synthetic facility')
   assert.equal(isNcrResponse({ ...response, mode: 'public' }), false)
-  assert.equal(ncrResponseCanDisplay(
-    { ...response, mode: 'public' }, 'public'), false)
+  assert.equal(
+    ncrResponseCanDisplay({ ...response, mode: 'public' }, 'public'),
+    false,
+  )
   const tampered = structuredClone(response)
   tampered.items[0].nameReview.destinationLabel.publicationApproved = true
   assert.equal(isNcrResponse(tampered), false)

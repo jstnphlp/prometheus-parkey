@@ -43,18 +43,29 @@ const RULES = new Map([
   ['building:hospital', [65, 60]],
 ])
 const hasUnsafeStatus = (record) =>
-  ['closed', 'permanently_closed', 'temporarily_closed', 'disused', 'abandoned']
-    .includes(record.operatingStatus) ||
+  [
+    'closed',
+    'permanently_closed',
+    'temporarily_closed',
+    'disused',
+    'abandoned',
+  ].includes(record.operatingStatus) ||
   (record.flags || []).some((flag) =>
-    /(closed|disused|prior_human_exclusion|prohibited|unsafe)/.test(flag))
+    /(closed|disused|prior_human_exclusion|prohibited|unsafe)/.test(flag),
+  )
 
 const isOsmSource = (clue) => {
-  if (clue.sourceLicense !== 'ODbL-1.0' ||
-    !/^osm:(?:node|way|relation)\/[1-9]\d*$/.test(clue.sourceId || '')) return false
+  if (
+    clue.sourceLicense !== 'ODbL-1.0' ||
+    !/^osm:(?:node|way|relation)\/[1-9]\d*$/.test(clue.sourceId || '')
+  )
+    return false
   try {
     const url = new URL(clue.sourceRecordUrl)
-    return url.protocol === 'https:' &&
+    return (
+      url.protocol === 'https:' &&
       ['openstreetmap.org', 'www.openstreetmap.org'].includes(url.hostname)
+    )
   } catch {
     return false
   }
@@ -64,36 +75,65 @@ const isOsmSource = (clue) => {
  * An optional contextual phrase, NOT a replacement name or a parking offer.
  * Distances are source-geometry straight-line approximations, not walking routes.
  */
-export function chooseNearbyDestinationLabel(record, enrichment, { privatePreview = false } = {}) {
-  if (!privatePreview || !record || !enrichment ||
-      !FACILITY_TYPES.has(record.type) || record.restrictedAccess ||
-      record.publicationApproved || hasUnsafeStatus(record) ||
-      meaningfulParkingName(record.name) ||
-      meaningfulParkingName(enrichment.proposedName) ||
-      enrichment.classification === 'unsuitable_for_public_discovery' ||
-      enrichment.classification === 'proposed_name_incomplete_or_conflicting' ||
-      !Array.isArray(enrichment.contextClues)) return null
+export function chooseNearbyDestinationLabel(
+  record,
+  enrichment,
+  { privatePreview = false } = {},
+) {
+  if (
+    !privatePreview ||
+    !record ||
+    !enrichment ||
+    !FACILITY_TYPES.has(record.type) ||
+    record.restrictedAccess ||
+    record.publicationApproved ||
+    hasUnsafeStatus(record) ||
+    meaningfulParkingName(record.name) ||
+    meaningfulParkingName(enrichment.proposedName) ||
+    enrichment.classification === 'unsuitable_for_public_discovery' ||
+    enrichment.classification === 'proposed_name_incomplete_or_conflicting' ||
+    !Array.isArray(enrichment.contextClues)
+  )
+    return null
 
-  const candidates = enrichment.contextClues.flatMap((clue) => {
-    const name = clue?.name?.trim()
-    const rule = RULES.get(String(clue?.placeKind || '').toLowerCase())
-    const distance = clue?.approximateMeters
-    const relation = clue?.relation
-    if (!name || name.length > 75 || !meaningfulParkingName(name) ||
-      !rule || !isOsmSource(clue) ||
-      !['parking_anchor_inside_named_property','nearby_named_property_only']
-        .includes(relation) ||
-      !Number.isFinite(distance) || distance < 0 ||
-      (relation !== 'parking_anchor_inside_named_property' &&
-        distance > rule[1])) return []
-    // When source polygon contains the anchor, it is still just a context
-    // association; never claim the parking belongs to that property.
-    const [relevance] = rule
-    const score = relevance + (relation === 'parking_anchor_inside_named_property' ? 5 : 0)
-      - Math.min(distance, 200) / 20
-    return [{ name, score, clue, distance }]
-  }).sort((a,b) => b.score-a.score || a.distance-b.distance ||
-    a.name.localeCompare(b.name) || a.clue.sourceId.localeCompare(b.clue.sourceId))
+  const candidates = enrichment.contextClues
+    .flatMap((clue) => {
+      const name = clue?.name?.trim()
+      const rule = RULES.get(String(clue?.placeKind || '').toLowerCase())
+      const distance = clue?.approximateMeters
+      const relation = clue?.relation
+      if (
+        !name ||
+        name.length > 75 ||
+        !meaningfulParkingName(name) ||
+        !rule ||
+        !isOsmSource(clue) ||
+        ![
+          'parking_anchor_inside_named_property',
+          'nearby_named_property_only',
+        ].includes(relation) ||
+        !Number.isFinite(distance) ||
+        distance < 0 ||
+        (relation !== 'parking_anchor_inside_named_property' &&
+          distance > rule[1])
+      )
+        return []
+      // When source polygon contains the anchor, it is still just a context
+      // association; never claim the parking belongs to that property.
+      const [relevance] = rule
+      const score =
+        relevance +
+        (relation === 'parking_anchor_inside_named_property' ? 5 : 0) -
+        Math.min(distance, 200) / 20
+      return [{ name, score, clue, distance }]
+    })
+    .sort(
+      (a, b) =>
+        b.score - a.score ||
+        a.distance - b.distance ||
+        a.name.localeCompare(b.name) ||
+        a.clue.sourceId.localeCompare(b.clue.sourceId),
+    )
   const best = candidates[0]
   if (!best) return null
   return {

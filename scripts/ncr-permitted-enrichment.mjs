@@ -44,7 +44,15 @@ const CONTEXT_KINDS = {
     'cinema',
     'arts_centre',
   ]),
-  tourism: new Set(['hotel', 'motel', 'attraction', 'museum', 'gallery', 'zoo', 'theme_park']),
+  tourism: new Set([
+    'hotel',
+    'motel',
+    'attraction',
+    'museum',
+    'gallery',
+    'zoo',
+    'theme_park',
+  ]),
   leisure: new Set(['park', 'stadium', 'sports_centre']),
   historic: new Set(['monument', 'memorial']),
   building: new Set([

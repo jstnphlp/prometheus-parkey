@@ -133,7 +133,6 @@ function sourceClues(member, refreshedById) {
   const operator=textName(p.operator),brand=textName(p.brand)
   return {clues,operatorContext:operator||null,brandContext:brand||null}
 }
-const cellKey=(p)=>Math.floor(p[0]*1000)+':'+Math.floor(p[1]*1000)
 function contextIndex(contexts) {
   const bins=new Map()
   for(const c of contexts) {

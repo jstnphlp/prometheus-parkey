@@ -48,13 +48,15 @@ test('search reports no matches and recovers from a provider error', async ({
   await openMap(page)
   await page.getByTestId('destination-query').fill('Nowhere')
   await expect(
-    page.getByText("No places found for 'Nowhere'", { exact: true }),
+    page.getByRole('heading', { name: 'No places found', exact: true }),
   ).toBeVisible()
   await page.route('https://e2e.parkey.test/search?**', (route) =>
     route.fulfill({ status: 503, body: 'Unavailable' }),
   )
   await page.getByTestId('destination-query').fill('Poblacion')
-  await expect(page.getByRole('alert')).toHaveText('Search couldn’t connect.')
+  await expect(
+    page.getByRole('heading', { name: 'Search couldn’t connect', exact: true }),
+  ).toBeVisible()
   await page.route('https://e2e.parkey.test/search?**', (route) =>
     route.fulfill({ json: destination }),
   )

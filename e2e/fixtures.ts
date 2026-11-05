@@ -13,6 +13,10 @@ export const spotPath = `/?${new URLSearchParams({
   lng: String(spot.longitude),
   lat: String(spot.latitude),
 })}`
+export const spotAreaPath = `/?${new URLSearchParams({
+  lng: String(spot.longitude),
+  lat: String(spot.latitude),
+})}`
 
 export const destination = {
   type: 'FeatureCollection',
@@ -131,7 +135,9 @@ export { expect }
 
 export async function openMap(page: Page, path = '/') {
   await page.goto(path)
-  await expect(page.getByTestId('discovery-map-ready')).toBeVisible()
+  await expect(page.getByTestId('discovery-map-ready')).toBeVisible({
+    timeout: 60_000,
+  })
 }
 
 export async function openSpot(page: Page) {

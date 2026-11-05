@@ -69,6 +69,7 @@ export function chooseNearbyDestinationLabel(record, enrichment, { privatePrevie
       !FACILITY_TYPES.has(record.type) || record.restrictedAccess ||
       record.publicationApproved || hasUnsafeStatus(record) ||
       meaningfulParkingName(record.name) ||
+      meaningfulParkingName(enrichment.proposedName) ||
       enrichment.classification === 'unsuitable_for_public_discovery' ||
       enrichment.classification === 'proposed_name_incomplete_or_conflicting' ||
       !Array.isArray(enrichment.contextClues)) return null

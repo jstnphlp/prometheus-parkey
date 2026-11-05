@@ -1,8 +1,35 @@
 import assert from 'node:assert/strict'
+import { Buffer } from 'node:buffer'
 import test from 'node:test'
-import { buildReviewedParkingData } from './parking-reviewed-data.mjs'
+import { createHash } from 'node:crypto'
+import { readFileSync } from 'node:fs'
+import { URL } from 'node:url'
+import {
+  buildReviewedParkingData,
+  matchesSnapshotReviewHash,
+} from './parking-reviewed-data.mjs'
 
 const { structuredClone } = globalThis
+
+test('historical CRLF snapshot hash accepts only the exact Git LF equivalent', () => {
+  const bytes = readFileSync(
+    new URL('../apps/mobile/src/discovery/osm-pilot.json', import.meta.url),
+  )
+  const lf = bytes.toString('utf8').replaceAll('\r\n', '\n')
+  const crlf = lf.replaceAll('\n', '\r\n')
+  const expected = createHash('sha256').update(crlf).digest('hex')
+  assert.equal(matchesSnapshotReviewHash(Buffer.from(lf), expected), true)
+  assert.equal(matchesSnapshotReviewHash(Buffer.from(crlf), expected), true)
+  assert.equal(
+    matchesSnapshotReviewHash(Buffer.from(lf + ' '), expected),
+    false,
+  )
+  assert.equal(matchesSnapshotReviewHash(Buffer.from('{}\n'), expected), false)
+  assert.equal(
+    matchesSnapshotReviewHash(Buffer.from(lf), 'different-source'),
+    false,
+  )
+})
 
 const sourceAsOf = '2026-11-03T13:23:54Z'
 const sourceHashes = { bundledOsm: 'bundled-test', overture: 'geojson-test' }

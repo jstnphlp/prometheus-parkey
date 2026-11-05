@@ -36,6 +36,13 @@ test('full-screen NCR map loads the complete private snapshot once and clears it
   await expect(summary).toContainText('5,427 research records loaded', {
     timeout: 30000,
   })
+  // Private archive still loads once. The default visible layer is strict
+  // cross-source name candidates; expanding the archive is an explicit action.
+  await page.getByRole('button', { name: 'All features', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'All research (including unnamed)' })
+    .click()
+  await expect(summary).toContainText('5,427 shown')
   expect(
     requests.filter((url) => url.includes('/research-preview?')),
   ).toHaveLength(11)

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "scope": "2026-11-03 Poblacion Overture Places pilot",
-  "policy": "Human research decisions are independent of Overture exports and generated data. Online Google Maps name searches corroborate possible listing presence only, never field verification, public parking rights or current operation. No Google Maps coordinates, descriptive content, URLs or reviews were copied into these records. Excluded records are retained pending documented reasons. No automatic publication.",
+  "policy": "Human research decisions are independent of Overture exports and generated data. Online Google Maps name searches corroborate possible listing presence only, never field verification, public parking rights or current operation. Three user-supplied Google Maps coordinate-pin links are recorded solely as navigation references for physical inspections; they do not prove a facility name, entrance or access. No Google Maps place details, reviews, hours or provider-derived coordinates were imported. Excluded records are retained pending documented reasons. No automatic publication.",
   "decisions": [
     {
       "id": "overture:040fdf1c-ec10-455d-a750-2613c0883f96",
@@ -65,9 +65,11 @@
       "reviewedOn": "2026-11-03",
       "method": "google_maps_name_search",
       "evidenceReference": null,
-      "evidenceNote": "Project owner reports finding a Google Maps result when searching this parking name. Name/listing corroboration only; precise location, public access, entrance, fees, hours and operating status not independently confirmed.",
+      "evidenceNote": "Project owner reports finding a Google Maps result when searching this parking name. Name/listing corroboration only; precise location, public access, entrance, fees, hours and operating status not independently confirmed. User supplied a coordinate pin for a future site visit; no physical check has been completed.",
       "siteVisitAt": null,
-      "publicationApproved": false
+      "publicationApproved": false,
+      "siteVisitRequired": true,
+      "siteVisitReferenceUrl": "https://www.google.com/maps/place/14%C2%B034'01.7%22N+121%C2%B001'50.4%22E/@14.5677898,121.0299767,18z/data=!4m4!3m3!8m2!3d14.5671261!4d121.0306714?entry=ttu"
     },
     {
       "id": "overture:7fabad6f-f325-4893-912e-4cb137964c6b",
@@ -76,9 +78,11 @@
       "reviewedOn": "2026-11-03",
       "method": null,
       "evidenceReference": null,
-      "evidenceNote": "Project owner flagged this candidate for physical confirmation. No site visit recorded.",
+      "evidenceNote": "Project owner flagged this candidate for physical confirmation. No site visit recorded. User supplied a coordinate pin for a future site visit; no physical check has been completed.",
       "siteVisitAt": null,
-      "publicationApproved": false
+      "publicationApproved": false,
+      "siteVisitRequired": true,
+      "siteVisitReferenceUrl": "https://www.google.com/maps/place/14%C2%B034'08.2%22N+121%C2%B001'50.3%22E/@14.5689496,121.028064,17z/data=!3m1!4b1!4m4!3m3!8m2!3d14.5689444!4d121.0306389?entry=ttu"
     },
     {
       "id": "overture:806d86ba-28ad-4bc7-8d89-e54b37d62db5",
@@ -142,9 +146,11 @@
       "reviewedOn": "2026-11-03",
       "method": null,
       "evidenceReference": null,
-      "evidenceNote": "Project owner flagged this candidate for physical confirmation. No site visit recorded.",
+      "evidenceNote": "Project owner flagged this candidate for physical confirmation. No site visit recorded. User supplied a coordinate pin for a future site visit; no physical check has been completed.",
       "siteVisitAt": null,
-      "publicationApproved": false
+      "publicationApproved": false,
+      "siteVisitRequired": true,
+      "siteVisitReferenceUrl": "https://www.google.com/maps/place/14%C2%B033'40.4%22N+121%C2%B001'26.6%22E/@14.5612254,121.0240513,17z/data=!3m1!4b1!4m4!3m3!8m2!3d14.5612254!4d121.0240513?entry=ttu"
     },
     {
       "id": "overture:e3390a4d-2364-4d12-b7c3-72e51aa39ba3",

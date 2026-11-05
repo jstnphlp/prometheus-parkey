@@ -1,0 +1,37 @@
+name: Format NCR permitted name-enrichment once
+
+on:
+  push:
+    branches:
+      - feat/ncr-permitted-name-enrichment
+    paths:
+      - .github/workflows/format-ncr-enrichment.yml
+
+permissions:
+  contents: write
+
+jobs:
+  format-once:
+    if: github.repository == 'jstnphlp/prometheus-parkey' && github.ref == 'refs/heads/feat/ncr-permitted-name-enrichment'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: feat/ncr-permitted-name-enrichment
+          persist-credentials: true
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Format new research files and remove workflow
+        run: |
+          pnpm exec prettier --write scripts/ncr-permitted-enrichment.mjs scripts/ncr-permitted-enrichment.test.mjs docs/ncr-permitted-name-enrichment.md
+          rm .github/workflows/format-ncr-enrichment.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add scripts/ncr-permitted-enrichment.mjs scripts/ncr-permitted-enrichment.test.mjs docs/ncr-permitted-name-enrichment.md .github/workflows/format-ncr-enrichment.yml
+          git commit -m 'style: format NCR permitted name enrichment'
+          git push origin HEAD:feat/ncr-permitted-name-enrichment

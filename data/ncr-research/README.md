@@ -52,3 +52,39 @@ The preview is for internal audits only. It makes no claims about available
 spaces, legal street parking, visitor access, or verified vehicle entrances.
 See [publication review](../../docs/ncr-release-review.md) and
 [hotspot fieldwork](../../docs/ncr-hotspot-fieldwork.md) before release.
+
+## Phase 1A–G autonomous continuation
+
+The frozen archives and original Poblacion decisions above remain unchanged.
+The continuation adds:
+
+- [Data-quality report](../../docs/ncr-data-quality.md), `review-ledger.json`
+  (5,507 individually traceable issues) and `relationship-review.json` (1,668
+  unconfirmed geometric proposals). All 70 duplicate pairs and 10 provider
+  conflicts have explicit unresolved human review dispositions; no additional
+  proximity-only merges were made.
+- [Licensing/publication report](../../docs/ncr-licensing-publication.md), the
+  official Foursquare NOTICE and `publication-ledger.json` with zero approvals.
+- `hotspot-additional-sources.json` and `hotspot-comparison.json`, documented in
+  the [11-area evidence comparison](../../docs/ncr-hotspot-comparison.md).
+  Priorities describe research readiness; all commercial scores remain unranked.
+- `fieldwork-checklist.json` covering every source ID, and a compact CSV for
+  66 candidates in 12 routes. [Field instructions](../../docs/ncr-fieldwork.md)
+  link the private local form, map links and unreviewed reconciliation workflow.
+- The [Expo/API development preview](../../docs/ncr-development-preview.md),
+  tested independently from public approval. Actual public NCR output is empty.
+- `phase1-verification.json`, `phase1-security-report.json` and the strict
+  machine-readable `phase1-gates.json`. The historical `verification.json`
+  remains the earlier baseline; use the new record for this continuation.
+
+Validate the new reproducible catalogs and gate consistency with:
+
+```powershell
+node scripts/ncr-quality-review.mjs data/ncr-research --check
+node scripts/ncr-fieldwork.mjs data/ncr-research --check
+node scripts/ncr-phase-gates.mjs data/ncr-research
+```
+
+Neither a valid report nor a passing code test upgrades an actual record's
+verification or publication status. The current report retains human fieldwork,
+commercial evidence, legal/distribution review and release authorization gates.

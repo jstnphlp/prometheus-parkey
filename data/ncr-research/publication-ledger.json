@@ -1,0 +1,6 @@
+{
+  "schemaVersion": 1,
+  "policyVersion": "ncr-display-v1",
+  "policy": "No research candidate has app publication approval. Only an accountable human can append a field-scoped approval after license, access, safety and evidence review. Source refreshes, automated quality decisions and field submissions confer no approval. This ledger is separate from the existing Poblacion decisions and the research review queue.",
+  "events": []
+}

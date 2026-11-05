@@ -147,7 +147,7 @@ export function ParkingProfile({
           </View>
         ))}
       </View>
-      <View style={styles.section}>
+      <View style={styles.section} testID="private-drafts">
         <View style={ui.row}>
           <Text accessibilityRole="header" style={[ui.heading, ui.flex]}>
             Drafts on this device

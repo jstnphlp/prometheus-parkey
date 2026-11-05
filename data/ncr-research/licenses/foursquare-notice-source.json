@@ -1,0 +1,11 @@
+{
+  "retrievedAt": "2026-11-05T07:34:30.783367+00:00",
+  "officialUrl": "https://opensource.foursquare.com/places-notice-txt/",
+  "httpStatus": 200,
+  "htmlSha256": "70ae8828fe567446e08c4305d66404fb5bf65b581e07492b6a386cb7f82564e4",
+  "textExtraction": "Full visible main-page notice text, excluding CSS/script and global site navigation. HTML entities decoded and whitespace/paragraph layout normalized; wording retained. Parkey changes described separately.",
+  "noticeSha256": "523fcc927f0a58c1d7c0fcf41ee775e007c7d270b011a43875f54ce786506d23",
+  "noticeBytes": 1810,
+  "modificationsSha256": "ace8d460be3cd287253167023a938338cbf898d7da00c3a52766ffadf0f3fe2a",
+  "legalApproval": false
+}

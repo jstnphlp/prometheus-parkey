@@ -1,0 +1,946 @@
+{
+  "schemaVersion": 1,
+  "asOf": "2026-11-05T07:46:43.799030+00:00",
+  "scope": "Additional remote research; immutable original 27-attempt register remains unchanged.",
+  "attemptCount": 51,
+  "scopedEvidenceCount": 11,
+  "policy": "Website retrieval is not physical verification, operator confirmation, publication approval or a legal judgment. A source can support only the facts and historical/conditional scope listed. No operator outreach or Google Maps content acquisition occurred.",
+  "sources": [
+    {
+      "id": "search-parking-study",
+      "requestedUrl": "https://www.bing.com/search?q=Metro+Manila+parking+demand+study+Makati+BGC+parking+survey+university",
+      "finalUrl": "https://www.bing.com/search?q=Metro+Manila+parking+demand+study+Makati+BGC+parking+survey+university",
+      "retrievedAt": "2026-11-05T07:28:35.303627+00:00",
+      "httpStatus": 200,
+      "bytes": 125472,
+      "sha256": "eee6b28793c8b2f3abff1c556c79e11dceeb30ebcaeaf4765d024cfece5c0a4b",
+      "referenceOnly": true,
+      "reusePolicy": "Attributed short factual summary/reference only; no general website-content license assumed, and no photos, maps, copied rate cards, reviews or page bodies imported.",
+      "evidenceClass": "unusable_or_discovery_only",
+      "sourceDocumentDate": null,
+      "supportedFacts": [],
+      "limitations": [
+        "Search returned unrelated results despite HTTP 200; snippets discarded as evidence."
+      ],
+      "usableForScopedResearch": false
+    },
+    {
+      "id": "search-bgc-rates",
+      "requestedUrl": "https://www.bing.com/search?q=BGC+official+parking+rates+2026+Bonifacio+High+Street+parking",
+      "finalUrl": "https://www.bing.com/search?q=BGC+official+parking+rates+2026+Bonifacio+High+Street+parking",
+      "retrievedAt": "2026-11-05T07:28:35.304628+00:00",
+      "httpStatus": 200,
+      "bytes": 124419,
+      "sha256": "ab8655e85b3718b0077581963ea25df2214680f083f55d816a22a7ce9accbf1f",
+      "referenceOnly": true,
+      "reusePolicy": "Attributed short factual summary/reference only; no general website-content license assumed, and no photos, maps, copied rate cards, reviews or page bodies imported.",
+      "evidenceClass": "unusable_or_discovery_only",
+      "sourceDocumentDate": null,
+      "supportedFacts": [],
+      "limitations": [
+        "Search returned unrelated results despite HTTP 200; snippets discarded as evidence."
+      ],
+      "usableForScopedResearch": false
+    },
+    {
+      "id": "search-cubao-rates",
+      "requestedUrl": "https://www.bing.com/search?q=Araneta+City+parking+rates+official+parking+garage+2026",
+      "finalUrl": "https://www.bing.com/search?q=Araneta+City+parking+rates+official+parking+garage+2026",
+      "retrievedAt": "2026-11-05T07:28:35.304628+00:00",
+      "httpStatus": 200,
+      "bytes": 123806,
+      "sha256": "b9817e17f3cd9e75729350df3b8ee47613add1b5e65d2e8622a20365fefffcca",
+      "referenceOnly": true,
+      "reusePolicy": "Attributed short factual summary/reference only; no general website-content license assumed, and no photos, maps, copied rate cards, reviews or page bodies imported.",
+      "evidenceClass": "unusable_or_discovery_only",
+      "sourceDocumentDate": null,
+      "supportedFacts": [],
+      "limitations": [
+        "Search returned unrelated results despite HTTP 200; snippets discarded as evidence."
+      ],
+      "usableForScopedResearch": false
+    },
+    {
+      "id": "search-binondo-rates",
+      "requestedUrl": "https://www.bing.com/search?q=Lucky+Chinatown+parking+rates+official+2025+parking",
+      "finalUrl": "https://www.bing.com/search?q=Lucky+Chinatown+parking+rates+official+2025+parking",
+      "retrievedAt": "2026-11-05T07:28:35.304628+00:00",
+      "httpStatus": 200,
+      "bytes": 122339,
+      "sha256": "64db759a5f0c8df6693e81295fb8f9c561e7b3f1b095faf9438eae12337f4e9c",
+      "referenceOnly": true,
+      "reusePolicy": "Attributed short factual summary/reference only; no general website-content license assumed, and no photos, maps, copied rate cards, reviews or page bodies imported.",
+      "evidenceClass": "unusable_or_discovery_only",
+      "sourceDocumentDate": null,
+      "supportedFacts": [],
+      "limitations": [
+        "Search returned unrelated results despite HTTP 200; snippets discarded as evidence."
+      ],
+      "usableForScopedResearch": false
+    },
+    {
+      "id": "search-makati-rates",
+      "requestedUrl": "https://www.bing.com/search?q=Makati+Park+Square+parking+rates+official+2025",
+      "finalUrl": "https://www.bing.com/search?q=Makati+Park+Square+parking+rates+official+2025",
+      "retrievedAt": "2026-11-05T07:28:35.304628+00:00",
+      "httpStatus": 200,
+      "bytes": 124962,
+      "sha256": "e2e0c6132cef6b95106280b1beb7f563512e70bc11cc949bc23c2c00a14a5ab8",
+      "referenceOnly": true,
+      "reusePolicy": "Attributed short factual summary/reference only; no general website-content license assumed, and no photos, maps, copied rate cards, reviews or page bodies imported.",
+      "evidenceClass": "unusable_or_discovery_only",
+      "sourceDocumentDate": null,
+      "supportedFacts": [],
+      "limitations": [
+        "Search returned unrelated results despite HTTP 200; snippets discarded as evidence."
+      ],
+      "usableForScopedResearch": false
+    },
+    {
+      "id": "search-ortigas-rates",
+      "requestedUrl": "https://www.bing.com/search?q=Ortigas+parking+rates+official+Greenhills+Megamall+Robinsons+Galleria",
+      "finalUrl": "https://www.bing.com/search?q=Ortigas+parking+rates+official+Greenhills+Megamall+Robinsons+Galleria",
+      "retrievedAt": "2026-11-05T07:28:35.988045+00:00",
+      "httpStatus": 200,
+      "bytes": 124817,
+      "sha256": "4ee4cb277bf45cc5fade21c75bf25fc9077f5a25bf503b63458f414a55700eba",
+      "referenceOnly": true,
+      "reusePolicy": "Attributed short factual summary/reference only; no general website-content license assumed, and no photos, maps, copied rate cards, reviews or page bodies imported.",
+      "evidenceClass": "unusable_or_discovery_only",
+      "sourceDocumentDate": null,
+      "supportedFacts": [],
+      "limitations": [
+        "Search returned unrelated results despite HTTP 200; snippets discarded as evidence."
+      ],
+      "usableForScopedResearch": false
+    },
+    {
+      "id": "search-moa-rates",
+      "requestedUrl": "https://www.bing.com/search?q=Mall+of+Asia+parking+rates+official+SM+2026",
+      "finalUrl": "https://www.bing.com/search?q=Mall+of+Asia+parking+rates+official+SM+2026",
+      "retrievedAt": "2026-11-05T07:28:36.015181+00:00",
+      "httpStatus": 200,
+      "bytes": 122534,
+      "sha256": "289def5cf73ea895c83cb2061b36932888bdbc357e1e07c0df5060d543f35726",
+      "referenceOnly": true,
+      "reusePolicy": "Attributed short factual summary/reference only; no general website-content license assumed, and no photos, maps, copied rate cards, reviews or page bodies imported.",
+      "evidenceClass": "unusable_or_discovery_only",
+      "sourceDocumentDate": null,
+      "supportedFacts": [],
+      "limitations": [
+        "Search returned unrelated results despite HTTP 200; snippets discarded as evidence."
+      ],
+      "usableForScopedResearch": false
+    },
+    {
+      "id": "search-alabang-rates",
+      "requestedUrl": "https://www.bing.com/search?q=Filinvest+Alabang+parking+rates+official+Festival+Mall",
+      "finalUrl": "https://www.bing.com/search?q=Filinvest+Alabang+parking+rates+official+Festival+Mall",
+      "retrievedAt": "2026-11-05T07:28:36.053104+00:00",
+      "httpStatus": 200,
+      "bytes": 122943,
+      "sha256": "addc77fe10583839ae9ef6244679a9524c21b89406192e344d43c7680cef730a",
+      "referenceOnly": true,
+      "reusePolicy": "Attributed short factual summary/reference only; no general website-content license assumed, and no photos, maps, copied rate cards, reviews or page bodies imported.",
+      "evidenceClass": "unusable_or_discovery_only",
+      "sourceDocumentDate": null,
+      "supportedFacts": [],
+      "limitations": [
+        "Search returned unrelated results despite HTTP 200; snippets discarded as evidence."
+      ],
+      "usableForScopedResearch": false
+    },
+    {
+      "id": "search-poblacion-rates",
+      "requestedUrl": "https://www.bing.com/search?q=Century+City+Mall+parking+rates+official+Poblacion+Makati",
+      "finalUrl": "https://www.bing.com/search?q=Century+City+Mall+parking+rates+official+Poblacion+Makati",
+      "retrievedAt": "2026-11-05T07:28:36.152119+00:00",
+      "httpStatus": 200,
+      "bytes": 132041,
+      "sha256": "66c28db5b60bdc31097553672b4b2901d37570304358ad5e6b6923ed5d934b4e",
+      "referenceOnly": true,
+      "reusePolicy": "Attributed short factual summary/reference only; no general website-content license assumed, and no photos, maps, copied rate cards, reviews or page bodies imported.",
+      "evidenceClass": "unusable_or_discovery_only",
+      "sourceDocumentDate": null,
+      "supportedFacts": [],
+      "limitations": [
+        "Search returned unrelated results despite HTTP 200; snippets discarded as evidence."
+      ],
+      "usableForScopedResearch": false
+    },
+    {
+      "id": "search-morato-regulation",
+      "requestedUrl": "https://www.bing.com/search?q=site%3Aquezoncity.gov.ph+Tomas+Morato+Sunday+car+free+parking+2025",
+      "finalUrl": "https://www.bing.com/search?q=site%3Aquezoncity.gov.ph+Tomas+Morato+Sunday+car+free+parking+2025",
+      "retrievedAt": "2026-11-05T07:28:36.153117+00:00",
+      "httpStatus": 200,
+      "bytes": 121024,
+      "sha256": "79f0dda6e8134c38915df88b765a729ea475497c46512fde43fd4bb85c4f36c2",
+      "referenceOnly": true,
+      "reusePolicy": "Attributed short factual summary/reference only; no general website-content license assumed, and no photos, maps, copied rate cards, reviews or page bodies imported.",
+      "evidenceClass": "unusable_or_discovery_only",
+      "sourceDocumentDate": null,
+      "supportedFacts": [],
+      "limitations": [
+        "Search returned unrelated results despite HTTP 200; snippets discarded as evidence."
+      ],
+      "usableForScopedResearch": false
+    },
+    {
+      "id": "search-maginhawa-parking",
+      "requestedUrl": "https://www.bing.com/search?q=Maginhawa+parking+study+parking+problems+Quezon+City+university",
+      "finalUrl": "https://www.bing.com/search?q=Maginhawa+parking+study+parking+problems+Quezon+City+university",
+      "retrievedAt": "2026-11-05T07:28:36.626007+00:00",
+      "httpStatus": 200,
+      "bytes": 124156,
+      "sha256": "d44987055f868401aa1c117a4b9c2b3de5ac778ffdfbf1ba7262621feac47f3e",
+      "referenceOnly": true,
+      "reusePolicy": "Attributed short factual summary/reference only; no general website-content license assumed, and no photos, maps, copied rate cards, reviews or page bodies imported.",
+      "evidenceClass": "unusable_or_discovery_only",
+      "sourceDocumentDate": null,
+      "supportedFacts": [],
+      "limitations": [
+        "Search returned unrelated results despite HTTP 200; snippets discarded as evidence."
+      ],
+      "usableForScopedResearch": false
+    },
+    {
+      "id": "search-north-rates",
+      "requestedUrl": "https://www.bing.com/search?q=SM+North+EDSA+Trinoma+parking+rates+official+2025",
+      "finalUrl": "https://www.bing.com/search?q=SM+North+EDSA+Trinoma+parking+rates+official+2025",
+      "retrievedAt": "2026-11-05T07:28:36.719177+00:00",
+      "httpStatus": 200,
+      "bytes": 129594,
+      "sha256": "31ffb90b83288f84b48374ce56c296f678e67305c8b07ee7aa153c960456c60a",
+      "referenceOnly": true,
+      "reusePolicy": "Attributed short factual summary/reference only; no general website-content license assumed, and no photos, maps, copied rate cards, reviews or page bodies imported.",
+      "evidenceClass": "unusable_or_discovery_only",
+      "sourceDocumentDate": null,
+      "supportedFacts": [],
+      "limitations": [
+        "Search returned unrelated results despite HTTP 200; snippets discarded as evidence."
+      ],
+      "usableForScopedResearch": false
+    },
+    {
+      "id": "search-parking-operators",
+      "requestedUrl": "https://www.bing.com/search?q=Metro+Manila+parking+operator+official+Parkwise+Metro+Parking+Philippines",
+      "finalUrl": "https://www.bing.com/search?q=Metro+Manila+parking+operator+official+Parkwise+Metro+Parking+Philippines",
+      "retrievedAt": "2026-11-05T07:28:36.793506+00:00",
+      "httpStatus": 200,
+      "bytes": 124189,
+      "sha256": "b570e3145e3470c7ff550b67ed7d96adf00bfd2c9d60ebdcf3e9fd6b38ff0657",
+      "referenceOnly": true,
+      "reusePolicy": "Attributed short factual summary/reference only; no general website-content license assumed, and no photos, maps, copied rate cards, reviews or page bodies imported.",
+      "evidenceClass": "unusable_or_discovery_only",
+      "sourceDocumentDate": null,
+      "supportedFacts": [],
+      "limitations": [
+        "Search returned unrelated results despite HTTP 200; snippets discarded as evidence."
+      ],
+      "usableForScopedResearch": false
+    },
+    {
+      "id": "bgc-parking-search",
+      "requestedUrl": "https://bgc.com.ph/wp-json/wp/v2/search?search=parking&per_page=20",
+      "finalUrl": "https://bgc.com.ph/wp-json/wp/v2/search?search=parking&per_page=20",
+      "retrievedAt": "2026-11-05T07:28:36.826635+00:00",
+      "httpStatus": 200,
+      "bytes": 4102,
+      "sha256": "f7bc46053c8f7aefb8507296d0e0701fa324027a504e76ba957a49bf3ef119b7",
+      "referenceOnly": true,
+      "reusePolicy": "Attributed short factual summary/reference only; no general website-content license assumed, and no photos, maps, copied rate cards, reviews or page bodies imported.",
+      "evidenceClass": "unusable_or_discovery_only",
+      "sourceDocumentDate": null,
+      "supportedFacts": [],
+      "limitations": [
+        "Discovery/index or generic page only; no additional location-specific parking fact accepted."
+      ],
+      "usableForScopedResearch": false
+    },
+    {
+      "id": "qc-parking-search",
+      "requestedUrl": "https://quezoncity.gov.ph/?s=parking+rates",
+      "finalUrl": "https://quezoncity.gov.ph/?s=parking+rates",
+      "retrievedAt": "2026-11-05T07:28:36.982626+00:00",
+      "httpStatus": 200,
+      "bytes": 189805,
+      "sha256": "118f5e61121c7514ec250baa50a7d0e8d24b3dfd06ce745b4b997024240e24fd",
+      "referenceOnly": true,
+      "reusePolicy": "Attributed short factual summary/reference only; no general website-content license assumed, and no photos, maps, copied rate cards, reviews or page bodies imported.",
+      "evidenceClass": "unusable_or_discovery_only",
+      "sourceDocumentDate": null,
+      "supportedFacts": [],
+      "limitations": [
+        "Discovery/index or generic page only; no additional location-specific parking fact accepted."
+      ],
+      "usableForScopedResearch": false
+    },
+    {
+      "id": "national-parking-law",
+      "requestedUrl": "https://www.officialgazette.gov.ph/1964/06/20/republic-act-no-4136/",
+      "finalUrl": "https://www.officialgazette.gov.ph/1964/06/20/republic-act-no-4136/",
+      "retrievedAt": "2026-11-05T07:28:37.365523+00:00",
+      "httpStatus": 403,
+      "bytes": 4583,
+      "sha256": "743b9813951134941871a395280815636bdcb20a1e36750b908075cb5db96090",
+      "error": "HTTP error",
+      "referenceOnly": true,
+      "reusePolicy": "Attributed short factual summary/reference only; no general website-content license assumed, and no photos, maps, copied rate cards, reviews or page bodies imported.",
+      "evidenceClass": "unusable_or_discovery_only",
+      "sourceDocumentDate": null,
+      "supportedFacts": [],
+      "limitations": ["HTTP error; no substantive parking evidence accepted."],
+      "usableForScopedResearch": false
+    },
+    {
+      "id": "national-parking-law-lawphil",
+      "requestedUrl": "https://lawphil.net/statutes/repacts/ra1964/ra_4136_1964.html",
+      "finalUrl": "https://lawphil.net/statutes/repacts/ra1964/ra_4136_1964.html",
+      "retrievedAt": "2026-11-05T07:28:37.383619+00:00",
+      "httpStatus": 200,
+      "bytes": 93097,
+      "sha256": "b075cde45fae2189e3ee46af4c4df4308713ad735e2adbdeaadf6130e55df6ac",
+      "referenceOnly": true,
+      "reusePolicy": "Attributed short factual summary/reference only; no general website-content license assumed, and no photos, maps, copied rate cards, reviews or page bodies imported.",
+      "evidenceClass": "legal_reference",
+      "sourceDocumentDate": "1964-06-20",
+      "supportedFacts": [
+        "Republic Act 4136 sections 46 and 52 identify prohibited parking locations and sidewalk restrictions; section 54 addresses obstruction."
+      ],
+      "limitations": [
+        "A legal reference is not a current LGU-specific permission or site compliance determination. The official-gazette request returned 403; this is the LawPhil university-hosted text."
+      ],
+      "usableForScopedResearch": true
+    },
+    {
+      "id": "parkwise",
+      "requestedUrl": "https://www.parkwise.com.ph/",
+      "finalUrl": "https://www.parkwise.com.ph/",
+      "retrievedAt": "2026-11-05T07:28:37.517968+00:00",
+      "httpStatus": 0,
+      "error": "curl: (28) Failed to connect to www.parkwise.com.ph:443 after 21740 ms: Could not connect to server",
+      "referenceOnly": true,
+      "reusePolicy": "Attributed short factual summary/reference only; no general website-content license assumed, and no photos, maps, copied rate cards, reviews or page bodies imported.",
+      "evidenceClass": "unusable_or_discovery_only",
+      "sourceDocumentDate": null,
+      "supportedFacts": [],
+      "limitations": [
+        "curl: (28) Failed to connect to www.parkwise.com.ph:443 after 21740 ms: Could not connect to server; no substantive parking evidence accepted."
+      ],
+      "usableForScopedResearch": false
+    },
+    {
+      "id": "metroparking",
+      "requestedUrl": "https://www.metroparking.com.ph/",
+      "finalUrl": "https://www.metroparking.com.ph/",
+      "retrievedAt": "2026-11-05T07:28:37.568893+00:00",
+      "httpStatus": 0,
+      "error": "curl: (56) schannel: server closed abruptly (missing close_notify)",
+      "referenceOnly": true,
+      "reusePolicy": "Attributed short factual summary/reference only; no general website-content license assumed, and no photos, maps, copied rate cards, reviews or page bodies imported.",
+      "evidenceClass": "unusable_or_discovery_only",
+      "sourceDocumentDate": null,
+      "supportedFacts": [],
+      "limitations": [
+        "curl: (56) schannel: server closed abruptly (missing close_notify); no substantive parking evidence accepted."
+      ],
+      "usableForScopedResearch": false
+    },
+    {
+      "id": "araneta-guide-current",
+      "requestedUrl": "https://aranetacity.com/parking",
+      "finalUrl": "https://aranetacity.com/parking",
+      "retrievedAt": "2026-11-05T07:28:37.662816+00:00",
+      "httpStatus": 200,
+      "bytes": 45324,
+      "sha256": "326e8accb5a8122a4d92af1abcb45b9563eb8a46f0e8d6de8346b40790605ec5",
+      "referenceOnly": true,
+      "reusePolicy": "Attributed short factual summary/reference only; no general website-content license assumed, and no photos, maps, copied rate cards, reviews or page bodies imported.",
+      "evidenceClass": "operator_claim",
+      "sourceDocumentDate": "undated",
+      "supportedFacts": [
+        "Araneta names eight parking locations and says weekends, paydays and Coliseum event nights fill fastest.",
+        "The guide names entrances P1 to P19 and promotes walking between connected malls."
+      ],
+      "limitations": [
+        "Operator claim, not an independent measured demand survey.",
+        "Transient slot figures were deliberately excluded; mall hours are not confirmed facility parking hours."
+      ],
+      "usableForScopedResearch": true
+    },
+    {
+      "id": "morato-full-ordinance",
+      "requestedUrl": "https://quezoncity.gov.ph/wp-content/uploads/2025/01/SP-3345-S-2024.pdf",
+      "finalUrl": "https://quezoncity.gov.ph/wp-content/uploads/2025/01/SP-3345-S-2024.pdf",
+      "retrievedAt": "2026-11-05T07:31:06.932781+00:00",
+      "httpStatus": 200,
+      "bytes": 1798366,
+      "sha256": "bf8e288fae1c6d9f9bbb0a7e730829e870249938a12c7caa0a2ab95ca4343a04",
+      "referenceOnly": true,
+      "reusePolicy": "Attributed short factual summary/reference only; no general website-content license assumed, and no photos, maps, copied rate cards, reviews or page bodies imported.",
+      "evidenceClass": "legal_text_ocr",
+      "sourceDocumentDate": "2024",
+      "supportedFacts": [
+        "Sections 2/4 cover Tomas Morato from Scout Rallos to Don A. Roces and specify no motorized traversal/parking 06:00–10:00 on Sundays subject to Section 5.",
+        "Section 5 first applies to the first Sunday each month during the first year after IRR approval, then every other Sunday, with TWG assessment before full implementation.",
+        "Section 6 lists emergency, police and establishment-delivery exemptions; Section 9 requires signs/advisories."
+      ],
+      "limitations": [
+        "Scanned PDF read using local Windows OCR, pages 4–7; OCR is fallible and does not provide legal approval.",
+        "IRR approval date, amendments, implementation phase, current signs and enforcement remain unestablished. Do not encode blanket all-Sunday closure."
+      ],
+      "usableForScopedResearch": true
+    },
+    {
+      "id": "bgc-faq",
+      "requestedUrl": "https://bgc.com.ph/faqs/",
+      "finalUrl": "https://bgc.com.ph/faqs/",
+      "retrievedAt": "2026-11-05T07:31:06.932781+00:00",
+      "httpStatus": 200,
+      "bytes": 291643,
+      "sha256": "c81d6722741b99ab3e40fcc08961b598e619c8428a19a59c8ab49b541f7dda08",
+      "referenceOnly": true,
+      "reusePolicy": "Attributed short factual summary/reference only; no general website-content license assumed, and no photos, maps, copied rate cards, reviews or page bodies imported.",
+      "evidenceClass": "operator_claim",
+      "sourceDocumentDate": "undated",
+      "supportedFacts": [
+        "BGC names High Street Central/South, Park Triangle open/basement parking, 7th Avenue open-air parking and nearby office/retail basements."
+      ],
+      "limitations": [
+        "Published visitor guidance is not present-day access/operation confirmation, a rate card, or a parking permission for any mapped record."
+      ],
+      "usableForScopedResearch": true
+    },
+    {
+      "id": "ddg-parking-study",
+      "requestedUrl": "https://html.duckduckgo.com/html/?q=Metro+Manila+parking+demand+study+Makati+parking",
+      "finalUrl": "https://html.duckduckgo.com/html/?q=Metro+Manila+parking+demand+study+Makati+parking",
+      "retrievedAt": "2026-11-05T07:31:06.933781+00:00",
+      "httpStatus": 202,
+      "bytes": 14312,
+      "sha256": "e887f6812e4795de72a12b936b93f833fc58d5ba45a9f84a045970de25c4833e",
+      "referenceOnly": true,
+      "reusePolicy": "Attributed short factual summary/reference only; no general website-content license assumed, and no photos, maps, copied rate cards, reviews or page bodies imported.",
+      "evidenceClass": "unusable_or_discovery_only",
+      "sourceDocumentDate": null,
+      "supportedFacts": [],
+      "limitations": [
+        "Search required a human anti-bot challenge; not bypassed."
+      ],
+      "usableForScopedResearch": false
+    },
+    {
+      "id": "ddg-bgc-rates",
+      "requestedUrl": "https://html.duckduckgo.com/html/?q=BGC+parking+rates+official+2025",
+      "finalUrl": "https://html.duckduckgo.com/html/?q=BGC+parking+rates+official+2025",
+      "retrievedAt": "2026-11-05T07:31:06.933781+00:00",
+      "httpStatus": 202,
+      "bytes": 14278,
+      "sha256": "c065958117b3f7989fc57629c4244fd72817976da22c336cf3e85cc4d70a7bbb",
+      "referenceOnly": true,
+      "reusePolicy": "Attributed short factual summary/reference only; no general website-content license assumed, and no photos, maps, copied rate cards, reviews or page bodies imported.",
+      "evidenceClass": "unusable_or_discovery_only",
+      "sourceDocumentDate": null,
+      "supportedFacts": [],
+      "limitations": [
+        "Search required a human anti-bot challenge; not bypassed."
+      ],
+      "usableForScopedResearch": false
+    },
+    {
+      "id": "yahoo-cubao-rates",
+      "requestedUrl": "https://search.yahoo.com/search?p=Araneta+City+parking+rates+official",
+      "finalUrl": "https://search.yahoo.com/search?p=Araneta+City+parking+rates+official",
+      "retrievedAt": "2026-11-05T07:31:06.933781+00:00",
+      "httpStatus": 500,
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "error": "HTTP error",
+      "referenceOnly": true,
+      "reusePolicy": "Attributed short factual summary/reference only; no general website-content license assumed, and no photos, maps, copied rate cards, reviews or page bodies imported.",
+      "evidenceClass": "unusable_or_discovery_only",
+      "sourceDocumentDate": null,
+      "supportedFacts": [],
+      "limitations": ["HTTP error; no substantive parking evidence accepted."],
+      "usableForScopedResearch": false
+    },
+    {
+      "id": "qc-maginhawa-regulations",
+      "requestedUrl": "https://quezoncity.gov.ph/?s=Maginhawa+parking",
+      "finalUrl": "https://quezoncity.gov.ph/?s=Maginhawa+parking",
+      "retrievedAt": "2026-11-05T07:31:07.152441+00:00",
+      "httpStatus": 200,
+      "bytes": 189887,
+      "sha256": "2bc92b171dc1d3df7ad11108a8b225d356f4ea6fe99787b9c68fa6c22b206493",
+      "referenceOnly": true,
+      "reusePolicy": "Attributed short factual summary/reference only; no general website-content license assumed, and no photos, maps, copied rate cards, reviews or page bodies imported.",
+      "evidenceClass": "unusable_or_discovery_only",
+      "sourceDocumentDate": null,
+      "supportedFacts": [],
+      "limitations": [
+        "Discovery/index or generic page only; no additional location-specific parking fact accepted."
+      ],
+      "usableForScopedResearch": false
+    },
+    {
+      "id": "qc-parking-fees",
+      "requestedUrl": "https://quezoncity.gov.ph/?s=parking+fee",
+      "finalUrl": "https://quezoncity.gov.ph/?s=parking+fee",
+      "retrievedAt": "2026-11-05T07:31:07.352215+00:00",
+      "httpStatus": 200,
+      "bytes": 189715,
+      "sha256": "7d08ef8a73541e6b703e46078b3419cf211bc0223fd5f71a7382713ae426430e",
+      "referenceOnly": true,
+      "reusePolicy": "Attributed short factual summary/reference only; no general website-content license assumed, and no photos, maps, copied rate cards, reviews or page bodies imported.",
+      "evidenceClass": "unusable_or_discovery_only",
+      "sourceDocumentDate": null,
+      "supportedFacts": [],
+      "limitations": [
+        "Discovery/index or generic page only; no additional location-specific parking fact accepted."
+      ],
+      "usableForScopedResearch": false
+    },
+    {
+      "id": "pasig-parking-search",
+      "requestedUrl": "https://pasigcity.gov.ph/news-and-releases?search=parking",
+      "finalUrl": "https://pasigcity.gov.ph/news-and-releases?search=parking",
+      "retrievedAt": "2026-11-05T07:31:07.362437+00:00",
+      "httpStatus": 200,
+      "bytes": 46869,
+      "sha256": "89cd6aff5d636954b46dbfb8fc1cf7201b8e8dc9987092dd939e86c27bfd3808",
+      "referenceOnly": true,
+      "reusePolicy": "Attributed short factual summary/reference only; no general website-content license assumed, and no photos, maps, copied rate cards, reviews or page bodies imported.",
+      "evidenceClass": "unusable_or_discovery_only",
+      "sourceDocumentDate": null,
+      "supportedFacts": [],
+      "limitations": [
+        "Discovery/index or generic page only; no additional location-specific parking fact accepted."
+      ],
+      "usableForScopedResearch": false
+    },
+    {
+      "id": "makati-traffic",
+      "requestedUrl": "https://www.makati.gov.ph/portal/",
+      "finalUrl": "https://www.makati.gov.ph/portal/",
+      "retrievedAt": "2026-11-05T07:31:07.708377+00:00",
+      "httpStatus": 200,
+      "bytes": 14019,
+      "sha256": "5c5ca886dd8ff6302f3628416c116418e8d51ecc7531d4d5b796422d21efeb85",
+      "referenceOnly": true,
+      "reusePolicy": "Attributed short factual summary/reference only; no general website-content license assumed, and no photos, maps, copied rate cards, reviews or page bodies imported.",
+      "evidenceClass": "unusable_or_discovery_only",
+      "sourceDocumentDate": null,
+      "supportedFacts": [],
+      "limitations": [
+        "Discovery/index or generic page only; no additional location-specific parking fact accepted."
+      ],
+      "usableForScopedResearch": false
+    },
+    {
+      "id": "jica-ncr-transport",
+      "requestedUrl": "https://openjicareport.jica.go.jp/pdf/12247664.pdf",
+      "finalUrl": "https://openjicareport.jica.go.jp/pdf/12247664.pdf",
+      "retrievedAt": "2026-11-05T07:31:08.026094+00:00",
+      "httpStatus": 200,
+      "bytes": 5849814,
+      "sha256": "e2c7918efb9bce4c91cea5565974bf57ad4501b4bdb4ed664c4c8e06c59f7632",
+      "referenceOnly": true,
+      "reusePolicy": "Attributed short factual summary/reference only; no general website-content license assumed, and no photos, maps, copied rate cards, reviews or page bodies imported.",
+      "evidenceClass": "historical_policy_context",
+      "sourceDocumentDate": null,
+      "supportedFacts": [
+        "JICA transport-planning policy manual discusses parking charges as a transport-demand-management option and uses historical MUCEP data."
+      ],
+      "limitations": [
+        "Policy/scenario analysis, not a parking shortage measurement, actual price offer or current hotspot study. No scenario revenue, trip total or mode share is used to rank Parkey hotspots."
+      ],
+      "usableForScopedResearch": true
+    },
+    {
+      "id": "ncts-parking-search",
+      "requestedUrl": "https://ncts.upd.edu.ph/tssp/?s=parking",
+      "finalUrl": "https://ncts.upd.edu.ph/tssp/?s=parking",
+      "retrievedAt": "2026-11-05T07:31:08.182597+00:00",
+      "httpStatus": 200,
+      "bytes": 99064,
+      "sha256": "4e1f55005f027c05baa8e335d8bf4c68f3b79c34f55097e2e0425b59ff48b663",
+      "referenceOnly": true,
+      "reusePolicy": "Attributed short factual summary/reference only; no general website-content license assumed, and no photos, maps, copied rate cards, reviews or page bodies imported.",
+      "evidenceClass": "unusable_or_discovery_only",
+      "sourceDocumentDate": null,
+      "supportedFacts": [],
+      "limitations": [
+        "Discovery/index or generic page only; no additional location-specific parking fact accepted."
+      ],
+      "usableForScopedResearch": false
+    },
+    {
+      "id": "sm-search-parking",
+      "requestedUrl": "https://www.smsupermalls.com/search?search=parking",
+      "finalUrl": "https://www.smsupermalls.com/search?search=parking",
+      "retrievedAt": "2026-11-05T07:31:08.277975+00:00",
+      "httpStatus": 200,
+      "bytes": 425648,
+      "sha256": "9287015136be4e86bab111d233c50539e99a1ec01830884dc458eb1270684788",
+      "referenceOnly": true,
+      "reusePolicy": "Attributed short factual summary/reference only; no general website-content license assumed, and no photos, maps, copied rate cards, reviews or page bodies imported.",
+      "evidenceClass": "unusable_or_discovery_only",
+      "sourceDocumentDate": null,
+      "supportedFacts": [],
+      "limitations": [
+        "Discovery/index or generic page only; no additional location-specific parking fact accepted."
+      ],
+      "usableForScopedResearch": false
+    },
+    {
+      "id": "parksecure",
+      "requestedUrl": "https://www.parksecure.ph/",
+      "finalUrl": "https://www.parksecure.ph/",
+      "retrievedAt": "2026-11-05T07:31:08.607947+00:00",
+      "httpStatus": 0,
+      "error": "curl: (56) schannel: server closed abruptly (missing close_notify)",
+      "referenceOnly": true,
+      "reusePolicy": "Attributed short factual summary/reference only; no general website-content license assumed, and no photos, maps, copied rate cards, reviews or page bodies imported.",
+      "evidenceClass": "unusable_or_discovery_only",
+      "sourceDocumentDate": null,
+      "supportedFacts": [],
+      "limitations": [
+        "curl: (56) schannel: server closed abruptly (missing close_notify); no substantive parking evidence accepted."
+      ],
+      "usableForScopedResearch": false
+    },
+    {
+      "id": "tssp-2013-conference",
+      "requestedUrl": "https://ncts.upd.edu.ph/tssp/2013-3",
+      "finalUrl": "https://ncts.upd.edu.ph/tssp/2013-3",
+      "retrievedAt": "2026-11-05T07:36:45.206388+00:00",
+      "httpStatus": 200,
+      "bytes": 93503,
+      "sha256": "9a60f014b33052a6d039c988cd1b6351a20f05b1e41896c0b49042958605570d",
+      "referenceOnly": true,
+      "reusePolicy": "Attributed short factual summary/reference only; no general website-content license assumed, and no photos, maps, copied rate cards, reviews or page bodies imported.",
+      "evidenceClass": "unusable_or_discovery_only",
+      "sourceDocumentDate": null,
+      "supportedFacts": [],
+      "limitations": [
+        "Discovery/index or generic page only; no additional location-specific parking fact accepted."
+      ],
+      "usableForScopedResearch": false
+    },
+    {
+      "id": "tssp-2013-alternative",
+      "requestedUrl": "https://ncts.upd.edu.ph/tssp/2013-2",
+      "finalUrl": "https://ncts.upd.edu.ph/tssp/2013-2",
+      "retrievedAt": "2026-11-05T07:36:45.206388+00:00",
+      "httpStatus": 200,
+      "bytes": 100740,
+      "sha256": "b46b6c4d8ca9e53c7767cbc5404c17cddde05b9275f972e7210b555f35ea56da",
+      "referenceOnly": true,
+      "reusePolicy": "Attributed short factual summary/reference only; no general website-content license assumed, and no photos, maps, copied rate cards, reviews or page bodies imported.",
+      "evidenceClass": "unusable_or_discovery_only",
+      "sourceDocumentDate": null,
+      "supportedFacts": [],
+      "limitations": [
+        "Discovery/index or generic page only; no additional location-specific parking fact accepted."
+      ],
+      "usableForScopedResearch": false
+    },
+    {
+      "id": "pasig-parking-closure",
+      "requestedUrl": "https://pasigcity.gov.ph/news-and-releases/abiso-pasig-city-mega-parking-i-near-mutya-ng-pasig-mega-market-caruncho-ave-brgy-san-nicolas-584",
+      "finalUrl": "https://pasigcity.gov.ph/news-and-releases/abiso-pasig-city-mega-parking-i-near-mutya-ng-pasig-mega-market-caruncho-ave-brgy-san-nicolas-584",
+      "retrievedAt": "2026-11-05T07:36:45.207389+00:00",
+      "httpStatus": 200,
+      "bytes": 26462,
+      "sha256": "a997b03b7129c803ffaea80ba2a8f420ba9e6028815efc0059c612dc27094978",
+      "referenceOnly": true,
+      "reusePolicy": "Attributed short factual summary/reference only; no general website-content license assumed, and no photos, maps, copied rate cards, reviews or page bodies imported.",
+      "evidenceClass": "dated_advisory",
+      "sourceDocumentDate": "2026-10-06",
+      "supportedFacts": [
+        "Pasig city announced only the third floor of Mega Parking I near Mutya ng Pasig Mega Market would close 7 October 2026, 08:00–12:00, for maintenance, with reopening planned at 12:01.",
+        "The advisory explicitly says floors 1, 2 and 4 remain open."
+      ],
+      "limitations": [
+        "Past floor-specific advisory. It does not establish current whole-facility closure or verified present operation. Not promoted as a launch hotspot."
+      ],
+      "usableForScopedResearch": true
+    },
+    {
+      "id": "qc-pwd-fee-notice",
+      "requestedUrl": "https://quezoncity.gov.ph/public-notice/sp-3234-s-2023-an-ordinance-exempting-all-persons-with-disabilities-pwd-residents-of-quezon-city-from-the-payment-of-initial-rate-in-city-government-owned-parking-facilities-such-as-hospitals-pay/",
+      "finalUrl": "https://quezoncity.gov.ph/public-notice/sp-3234-s-2023-an-ordinance-exempting-all-persons-with-disabilities-pwd-residents-of-quezon-city-from-the-payment-of-initial-rate-in-city-government-owned-parking-facilities-such-as-hospitals-pay/",
+      "retrievedAt": "2026-11-05T07:36:45.207389+00:00",
+      "httpStatus": 200,
+      "bytes": 180893,
+      "sha256": "041fc09f95fccff7aa82667b790b771c5cff5737ad6f86e691c33075949f19dd",
+      "referenceOnly": true,
+      "reusePolicy": "Attributed short factual summary/reference only; no general website-content license assumed, and no photos, maps, copied rate cards, reviews or page bodies imported.",
+      "evidenceClass": "legal_notice_title",
+      "sourceDocumentDate": "2023",
+      "supportedFacts": [
+        "Official SP-3234 S-2023 notice concerns initial-rate exemptions for QC-resident persons with disabilities at city-government-owned parking facilities."
+      ],
+      "limitations": [
+        "Full ordinance/implementation conditions were not reviewed. Do not label all private QC mall parking free for PWDs or infer a current fee."
+      ],
+      "usableForScopedResearch": true
+    },
+    {
+      "id": "moa-arena-faq",
+      "requestedUrl": "https://www.mallofasia-arena.com/faq/",
+      "finalUrl": "https://www.sm-arena.com/MOA",
+      "retrievedAt": "2026-11-05T07:36:45.208387+00:00",
+      "httpStatus": 403,
+      "bytes": 5362,
+      "sha256": "43fa4c610c4d226526d8cec0d514d939c23e76adc27a212935af06c872e561ab",
+      "error": "HTTP error",
+      "referenceOnly": true,
+      "reusePolicy": "Attributed short factual summary/reference only; no general website-content license assumed, and no photos, maps, copied rate cards, reviews or page bodies imported.",
+      "evidenceClass": "unusable_or_discovery_only",
+      "sourceDocumentDate": null,
+      "supportedFacts": [],
+      "limitations": ["HTTP error; no substantive parking evidence accepted."],
+      "usableForScopedResearch": false
+    },
+    {
+      "id": "sm-faq",
+      "requestedUrl": "https://www.smsupermalls.com/faqs/",
+      "finalUrl": "https://www.smsupermalls.com/faqs",
+      "retrievedAt": "2026-11-05T07:36:45.758790+00:00",
+      "httpStatus": 404,
+      "bytes": 407702,
+      "sha256": "61ba6670cd0c621b6f9d9808178e99adc98d21b9d4b91dae6742e4be1ea08944",
+      "error": "HTTP error",
+      "referenceOnly": true,
+      "reusePolicy": "Attributed short factual summary/reference only; no general website-content license assumed, and no photos, maps, copied rate cards, reviews or page bodies imported.",
+      "evidenceClass": "unusable_or_discovery_only",
+      "sourceDocumentDate": null,
+      "supportedFacts": [],
+      "limitations": ["HTTP error; no substantive parking evidence accepted."],
+      "usableForScopedResearch": false
+    },
+    {
+      "id": "smdc-grass-residences",
+      "requestedUrl": "https://smdc.com/properties/grass-residences/",
+      "finalUrl": "https://smdc.com/properties/grass-residences/",
+      "retrievedAt": "2026-11-05T07:41:09.326327+00:00",
+      "httpStatus": 404,
+      "bytes": 42988,
+      "sha256": "86e1ee989b095b50da6dba29e03eb164fe9f30bce58180b27caa42e44c0af81e",
+      "error": "HTTP error",
+      "referenceOnly": true,
+      "reusePolicy": "Attributed short factual summary/reference only; no general website-content license assumed, and no photos, maps, copied rate cards, reviews or page bodies imported.",
+      "evidenceClass": "unusable_or_discovery_only",
+      "sourceDocumentDate": null,
+      "supportedFacts": [],
+      "limitations": ["HTTP error; no substantive parking evidence accepted."],
+      "usableForScopedResearch": false
+    },
+    {
+      "id": "smdc-grass-official-search",
+      "requestedUrl": "https://smdc.com/?s=grass+residences",
+      "finalUrl": "https://smdc.com/?s=grass+residences",
+      "retrievedAt": "2026-11-05T07:41:09.326327+00:00",
+      "httpStatus": 404,
+      "bytes": 52323,
+      "sha256": "85c619980ba77924da0b472228c594efad713b3399525393adb344ecad31f4a9",
+      "error": "HTTP error",
+      "referenceOnly": true,
+      "reusePolicy": "Attributed short factual summary/reference only; no general website-content license assumed, and no photos, maps, copied rate cards, reviews or page bodies imported.",
+      "evidenceClass": "unusable_or_discovery_only",
+      "sourceDocumentDate": null,
+      "supportedFacts": [],
+      "limitations": ["HTTP error; no substantive parking evidence accepted."],
+      "usableForScopedResearch": false
+    },
+    {
+      "id": "safepark-ph",
+      "requestedUrl": "https://safepark.ph/",
+      "finalUrl": "https://safepark.ph/",
+      "retrievedAt": "2026-11-05T07:41:09.326327+00:00",
+      "httpStatus": 0,
+      "error": "curl: (35) schannel: next InitializeSecurityContext failed: SEC_E_INTERNAL_ERROR (0x80090304) - The Local Security Authority cannot be contacted",
+      "referenceOnly": true,
+      "reusePolicy": "Attributed short factual summary/reference only; no general website-content license assumed, and no photos, maps, copied rate cards, reviews or page bodies imported.",
+      "evidenceClass": "unusable_or_discovery_only",
+      "sourceDocumentDate": null,
+      "supportedFacts": [],
+      "limitations": [
+        "curl: (35) schannel: next InitializeSecurityContext failed: SEC_E_INTERNAL_ERROR (0x80090304) - The Local Security Authority cannot be contacted; no substantive parking evidence accepted."
+      ],
+      "usableForScopedResearch": false
+    },
+    {
+      "id": "safepark-com-ph",
+      "requestedUrl": "https://www.safepark.com.ph/",
+      "finalUrl": "https://www.safepark.com.ph/",
+      "retrievedAt": "2026-11-05T07:41:09.326327+00:00",
+      "httpStatus": 0,
+      "error": "curl: (35) schannel: next InitializeSecurityContext failed: SEC_E_INTERNAL_ERROR (0x80090304) - The Local Security Authority cannot be contacted",
+      "referenceOnly": true,
+      "reusePolicy": "Attributed short factual summary/reference only; no general website-content license assumed, and no photos, maps, copied rate cards, reviews or page bodies imported.",
+      "evidenceClass": "unusable_or_discovery_only",
+      "sourceDocumentDate": null,
+      "supportedFacts": [],
+      "limitations": [
+        "curl: (35) schannel: next InitializeSecurityContext failed: SEC_E_INTERNAL_ERROR (0x80090304) - The Local Security Authority cannot be contacted; no substantive parking evidence accepted."
+      ],
+      "usableForScopedResearch": false
+    },
+    {
+      "id": "chemin-neuf-philippines",
+      "requestedUrl": "https://www.chemin-neuf.org/en/philippines/",
+      "finalUrl": "https://www.chemin-neuf.org/en/philippines/",
+      "retrievedAt": "2026-11-05T07:41:09.327325+00:00",
+      "httpStatus": 404,
+      "bytes": 73188,
+      "sha256": "1d1aa2615b87cbad8cbf7019607d12810220e79643470129366f6da9147437ef",
+      "error": "HTTP error",
+      "referenceOnly": true,
+      "reusePolicy": "Attributed short factual summary/reference only; no general website-content license assumed, and no photos, maps, copied rate cards, reviews or page bodies imported.",
+      "evidenceClass": "unusable_or_discovery_only",
+      "sourceDocumentDate": null,
+      "supportedFacts": [],
+      "limitations": ["HTTP error; no substantive parking evidence accepted."],
+      "usableForScopedResearch": false
+    },
+    {
+      "id": "chemin-neuf-local",
+      "requestedUrl": "https://www.chemin-neuf.ph/",
+      "finalUrl": "https://www.chemin-neuf.ph/",
+      "retrievedAt": "2026-11-05T07:41:09.815518+00:00",
+      "httpStatus": 200,
+      "bytes": 176335,
+      "sha256": "f732fc6f9aa129fc128dcc288f04c922c4129533d2734d590a210d25928e2040",
+      "referenceOnly": true,
+      "reusePolicy": "Attributed short factual summary/reference only; no general website-content license assumed, and no photos, maps, copied rate cards, reviews or page bodies imported.",
+      "evidenceClass": "organization_context",
+      "sourceDocumentDate": null,
+      "supportedFacts": [
+        "Official local site describes a Christian community, retreats, campus ministry and a student Catholic center/dormitory."
+      ],
+      "limitations": [
+        "Organizational context raises an identity/category question; it does not prove incidental parking is absent or establish public access."
+      ],
+      "usableForScopedResearch": true
+    },
+    {
+      "id": "chemin-neuf-locations",
+      "requestedUrl": "https://www.chemin-neuf.ph/where-to-find-us/in-the-philippines/",
+      "finalUrl": "https://www.chemin-neuf.ph/where-to-find-us/in-the-philippines/",
+      "retrievedAt": "2026-11-05T07:42:22.655589+00:00",
+      "httpStatus": 200,
+      "bytes": 88326,
+      "sha256": "e5cc9030a1afa803cbcc298827beeeb79dc8c903c4a8d1fa5e585aef0032df89",
+      "referenceOnly": true,
+      "reusePolicy": "Attributed short factual summary/reference only; no general website-content license assumed, and no photos, maps, copied rate cards, reviews or page bodies imported.",
+      "evidenceClass": "organization_context",
+      "sourceDocumentDate": null,
+      "supportedFacts": [
+        "The community location page identifies Sampaloc/Legarda Street in Metro Manila."
+      ],
+      "limitations": [
+        "Textual location context only; no coordinates or entrance were derived and no source point was silently selected."
+      ],
+      "usableForScopedResearch": true
+    },
+    {
+      "id": "chemin-neuf-contact",
+      "requestedUrl": "https://www.chemin-neuf.ph/where-to-find-us/contact-us/",
+      "finalUrl": "https://www.chemin-neuf.ph/where-to-find-us/contact-us/",
+      "retrievedAt": "2026-11-05T07:42:22.655589+00:00",
+      "httpStatus": 200,
+      "bytes": 86919,
+      "sha256": "14af55394338e065a41ddb50778c68cdd4ecd46fa4ac9c9b38bbec5a926e2b18",
+      "referenceOnly": true,
+      "reusePolicy": "Attributed short factual summary/reference only; no general website-content license assumed, and no photos, maps, copied rate cards, reviews or page bodies imported.",
+      "evidenceClass": "organization_context",
+      "sourceDocumentDate": null,
+      "supportedFacts": [
+        "The official contact page gives 2486 Legarda Street, Sampaloc, Metro Manila, Barangay 412."
+      ],
+      "limitations": [
+        "Business/organization address context only. Phone numbers, personal contact details and form contents were not imported; no message sent."
+      ],
+      "usableForScopedResearch": true
+    },
+    {
+      "id": "smdc-main",
+      "requestedUrl": "https://smdc.com/",
+      "finalUrl": "https://smdc.com/",
+      "retrievedAt": "2026-11-05T07:42:22.655589+00:00",
+      "httpStatus": 200,
+      "bytes": 187223,
+      "sha256": "137ac57605128fa67ee3df63839e836e2b0c458a14060f396ecdb3ac118d6e47",
+      "referenceOnly": true,
+      "reusePolicy": "Attributed short factual summary/reference only; no general website-content license assumed, and no photos, maps, copied rate cards, reviews or page bodies imported.",
+      "evidenceClass": "unusable_or_discovery_only",
+      "sourceDocumentDate": null,
+      "supportedFacts": [],
+      "limitations": [
+        "Discovery/index or generic page only; no additional location-specific parking fact accepted."
+      ],
+      "usableForScopedResearch": false
+    },
+    {
+      "id": "smdc-heights-main",
+      "requestedUrl": "https://www.smdcheights.com/",
+      "finalUrl": "https://www.smdcheights.com/",
+      "retrievedAt": "2026-11-05T07:43:40.616003+00:00",
+      "httpStatus": 200,
+      "bytes": 178247,
+      "sha256": "0511172746e073e8e5b23b5588eda9a95b3e1d5609d3e3c331a73740fd45e41f",
+      "referenceOnly": true,
+      "reusePolicy": "Attributed short factual summary/reference only; no general website-content license assumed, and no photos, maps, copied rate cards, reviews or page bodies imported.",
+      "evidenceClass": "unusable_or_discovery_only",
+      "sourceDocumentDate": null,
+      "supportedFacts": [],
+      "limitations": [
+        "Discovery/index or generic page only; no additional location-specific parking fact accepted."
+      ],
+      "usableForScopedResearch": false
+    },
+    {
+      "id": "smdc-heights-grass",
+      "requestedUrl": "https://www.smdcheights.com/properties/grass-residences/",
+      "finalUrl": "https://www.smdcheights.com/properties/grass-residences/",
+      "retrievedAt": "2026-11-05T07:43:40.616003+00:00",
+      "httpStatus": 404,
+      "bytes": 36992,
+      "sha256": "0a2dd766f7266c86a92fd7eda69c78b721e56dcf7f8a285ab8fa3d89bb28e9e0",
+      "error": "HTTP error",
+      "referenceOnly": true,
+      "reusePolicy": "Attributed short factual summary/reference only; no general website-content license assumed, and no photos, maps, copied rate cards, reviews or page bodies imported.",
+      "evidenceClass": "unusable_or_discovery_only",
+      "sourceDocumentDate": null,
+      "supportedFacts": [],
+      "limitations": ["HTTP error; no substantive parking evidence accepted."],
+      "usableForScopedResearch": false
+    },
+    {
+      "id": "valdez-parking-2013",
+      "requestedUrl": "https://ncts.upd.edu.ph/tssp/wp-content/uploads/2018/08/Valdez13.pdf",
+      "finalUrl": "https://ncts.upd.edu.ph/tssp/wp-content/uploads/2018/08/Valdez13.pdf",
+      "retrievedAt": "2026-11-05T07:38:58.479729+00:00",
+      "httpStatus": 200,
+      "bytes": 2082482,
+      "sha256": "6bcfb8f660c54a98224dba16cbde9cb438cd8fb6195a1de0b48928def8f22c7f",
+      "referenceOnly": true,
+      "reusePolicy": "Attributed short factual summary/reference only; no general website-content license assumed, and no photos, maps, copied rate cards, reviews or page bodies imported.",
+      "evidenceClass": "historical_measurement",
+      "sourceDocumentDate": "2013",
+      "supportedFacts": [
+        "The TSSP-hosted conference paper uses MaPA Makati CBD records for Friday 19 October 2012, 07:00–17:00.",
+        "The authors report a 14:30 peak interval and average Makati CBD parking duration of 1.164 hours per vehicle.",
+        "The paper separately describes questionnaires about actual payment and willingness to pay in Ermita-Malate."
+      ],
+      "limitations": [
+        "See PDF pages 8, 11 and 12. Historical one-day records, not current NCR/2026 demand.",
+        "No original MaPA data was obtained/reproduced. Historic Ermita-Malate questionnaire results do not establish current Makati or Parkey willingness to pay."
+      ],
+      "usableForScopedResearch": true
+    }
+  ]
+}

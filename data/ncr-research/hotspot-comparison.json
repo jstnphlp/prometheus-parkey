@@ -1,0 +1,1035 @@
+{
+  "schemaVersion": 1,
+  "asOf": "2026-11-05T07:46:43.799030+00:00",
+  "scope": "Eleven NCR research windows; evidence-readiness comparison, not commercial ranking.",
+  "sourceHashes": {
+    "boundaries": "ea7864d00557f64de39981ccefca370c2d47eb82ceb98c55f554d21601e4ede7",
+    "osm": "5ae2654e12d0ec47c33da193004e009fd628ea9b408b953b37b2fb24fa26335d",
+    "overture": "203a4847b0fa9f8129374442089f4722ddfd49e601bb172c41df02688236cb25",
+    "reviews": "68e702bb733c0134fb505ec5d551c21dd27ac95dbb99a468ea98ae9077511a0b"
+  },
+  "originalSourceRegister": "data/ncr-research/hotspot-source-evidence.json",
+  "additionalSourceRegister": "data/ncr-research/hotspot-additional-sources.json",
+  "additionalRetrievalAttempts": 51,
+  "noCommercialRanking": true,
+  "priorityMethod": {
+    "type": "ordered_research_logistics_and_evidence_readiness",
+    "notCommercialRanking": true,
+    "criteria": [
+      "Preserve and complete existing owner-requested visits before adding duplicate fieldwork.",
+      "Prefer named facility portfolios and published operator channels that make verification repeatable.",
+      "Investigate specific access/legal risks early, including phased rules and major coordinate conflicts.",
+      "Use remaining areas as geographic/operating-model comparison strata; mapped counts do not indicate demand or shortage."
+    ],
+    "firstWave": ["poblacion", "cubao", "bgc", "tomas-morato"],
+    "whyPoblacionFirst": "Six existing owner visit requirements, preserved source identities and nearby route continuity. This is the recommended first verification hotspot for reducing known readiness gaps, not a validated marketplace winner.",
+    "strongestOperatorResearchLead": "cubao",
+    "nextCommercialDecisionRequires": [
+      "Current time-matched legal/usable supply and demand",
+      "Consenting driver payment/product-price research",
+      "Authorized operator or host response and authority",
+      "Legal/access/licensing review",
+      "Accountable human final hotspot and publication decision"
+    ]
+  },
+  "potentialSupplyGapFindings": {
+    "supportedCurrentShortages": [],
+    "hypothesesToTest": [
+      {
+        "area": "cubao",
+        "reason": "Operator-reported busy periods justify observation; they do not prove unmet demand."
+      },
+      {
+        "area": "tomas-morato",
+        "reason": "Implemented phased restrictions could affect legal curb options at specified times; current phase, alternative access and demand must be established."
+      },
+      {
+        "area": "poblacion",
+        "reason": "Evening dining-trip information/access friction is a testable hypothesis, not measured search difficulty."
+      }
+    ]
+  },
+  "historicalMeasurement": {
+    "sourceReference": "additional:valdez-parking-2013",
+    "area": "makati-cbd",
+    "observationDate": "2012-10-19",
+    "reportedTimeWindow": "07:00–17:00",
+    "reportedPeakInterval": "14:30",
+    "reportedAverageDurationHours": 1.164,
+    "pages": [8, 11, 12],
+    "currentDemandScore": null,
+    "limitations": [
+      "One historical Friday from MaPA records as reported by the paper; original records not independently reproduced.",
+      "No transfer to2026 occupancy, search time, supply gap, Parkey pricing or willingness to pay."
+    ]
+  },
+  "regulationFindings": {
+    "morato": {
+      "sourceReference": "additional:morato-full-ordinance",
+      "pages": [4, 5, 7],
+      "corridor": "Tomas Morato from Scout Rallos to Don A. Roces Avenue",
+      "timeWindow": "06:00–10:00",
+      "scheduleConditionalOnIrr": true,
+      "firstPhase": "First Sunday monthly for the first year after IRR approval",
+      "secondPhase": "Every other Sunday after the initial year, with TWG assessment of full implementation",
+      "currentIrrApprovalDate": null,
+      "currentImplementationPhase": null,
+      "legalApproval": false
+    },
+    "national": {
+      "sourceReference": "additional:national-parking-law-lawphil",
+      "sections": [46, 52, 54],
+      "siteSpecificPermission": false
+    },
+    "pastPasigAdvisory": {
+      "sourceReference": "additional:pasig-parking-closure",
+      "appliesTo": "Mega Parking I third floor only",
+      "date": "2026-10-07",
+      "closureWindow": "08:00–12:00",
+      "plannedReopening": "12:01",
+      "currentWholeFacilityClosure": null
+    }
+  },
+  "additionalAreasConsidered": [
+    {
+      "area": "Ermita-Malate",
+      "sourceReference": "additional:valdez-parking-2013",
+      "decision": "Historical comparison-study lead only; not promoted ahead of the eleven current areas without fresh evidence."
+    },
+    {
+      "area": "Pasig Mega Market / Mega Parking I",
+      "sourceReference": "additional:pasig-parking-closure",
+      "decision": "Official municipal-facility lead and scoped past advisory; not a current shortage or launch opportunity finding."
+    }
+  ],
+  "areas": [
+    {
+      "id": "poblacion",
+      "name": "Poblacion",
+      "studyWindow": [121.024, 14.558, 121.041, 14.572],
+      "windowPolicy": "Analyst-defined research rectangle; may overlap other windows and is not an official neighborhood boundary.",
+      "supply": {
+        "mappedEntities": 100,
+        "deduplicatedFacilityCandidates": 54,
+        "accessUnknown": 87,
+        "restricted": 5,
+        "customerOnly": 8,
+        "byType": {
+          "entrance": 31,
+          "facility_unspecified": 36,
+          "garage": 3,
+          "lot": 15,
+          "street_segment": 15
+        }
+      },
+      "context": "Dining/retail/leisure context and preserved owner research decisions; historical mall parking/valet mention.",
+      "evidenceReferences": [
+        "original:century-about",
+        "original:century-parking-historical"
+      ],
+      "pricing": {
+        "currentPrice": null,
+        "verifiedRateCards": 0,
+        "rawFeeTagObservationCounts": {
+          "yes": 3
+        },
+        "legacyPriceHints": [],
+        "interpretation": "Raw source observations may duplicate facilities/entrances. fee=no is not confirmed free/public parking; fee=yes has no inferred amount. No normalized app fee was changed."
+      },
+      "demand": {
+        "currentMeasuredDemand": null,
+        "classification": "proxy_or_unknown",
+        "proposedObservationPeriods": [
+          "Friday/Saturday 19:00–22:00 versus an ordinary weekday period; proposed, not measured peak."
+        ]
+      },
+      "driverComplaints": {
+        "currentIndependentEvidence": null,
+        "status": "not_established_in_retrieved_sources"
+      },
+      "willingnessToPay": {
+        "currentEvidence": null,
+        "status": "not_established"
+      },
+      "partnerLeads": [
+        "Century City Mall management",
+        "Existing six owner visit tasks and named independent-lot leads"
+      ],
+      "licensedOperatorTagLeads": [],
+      "partnerCommitment": null,
+      "researchPriority": "first_wave_owner_continuity",
+      "fieldQuestions": [
+        "Current visitor access and correct vehicle entrances",
+        "Evening search/refusal experience and authorized inventory"
+      ],
+      "opportunityScore": null,
+      "commercialRank": null,
+      "rankingStatus": "more_evidence_needed",
+      "physicallyVerified": false,
+      "publicationApproved": false
+    },
+    {
+      "id": "bgc",
+      "name": "BGC",
+      "studyWindow": [121.04, 14.536, 121.06, 14.561],
+      "windowPolicy": "Analyst-defined research rectangle; may overlap other windows and is not an official neighborhood boundary.",
+      "supply": {
+        "mappedEntities": 152,
+        "deduplicatedFacilityCandidates": 75,
+        "accessUnknown": 118,
+        "restricted": 3,
+        "customerOnly": 15,
+        "byType": {
+          "entrance": 68,
+          "facility_unspecified": 45,
+          "garage": 10,
+          "lot": 22,
+          "space": 1,
+          "street_segment": 6
+        }
+      },
+      "context": "Mixed-use estate with named parking guidance and a dedicated parking inquiry channel.",
+      "evidenceReferences": [
+        "original:bgc-about",
+        "original:bgc-parking-inquiry",
+        "additional:bgc-faq"
+      ],
+      "pricing": {
+        "currentPrice": null,
+        "verifiedRateCards": 0,
+        "rawFeeTagObservationCounts": {
+          "yes": 24
+        },
+        "legacyPriceHints": [],
+        "interpretation": "Raw source observations may duplicate facilities/entrances. fee=no is not confirmed free/public parking; fee=yes has no inferred amount. No normalized app fee was changed."
+      },
+      "demand": {
+        "currentMeasuredDemand": null,
+        "classification": "proxy_or_unknown",
+        "proposedObservationPeriods": [
+          "Weekday 08:00–10:00 and a separate evening/weekend retail period; proposed sampling."
+        ]
+      },
+      "driverComplaints": {
+        "currentIndependentEvidence": null,
+        "status": "not_established_in_retrieved_sources"
+      },
+      "willingnessToPay": {
+        "currentEvidence": null,
+        "status": "not_established"
+      },
+      "partnerLeads": [
+        "BGC estate parking inquiry",
+        "High Street Central/South parking",
+        "Park Triangle parking"
+      ],
+      "licensedOperatorTagLeads": [],
+      "partnerCommitment": null,
+      "researchPriority": "first_wave_operator_evidence",
+      "fieldQuestions": [
+        "Facility-specific conditions, entrance and rates",
+        "Whether an authorized operator will offer inventory; a contact form is not interest"
+      ],
+      "opportunityScore": null,
+      "commercialRank": null,
+      "rankingStatus": "more_evidence_needed",
+      "physicallyVerified": false,
+      "publicationApproved": false
+    },
+    {
+      "id": "binondo",
+      "name": "Binondo",
+      "studyWindow": [120.967, 14.593, 120.985, 14.609],
+      "windowPolicy": "Analyst-defined research rectangle; may overlap other windows and is not an official neighborhood boundary.",
+      "supply": {
+        "mappedEntities": 125,
+        "deduplicatedFacilityCandidates": 74,
+        "accessUnknown": 80,
+        "restricted": 24,
+        "customerOnly": 10,
+        "byType": {
+          "entrance": 37,
+          "facility_unspecified": 41,
+          "garage": 6,
+          "lot": 27,
+          "street_segment": 14
+        }
+      },
+      "context": "Original first-party attempts did not provide substantive parking evidence; permitted mapped supply includes customer/private and Manila Traffic & Parking Bureau tag leads.",
+      "evidenceReferences": [
+        "original:lucky-chinatown",
+        "original:lucky-corporate",
+        "original:manila-binondo"
+      ],
+      "pricing": {
+        "currentPrice": null,
+        "verifiedRateCards": 0,
+        "rawFeeTagObservationCounts": {
+          "yes": 10,
+          "no": 3,
+          "40": 1
+        },
+        "legacyPriceHints": [
+          {
+            "recordId": "osm:way/296325299:MultiPolygon",
+            "name": "Unnamed parking facility",
+            "tag": "fee",
+            "rawValue": "40",
+            "sourceEditedAt": "2017-06-17T09:14:15Z",
+            "sourceRecordUrl": "https://www.openstreetmap.org/way/296325299",
+            "status": "unverified_historical_source_hint",
+            "currentPrice": null,
+            "limitation": "Unparsed source tag; period, currency/conditions and present operation may be unknown. Not a current offer or willingness-to-pay measure."
+          }
+        ],
+        "interpretation": "Raw source observations may duplicate facilities/entrances. fee=no is not confirmed free/public parking; fee=yes has no inferred amount. No normalized app fee was changed."
+      },
+      "demand": {
+        "currentMeasuredDemand": null,
+        "classification": "proxy_or_unknown",
+        "proposedObservationPeriods": [
+          "Weekday business/errand period and a separate ordinary weekend; proposed, no measured peak."
+        ]
+      },
+      "driverComplaints": {
+        "currentIndependentEvidence": null,
+        "status": "not_established_in_retrieved_sources"
+      },
+      "willingnessToPay": {
+        "currentEvidence": null,
+        "status": "not_established"
+      },
+      "partnerLeads": [
+        "Lucky Chinatown management (unconfirmed contact lead)",
+        "City traffic/parking authority for mapped street segments"
+      ],
+      "licensedOperatorTagLeads": [
+        {
+          "recordId": "osm:relation/14378535:MultiPolygon",
+          "operatorTag": "Manila Traffic & Parking Bureau",
+          "sourceEditedAt": "2024-02-26T17:09:44Z",
+          "status": "unconfirmed_source_tag_lead"
+        },
+        {
+          "recordId": "osm:way/1080689863:MultiPolygon",
+          "operatorTag": "Manila Traffic & Parking Bureau",
+          "sourceEditedAt": "2024-02-26T17:09:44Z",
+          "status": "unconfirmed_source_tag_lead"
+        },
+        {
+          "recordId": "osm:way/1080689865:MultiPolygon",
+          "operatorTag": "Manila Traffic & Parking Bureau",
+          "sourceEditedAt": "2024-02-26T17:09:44Z",
+          "status": "unconfirmed_source_tag_lead"
+        },
+        {
+          "recordId": "osm:way/1081204558:MultiPolygon",
+          "operatorTag": "Land Transportation Office Manila South District Office",
+          "sourceEditedAt": "2024-03-10T01:22:39Z",
+          "status": "unconfirmed_source_tag_lead"
+        },
+        {
+          "recordId": "osm:way/181381944:MultiPolygon",
+          "operatorTag": "Professional Parking Group",
+          "sourceEditedAt": "2025-12-27T11:54:27Z",
+          "status": "unconfirmed_source_tag_lead"
+        }
+      ],
+      "partnerCommitment": null,
+      "researchPriority": "second_wave_evidence_gap",
+      "fieldQuestions": [
+        "Validate any legal visitor supply and exact loading-versus-parking rules",
+        "Obtain current prices and independent driver evidence before a scarcity claim"
+      ],
+      "opportunityScore": null,
+      "commercialRank": null,
+      "rankingStatus": "more_evidence_needed",
+      "physicallyVerified": false,
+      "publicationApproved": false
+    },
+    {
+      "id": "makati-cbd",
+      "name": "Makati CBD",
+      "studyWindow": [121.014, 14.548, 121.03, 14.566],
+      "windowPolicy": "Analyst-defined research rectangle; may overlap other windows and is not an official neighborhood boundary.",
+      "supply": {
+        "mappedEntities": 247,
+        "deduplicatedFacilityCandidates": 128,
+        "accessUnknown": 216,
+        "restricted": 11,
+        "customerOnly": 11,
+        "byType": {
+          "entrance": 72,
+          "facility_unspecified": 97,
+          "garage": 10,
+          "lot": 22,
+          "street_segment": 46
+        }
+      },
+      "context": "Office/retail estate context plus dated 2012 MaPA parking measurements reported in a 2013 study.",
+      "evidenceReferences": [
+        "original:makati-estate",
+        "additional:valdez-parking-2013"
+      ],
+      "pricing": {
+        "currentPrice": null,
+        "verifiedRateCards": 0,
+        "rawFeeTagObservationCounts": {
+          "yes": 9,
+          "P75": 1
+        },
+        "legacyPriceHints": [
+          {
+            "recordId": "osm:node/2153432735:Point",
+            "name": "New World Parking",
+            "tag": "fee",
+            "rawValue": "P75",
+            "sourceEditedAt": "2024-03-01T00:01:30Z",
+            "sourceRecordUrl": "https://www.openstreetmap.org/node/2153432735",
+            "status": "unverified_historical_source_hint",
+            "currentPrice": null,
+            "limitation": "Unparsed source tag; period, currency/conditions and present operation may be unknown. Not a current offer or willingness-to-pay measure."
+          }
+        ],
+        "interpretation": "Raw source observations may duplicate facilities/entrances. fee=no is not confirmed free/public parking; fee=yes has no inferred amount. No normalized app fee was changed."
+      },
+      "demand": {
+        "currentMeasuredDemand": null,
+        "classification": "historical_measurement_only",
+        "proposedObservationPeriods": [
+          "Weekday 08:00–10:00 plus an afternoon sample around14:00–15:00 as a historical replication question, not a current peak forecast."
+        ]
+      },
+      "driverComplaints": {
+        "currentIndependentEvidence": null,
+        "status": "not_established_in_retrieved_sources"
+      },
+      "willingnessToPay": {
+        "currentEvidence": null,
+        "status": "not_established"
+      },
+      "partnerLeads": [
+        "Estate/authorized parking management",
+        "Valero/Legazpi/Salcedo operator leads in source tags"
+      ],
+      "licensedOperatorTagLeads": [],
+      "partnerCommitment": null,
+      "researchPriority": "second_wave_historical_comparison",
+      "fieldQuestions": [
+        "Re-measure current turnover/access and compare periods",
+        "Confirm current pricing and the actual scope of street regulations"
+      ],
+      "opportunityScore": null,
+      "commercialRank": null,
+      "rankingStatus": "more_evidence_needed",
+      "physicallyVerified": false,
+      "publicationApproved": false
+    },
+    {
+      "id": "ortigas",
+      "name": "Ortigas",
+      "studyWindow": [121.048, 14.574, 121.069, 14.596],
+      "windowPolicy": "Analyst-defined research rectangle; may overlap other windows and is not an official neighborhood boundary.",
+      "supply": {
+        "mappedEntities": 279,
+        "deduplicatedFacilityCandidates": 154,
+        "accessUnknown": 200,
+        "restricted": 56,
+        "customerOnly": 12,
+        "byType": {
+          "entrance": 116,
+          "facility_unspecified": 88,
+          "garage": 13,
+          "lot": 53,
+          "street_segment": 9
+        }
+      },
+      "context": "Operator-identified mall/business-district destination; the study window crosses LGUs and contains many mapped restricted/unknown observations.",
+      "evidenceReferences": ["original:sm-megamall"],
+      "pricing": {
+        "currentPrice": null,
+        "verifiedRateCards": 0,
+        "rawFeeTagObservationCounts": {
+          "yes": 25,
+          "no": 3
+        },
+        "legacyPriceHints": [
+          {
+            "recordId": "osm:way/200488598:MultiPolygon",
+            "name": "Unnamed parking facility",
+            "tag": "charge",
+            "rawValue": "50+ PHP",
+            "sourceEditedAt": "2023-05-31T01:31:14Z",
+            "sourceRecordUrl": "https://www.openstreetmap.org/way/200488598",
+            "status": "unverified_historical_source_hint",
+            "currentPrice": null,
+            "limitation": "Unparsed source tag; period, currency/conditions and present operation may be unknown. Not a current offer or willingness-to-pay measure."
+          }
+        ],
+        "interpretation": "Raw source observations may duplicate facilities/entrances. fee=no is not confirmed free/public parking; fee=yes has no inferred amount. No normalized app fee was changed."
+      },
+      "demand": {
+        "currentMeasuredDemand": null,
+        "classification": "proxy_or_unknown",
+        "proposedObservationPeriods": [
+          "Weekday office-arrival period versus evening/weekend retail/event period; proposed."
+        ]
+      },
+      "driverComplaints": {
+        "currentIndependentEvidence": null,
+        "status": "not_established_in_retrieved_sources"
+      },
+      "willingnessToPay": {
+        "currentEvidence": null,
+        "status": "not_established"
+      },
+      "partnerLeads": [
+        "SM Megamall/estate parking management",
+        "SM Keppel Land/Podium and UPark source-tag leads, unconfirmed"
+      ],
+      "licensedOperatorTagLeads": [
+        {
+          "recordId": "osm:node/1981387811:Point",
+          "operatorTag": "SPI Parking Services Inc",
+          "sourceEditedAt": "2025-05-09T12:34:07Z",
+          "status": "unconfirmed_source_tag_lead"
+        },
+        {
+          "recordId": "osm:node/813134328:Point",
+          "operatorTag": "SM Keppel Land",
+          "sourceEditedAt": "2024-07-28T15:46:57Z",
+          "status": "unconfirmed_source_tag_lead"
+        },
+        {
+          "recordId": "osm:way/1229904626:MultiPolygon",
+          "operatorTag": "Robinsons Land Corporation",
+          "sourceEditedAt": "2023-12-09T14:41:45Z",
+          "status": "unconfirmed_source_tag_lead"
+        },
+        {
+          "recordId": "osm:way/395719341:MultiPolygon",
+          "operatorTag": "University of Asia and the Pacific",
+          "sourceEditedAt": "2024-02-26T04:10:13Z",
+          "status": "unconfirmed_source_tag_lead"
+        },
+        {
+          "recordId": "osm:way/67302626:MultiPolygon",
+          "operatorTag": "J3N3 Parking",
+          "sourceEditedAt": "2024-02-28T05:51:45Z",
+          "status": "unconfirmed_source_tag_lead"
+        },
+        {
+          "recordId": "osm:way/67328907:MultiPolygon",
+          "operatorTag": "LuvPark",
+          "sourceEditedAt": "2026-06-27T16:47:40Z",
+          "status": "unconfirmed_source_tag_lead"
+        }
+      ],
+      "partnerCommitment": null,
+      "researchPriority": "second_wave_access_review",
+      "fieldQuestions": [
+        "Review cross-LGU regulation and private/customer conditions",
+        "Deduplicate multiple entrances/floors before usable-supply analysis"
+      ],
+      "opportunityScore": null,
+      "commercialRank": null,
+      "rankingStatus": "more_evidence_needed",
+      "physicallyVerified": false,
+      "publicationApproved": false
+    },
+    {
+      "id": "moa",
+      "name": "MOA area",
+      "studyWindow": [120.972, 14.524, 120.993, 14.544],
+      "windowPolicy": "Analyst-defined research rectangle; may overlap other windows and is not an official neighborhood boundary.",
+      "supply": {
+        "mappedEntities": 107,
+        "deduplicatedFacilityCandidates": 82,
+        "accessUnknown": 80,
+        "restricted": 5,
+        "customerOnly": 19,
+        "byType": {
+          "entrance": 24,
+          "facility_unspecified": 56,
+          "garage": 8,
+          "lot": 18,
+          "street_segment": 1
+        }
+      },
+      "context": "Operator directory names parking buildings; attempted arena FAQ was403, supplying no new parking fact.",
+      "evidenceReferences": ["original:sm-moa", "additional:moa-arena-faq"],
+      "pricing": {
+        "currentPrice": null,
+        "verifiedRateCards": 0,
+        "rawFeeTagObservationCounts": {
+          "yes": 25,
+          "no": 4
+        },
+        "legacyPriceHints": [
+          {
+            "recordId": "osm:way/742804945:MultiPolygon",
+            "name": "Unnamed parking facility",
+            "tag": "charge",
+            "rawValue": "50 PHP",
+            "sourceEditedAt": "2023-07-24T03:56:13Z",
+            "sourceRecordUrl": "https://www.openstreetmap.org/way/742804945",
+            "status": "unverified_historical_source_hint",
+            "currentPrice": null,
+            "limitation": "Unparsed source tag; period, currency/conditions and present operation may be unknown. Not a current offer or willingness-to-pay measure."
+          }
+        ],
+        "interpretation": "Raw source observations may duplicate facilities/entrances. fee=no is not confirmed free/public parking; fee=yes has no inferred amount. No normalized app fee was changed."
+      },
+      "demand": {
+        "currentMeasuredDemand": null,
+        "classification": "proxy_or_unknown",
+        "proposedObservationPeriods": [
+          "Ordinary weekend versus a separately documented arena/convention event session; proposed."
+        ]
+      },
+      "driverComplaints": {
+        "currentIndependentEvidence": null,
+        "status": "not_established_in_retrieved_sources"
+      },
+      "willingnessToPay": {
+        "currentEvidence": null,
+        "status": "not_established"
+      },
+      "partnerLeads": [
+        "SM mall/estate parking management",
+        "MAAX/Arena and Smartpark source-tag leads, unconfirmed"
+      ],
+      "licensedOperatorTagLeads": [
+        {
+          "recordId": "osm:node/26935335:Point",
+          "operatorTag": "First Leisure Ventures Group Inc.",
+          "sourceEditedAt": "2019-08-05T02:54:52Z",
+          "status": "unconfirmed_source_tag_lead"
+        },
+        {
+          "recordId": "osm:node/5213647920:Point",
+          "operatorTag": "First Leisure Ventures Group Inc.",
+          "sourceEditedAt": "2019-08-05T02:54:52Z",
+          "status": "unconfirmed_source_tag_lead"
+        },
+        {
+          "recordId": "osm:node/5237566657:Point",
+          "operatorTag": "SM Mall of Asia",
+          "sourceEditedAt": "2020-02-25T05:27:53Z",
+          "status": "unconfirmed_source_tag_lead"
+        },
+        {
+          "recordId": "osm:node/6200922030:Point",
+          "operatorTag": "Smartpark Systems Solutions Inc.",
+          "sourceEditedAt": "2025-09-05T05:32:06Z",
+          "status": "unconfirmed_source_tag_lead"
+        },
+        {
+          "recordId": "osm:node/6680879828:Point",
+          "operatorTag": "Smartpark Systems Solutions Inc.",
+          "sourceEditedAt": "2022-07-21T00:53:25Z",
+          "status": "unconfirmed_source_tag_lead"
+        },
+        {
+          "recordId": "osm:way/290236189:MultiPolygon",
+          "operatorTag": "Metro Parking Mangement Philippines, Inc.",
+          "sourceEditedAt": "2024-05-22T16:14:32Z",
+          "status": "unconfirmed_source_tag_lead"
+        }
+      ],
+      "partnerCommitment": null,
+      "researchPriority": "second_wave_event_comparison",
+      "fieldQuestions": [
+        "Current entrance, rate conditions and event access changes",
+        "Measure actual spillover/refusal rather than infer it from event presence"
+      ],
+      "opportunityScore": null,
+      "commercialRank": null,
+      "rankingStatus": "more_evidence_needed",
+      "physicallyVerified": false,
+      "publicationApproved": false
+    },
+    {
+      "id": "cubao",
+      "name": "Cubao / Araneta City",
+      "studyWindow": [121.045, 14.613, 121.065, 14.634],
+      "windowPolicy": "Analyst-defined research rectangle; may overlap other windows and is not an official neighborhood boundary.",
+      "supply": {
+        "mappedEntities": 102,
+        "deduplicatedFacilityCandidates": 57,
+        "accessUnknown": 66,
+        "restricted": 17,
+        "customerOnly": 15,
+        "byType": {
+          "entrance": 35,
+          "facility_unspecified": 31,
+          "garage": 4,
+          "lot": 22,
+          "street_segment": 10
+        }
+      },
+      "context": "Eight named operator parking locations, connected malls/transit, and operator-reported busy weekends/paydays/Coliseum nights.",
+      "evidenceReferences": ["additional:araneta-guide-current"],
+      "pricing": {
+        "currentPrice": null,
+        "verifiedRateCards": 0,
+        "rawFeeTagObservationCounts": {
+          "35": 1,
+          "yes": 8
+        },
+        "legacyPriceHints": [
+          {
+            "recordId": "osm:node/1556858539:Point",
+            "name": "Gateway Underground Parking",
+            "tag": "fee",
+            "rawValue": "35",
+            "sourceEditedAt": "2022-06-24T19:11:29Z",
+            "sourceRecordUrl": "https://www.openstreetmap.org/node/1556858539",
+            "status": "unverified_historical_source_hint",
+            "currentPrice": null,
+            "limitation": "Unparsed source tag; period, currency/conditions and present operation may be unknown. Not a current offer or willingness-to-pay measure."
+          }
+        ],
+        "interpretation": "Raw source observations may duplicate facilities/entrances. fee=no is not confirmed free/public parking; fee=yes has no inferred amount. No normalized app fee was changed."
+      },
+      "demand": {
+        "currentMeasuredDemand": null,
+        "classification": "operator_claim_only",
+        "proposedObservationPeriods": [
+          "Ordinary weekday versus documented event evening or payday/weekend; operator claim requires independent observation."
+        ]
+      },
+      "driverComplaints": {
+        "currentIndependentEvidence": null,
+        "status": "not_established_in_retrieved_sources"
+      },
+      "willingnessToPay": {
+        "currentEvidence": null,
+        "status": "not_established"
+      },
+      "partnerLeads": [
+        "Araneta City estate/parking management",
+        "Parking Garage South",
+        "Gateway Mall parking"
+      ],
+      "licensedOperatorTagLeads": [
+        {
+          "recordId": "osm:node/1556858539:Point",
+          "operatorTag": "ACI, Inc.",
+          "sourceEditedAt": "2022-06-24T19:11:29Z",
+          "status": "unconfirmed_source_tag_lead"
+        }
+      ],
+      "partnerCommitment": null,
+      "researchPriority": "first_wave_operator_evidence",
+      "fieldQuestions": [
+        "Resolve facility versus entrance identities",
+        "Test actual event queue/search behavior and legal visitor access",
+        "Determine what existing operator information already solves"
+      ],
+      "opportunityScore": null,
+      "commercialRank": null,
+      "rankingStatus": "more_evidence_needed",
+      "physicallyVerified": false,
+      "publicationApproved": false
+    },
+    {
+      "id": "tomas-morato",
+      "name": "Tomas Morato / Timog",
+      "studyWindow": [121.024, 14.628, 121.045, 14.648],
+      "windowPolicy": "Analyst-defined research rectangle; may overlap other windows and is not an official neighborhood boundary.",
+      "supply": {
+        "mappedEntities": 134,
+        "deduplicatedFacilityCandidates": 89,
+        "accessUnknown": 95,
+        "restricted": 7,
+        "customerOnly": 23,
+        "byType": {
+          "entrance": 42,
+          "facility_unspecified": 56,
+          "garage": 6,
+          "lot": 27,
+          "street_segment": 3
+        }
+      },
+      "context": "Tourism/dining context plus an ordinance with phased Sunday 06:00–10:00 motorized-access/parking restrictions on a specified section.",
+      "evidenceReferences": [
+        "original:qc-morato-tourism",
+        "additional:morato-full-ordinance"
+      ],
+      "pricing": {
+        "currentPrice": null,
+        "verifiedRateCards": 0,
+        "rawFeeTagObservationCounts": {
+          "yes": 6,
+          "no": 2
+        },
+        "legacyPriceHints": [],
+        "interpretation": "Raw source observations may duplicate facilities/entrances. fee=no is not confirmed free/public parking; fee=yes has no inferred amount. No normalized app fee was changed."
+      },
+      "demand": {
+        "currentMeasuredDemand": null,
+        "classification": "proxy_or_unknown",
+        "proposedObservationPeriods": [
+          "Friday/Saturday 19:00–22:00 off-street sample",
+          "A separately confirmed implemented Sunday closure period; verify signs and current phase first."
+        ]
+      },
+      "driverComplaints": {
+        "currentIndependentEvidence": null,
+        "status": "not_established_in_retrieved_sources"
+      },
+      "willingnessToPay": {
+        "currentEvidence": null,
+        "status": "not_established"
+      },
+      "partnerLeads": [
+        "Authorized off-street operators",
+        "Barangay/city traffic officials and business association, subject to authorization"
+      ],
+      "licensedOperatorTagLeads": [
+        {
+          "recordId": "osm:relation/21007217:MultiPolygon",
+          "operatorTag": "GMA Network, Inc.",
+          "sourceEditedAt": "2026-08-01T09:54:43Z",
+          "status": "unconfirmed_source_tag_lead"
+        },
+        {
+          "recordId": "osm:way/1300738852:MultiPolygon",
+          "operatorTag": "ABS-CBN Corporation",
+          "sourceEditedAt": "2024-07-11T18:52:24Z",
+          "status": "unconfirmed_source_tag_lead"
+        }
+      ],
+      "partnerCommitment": null,
+      "researchPriority": "first_wave_legal_risk",
+      "fieldQuestions": [
+        "IRR approval date, current phase, amendments, signs and enforcement",
+        "Whether lawful off-street alternatives remain accessible during restrictions"
+      ],
+      "opportunityScore": null,
+      "commercialRank": null,
+      "rankingStatus": "more_evidence_needed",
+      "physicallyVerified": false,
+      "publicationApproved": false
+    },
+    {
+      "id": "north-edsa",
+      "name": "North EDSA",
+      "studyWindow": [121.016, 14.648, 121.04, 14.665],
+      "windowPolicy": "Analyst-defined research rectangle; may overlap other windows and is not an official neighborhood boundary.",
+      "supply": {
+        "mappedEntities": 88,
+        "deduplicatedFacilityCandidates": 48,
+        "accessUnknown": 79,
+        "restricted": 3,
+        "customerOnly": 6,
+        "byType": {
+          "entrance": 35,
+          "facility_unspecified": 38,
+          "garage": 5,
+          "lot": 5,
+          "street_segment": 5
+        }
+      },
+      "context": "SM operator destination lead; TriNoma and guessed official Grass pages provided no rate/location fact. A shared-provider Grass identity has a large coordinate conflict.",
+      "evidenceReferences": [
+        "original:sm-north",
+        "original:trinoma",
+        "additional:smdc-grass-residences",
+        "additional:smdc-heights-grass"
+      ],
+      "pricing": {
+        "currentPrice": null,
+        "verifiedRateCards": 0,
+        "rawFeeTagObservationCounts": {
+          "yes": 1
+        },
+        "legacyPriceHints": [],
+        "interpretation": "Raw source observations may duplicate facilities/entrances. fee=no is not confirmed free/public parking; fee=yes has no inferred amount. No normalized app fee was changed."
+      },
+      "demand": {
+        "currentMeasuredDemand": null,
+        "classification": "proxy_or_unknown",
+        "proposedObservationPeriods": [
+          "Ordinary weekday and weekend mall period; proposed, no commuting demand measured."
+        ]
+      },
+      "driverComplaints": {
+        "currentIndependentEvidence": null,
+        "status": "not_established_in_retrieved_sources"
+      },
+      "willingnessToPay": {
+        "currentEvidence": null,
+        "status": "not_established"
+      },
+      "partnerLeads": [
+        "SM North EDSA/TriNoma management",
+        "Grass parking-host lead only after property identity/access authority review"
+      ],
+      "licensedOperatorTagLeads": [],
+      "partnerCommitment": null,
+      "researchPriority": "comparison_and_identity_resolution",
+      "fieldQuestions": [
+        "Resolve Grass conflicting points without using corporate footer addresses",
+        "Confirm host authority, customer/resident restrictions and actual fees"
+      ],
+      "opportunityScore": null,
+      "commercialRank": null,
+      "rankingStatus": "more_evidence_needed",
+      "physicallyVerified": false,
+      "publicationApproved": false
+    },
+    {
+      "id": "alabang",
+      "name": "Alabang / Filinvest",
+      "studyWindow": [121.025, 14.41, 121.055, 14.435],
+      "windowPolicy": "Analyst-defined research rectangle; may overlap other windows and is not an official neighborhood boundary.",
+      "supply": {
+        "mappedEntities": 126,
+        "deduplicatedFacilityCandidates": 95,
+        "accessUnknown": 108,
+        "restricted": 4,
+        "customerOnly": 9,
+        "byType": {
+          "entrance": 26,
+          "facility_unspecified": 60,
+          "garage": 7,
+          "lot": 28,
+          "street_segment": 5
+        }
+      },
+      "context": "Southern NCR estate/office context; no direct current parking-rate evidence from attempted mall resources.",
+      "evidenceReferences": [
+        "original:filinvest-city",
+        "original:festival-mall"
+      ],
+      "pricing": {
+        "currentPrice": null,
+        "verifiedRateCards": 0,
+        "rawFeeTagObservationCounts": {
+          "yes": 16,
+          "no": 8
+        },
+        "legacyPriceHints": [],
+        "interpretation": "Raw source observations may duplicate facilities/entrances. fee=no is not confirmed free/public parking; fee=yes has no inferred amount. No normalized app fee was changed."
+      },
+      "demand": {
+        "currentMeasuredDemand": null,
+        "classification": "proxy_or_unknown",
+        "proposedObservationPeriods": [
+          "Weekday office and separate weekend retail period; proposed."
+        ]
+      },
+      "driverComplaints": {
+        "currentIndependentEvidence": null,
+        "status": "not_established_in_retrieved_sources"
+      },
+      "willingnessToPay": {
+        "currentEvidence": null,
+        "status": "not_established"
+      },
+      "partnerLeads": [
+        "Filinvest estate/mall management",
+        "Authorized independent operators from source tags"
+      ],
+      "licensedOperatorTagLeads": [
+        {
+          "recordId": "osm:node/793875296:Point",
+          "operatorTag": "Wilcon Depot, Inc.",
+          "sourceEditedAt": "2023-04-16T11:50:58Z",
+          "status": "unconfirmed_source_tag_lead"
+        }
+      ],
+      "partnerCommitment": null,
+      "researchPriority": "comparison_southern_ncr",
+      "fieldQuestions": [
+        "Legal visitor access, entrance safety and present operation",
+        "Time-matched use and actual driver payments"
+      ],
+      "opportunityScore": null,
+      "commercialRank": null,
+      "rankingStatus": "more_evidence_needed",
+      "physicallyVerified": false,
+      "publicationApproved": false
+    },
+    {
+      "id": "maginhawa",
+      "name": "Maginhawa",
+      "studyWindow": [121.049, 14.637, 121.069, 14.66],
+      "windowPolicy": "Analyst-defined research rectangle; may overlap other windows and is not an official neighborhood boundary.",
+      "supply": {
+        "mappedEntities": 119,
+        "deduplicatedFacilityCandidates": 94,
+        "accessUnknown": 101,
+        "restricted": 10,
+        "customerOnly": 5,
+        "byType": {
+          "entrance": 6,
+          "facility_unspecified": 79,
+          "garage": 1,
+          "lot": 14,
+          "space": 3,
+          "street_segment": 16
+        }
+      },
+      "context": "Official tourism-district context does not establish legal curb parking or measured shortage.",
+      "evidenceReferences": ["original:qc-maginhawa-district"],
+      "pricing": {
+        "currentPrice": null,
+        "verifiedRateCards": 0,
+        "rawFeeTagObservationCounts": {
+          "no": 1,
+          "yes": 3
+        },
+        "legacyPriceHints": [],
+        "interpretation": "Raw source observations may duplicate facilities/entrances. fee=no is not confirmed free/public parking; fee=yes has no inferred amount. No normalized app fee was changed."
+      },
+      "demand": {
+        "currentMeasuredDemand": null,
+        "classification": "proxy_or_unknown",
+        "proposedObservationPeriods": [
+          "Friday/Saturday dining evening and ordinary weekday comparison; proposed."
+        ]
+      },
+      "driverComplaints": {
+        "currentIndependentEvidence": null,
+        "status": "not_established_in_retrieved_sources"
+      },
+      "willingnessToPay": {
+        "currentEvidence": null,
+        "status": "not_established"
+      },
+      "partnerLeads": [
+        "Business association/barangay traffic authority",
+        "Authorized off-street dining/lot hosts, not assumed to have spare spaces"
+      ],
+      "licensedOperatorTagLeads": [
+        {
+          "recordId": "osm:way/629323118:MultiPolygon",
+          "operatorTag": "College of Music Parking Lot",
+          "sourceEditedAt": "2025-09-24T01:08:00Z",
+          "status": "unconfirmed_source_tag_lead"
+        }
+      ],
+      "partnerCommitment": null,
+      "researchPriority": "comparison_small_business",
+      "fieldQuestions": [
+        "Block-specific signs/rules and resident impacts",
+        "Actual visitor search behavior and authorized host inventory"
+      ],
+      "opportunityScore": null,
+      "commercialRank": null,
+      "rankingStatus": "more_evidence_needed",
+      "physicallyVerified": false,
+      "publicationApproved": false
+    }
+  ],
+  "outstandingHumanEvidence": [
+    "Actual physical entrance/access and sign observations",
+    "Authorized operator/owner participation and inventory authority",
+    "Consenting driver interviews/current time-matched parking-use observations",
+    "Legal interpretation and implementation decisions",
+    "Final hotspot selection and publication authorization"
+  ]
+}

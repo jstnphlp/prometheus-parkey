@@ -1,0 +1,3 @@
+Parkey NCR research modifications, 5 November 2026
+
+The Overture Places 2026-10-21.0 parking subset was geographically filtered to Metro Manila research boundaries, normalized into research feature categories, assigned source-preserving identities and evidence/safety flags, and grouped provisionally using explicit provider identity. Original source observations, provider identifiers, licenses, taxonomy and geometry are retained in the accompanying gzip source archives. The data does not establish current visitor access, operation, available capacity or physical verification. These modifications and research assertions are Parkey's; Foursquare and the other source providers do not endorse them.

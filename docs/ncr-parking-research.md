@@ -8,6 +8,12 @@ Read its manifest and [coverage/evidence-gap report](ncr-evidence-gaps.md),
 These deliverables distinguish source observations from facility candidates and
 do not claim a complete inventory or guaranteed public parking.
 
+The later [Phase 1 completion report](ncr-phase1-completion.md) records the
+implemented local Expo preview, publication controls, additional hotspot
+research, persistent issue ledger and fieldwork form. The acquisition guidance
+and frozen evidence below remain the original research baseline; completion and
+release status are in `data/ncr-research/phase1-gates.json`.
+
 Use Node 24 and the pinned pnpm version. On Windows use `pnpm.cmd` if PowerShell
 blocks the pnpm.ps1 launcher. Install with `pnpm.cmd install --frozen-lockfile`.
 Python extraction versions used in the actual run are pinned in

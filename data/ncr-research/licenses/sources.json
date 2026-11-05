@@ -25,6 +25,13 @@
       "sha256": "77d2692c3d64efdd4db18dce2407699baf62930e2b50d6e5ed90b48acf16b7c1",
       "bytes": 25289,
       "note": "Canonical OpenDataCommons text endpoint returned HTTP 403; SPDX text used."
+    },
+    {
+      "file": "Foursquare-NOTICE.txt",
+      "sourceUrl": "https://opensource.foursquare.com/places-notice-txt/",
+      "sha256": "523fcc927f0a58c1d7c0fcf41ee775e007c7d270b011a43875f54ce786506d23",
+      "bytes": 1810,
+      "note": "Official visible NOTICE text, HTML whitespace only normalized; no substantive wording changes."
     }
   ]
 }

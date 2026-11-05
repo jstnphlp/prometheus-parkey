@@ -1,0 +1,562 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="referrer" content="no-referrer" />
+    <title>Parkey private field verification</title>
+    <style>
+      :root {
+        color-scheme: light;
+        font:
+          16px/1.5 system-ui,
+          sans-serif;
+        color: #172b27;
+        background: #f4f6f4;
+      }
+      body {
+        max-width: 860px;
+        margin: auto;
+        padding: 24px 16px 60px;
+      }
+      h1,
+      h2 {
+        line-height: 1.2;
+      }
+      section,
+      fieldset {
+        padding: 20px;
+        margin: 20px 0;
+        border: 1px solid #b9c6c0;
+        border-radius: 12px;
+        background: white;
+      }
+      label {
+        display: block;
+        margin: 14px 0 5px;
+        font-weight: 650;
+      }
+      input:not([type='checkbox']),
+      select,
+      textarea,
+      button {
+        box-sizing: border-box;
+        width: 100%;
+        font: inherit;
+        padding: 10px;
+        border: 1px solid #71877a;
+        border-radius: 6px;
+      }
+      textarea {
+        min-height: 90px;
+      }
+      button {
+        margin-top: 18px;
+        background: #185541;
+        color: white;
+        font-weight: 700;
+        cursor: pointer;
+      }
+      button:disabled {
+        opacity: 0.6;
+        cursor: wait;
+      }
+      .warning {
+        padding: 14px;
+        border-left: 5px solid #a76c00;
+        background: #fff4d9;
+      }
+      .check {
+        font-weight: 400;
+      }
+      #message {
+        min-height: 28px;
+        font-weight: 650;
+      }
+      dt {
+        margin-top: 12px;
+        font-weight: 700;
+      }
+      dd {
+        margin: 0;
+        overflow-wrap: anywhere;
+      }
+      a {
+        color: #175642;
+      }
+      small {
+        display: block;
+      }
+      code {
+        overflow-wrap: anywhere;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Parkey field verification</h1>
+    <p class="warning">
+      Private research only. A source point is not a confirmed vehicle entrance
+      or permission to park. Exported observations remain
+      <strong>unreviewed</strong>; this form cannot verify or publish a
+      location.
+    </p>
+    <p>
+      Open this HTML file locally. Load the committed
+      <code>data/ncr-research/fieldwork-checklist.json</code>. Nothing is
+      uploaded or sent to a server. Export the completed private submission for
+      reconciliation after your actual visit.
+    </p>
+    <section aria-labelledby="choose-heading">
+      <h2 id="choose-heading">Choose a research candidate</h2>
+      <label for="checklist">Load fieldwork checklist JSON</label
+      ><input id="checklist" type="file" accept="application/json,.json" />
+      <label for="route">Inspection route</label
+      ><select id="route" disabled>
+        <option value="first-wave">First wave</option>
+      </select>
+      <label for="search">Find parking candidate</label
+      ><input
+        id="search"
+        type="search"
+        disabled
+        placeholder="Name or unique source ID"
+      />
+      <label for="candidate">Parking candidate</label
+      ><select id="candidate" size="6" disabled></select>
+      <p id="matches" aria-live="polite">Load a checklist to begin.</p>
+    </section>
+    <section id="candidate-details" hidden aria-labelledby="details-heading">
+      <h2 id="details-heading">Visit brief</h2>
+      <dl id="facts"></dl>
+      <h3>Specific on-site questions</h3>
+      <ol id="questions"></ol>
+    </section>
+    <form id="observation-form">
+      <fieldset id="observation" disabled>
+        <legend>Actual on-site observation</legend>
+        <label for="observer">Non-personal observer/evidence reference</label
+        ><input
+          id="observer"
+          maxlength="80"
+          required
+          placeholder="For example, observer-a-visit-01"
+        />
+        <label for="observed">Actual visit date and time</label
+        ><input id="observed" type="datetime-local" required /><small
+          >Use the time of your actual observation in your device's local
+          timezone. Do not prefill a planned visit as completed.</small
+        >
+        <label for="existence">Existence at the source location</label
+        ><select id="existence">
+          <option value="unknown">Unknown / could not establish</option>
+          <option value="exists">Observed mapped object exists</option>
+          <option value="not_found">Could not find the mapped object</option>
+        </select>
+        <label for="access">Observed visitor-access conditions</label
+        ><select id="access">
+          <option value="unknown">Unknown</option>
+          <option value="public_visitors">
+            Evidence supports ordinary visiting drivers
+          </option>
+          <option value="customers">Customers only / conditions apply</option>
+          <option value="private">Private</option>
+          <option value="prohibited">Parking prohibited</option>
+          <option value="permit_only">Permit only</option>
+          <option value="residents">Residents only</option>
+          <option value="staff_only">Staff only</option>
+        </select>
+        <label for="operation">Operation during the visit</label
+        ><select id="operation">
+          <option value="unknown">Unknown</option>
+          <option value="open_observed">Operating when observed</option>
+          <option value="closed_observed">Closed when observed</option>
+          <option value="construction">Construction / obstruction</option>
+        </select>
+        <label for="entrance-longitude"
+          >Separately observed vehicle entrance longitude (optional)</label
+        ><input
+          id="entrance-longitude"
+          type="number"
+          min="-180"
+          max="180"
+          step="any"
+        />
+        <label for="entrance-latitude"
+          >Separately observed vehicle entrance latitude (optional)</label
+        ><input
+          id="entrance-latitude"
+          type="number"
+          min="-90"
+          max="90"
+          step="any"
+        /><small
+          >Leave both blank if no permitted vehicle entrance was actually
+          confirmed. Do not copy the source research anchor into these
+          fields.</small
+        >
+        <label for="rates">Observed rate text and units (optional)</label
+        ><textarea
+          id="rates"
+          maxlength="1000"
+          placeholder="Currency, duration, special conditions, and where observed. Blank means unknown."
+        ></textarea>
+        <label for="hours"
+          >Observed operating / entry-exit hours (optional)</label
+        ><textarea id="hours" maxlength="1000"></textarea>
+        <label for="signs"
+          >Signs, block/side and applicable schedules (optional)</label
+        ><textarea id="signs" maxlength="1000"></textarea>
+        <label for="operator">Authorized operator evidence (optional)</label
+        ><textarea
+          id="operator"
+          maxlength="1000"
+          placeholder="Role and checked facts only; do not collect personal names or contact details."
+        ></textarea>
+        <label for="notes"
+          >What you actually observed and what remains uncertain</label
+        ><textarea
+          id="notes"
+          minlength="20"
+          maxlength="4000"
+          required
+        ></textarea>
+        <label for="photos">Optional permitted photographs (up to three)</label
+        ><input
+          id="photos"
+          type="file"
+          accept="image/png,image/jpeg,image/webp"
+          multiple
+        /><small
+          >Use signs or entrances only where permitted. Remove people, vehicle
+          plates and personal information. Images are resized and re-encoded
+          locally as PNG to discard original EXIF; inspect visible image content
+          yourself. Photos remain in your private exported file.</small
+        >
+        <label class="check"
+          ><input id="attested" type="checkbox" required /> I personally made
+          this actual on-site observation; this is not a planned, online or
+          inferred visit.</label
+        >
+        <label class="check"
+          ><input id="privacy" type="checkbox" required /> I observed
+          access/photography rules and reviewed notes/photos for privacy. I
+          understand that submitting this evidence does not approve parking use
+          or publication.</label
+        >
+        <button id="export" type="submit">
+          Export unreviewed field submission
+        </button>
+      </fieldset>
+    </form>
+    <p id="message" role="status" aria-live="polite"></p>
+    <p>
+      Reconcile the exported file locally with
+      <code>node scripts/ncr-fieldwork-submit.mjs PATH_TO_SUBMISSION.json</code
+      >. This archives private evidence under ignored
+      <code>output/ncr/field-submissions/</code> and appends an audit event.
+      Human review and separate publication approval are still required.
+    </p>
+    <script>
+      const element = (id) => document.getElementById(id)
+      let checklist = null
+      let currentTask = null
+      let dirtyObservation = false
+      const message = (text) => {
+        element('message').textContent = text
+      }
+      const textFact = (label, text) => {
+        const term = document.createElement('dt'),
+          description = document.createElement('dd')
+        term.textContent = label
+        description.textContent = text
+        element('facts').append(term, description)
+      }
+      const safeLink = (label, href) => {
+        const url = new URL(href)
+        if (url.protocol !== 'https:' || url.username || url.password) return
+        const term = document.createElement('dt'),
+          description = document.createElement('dd'),
+          link = document.createElement('a')
+        term.textContent = label
+        link.textContent = href
+        link.href = url.href
+        link.target = '_blank'
+        link.rel = 'noopener noreferrer'
+        description.append(link)
+        element('facts').append(term, description)
+      }
+      function selectTask(id) {
+        if (
+          currentTask?.id !== id &&
+          dirtyObservation &&
+          !window.confirm(
+            'Discard this unexported observation before changing candidates? Export it first to keep it.',
+          )
+        ) {
+          element('candidate').value = currentTask.id
+          return
+        }
+        if (currentTask?.id !== id) {
+          element('observation-form').reset()
+          dirtyObservation = false
+        }
+        currentTask = checklist.tasks.find((task) => task.id === id) || null
+        element('candidate-details').hidden = !currentTask
+        element('observation').disabled = !currentTask
+        element('facts').replaceChildren()
+        element('questions').replaceChildren()
+        if (!currentTask) return
+        const task = currentTask
+        textFact('Name and ID', `${task.name} — ${task.id}`)
+        textFact(
+          'Coordinates',
+          `${task.coordinates[0]}, ${task.coordinates[1]} (longitude, latitude). Research anchor; not a confirmed vehicle entrance.`,
+        )
+        textFact(
+          'Research / verification',
+          `${task.researchStatus} / ${task.verificationStatus}. Publication approved: false.`,
+        )
+        textFact(
+          'Remote source evidence',
+          `${task.remoteEstablished.sourceKind}: ${task.remoteEstablished.mappedType}; mapped access: ${task.remoteEstablished.mappedAccess}; last source edit: ${task.remoteEstablished.sourceEditedAt || 'unknown'}. Source facts remain unverified.`,
+        )
+        safeLink(
+          'Original licensed source',
+          task.remoteEstablished.sourceRecordUrl,
+        )
+        safeLink(
+          'Google Maps search — navigation only',
+          `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(task.coordinates[1] + ',' + task.coordinates[0])}`,
+        )
+        for (const reference of task.remoteEstablished.independentReferences ||
+          []) {
+          textFact('Independent context (limited scope)', reference.fact)
+          safeLink('Context source', reference.url)
+        }
+        textFact('Uncertainty / review reasons', task.uncertainties.join('; '))
+        textFact(
+          'Suggested observation period',
+          checklist.visitPeriods[task.suggestedVisitPeriodKey],
+        )
+        textFact(
+          'Permission / safety',
+          checklist.permissionInstructions[task.operatorPermissionNeededKey],
+        )
+        textFact(
+          'Expected readiness impact',
+          checklist.readinessImpacts[task.readinessImpactKey],
+        )
+        for (const key of task.questionKeys) {
+          const item = document.createElement('li')
+          item.textContent = checklist.questions[key]
+          element('questions').append(item)
+        }
+      }
+      function filterTasks() {
+        const route = element('route').value,
+          query = element('search').value.trim().toLowerCase()
+        const tasks = checklist.tasks.filter(
+          (task) =>
+            (route === 'all' ||
+              (route === 'first-wave' && task.firstWave) ||
+              task.routeId === route) &&
+            (!query ||
+              task.name.toLowerCase().includes(query) ||
+              task.id.toLowerCase().includes(query)),
+        )
+        element('candidate').replaceChildren()
+        for (const task of tasks.slice(0, 100)) {
+          const option = document.createElement('option')
+          option.value = task.id
+          option.textContent = `${task.name} · ${task.id}`
+          element('candidate').append(option)
+        }
+        element('matches').textContent =
+          `${tasks.length} matching candidates; showing up to 100. Search by name or ID to narrow the full queue.`
+        if (tasks.length) {
+          element('candidate').value = tasks[0].id
+          selectTask(tasks[0].id)
+        } else selectTask(null)
+      }
+      element('checklist').addEventListener('change', async (event) => {
+        try {
+          const file = event.target.files[0]
+          if (!file) return
+          if (file.size > 20 * 1024 * 1024)
+            throw new Error('Checklist exceeds 20 MiB')
+          const value = JSON.parse(await file.text())
+          if (
+            value.schemaVersion !== 1 ||
+            !Array.isArray(value.tasks) ||
+            value.tasks.length > 20000 ||
+            !value.sourceHashes ||
+            !value.questions ||
+            !value.visitPeriods ||
+            !value.permissionInstructions ||
+            !value.readinessImpacts ||
+            !Array.isArray(value.routes)
+          )
+            throw new Error('Invalid fieldwork checklist')
+          for (const task of value.tasks)
+            if (
+              typeof task.id !== 'string' ||
+              typeof task.name !== 'string' ||
+              !Array.isArray(task.coordinates) ||
+              task.coordinates.length !== 2 ||
+              !task.coordinates.every(Number.isFinite) ||
+              Math.abs(task.coordinates[0]) > 180 ||
+              Math.abs(task.coordinates[1]) > 90 ||
+              !Array.isArray(task.questionKeys) ||
+              task.questionKeys.some(
+                (key) => typeof value.questions[key] !== 'string',
+              )
+            )
+              throw new Error('Invalid candidate record')
+          checklist = value
+          element('route').replaceChildren()
+          for (const [id, label] of [
+            [
+              'first-wave',
+              `First wave — ${value.tasks.filter((task) => task.firstWave).length} planned candidates`,
+            ],
+            ['all', 'All candidates'],
+            ...value.routes.map((route) => [
+              route.id,
+              `${route.priority}. ${route.id}`,
+            ]),
+          ]) {
+            const option = document.createElement('option')
+            option.value = id
+            option.textContent = label
+            element('route').append(option)
+          }
+          element('route').disabled = false
+          element('search').disabled = false
+          element('candidate').disabled = false
+          filterTasks()
+          message(
+            'Checklist loaded locally. No record has been verified or published.',
+          )
+        } catch (error) {
+          checklist = null
+          currentTask = null
+          element('observation').disabled = true
+          message(error.message)
+        }
+      })
+      element('route').addEventListener('change', filterTasks)
+      element('search').addEventListener('input', filterTasks)
+      element('candidate').addEventListener('change', (event) =>
+        selectTask(event.target.value),
+      )
+      element('observation-form').addEventListener('input', () => {
+        dirtyObservation = true
+      })
+      const nullableText = (id) => element(id).value.trim() || null
+      async function sanitizePhoto(file, index) {
+        if (
+          !['image/png', 'image/jpeg', 'image/webp'].includes(file.type) ||
+          file.size > 12 * 1024 * 1024
+        )
+          throw new Error('Use PNG/JPEG/WebP photos below 12 MiB each')
+        const url = URL.createObjectURL(file)
+        try {
+          const image = new Image()
+          await new Promise((resolve, reject) => {
+            image.onload = resolve
+            image.onerror = () => reject(new Error('Could not decode photo'))
+            image.src = url
+          })
+          const scale = Math.min(1, 1600 / Math.max(image.width, image.height)),
+            canvas = document.createElement('canvas')
+          canvas.width = Math.max(1, Math.round(image.width * scale))
+          canvas.height = Math.max(1, Math.round(image.height * scale))
+          canvas
+            .getContext('2d')
+            .drawImage(image, 0, 0, canvas.width, canvas.height)
+          const dataUrl = canvas.toDataURL('image/png')
+          if (dataUrl.length > 2_800_000)
+            throw new Error(
+              'Sanitized photo exceeds 2 MiB; crop or reduce it before attaching',
+            )
+          return {
+            id: `photo-${index + 1}`,
+            caption:
+              'Observer-supplied evidence; privacy and human review required.',
+            dataUrl,
+          }
+        } finally {
+          URL.revokeObjectURL(url)
+        }
+      }
+      element('observation-form').addEventListener('submit', async (event) => {
+        event.preventDefault()
+        try {
+          if (!currentTask || !element('observation-form').reportValidity())
+            return
+          const observedAt = new Date(element('observed').value).toISOString()
+          if (
+            Date.parse(observedAt) > Date.now() ||
+            Date.parse(observedAt) < Date.parse(checklist.sourceAsOf)
+          )
+            throw new Error(
+              'Enter the actual nonfuture visit time after the research snapshot',
+            )
+          const longitude = element('entrance-longitude').value,
+            latitude = element('entrance-latitude').value
+          if (Boolean(longitude) !== Boolean(latitude))
+            throw new Error(
+              'Enter both entrance coordinates or leave both blank',
+            )
+          const files = [...element('photos').files]
+          if (files.length > 3)
+            throw new Error('Attach at most three optional photos')
+          element('export').disabled = true
+          const photos = await Promise.all(files.map(sanitizePhoto))
+          const submission = {
+            schemaVersion: 1,
+            status: 'submitted_unreviewed',
+            candidateId: currentTask.id,
+            sourceHashes: checklist.sourceHashes,
+            observerReference: element('observer').value.trim(),
+            observedAt,
+            attestedOnSite: element('attested').checked,
+            privacyReviewed: element('privacy').checked,
+            facts: {
+              existence: element('existence').value,
+              access: element('access').value,
+              operation: element('operation').value,
+              entranceCoordinates: longitude
+                ? [Number(longitude), Number(latitude)]
+                : null,
+              ratesText: nullableText('rates'),
+              hoursText: nullableText('hours'),
+              operatorEvidence: nullableText('operator'),
+              signageText: nullableText('signs'),
+            },
+            notes: element('notes').value.trim(),
+            photos,
+          }
+          const url = URL.createObjectURL(
+              new Blob([JSON.stringify(submission, null, 2) + '\n'], {
+                type: 'application/json',
+              }),
+            ),
+            link = document.createElement('a')
+          link.href = url
+          link.download = `parkey-field-submission-${currentTask.id.replace(/[^a-zA-Z0-9-]/g, '-')}.json`
+          link.click()
+          setTimeout(() => URL.revokeObjectURL(url), 1000)
+          dirtyObservation = false
+          message(
+            'Exported private, unreviewed evidence. No verification or publication approval was made. Run the reconciliation command after copying the file to your project.',
+          )
+        } catch (error) {
+          message(error.message)
+        } finally {
+          element('export').disabled = false
+        }
+      })
+    </script>
+  </body>
+</html>

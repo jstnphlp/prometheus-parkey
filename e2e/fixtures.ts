@@ -131,7 +131,10 @@ export { expect }
 
 export async function openMap(page: Page, path = '/') {
   await page.goto(path)
-  await expect(page.getByTestId('discovery-map-ready')).toBeVisible()
+  // Expo serves a compilation shell before the map module is ready on cold CI.
+  await expect(page.getByTestId('discovery-map-ready')).toBeVisible({
+    timeout: 30_000,
+  })
 }
 
 export async function openSpot(page: Page) {
@@ -144,4 +147,49 @@ export async function expandResults(page: Page) {
   await handle.click()
   await handle.click()
   await expect(handle).toHaveAccessibleName(/Parking sheet: full/)
+}
+
+export async function installNavigationSensor(page: Page) {
+  // A deterministic sensor fixture emits fresh timestamped callbacks. Chromium's
+  // context geolocation timestamp can predate a cold Expo compilation by >10s,
+  // correctly failing the app's stale-fix check. Do not weaken that safeguard.
+  // context.setGeolocation also resets the emulated sensor through an
+  // unavailable error on each update, which correctly clears arrival evidence.
+  // Avoid that reset while retaining the app's real consecutive-fix safeguards.
+  await page.addInitScript(() => {
+    let nextId = 1
+    const listeners = new Map<number, EventListener>()
+    navigator.geolocation.watchPosition = (success) => {
+      const deliver = (longitude: number, latitude: number) =>
+        success({
+          coords: {
+            longitude,
+            latitude,
+            accuracy: 5,
+            altitude: null,
+            altitudeAccuracy: null,
+            heading: null,
+            speed: null,
+            toJSON: () => ({}),
+          },
+          timestamp: Date.now(),
+          toJSON: () => ({}),
+        })
+      const listener: EventListener = (event) => {
+        if (event instanceof CustomEvent)
+          deliver(event.detail.longitude, event.detail.latitude)
+      }
+      const id = nextId++
+      listeners.set(id, listener)
+      globalThis.addEventListener('parkey-test-position', listener)
+      setTimeout(() => deliver(121.0308, 14.5653), 0)
+      return id
+    }
+    navigator.geolocation.clearWatch = (id) => {
+      const listener = listeners.get(id)
+      if (listener)
+        globalThis.removeEventListener('parkey-test-position', listener)
+      listeners.delete(id)
+    }
+  })
 }

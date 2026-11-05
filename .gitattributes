@@ -5,6 +5,9 @@ poblacion-places.geojson text eol=lf
 data/parking-open-data-review.json text eol=lf
 data/parking-open-data-reviewed.json text eol=lf
 data/ncr-research/*.json text eol=lf
+data/ncr-research/*.csv text eol=lf
+# Patch context preserves upstream tabs and blank lines; keep its hash portable.
+patches/*.patch text eol=lf -whitespace
 data/ncr-research/licenses/*.json text eol=lf
 data/ncr-research/licenses/*.txt text eol=lf
 data/ncr-research/*.gz -text

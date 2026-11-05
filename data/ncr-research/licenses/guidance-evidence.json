@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "sources": [
+    {
+      "id": "overture-attribution",
+      "url": "https://docs.overturemaps.org/attribution/",
+      "retrievedAt": "2026-11-05T07:40:00.114658+00:00",
+      "httpStatus": 200,
+      "sha256": "5b61d96eb7006ba83cbb774f5b62a02bd937ccfad2a3a087a455270e70de1cc0",
+      "evidenceScope": "Official guidance reviewed for source attribution and publication obligations; not a legal approval."
+    },
+    {
+      "id": "overture-places",
+      "url": "https://docs.overturemaps.org/guides/places/",
+      "retrievedAt": "2026-11-05T07:40:00.146289+00:00",
+      "httpStatus": 200,
+      "sha256": "bca5fcc7bdd8978fa005acf69e22b1bbcebe217aae46b5f8a68cc738c535296e",
+      "evidenceScope": "Official guidance reviewed for source attribution and publication obligations; not a legal approval."
+    },
+    {
+      "id": "osm-attribution",
+      "url": "https://osmfoundation.org/wiki/Licence/Attribution_Guidelines",
+      "retrievedAt": "2026-11-05T07:40:00.173570+00:00",
+      "httpStatus": 200,
+      "sha256": "8ad7c2ce5aa9cdda251a1851a3bb8884349d2ff58e62492c0fec4b61a5ace8c6",
+      "evidenceScope": "Official guidance reviewed for source attribution and publication obligations; not a legal approval."
+    },
+    {
+      "id": "osm-legal",
+      "url": "https://osmfoundation.org/wiki/Licence/Licence_and_Legal_FAQ",
+      "retrievedAt": "2026-11-05T07:40:00.215171+00:00",
+      "httpStatus": 200,
+      "sha256": "80b4a4f4ba9993eb9fb0780a9a9ff25763b4bae8ff0d70c8c494ba3745935e50",
+      "evidenceScope": "Official guidance reviewed for source attribution and publication obligations; not a legal approval."
+    }
+  ],
+  "legalApproval": false
+}

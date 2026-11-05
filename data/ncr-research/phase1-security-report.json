@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "checkedAt": "2026-11-05T08:16:21.647971+00:00",
+  "command": "pnpm audit --prod --json",
+  "rawExitCode": 1,
+  "vulnerabilities": {
+    "info": 0,
+    "low": 1,
+    "moderate": 0,
+    "high": 0,
+    "critical": 0
+  },
+  "changes": {
+    "node-forge": "1.4.0 -> 1.4.1",
+    "glob": "13.0.6 -> 14.0.2",
+    "minimatch": "10.2.6 -> 11.0.1",
+    "@expo/cli": "58.1.15 -> 58.1.19 compatible SDK58 patch",
+    "expo-constants": "58.0.13 -> 58.0.15 (compatible router-server peer)",
+    "expo-font": "58.0.10 -> 58.0.11 (compatible router-server peer)",
+    "deepmerge": "4.3.1 with tracked patches/deepmerge@4.3.1.patch"
+  },
+  "remaining": [
+    {
+      "module": "deepmerge",
+      "severity": "low",
+      "title": "deepmerge mergeObject() allows prototype poisoning of returned objects",
+      "url": "https://github.com/advisories/GHSA-gcqx-w48m-w2h4",
+      "patchedByRepository": true,
+      "disposition": "Version-only registry finding remains. Tracked patch rejects __proto__,constructor,prototype keys in both copied target and source, and the installed-artifact exploit regression passes. No advisory ignored."
+    }
+  ],
+  "frameworkVersionsUnchanged": true,
+  "officialCompatibilityEvidence": [
+    "https://raw.githubusercontent.com/expo/expo/main/packages/%40expo/cli/CHANGELOG.md",
+    "npm:expo@58.0.19 dependencies @expo/cli ^58.1.15",
+    "npm:@expo/cli@58.1.19",
+    "pnpm peers check (no peer dependency issues)"
+  ],
+  "databaseTests": {
+    "status": "BLOCKED",
+    "reason": "Docker executable is not installed on this host; Supabase SQL tests cannot run locally. No database or production action attempted."
+  }
+}

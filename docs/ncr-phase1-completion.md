@@ -22,7 +22,7 @@ commercial, legal, access or physical evidence.
   field scope, rejection/revocation and review expiry. Invalid/tampered ledgers
   fail closed. Approval events cannot manufacture physical evidence badges.
 - Implemented the [Expo development preview](ncr-development-preview.md), with
-  viewport queries, clusters, category filters, original geometry, attribution,
+  a full-screen map, complete-snapshot loading, local clusters, category filters, original geometry, attribution,
   access/evidence labels and unknown facts. Actual public NCR output is empty;
   no candidate has a driving action based on a centroid or research anchor.
 - Extended the [11-area hotspot comparison](ncr-hotspot-comparison.md) with 51
@@ -40,6 +40,14 @@ commercial, legal, access or physical evidence.
   Production arrival/stale-fix guards remain intact. Updated vulnerable
   transitive dependencies and patched deepmerge with an installed-artifact
   exploit regression; no security assertion/advisory was disabled.
+
+The subsequent map review changed the display requirement: all source records
+load once into the explicit private preview, with information/details in modal
+sheets. This replaces viewport-triggered client fetching. The API still bounds
+and validates each page and enforces public eligibility. Visible-scrollbar
+testing reproduced the former 15-pixel layout oscillation; full-screen map
+sizing removes the results-page scrollbar from the map layout. Moving, zooming
+and filtering no longer cause data requests or clear/recreate the map.
 
 Actual commands, results and log hashes are in
 [phase1-verification.json](../data/ncr-research/phase1-verification.json).

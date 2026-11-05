@@ -5,7 +5,7 @@ import type {
   NcrFeatureType,
 } from '@parkey/shared-types'
 import { Link, Stack } from 'expo-router'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   ActivityIndicator,
   FlatList,
@@ -15,29 +15,25 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   View,
 } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import type { Viewport } from './model'
 import {
-  fetchNcrPage,
+  fetchNcrDataset,
   ncrCategories,
   ncrPreviewEnabled,
   ncrResponseCanDisplay,
 } from './ncr-client'
 import NcrMap from './ncr-map'
 import { colors } from './palette'
+import { ModalSheet } from './sheets'
+import { IconButton } from './ui'
 
 const apiUrl =
   process.env.EXPO_PUBLIC_NCR_RESEARCH_URL || 'http://127.0.0.1:8090'
-const initialViewport: Viewport = {
-  west: 120.85,
-  south: 14.3,
-  east: 121.27,
-  north: 14.86,
-  zoom: 11.5,
-}
 const areas: { name: string; point: Coordinate }[] = [
   { name: 'NCR overview', point: [121.035, 14.6] },
   { name: 'Poblacion', point: [121.0325, 14.565] },
@@ -54,11 +50,13 @@ const areas: { name: string; point: Coordinate }[] = [
 ]
 function Action({
   title,
+  label,
   onPress,
   selected = false,
   disabled = false,
 }: {
   title: string
+  label?: string
   onPress: () => void
   selected?: boolean
   disabled?: boolean
@@ -66,6 +64,7 @@ function Action({
   return (
     <Pressable
       accessibilityRole="button"
+      accessibilityLabel={label}
       accessibilityState={{ selected, disabled }}
       disabled={disabled}
       onPress={onPress}
@@ -164,410 +163,480 @@ export default function NcrResearch() {
         : ''
       : 'localhost',
   )
-  const [viewport, setViewport] = useState(initialViewport)
   const [target, setTarget] = useState<{
     coordinate: Coordinate
     zoom: number
-  }>({ coordinate: [121.035, 14.6], zoom: 11.5 })
+  }>({ coordinate: [121.035, 14.58], zoom: 9.4 })
+  const camera = useRef<Viewport | null>(null)
+  const updateViewport = useCallback((next: Viewport) => {
+    camera.current = next
+  }, [])
   const [category, setCategory] = useState<'all' | NcrFeatureType>('all')
   const [mode, setMode] = useState<'public' | 'research_preview'>('public')
   const [storedData, setData] = useState<NcrDiscoveryResponse | null>(null)
-  const [dataQuery, setDataQuery] = useState('')
-  const queryKey = JSON.stringify([viewport, category, mode])
-  const data =
-    dataQuery === queryKey && ncrResponseCanDisplay(storedData, mode)
-      ? storedData
-      : null
+  const privateCache = useRef<NcrDiscoveryResponse | null>(null)
+  const dataset = ncrResponseCanDisplay(storedData, mode) ? storedData : null
+  const data = useMemo(
+    () =>
+      dataset
+        ? {
+            ...dataset,
+            items:
+              category === 'all'
+                ? dataset.items
+                : dataset.items.filter((item) => item.featureType === category),
+            clusters: [],
+          }
+        : null,
+    [dataset, category],
+  )
   const [selectedId, setSelectedId] = useState<string | null>(null)
+  const selected = data?.items.find((item) => item.id === selectedId) || null
+  const [panel, setPanel] = useState<
+    'info' | 'filters' | 'areas' | 'results' | null
+  >(null)
+  const [search, setSearch] = useState('')
   const [loading, setLoading] = useState(false)
+  const [progress, setProgress] = useState({ loaded: 0, total: 0 })
   const [error, setError] = useState<string | null>(null)
   const [mapError, setMapError] = useState(false)
   const [revision, setRevision] = useState(0)
-  const moreRequest = useRef<AbortController | null>(null)
-  const latestQuery = useRef(0)
-  const invalidate = useCallback(() => {
-    latestQuery.current++
-    moreRequest.current?.abort()
-    setData(null)
-    setSelectedId(null)
-  }, [])
-  const updateViewport = useCallback(
-    (next: Viewport) =>
-      setViewport((current) =>
-        current.west === next.west &&
-        current.south === next.south &&
-        current.east === next.east &&
-        current.north === next.north &&
-        current.zoom === next.zoom
-          ? current
-          : next,
-      ),
-    [],
-  )
+  const latestRequest = useRef(0)
   const onMapError = useCallback(() => setMapError(true), [])
+  const onSelect = useCallback((id: string) => {
+    setPanel(null)
+    setSelectedId(id)
+  }, [])
+
   useEffect(() => {
     if (!enabled) return
     const controller = new AbortController(),
-      query = ++latestQuery.current
-    moreRequest.current?.abort()
+      generation = ++latestRequest.current
     let deadline: ReturnType<typeof setTimeout> | undefined
-    const timer = setTimeout(() => {
-      if (mode === 'public') setData(null)
-      setLoading(true)
-      deadline = setTimeout(() => {
-        if (query !== latestQuery.current || controller.signal.aborted) return
-        if (mode === 'public') setData(null)
-        setError(
-          'Research service timed out. Retry or return to the offline Poblacion pilot.',
-        )
+    const start = setTimeout(() => {
+      setData(null)
+      setError(null)
+      if (mode === 'research_preview' && privateCache.current) {
+        setData(privateCache.current)
         setLoading(false)
+        return
+      }
+      setLoading(true)
+      setProgress({ loaded: 0, total: 0 })
+      deadline = setTimeout(() => {
+        if (generation !== latestRequest.current || controller.signal.aborted)
+          return
         controller.abort()
-      }, 12000)
-      void fetchNcrPage(apiUrl, viewport, category, mode, controller.signal)
+        setData(null)
+        setLoading(false)
+        setError(
+          'Loading Metro Manila timed out. Retry to load the complete dataset.',
+        )
+      }, 90000)
+      void fetchNcrDataset(apiUrl, mode, controller.signal, (loaded, total) => {
+        if (generation === latestRequest.current && !controller.signal.aborted)
+          setProgress({ loaded, total })
+      })
         .then((result) => {
-          if (query === latestQuery.current && !controller.signal.aborted) {
-            setData(result)
-            setDataQuery(queryKey)
-            setError(null)
-          }
+          if (generation !== latestRequest.current || controller.signal.aborted)
+            return
+          if (mode === 'research_preview') privateCache.current = result
+          setData(result)
         })
         .catch((failure: unknown) => {
-          if (!controller.signal.aborted && query === latestQuery.current) {
-            if (mode === 'public') setData(null)
-            setError(
-              failure instanceof Error
-                ? failure.message
-                : 'Research service unavailable. Retry or return to the offline pilot.',
-            )
-          }
+          if (generation !== latestRequest.current || controller.signal.aborted)
+            return
+          setData(null)
+          setError(
+            failure instanceof Error
+              ? failure.message
+              : 'Research service unavailable. Retry or return to the pilot.',
+          )
         })
         .finally(() => {
           clearTimeout(deadline)
-          if (!controller.signal.aborted && query === latestQuery.current)
+          if (
+            generation === latestRequest.current &&
+            !controller.signal.aborted
+          )
             setLoading(false)
         })
-    }, 350)
+    }, 0)
     return () => {
-      clearTimeout(timer)
+      clearTimeout(start)
       clearTimeout(deadline)
       controller.abort()
     }
-  }, [enabled, viewport, category, mode, revision, queryKey])
+  }, [enabled, mode, revision])
   useEffect(() => {
-    if (mode !== 'public' || !data?.totalMatched) return
-    const dueAt = Date.parse(data.reviewDueAt || '')
+    if (mode !== 'public' || !dataset?.totalMatched) return
+    const dueAt = Date.parse(dataset.reviewDueAt || '')
     const timer = setTimeout(
       () => {
-        invalidate()
-        setRevision((v) => v + 1)
+        setData(null)
+        setSelectedId(null)
+        setRevision((value) => value + 1)
       },
       Math.max(0, Math.min(30000, dueAt - Date.now())),
     )
     return () => clearTimeout(timer)
-  }, [data, mode, invalidate])
-  useEffect(() => () => moreRequest.current?.abort(), [])
-  async function loadMore() {
-    if (!data?.nextCursor || loading) return
-    const controller = new AbortController(),
-      query = latestQuery.current,
-      version = data.dataVersion
-    moreRequest.current = controller
-    setLoading(true)
-    try {
-      const result = await fetchNcrPage(
-        apiUrl,
-        viewport,
-        category,
-        mode,
-        controller.signal,
-        data.nextCursor,
-      )
-      if (query !== latestQuery.current || controller.signal.aborted) return
-      if (result.dataVersion !== version) {
-        setRevision((v) => v + 1)
-        return
-      }
-      setData((current) =>
-        current
-          ? {
-              ...result,
-              items: [
-                ...current.items,
-                ...result.items.filter(
-                  (item) =>
-                    !current.items.some((previous) => previous.id === item.id),
-                ),
-              ],
-            }
-          : result,
-      )
-    } catch (failure) {
-      if (!controller.signal.aborted) {
-        if (mode === 'public') setData(null)
-        setError(
-          failure instanceof Error
-            ? failure.message
-            : 'Could not load the next page.',
-        )
-      }
-    } finally {
-      if (query === latestQuery.current && !controller.signal.aborted)
-        setLoading(false)
-    }
-  }
+  }, [dataset, mode])
   function changeMode(next: typeof mode) {
-    invalidate()
+    if (next === mode) return
+    latestRequest.current++
+    setData(null)
+    setSelectedId(null)
+    setPanel(null)
     setMode(next)
   }
-  const selected = data?.items.find((item) => item.id === selectedId)
+  function retry() {
+    latestRequest.current++
+    privateCache.current = null
+    setData(null)
+    setSelectedId(null)
+    setRevision((value) => value + 1)
+  }
+  function zoomBy(amount: number) {
+    const view = camera.current
+    setTarget({
+      coordinate: view
+        ? [(view.west + view.east) / 2, (view.south + view.north) / 2]
+        : target.coordinate,
+      zoom: Math.max(8.5, Math.min(20, (view?.zoom ?? target.zoom) + amount)),
+    })
+  }
+  const results = useMemo(() => {
+    const term = search.trim().toLocaleLowerCase()
+    return (data?.items || []).filter(
+      (item) =>
+        !term ||
+        item.name.toLocaleLowerCase().includes(term) ||
+        item.id.toLocaleLowerCase().includes(term),
+    )
+  }, [data, search])
+  const categoryLabel =
+    ncrCategories.find((c) => c.value === category)?.label || 'All features'
   return (
-    <View
-      style={[
-        styles.screen,
-        { paddingTop: insets.top, paddingBottom: insets.bottom },
-      ]}
-    >
+    <View style={styles.screen} testID="ncr-screen">
       <Stack.Screen
-        options={{ title: 'NCR research preview', headerShown: true }}
+        options={{ title: 'Metro Manila parking map', headerShown: false }}
       />
-      <FlatList
-        data={enabled && !selected ? data?.items || [] : []}
-        keyExtractor={(item) => item.id}
-        style={styles.list}
-        initialNumToRender={12}
-        ListHeaderComponent={
-          <>
-            <View style={styles.header}>
-              <Link href="/">
-                Return to Poblacion pilot and offline fallback
-              </Link>
-              <Text selectable style={styles.warning}>
-                Private development preview. Unapproved records are not public
-                listings. Coverage is incomplete.
+      <View style={StyleSheet.absoluteFill} testID="ncr-map-surface">
+        {enabled ? (
+          <NcrMap
+            data={data}
+            selectedId={selectedId}
+            target={target}
+            onViewport={updateViewport}
+            onSelect={onSelect}
+            onCluster={(coordinate) =>
+              setTarget({
+                coordinate,
+                zoom: Math.min(20, (camera.current?.zoom ?? target.zoom) + 2),
+              })
+            }
+            onError={onMapError}
+          />
+        ) : null}
+      </View>
+      <View
+        style={[styles.topOverlay, { top: insets.top + 12 }]}
+        pointerEvents="box-none"
+      >
+        <View style={styles.toolbar}>
+          <View style={styles.titleRow}>
+            <Link
+              href="/"
+              accessibilityLabel="Return to Poblacion pilot and offline fallback"
+              style={styles.backLink}
+            >
+              ← Pilot
+            </Link>
+            <View style={styles.heading}>
+              <Text style={styles.title}>Metro Manila</Text>
+              <Text style={styles.caption}>Parking research</Text>
+            </View>
+            <IconButton
+              icon="info"
+              label="NCR map information"
+              onPress={() => setPanel('info')}
+            />
+          </View>
+          <View style={styles.controls}>
+            <Action
+              title="Public"
+              label="Approved projection"
+              selected={mode === 'public'}
+              onPress={() => changeMode('public')}
+            />
+            <Action
+              title="Private research"
+              label="Open private research"
+              selected={mode === 'research_preview'}
+              onPress={() => changeMode('research_preview')}
+            />
+          </View>
+          <View style={styles.controls}>
+            <Action title={categoryLabel} onPress={() => setPanel('filters')} />
+            <Action title="Jump to area" onPress={() => setPanel('areas')} />
+            <Action
+              title="Locations"
+              onPress={() => setPanel('results')}
+              disabled={!dataset}
+            />
+          </View>
+        </View>
+      </View>
+      <View style={[styles.zoomControls, { bottom: insets.bottom + 132 }]}>
+        <IconButton icon="plus" label="Zoom in" onPress={() => zoomBy(1)} />
+        <Action title="−" label="Zoom out" onPress={() => zoomBy(-1)} />
+      </View>
+      <View
+        style={[styles.bottomOverlay, { bottom: insets.bottom + 12 }]}
+        pointerEvents="box-none"
+      >
+        <View style={styles.statusCard} testID="ncr-result-summary">
+          {!enabled ? (
+            <Text style={styles.warning}>
+              Research preview unavailable. Open a development build with the
+              local research service.
+            </Text>
+          ) : loading ? (
+            <View style={styles.statusRow}>
+              <ActivityIndicator />
+              <Text style={styles.statusText}>
+                Loading all NCR records
+                {progress.total
+                  ? `: ${progress.loaded.toLocaleString()} / ${progress.total.toLocaleString()}`
+                  : '…'}
               </Text>
             </View>
-            {!enabled ? (
-              <View style={styles.detail}>
-                <Text accessibilityRole="header" style={styles.title}>
-                  Research preview unavailable
+          ) : error ? (
+            <View style={styles.statusRow}>
+              <Text
+                accessibilityRole="alert"
+                style={[styles.statusText, styles.error]}
+              >
+                {error}
+              </Text>
+              <Action title="Retry / refresh" onPress={retry} />
+            </View>
+          ) : dataset ? (
+            <>
+              <Text style={styles.count}>
+                {dataset.items.length.toLocaleString()}{' '}
+                {mode === 'public' ? 'approved' : 'research'} records loaded ·{' '}
+                {(data?.items.length || 0).toLocaleString()} shown
+              </Text>
+              {mode === 'public' && !dataset.items.length ? (
+                <Text testID="ncr-empty" style={styles.caption}>
+                  No NCR records are approved for public display. This does not
+                  mean no parking exists.
                 </Text>
-                <Text selectable>
-                  This screen requires a development build and a loopback
-                  research service. The Poblacion pilot remains available.
+              ) : (
+                <Text style={styles.warning}>
+                  Unverified research · Check access and posted restrictions
                 </Text>
-              </View>
-            ) : (
-              <>
-                <ScrollView
-                  horizontal
-                  style={styles.strip}
-                  contentContainerStyle={styles.stripContent}
-                >
-                  <Action
-                    title="Approved projection"
-                    selected={mode === 'public'}
-                    onPress={() => changeMode('public')}
-                  />
-                  <Action
-                    title="Open private research"
-                    selected={mode === 'research_preview'}
-                    onPress={() => changeMode('research_preview')}
-                  />
-                  <Action
-                    title="Retry / refresh"
-                    onPress={() => setRevision((v) => v + 1)}
-                  />
-                </ScrollView>
-                <ScrollView
-                  horizontal
-                  style={styles.strip}
-                  contentContainerStyle={styles.stripContent}
-                >
-                  {areas.map((area, i) => (
-                    <Action
-                      key={area.name}
-                      title={area.name}
-                      onPress={() => {
-                        setSelectedId(null)
-                        setTarget({
-                          coordinate: area.point,
-                          zoom: i === 0 ? 11.5 : 15,
-                        })
-                      }}
-                    />
-                  ))}
-                </ScrollView>
-                <ScrollView
-                  horizontal
-                  style={styles.strip}
-                  contentContainerStyle={styles.stripContent}
-                >
-                  {ncrCategories.map((c) => (
-                    <Action
-                      key={c.value}
-                      title={c.label}
-                      selected={category === c.value}
-                      onPress={() => {
-                        invalidate()
-                        setCategory(c.value)
-                      }}
-                    />
-                  ))}
-                </ScrollView>
-                <View style={styles.map}>
-                  <NcrMap
-                    data={data}
-                    selectedId={selectedId}
-                    target={target}
-                    onViewport={updateViewport}
-                    onSelect={setSelectedId}
-                    onCluster={(coordinate) =>
-                      setTarget({
-                        coordinate,
-                        zoom: Math.min(18, viewport.zoom + 2),
-                      })
-                    }
-                    onError={onMapError}
-                  />
-                </View>
-                <Text style={styles.legend} selectable>
-                  Facilities: purple · Entrances: amber · Bays: teal · Streets:
-                  lines · Restricted: red. All markers are research anchors.
-                </Text>
-                {loading ? (
-                  <View style={styles.status}>
-                    <ActivityIndicator />
-                    <Text selectable>
-                      Loading viewport; prior results may remain visible.
-                    </Text>
-                  </View>
-                ) : null}
-                {error ? (
-                  <Text
-                    accessibilityRole="alert"
-                    selectable
-                    style={styles.error}
-                  >
-                    {error}
-                  </Text>
-                ) : null}
-                {mapError ? (
-                  <Text selectable style={styles.warning}>
-                    Basemap or graphics unavailable. Research results remain
-                    accessible below.
-                  </Text>
-                ) : null}
-                {data ? (
-                  <View style={styles.summary} testID="ncr-result-summary">
-                    <Text selectable>{data.notice}</Text>
-                    <Text selectable>
-                      {data.totalMatched}{' '}
-                      {mode === 'public' ? 'approved' : 'research'} observations
-                      match this viewport.{' '}
-                      {data.truncated
-                        ? 'More results exist; load the next page or zoom in.'
-                        : ''}
-                    </Text>
-                    <Text selectable>
-                      Source snapshot: {data.coverage.sourceAsOf}.
-                      Municipalities are community-mapped, not a legal boundary
-                      determination.
-                    </Text>
-                    {data.attribution.map((a) => (
-                      <Text selectable key={a.label}>
-                        {a.label} · {a.url}
-                      </Text>
-                    ))}
-                  </View>
-                ) : null}
-                {data &&
-                !loading &&
-                !data.items.length &&
-                !data.clusters.length ? (
-                  <Text selectable style={styles.summary} testID="ncr-empty">
-                    {mode === 'public'
-                      ? 'No NCR records are approved for public display. This does not mean no parking exists.'
-                      : 'No source observations match this viewport/filter. Coverage is incomplete.'}
-                  </Text>
-                ) : null}
-
-                {selected ? (
-                  <View>
-                    <ItemFacts item={selected} />
-                    <Action
-                      title="Close research details"
-                      onPress={() => setSelectedId(null)}
-                    />
-                  </View>
-                ) : (
-                  data?.clusters.map((c) => (
-                    <View key={c.id} style={styles.row}>
-                      <Text selectable>
-                        {c.sourceObservationCount} source observations ?{' '}
-                        {c.facilityCandidateCount} facility candidates. No space
-                        availability inferred.
-                      </Text>
-                      <Action
-                        title={`Inspect cluster ${c.id}`}
-                        onPress={() =>
-                          setTarget({
-                            coordinate: c.coordinate,
-                            zoom: Math.min(18, viewport.zoom + 2),
-                          })
-                        }
-                      />
-                    </View>
-                  ))
-                )}
-              </>
-            )}
-          </>
-        }
-        renderItem={({ item }) => (
+              )}
+            </>
+          ) : null}
+          {mapError ? (
+            <Text style={styles.warning}>
+              Basemap unavailable. Open Locations to inspect loaded research.
+            </Text>
+          ) : null}
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel={`Research details for ${item.name}`}
-            testID={`ncr-row-${item.id}`}
-            onPress={() => setSelectedId(item.id)}
-            style={styles.row}
+            accessibilityLabel="Sources and map credits"
+            onPress={() => setPanel('info')}
           >
-            <Text selectable style={styles.rowName}>
-              {item.name} ? {item.featureType}
-            </Text>
-            <Text selectable>
-              {item.restrictedAccess
-                ? 'Restricted ? research only'
-                : `Access: ${item.accessClass}, unconfirmed`}{' '}
-              ?{' '}
-              {item.evidence.physicallyVerified
-                ? 'Physical evidence recorded'
-                : 'Not field verified'}
+            <Text style={styles.caption}>
+              © OpenStreetMap contributors · Overture · Credits
             </Text>
           </Pressable>
-        )}
-        ListFooterComponent={
-          !selected && data?.nextCursor ? (
+        </View>
+      </View>
+      {panel === 'info' ? (
+        <ModalSheet title="NCR map information" onClose={() => setPanel(null)}>
+          <ScrollView contentContainerStyle={styles.modalContent}>
+            <Text style={styles.warning}>
+              Private development preview. All new NCR candidates remain
+              unpublished. Mapped records are not parking offers.
+            </Text>
+            <Text>
+              The complete NCR snapshot loads once when private research is
+              opened. Moving the map, zooming and filtering use the loaded
+              records; they do not fetch another viewport.
+            </Text>
+            <Text>
+              Facilities: purple. Entrances: amber. Individual bays: teal.
+              Streets: lines. Restricted: red. Cluster numbers count source
+              observations, not facilities or available spaces.
+            </Text>
+            <Text>
+              No live availability is provided. Fees, hours and capacity remain
+              unknown unless separately established. A source anchor or polygon
+              center is not a confirmed vehicle entrance.
+            </Text>
+            <Text>
+              Research, online corroboration, operator confirmation, physical
+              verification and publication approval are separate states.
+              Private/restricted records appear only in explicit research mode.
+            </Text>
+            <Text>
+              Source snapshot: {dataset?.coverage.sourceAsOf || 'not loaded'}.
+              Community-mapped LGU boundaries are not a legal boundary
+              determination.
+            </Text>
+            {(dataset?.attribution || []).map((a) => (
+              <Text selectable key={a.label}>
+                {a.label} · {a.url}
+              </Text>
+            ))}
+            <Text selectable>
+              Basemap: OpenFreeMap / OpenMapTiles. © OpenStreetMap contributors.
+              Renderer: MapLibre.
+            </Text>
             <Action
-              title="Load more research results"
-              disabled={loading}
+              title="Retry / refresh"
               onPress={() => {
-                void loadMore()
+                setPanel(null)
+                retry()
               }}
             />
-          ) : undefined
-        }
-      />
+          </ScrollView>
+        </ModalSheet>
+      ) : null}
+      {panel === 'areas' ? (
+        <ModalSheet title="Jump to area" onClose={() => setPanel(null)}>
+          <ScrollView contentContainerStyle={styles.modalContent}>
+            {areas.map((area, index) => (
+              <Action
+                key={area.name}
+                title={area.name}
+                onPress={() => {
+                  setTarget({
+                    coordinate: area.point,
+                    zoom: index === 0 ? 9.4 : 15,
+                  })
+                  setPanel(null)
+                }}
+              />
+            ))}
+          </ScrollView>
+        </ModalSheet>
+      ) : null}
+      {panel === 'filters' ? (
+        <ModalSheet title="Parking categories" onClose={() => setPanel(null)}>
+          <ScrollView contentContainerStyle={styles.modalContent}>
+            {ncrCategories.map((c) => (
+              <View key={c.value} style={styles.filterRow}>
+                <View style={styles.flex}>
+                  <Action
+                    title={c.label}
+                    selected={category === c.value}
+                    onPress={() => {
+                      setCategory(c.value)
+                      setSelectedId(null)
+                      setPanel(null)
+                    }}
+                  />
+                </View>
+                <Text style={styles.caption}>
+                  {(
+                    dataset?.items.filter(
+                      (item) =>
+                        c.value === 'all' || item.featureType === c.value,
+                    ).length || 0
+                  ).toLocaleString()}
+                </Text>
+              </View>
+            ))}
+          </ScrollView>
+        </ModalSheet>
+      ) : null}
+      {panel === 'results' ? (
+        <ModalSheet title="Loaded locations" onClose={() => setPanel(null)}>
+          <TextInput
+            value={search}
+            onChangeText={setSearch}
+            accessibilityLabel="Search loaded locations"
+            placeholder="Search a name or source ID"
+            style={styles.search}
+          />
+          <FlatList
+            data={results}
+            keyExtractor={(item) => item.id}
+            initialNumToRender={12}
+            keyboardShouldPersistTaps="handled"
+            style={styles.resultList}
+            ListEmptyComponent={
+              <Text style={styles.modalContent}>
+                No loaded locations match this search or category.
+              </Text>
+            }
+            renderItem={({ item }) => (
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={`Research details for ${item.name}`}
+                onPress={() => {
+                  setPanel(null)
+                  setSelectedId(item.id)
+                  setTarget({ coordinate: item.representativePoint, zoom: 16 })
+                }}
+                style={styles.row}
+              >
+                <Text style={styles.rowName}>{item.name}</Text>
+                <Text style={styles.caption}>
+                  {item.featureType} ·{' '}
+                  {item.restrictedAccess
+                    ? 'Restricted access'
+                    : `Access: ${item.accessClass}`}{' '}
+                  · Not field verified
+                </Text>
+              </Pressable>
+            )}
+          />
+        </ModalSheet>
+      ) : null}
+      {selected ? (
+        <ModalSheet
+          title="Research details"
+          onClose={() => setSelectedId(null)}
+        >
+          <ScrollView>
+            <ItemFacts item={selected} />
+          </ScrollView>
+        </ModalSheet>
+      ) : null}
     </View>
   )
 }
-
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: colors.canvas },
-  header: { padding: 12, gap: 8 },
+  screen: { flex: 1, backgroundColor: colors.canvas, overflow: 'hidden' },
+  topOverlay: {
+    position: 'absolute',
+    left: 12,
+    right: 12,
+    alignItems: 'flex-start',
+  },
+  toolbar: {
+    width: '100%',
+    maxWidth: 510,
+    backgroundColor: colors.surface,
+    borderRadius: 20,
+    padding: 12,
+    gap: 10,
+    borderWidth: 1,
+    borderColor: colors.border,
+    boxShadow: '0 4px 20px rgba(30,27,56,0.12)',
+  },
+  titleRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  heading: { flex: 1 },
   title: { fontSize: 20, fontWeight: '700', color: colors.ink },
-  warning: { color: colors.amber },
-  strip: { flexGrow: 0, maxHeight: 52 },
-  stripContent: { paddingHorizontal: 12, gap: 8, alignItems: 'center' },
+  caption: { fontSize: 12, color: colors.muted },
+  backLink: { color: colors.brand, fontWeight: '600', paddingVertical: 10 },
+  controls: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   action: {
     paddingHorizontal: 12,
     paddingVertical: 10,
@@ -578,18 +647,57 @@ const styles = StyleSheet.create({
   },
   selected: { backgroundColor: colors.brand },
   disabled: { opacity: 0.5 },
-  map: { height: 320, flexShrink: 0 },
-  legend: { padding: 8, fontSize: 12, color: colors.muted },
-  status: { flexDirection: 'row', gap: 8, padding: 8 },
-  error: { padding: 8, color: colors.error },
-  summary: { paddingHorizontal: 12, gap: 4, fontSize: 12 },
-  list: { flex: 1 },
-  detail: { padding: 16, gap: 10 },
-  row: {
+  bottomOverlay: {
+    position: 'absolute',
+    left: 12,
+    right: 12,
+    alignItems: 'center',
+  },
+  statusCard: {
+    width: '100%',
+    maxWidth: 680,
+    backgroundColor: colors.surface,
     padding: 12,
+    gap: 5,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: colors.border,
+    boxShadow: '0 4px 20px rgba(30,27,56,0.12)',
+  },
+  count: { fontSize: 14, fontWeight: '600', color: colors.ink },
+  warning: { fontSize: 12, color: colors.amber },
+  error: { color: colors.error },
+  statusRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  statusText: { flex: 1, fontSize: 13, color: colors.ink },
+  zoomControls: {
+    position: 'absolute',
+    right: 12,
+    gap: 6,
+    backgroundColor: colors.surface,
+    borderRadius: 14,
+    padding: 4,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  modalContent: { paddingHorizontal: 24, paddingBottom: 24, gap: 16 },
+  filterRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  flex: { flex: 1 },
+  search: {
+    marginHorizontal: 24,
+    marginBottom: 12,
+    padding: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: colors.border,
+    color: colors.ink,
+  },
+  resultList: { maxHeight: 440 },
+  row: {
+    padding: 16,
     borderBottomWidth: 1,
     borderColor: colors.border,
-    gap: 4,
+    gap: 6,
   },
   rowName: { fontWeight: '600', color: colors.ink },
+  detail: { padding: 24, gap: 12 },
 })

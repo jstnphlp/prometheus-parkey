@@ -375,14 +375,15 @@
       "acceptanceCriteria": [
         {
           "id": "development-preview",
-          "description": "Actual snapshot loaded privately in existing Expo architecture; public output empty; geometry, labels, unknown facts and pilot fallback retained.",
+          "description": "User-requested full-screen map with overlay controls and modal facts; complete private snapshot loaded once, local clustering/filtering, no pan-triggered requests; public output remains empty.",
           "status": "PASS",
           "executed": true,
           "satisfied": true,
           "evidenceReferences": [
             "docs/ncr-development-preview.md",
             "e2e/ncr-research.spec.ts",
-            "data/ncr-research/phase1-verification.json#e2e"
+            "data/ncr-research/phase1-verification.json#e2e",
+            "data/ncr-research/ncr-ui-verification.json"
           ]
         },
         {
@@ -446,6 +447,16 @@
           "checkId": "sql-ci",
           "result": "PASS",
           "evidenceReference": "data/ncr-research/phase1-verification.json#sql-ci"
+        },
+        {
+          "checkId": "ncr-fullscreen-e2e",
+          "result": "PASS",
+          "evidenceReference": "data/ncr-research/ncr-ui-verification.json#ncr-fullscreen-e2e"
+        },
+        {
+          "checkId": "ncr-fullscreen-unit",
+          "result": "PASS",
+          "evidenceReference": "data/ncr-research/ncr-ui-verification.json#ncr-fullscreen-unit"
         }
       ],
       "evidenceReferences": [
@@ -457,7 +468,8 @@
         "docs/ncr-licensing-publication.md",
         "e2e/ncr-research.spec.ts",
         "scripts/ncr-preview-server.test.mjs",
-        "scripts/ncr-publication.test.mjs"
+        "scripts/ncr-publication.test.mjs",
+        "data/ncr-research/ncr-ui-verification.json"
       ],
       "outstandingBlockers": [
         "Accountable human legal/access/publication approval is absent; all new NCR candidates remain unpublished. No deployment or merge authorized."
@@ -549,10 +561,11 @@
     "automatedCheckEvidence": "data/ncr-research/phase1-verification.json",
     "remoteCI": "PASS on 4f7c9444050897f89d238f730e294cefc4a968e9; validate, 42 browser tests, 186 SQL assertions. Final font correction has native/targeted verification; PR checks execute follow-up head.",
     "localSQL": "PASS via disposable runner CI: 4 files, 186 assertions. Docker remains absent locally.",
-    "nativeRendering": "PASS limited Android 17 emulator smoke on existing development client/current Metro code. iOS not executed.",
+    "nativeRendering": "Historical initial preview Android smoke passed. New full-screen native renderer typechecked; no new native smoke or iOS result claimed.",
     "deployment": "NOT_AUTHORIZED",
     "productionDatabase": "UNMODIFIED",
-    "mergeToMain": "NOT_AUTHORIZED"
+    "mergeToMain": "NOT_AUTHORIZED",
+    "uiContinuation": "Full-screen client and complete-once loading supersede the earlier viewport requirement by explicit user request. See ncr-ui-verification.json; public approval gate unchanged."
   },
   "nextHumanActions": [
     "Inspect six preserved Poblacion owner tasks, then other first-wave pockets; submit only actual observations.",

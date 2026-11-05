@@ -197,7 +197,9 @@ export async function fetchNcrPage(
   mode: 'public' | 'research_preview',
   signal: AbortSignal,
   cursor: string | null = null,
+  limit = 200,
 ): Promise<NcrDiscoveryResponse> {
+  signal.throwIfAborted()
   const url = new URL(
     mode === 'public' ? '/api/ncr/discovery' : '/api/ncr/research-preview',
     baseUrl,
@@ -208,7 +210,7 @@ export async function fetchNcrPage(
   )
   url.searchParams.set('zoom', String(viewport.zoom))
   url.searchParams.set('category', category)
-  url.searchParams.set('limit', '200')
+  url.searchParams.set('limit', String(limit))
   if (cursor) url.searchParams.set('cursor', cursor)
   const response = await fetch(url.toString(), {
     signal,
@@ -223,6 +225,7 @@ export async function fetchNcrPage(
       `NCR research service returned ${response.status}. Start the local preview server or retry.`,
     )
   const value: unknown = await response.json()
+  signal.throwIfAborted()
   if (!isNcrResponse(value) || value.mode !== mode)
     throw new Error(
       'The NCR service returned an unsupported response. No records were displayed.',
@@ -232,4 +235,99 @@ export async function fetchNcrPage(
       'The public response failed publication checks. No records were displayed.',
     )
   return value
+}
+
+const ncrDatasetViewport: Viewport = {
+  west: 120.85,
+  south: 14.3,
+  east: 121.27,
+  north: 14.86,
+  zoom: 20,
+}
+
+function snapshotMetadata(page: NcrDiscoveryResponse) {
+  return JSON.stringify([
+    page.dataVersion,
+    page.totalMatched,
+    page.coverage.sourceAsOf,
+    page.coverage.boundarySource,
+    page.coverage.scope,
+    page.reviewDueAt,
+    page.notice,
+    page.attribution.map(({ label, url }) => [label, url]),
+  ])
+}
+
+/** Load one complete, consistent NCR snapshot; panning and filtering stay local. */
+export async function fetchNcrDataset(
+  baseUrl: string,
+  mode: NcrDiscoveryResponse['mode'],
+  signal: AbortSignal,
+  onProgress?: (loaded: number, total: number) => void,
+): Promise<NcrDiscoveryResponse> {
+  const items: NcrDiscoveryItem[] = []
+  const ids = new Set<string>()
+  const cursors = new Set<string>()
+  let first: NcrDiscoveryResponse | null = null
+  let cursor: string | null = null
+  let latestGeneratedAt: string
+  do {
+    signal.throwIfAborted()
+    const page = await fetchNcrPage(
+      baseUrl,
+      ncrDatasetViewport,
+      'all',
+      mode,
+      signal,
+      cursor,
+      500,
+    )
+    if (!first) first = page
+    if (!page.dataVersion || snapshotMetadata(page) !== snapshotMetadata(first))
+      throw new Error(
+        'The NCR snapshot changed while loading. Retry to load a complete dataset.',
+      )
+    if (
+      page.clusters.length ||
+      page.truncated !== (page.nextCursor !== null) ||
+      (page.nextCursor !== null && !page.nextCursor)
+    )
+      throw new Error('The NCR service returned invalid detail pagination.')
+    for (const item of page.items) {
+      if (ids.has(item.id))
+        throw new Error('The NCR service returned duplicate record IDs.')
+      ids.add(item.id)
+      items.push(item)
+    }
+    if (
+      items.length > first.totalMatched ||
+      (page.nextCursor !== null &&
+        (!page.items.length || items.length >= first.totalMatched)) ||
+      (page.nextCursor === null && items.length !== first.totalMatched)
+    )
+      throw new Error('The NCR service returned an incomplete dataset.')
+    if (page.nextCursor !== null) {
+      if (cursors.has(page.nextCursor))
+        throw new Error('The NCR service repeated a pagination cursor.')
+      cursors.add(page.nextCursor)
+    }
+    latestGeneratedAt = page.generatedAt
+    onProgress?.(items.length, first.totalMatched)
+    signal.throwIfAborted()
+    cursor = page.nextCursor
+  } while (cursor !== null)
+
+  const complete = {
+    ...first,
+    generatedAt: latestGeneratedAt,
+    items,
+    clusters: [],
+    nextCursor: null,
+    truncated: false,
+  }
+  if (mode === 'public' && !ncrResponseCanDisplay(complete, mode))
+    throw new Error(
+      'Public display approval expired while loading. No records were displayed.',
+    )
+  return complete
 }

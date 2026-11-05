@@ -11,10 +11,7 @@ export default function NcrMap(props: NcrMapProps) {
   const container = useRef<HTMLDivElement>(null)
   const map = useRef<Map | null>(null)
   const [loaded, setLoaded] = useState(false)
-  const sources = useMemo(
-    () => ncrMapSources(props.data, props.selectedId),
-    [props.data, props.selectedId],
-  )
+  const sources = useMemo(() => ncrMapSources(props.data, null), [props.data])
   const viewport = useEffectEvent(() => {
     const instance = map.current,
       bounds = instance?.getBounds()
@@ -43,7 +40,7 @@ export default function NcrMap(props: NcrMapProps) {
         style: config.mapStyle,
         center: initialTarget.coordinate,
         zoom: initialTarget.zoom,
-        minZoom: 10,
+        minZoom: 8.5,
         maxZoom: 20,
         attributionControl: {},
         fadeDuration: 0,
@@ -54,15 +51,22 @@ export default function NcrMap(props: NcrMapProps) {
     }
     map.current = instance
     instance.on('load', () => {
-      for (const id of ['shapes', 'anchors', 'clusters'])
-        instance.addSource(id, {
-          type: 'geojson',
-          data: { type: 'FeatureCollection', features: [] },
-        })
+      instance.addSource('shapes', {
+        type: 'geojson',
+        data: { type: 'FeatureCollection', features: [] },
+      })
+      instance.addSource('anchors', {
+        type: 'geojson',
+        data: { type: 'FeatureCollection', features: [] },
+        cluster: true,
+        clusterRadius: 48,
+        clusterMaxZoom: 14,
+      })
       instance.addLayer({
         id: 'ncr-areas',
         type: 'fill',
         source: 'shapes',
+        minzoom: 14,
         filter: ['==', ['geometry-type'], 'Polygon'],
         paint: {
           'fill-color': ['case', ['get', 'restricted'], '#C23B3B', '#8A1060'],
@@ -73,9 +77,10 @@ export default function NcrMap(props: NcrMapProps) {
         id: 'ncr-streets',
         type: 'line',
         source: 'shapes',
+        minzoom: 14,
         filter: ['==', ['geometry-type'], 'LineString'],
         paint: {
-          'line-color': '#2E7F88',
+          'line-color': ['case', ['get', 'restricted'], '#C23B3B', '#2E7F88'],
           'line-width': 4,
           'line-dasharray': [2, 1],
         },
@@ -84,6 +89,7 @@ export default function NcrMap(props: NcrMapProps) {
         id: 'ncr-anchors',
         type: 'circle',
         source: 'anchors',
+        filter: ['!', ['has', 'point_count']],
         paint: {
           'circle-color': [
             'case',
@@ -112,7 +118,8 @@ export default function NcrMap(props: NcrMapProps) {
       instance.addLayer({
         id: 'ncr-clusters',
         type: 'circle',
-        source: 'clusters',
+        source: 'anchors',
+        filter: ['has', 'point_count'],
         paint: {
           'circle-color': '#8A1060',
           'circle-radius': 18,
@@ -122,9 +129,11 @@ export default function NcrMap(props: NcrMapProps) {
       instance.addLayer({
         id: 'ncr-cluster-label',
         type: 'symbol',
-        source: 'clusters',
+        source: 'anchors',
+        filter: ['has', 'point_count'],
         layout: {
-          'text-field': ['to-string', ['get', 'observations']],
+          // Every anchor is one source observation, never a capacity claim.
+          'text-field': ['get', 'point_count_abbreviated'],
           'text-font': ['Noto Sans Bold'],
           'text-size': 12,
         },
@@ -140,22 +149,59 @@ export default function NcrMap(props: NcrMapProps) {
         layers: ['ncr-anchors', 'ncr-clusters', 'ncr-streets', 'ncr-areas'],
       })
       const feature = features[0]
-      if (feature?.source === 'clusters' && feature.geometry.type === 'Point') {
+      if (
+        feature?.properties.cluster === true &&
+        feature.geometry.type === 'Point'
+      ) {
         const [x, y] = feature.geometry.coordinates
         if (x !== undefined && y !== undefined) cluster([x, y])
       } else if (typeof feature?.properties.id === 'string')
         selected(feature.properties.id)
     })
+    // Container size changes do not always emit a browser window resize.
+    // Keep the same map/camera when overlays or device orientation change.
+    let resizeFrame = 0
+    const observer = new ResizeObserver(() => {
+      cancelAnimationFrame(resizeFrame)
+      resizeFrame = requestAnimationFrame(() => instance.resize())
+    })
+    observer.observe(container.current)
     return () => {
+      observer.disconnect()
+      cancelAnimationFrame(resizeFrame)
       instance.remove()
       map.current = null
     }
   }, [initialTarget])
   useEffect(() => {
     if (!loaded) return
-    for (const id of ['shapes', 'anchors', 'clusters'] as const)
-      map.current?.getSource<GeoJSONSource>(id)?.setData(sources[id])
+    const instance = map.current
+    if (!instance) return
+    // Hide immediately when the parent clears private data on a mode switch,
+    // while the GeoJSON worker applies the empty source in the background.
+    const visibility = sources.anchors.features.length ? 'visible' : 'none'
+    for (const layer of [
+      'ncr-areas',
+      'ncr-streets',
+      'ncr-anchors',
+      'ncr-clusters',
+      'ncr-cluster-label',
+    ])
+      instance.setLayoutProperty(layer, 'visibility', visibility)
+    for (const id of ['shapes', 'anchors'] as const)
+      instance.getSource<GeoJSONSource>(id)?.setData(sources[id])
   }, [loaded, sources])
+  useEffect(() => {
+    if (!loaded) return
+    // A selection changes paint only, without reparsing/reclustering the full
+    // snapshot or recreating the map when a detail modal opens.
+    map.current?.setPaintProperty('ncr-anchors', 'circle-radius', [
+      'case',
+      ['==', ['get', 'id'], props.selectedId || ''],
+      10,
+      ['match', ['get', 'featureType'], 'entrance', 4, 'space', 4, 7],
+    ])
+  }, [loaded, props.selectedId])
   useEffect(() => {
     if (loaded)
       map.current?.jumpTo({
@@ -168,7 +214,13 @@ export default function NcrMap(props: NcrMapProps) {
       ref={container}
       data-testid={loaded ? 'ncr-map-ready' : 'ncr-map-loading'}
       aria-label="Private NCR research map. Points are research anchors, not driving entrances."
-      style={{ width: '100%', height: '100%', minHeight: 280 }}
+      style={{
+        position: 'absolute',
+        inset: 0,
+        width: '100%',
+        height: '100%',
+        minHeight: 0,
+      }}
     />
   )
 }

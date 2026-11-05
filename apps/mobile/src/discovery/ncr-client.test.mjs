@@ -3,6 +3,7 @@ import test from 'node:test'
 
 import {
   fetchNcrPage,
+  fetchNcrDataset,
   isNcrResponse,
   ncrPreviewEnabled,
   ncrResponseCanDisplay,
@@ -219,4 +220,302 @@ test('mode transitions and approval expiry fail closed even if a stale request r
     ),
     false,
   )
+})
+
+const datasetItem = (index) => ({ ...item, id: `synthetic:${index}` })
+const datasetPage = (items, patch = {}) => ({ ...result, items, ...patch })
+
+test('complete NCR loader fetches every bounded detail page once and preserves source facts', async () => {
+  const original = globalThis.fetch
+  const controller = new globalThis.AbortController()
+  const expected = Array.from({ length: 502 }, (_, i) => datasetItem(i))
+  const progress = []
+  const requests = []
+  try {
+    globalThis.fetch = async (input, options) => {
+      const url = new globalThis.URL(input)
+      requests.push(url)
+      assert.equal(url.searchParams.get('bbox'), '120.85,14.3,121.27,14.86')
+      assert.equal(url.searchParams.get('zoom'), '20')
+      assert.equal(url.searchParams.get('category'), 'all')
+      assert.equal(url.searchParams.get('limit'), '500')
+      assert.equal(options.signal, controller.signal)
+      assert.equal(options.cache, 'no-store')
+      assert.equal(
+        options.headers['X-Parkey-Research-Preview'],
+        'local-development',
+      )
+      return new globalThis.Response(
+        JSON.stringify(
+          requests.length === 1
+            ? datasetPage(expected.slice(0, 500), {
+                totalMatched: 502,
+                nextCursor: 'second-page',
+                truncated: true,
+              })
+            : datasetPage(expected.slice(500), {
+                totalMatched: 502,
+                generatedAt: '2026-11-05T00:00:01Z',
+              }),
+        ),
+      )
+    }
+    const complete = await fetchNcrDataset(
+      'http://127.0.0.1:8090',
+      'research_preview',
+      controller.signal,
+      (loaded, total) => progress.push([loaded, total]),
+    )
+    assert.equal(requests.length, 2)
+    assert.equal(requests[0].searchParams.has('cursor'), false)
+    assert.equal(requests[1].searchParams.get('cursor'), 'second-page')
+    assert.deepEqual(progress, [
+      [500, 502],
+      [502, 502],
+    ])
+    assert.deepEqual(complete.items, expected)
+    assert.equal(complete.nextCursor, null)
+    assert.equal(complete.truncated, false)
+    assert.equal(complete.totalMatched, 502)
+    assert.equal(complete.generatedAt, '2026-11-05T00:00:01Z')
+    assert.deepEqual(complete.coverage, result.coverage)
+    assert.deepEqual(complete.attribution, result.attribution)
+    assert.equal(ncrResponseCanDisplay(complete, 'research_preview'), true)
+    assert.equal(
+      isNcrResponse(complete),
+      false,
+      'wire page limit stays 500; the completed in-memory dataset may be larger',
+    )
+  } finally {
+    globalThis.fetch = original
+  }
+})
+
+test('complete NCR loader rejects changed snapshot, coverage, licensing or approval metadata', async () => {
+  const original = globalThis.fetch
+  try {
+    for (const patch of [
+      { dataVersion: 'changed-source' },
+      { totalMatched: 3 },
+      { coverage: { ...result.coverage, sourceAsOf: '2026-11-04T00:00:00Z' } },
+      {
+        attribution: [
+          { label: 'Changed attribution', url: 'https://example.com/changed' },
+        ],
+      },
+      { notice: 'Changed publication policy' },
+      { reviewDueAt: '2026-12-01T00:00:00Z' },
+    ]) {
+      let calls = 0
+      globalThis.fetch = async () =>
+        new globalThis.Response(
+          JSON.stringify(
+            ++calls === 1
+              ? datasetPage([datasetItem(1)], {
+                  totalMatched: 2,
+                  nextCursor: 'second',
+                  truncated: true,
+                })
+              : datasetPage([datasetItem(2)], { totalMatched: 2, ...patch }),
+          ),
+        )
+      await assert.rejects(
+        fetchNcrDataset(
+          'http://127.0.0.1:8090',
+          'research_preview',
+          new globalThis.AbortController().signal,
+        ),
+        /snapshot changed/,
+      )
+    }
+  } finally {
+    globalThis.fetch = original
+  }
+})
+
+test('complete NCR loader refuses repeated IDs/cursors, stalled pages, clusters and incomplete totals', async () => {
+  const original = globalThis.fetch
+  const first = datasetPage([datasetItem(1)], {
+    totalMatched: 4,
+    nextCursor: 'second',
+    truncated: true,
+  })
+  const scenarios = [
+    [
+      first,
+      datasetPage([datasetItem(1)], {
+        totalMatched: 4,
+        nextCursor: 'third',
+        truncated: true,
+      }),
+    ],
+    [
+      first,
+      datasetPage([datasetItem(2)], {
+        totalMatched: 4,
+        nextCursor: 'second',
+        truncated: true,
+      }),
+    ],
+    [
+      first,
+      datasetPage([], {
+        totalMatched: 4,
+        nextCursor: 'third',
+        truncated: true,
+      }),
+    ],
+    [first, datasetPage([datasetItem(2)], { totalMatched: 4 })],
+    [datasetPage([datasetItem(1)], { totalMatched: 0 })],
+    [
+      datasetPage([datasetItem(1)], {
+        totalMatched: 1,
+        nextCursor: 'extra',
+        truncated: true,
+      }),
+    ],
+    [
+      datasetPage([datasetItem(1)], {
+        totalMatched: 2,
+        nextCursor: 'second',
+        truncated: false,
+      }),
+    ],
+    [
+      datasetPage([], {
+        totalMatched: 1,
+        clusters: [
+          {
+            id: 'synthetic-cluster',
+            coordinate: [121, 14.5],
+            sourceObservationCount: 1,
+            facilityCandidateCount: 1,
+            byType: { lot: 1 },
+          },
+        ],
+      }),
+    ],
+  ]
+  try {
+    for (const pages of scenarios) {
+      let calls = 0
+      globalThis.fetch = async () => {
+        assert.ok(
+          calls < pages.length,
+          'bad pagination must stop before any extra request',
+        )
+        return new globalThis.Response(JSON.stringify(pages[calls++]))
+      }
+      await assert.rejects(
+        fetchNcrDataset(
+          'http://127.0.0.1:8090',
+          'research_preview',
+          new globalThis.AbortController().signal,
+        ),
+        /duplicate record IDs|repeated a pagination cursor|incomplete dataset|invalid detail pagination/,
+      )
+    }
+  } finally {
+    globalThis.fetch = original
+  }
+})
+
+test('complete NCR loader aborts before requests and between pages without returning partial records', async () => {
+  const original = globalThis.fetch
+  try {
+    let calls = 0
+    globalThis.fetch = async () => {
+      calls++
+      return new globalThis.Response(JSON.stringify(result))
+    }
+    const before = new globalThis.AbortController()
+    before.abort()
+    await assert.rejects(
+      fetchNcrDataset(
+        'http://127.0.0.1:8090',
+        'research_preview',
+        before.signal,
+      ),
+      { name: 'AbortError' },
+    )
+    assert.equal(calls, 0)
+    const between = new globalThis.AbortController()
+    globalThis.fetch = async () => {
+      calls++
+      return new globalThis.Response(
+        JSON.stringify(
+          datasetPage([datasetItem(1)], {
+            totalMatched: 2,
+            nextCursor: 'second',
+            truncated: true,
+          }),
+        ),
+      )
+    }
+    await assert.rejects(
+      fetchNcrDataset(
+        'http://127.0.0.1:8090',
+        'research_preview',
+        between.signal,
+        () => between.abort(),
+      ),
+      { name: 'AbortError' },
+    )
+    assert.equal(calls, 1)
+    const during = new globalThis.AbortController()
+    globalThis.fetch = async () => {
+      during.abort()
+      return new globalThis.Response(JSON.stringify(result))
+    }
+    await assert.rejects(
+      fetchNcrDataset(
+        'http://127.0.0.1:8090',
+        'research_preview',
+        during.signal,
+      ),
+      { name: 'AbortError' },
+    )
+  } finally {
+    globalThis.fetch = original
+  }
+})
+
+test('complete public snapshot stays empty unless every returned record passes publication checks', async () => {
+  const original = globalThis.fetch
+  try {
+    globalThis.fetch = async (input, options) => {
+      assert.equal(new globalThis.URL(input).pathname, '/api/ncr/discovery')
+      assert.deepEqual(options.headers, {})
+      return new globalThis.Response(
+        JSON.stringify({
+          ...result,
+          mode: 'public',
+          items: [],
+          totalMatched: 0,
+        }),
+      )
+    }
+    assert.equal(
+      (
+        await fetchNcrDataset(
+          'http://127.0.0.1:8090',
+          'public',
+          new globalThis.AbortController().signal,
+        )
+      ).items.length,
+      0,
+    )
+    globalThis.fetch = async () =>
+      new globalThis.Response(JSON.stringify({ ...result, mode: 'public' }))
+    await assert.rejects(
+      fetchNcrDataset(
+        'http://127.0.0.1:8090',
+        'public',
+        new globalThis.AbortController().signal,
+      ),
+      /publication checks/,
+    )
+  } finally {
+    globalThis.fetch = original
+  }
 })

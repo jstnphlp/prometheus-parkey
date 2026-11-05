@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
+import process from 'node:process'
 import { readFileSync } from 'node:fs'
 import { gunzipSync } from 'node:zlib'
 
@@ -89,6 +90,7 @@ test('frozen NCR research can use existing named-property clues without changing
     .map(id=>chooseNearbyDestinationLabel(lookup.get(id),r,{privatePreview:true}))
     .filter(Boolean))
   assert.ok(result.length>0,'existing reusable property clues should yield contextual labels')
+  process.stdout.write('Private NCR nearby-destination descriptors: ' + result.length + '\n')
   assert.ok(result.every(x=>!x.parkingNameConfirmed && !x.publicationApproved))
   assert.equal(report.totals.unnamedAfter,3112)
 })

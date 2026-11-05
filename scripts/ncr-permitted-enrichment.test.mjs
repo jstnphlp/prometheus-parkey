@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
+import process from 'node:process'
 
 import { buildPermittedEnrichment } from './ncr-permitted-enrichment.mjs'
 import { loadNcrResearch } from './ncr-quality-review.mjs'

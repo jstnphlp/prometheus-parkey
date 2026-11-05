@@ -6,11 +6,14 @@ if [[ $# -ne 2 ]]; then
   printf 'Usage: bash scripts/extract-ncr-name-context.sh output/ncr/ncr-area.osm.pbf output/ncr/osm-name-context.geojson\n' >&2
   exit 2
 fi
-command -v osmium >/dev/null || { echo 'Install osmium-tool first.' >&2; exit 2; }
 input=$1
 out=$2
 if [[ ! -f "$input" ]]; then echo "Missing source snapshot: $input" >&2; exit 2; fi
 if [[ -e "$out" ]]; then echo "Refusing to overwrite existing context file: $out" >&2; exit 2; fi
+# Windows and other hosts can use the already-pinned pyosmium dependency.
+if ! command -v osmium >/dev/null; then
+  exec python "$(dirname "$0")/extract-ncr-name-context.py" "$input" "$out"
+fi
 mkdir -p "$(dirname "$out")"
 tmp="$out.tmp.osm.pbf"
 if [[ -e "$tmp" ]]; then echo "Stale temporary file: $tmp" >&2; exit 2; fi

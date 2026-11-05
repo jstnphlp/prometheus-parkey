@@ -121,7 +121,7 @@ operator agreement before enabling alerts. No live metrics or availability claim
 are supplied. Roll back the mobile mode to synthetic if needed; keep migrations
 and data intact. Never revert by deleting hosted tables.
 
-## Local evidence (2026-11-05)
+## Initial evidence (2026-11-05, superseded by pre-merge checks below)
 
 - Node 24.22.2 / pnpm 11.25.0; shared and mobile targeted typechecks passed.
 - Workspace `pnpm typecheck` and `pnpm build:web` passed. Router generation
@@ -141,8 +141,88 @@ and data intact. Never revert by deleting hosted tables.
 - No browser, emulator, provider integration, hosted migration, import,
   publication, account creation, deployment, spending or merge was performed.
 
-All six PRs remain drafts until baseline failures and DB/device/legacy-cutover
-gates have been resolved with the required authorization. Monitoring here is a
+All six PRs remain drafts until the remaining release gates are resolved.
+Monitoring here is a
 runbook using existing instrumentation; live alert infrastructure is not enabled.
 Commits use `[skip ci]` to avoid starting potentially billable hosted runners.
 Authorize CI execution separately after confirming account runner allowance.
+
+## Pre-merge verification follow-up
+
+The user authorized resolving the pre-merge failures. Baseline-only fixes are
+isolated in [PR #11](https://github.com/jstnphlp/prometheus-parkey/pull/11), based on
+main. Review/merge it before #5–#10. It adds explicit Node global declarations,
+formats the affected scripts/runbook and preserves deterministic LF bytes. The
+reviewed artifact mismatch was exclusively CRLF versus LF; parsed contents and
+all decisions were identical. No source hash, parking fact or approval changed.
+
+Completed locally on the integrated stack:
+
+- Workspace lint, strict typecheck (including E2E/Edge), formatting and web build.
+- Existing Node/Python test commands, data audit and reviewed-data artifact check.
+- All seven migrations applied successfully to a disposable Supabase PostgreSQL
+  17 database using the existing Podman VM and cached images. Existing project
+  containers/volumes stayed untouched; seeds were disabled in the temporary copy.
+- All five pgTAP files passed: 208 assertions, including legacy foundation,
+  discovery RLS, immutable import replay, moderation and Phase 2 approval gates.
+  Database lint found no errors in public or parkey_private. The first run exposed
+  a test fixture that attempted reconciliation while still published; the test
+  now correctly returns to unpublished staging. Additional tests cover fact/rule
+  drift, denied approval/writes and viewport bounds.
+- Phase 2 browser tests passed on mobile Chromium: hosted search/detail,
+  location-denied browsing, cold backend failure/Retry with no pilot fallback,
+  and synthetic mode's banner with zero discovery requests. Responses were
+  fictional intercepted fixtures, not live provider integration. Cold backend
+  failure does not prove a fully offline native app can boot its app bundle.
+- Independent review identified permissive legacy provenance validation. Hosted
+  responses now require a public HTTPS source URL without embedded credentials,
+  a nonempty source label and a known nonempty license. A new regression test
+  first failed, then passed; the fix is also on mobile PR #9.
+- Native Android checks used the existing SDK 58 development APK and local Metro:
+  native MapLibre map, sample labels, denied location permission, expanded results
+  and synthetic parking detail were observed. The detail remained available with
+  emulator Wi-Fi/mobile data disabled; both were restored. This is session offline
+  behavior, not a release-build cold-offline launch guarantee. Metro needed IPv4
+  localhost resolution for the ADB bridge (`NODE_OPTIONS=--dns-result-order=ipv4first`).
+- Hosted CI exposed two baseline portability issues: setup-node's automatic pnpm
+  cache lookup ran before pnpm installation, and newer Python normalized
+  `24:00:00`. Setup order and explicit clock-component validation now preserve
+  the existing contracts; the nine Python tests pass locally. Both fixes are
+  included in prerequisite PR #11.
+
+The full legacy browser run reached all 36 desktop/mobile cases: 33 passed and
+three exposed stale search text and a phone viewport without garage coverage.
+After those fixture/selector fixes, all four affected cases passed in targeted
+checks. Other maintenance fixes align profile/saved-place controls with the
+current UI and feed uninterrupted synthetic GPS into the arrival test. Tracing
+confirmed Chromium emits POSITION_UNAVAILABLE while replacing a geolocation
+override; production arrival evidence correctly resets on that error and was
+not changed. Independent review confirmed persistence, undo, recovery, consent
+and arrival assertions remain substantive.
+
+PR #11 now precedes the six-PR stack; #5 explicitly targets its branch, then each
+PR targets its predecessor. Verified prerequisite commits were propagated using
+ordinary branch merges without rewriting history or merging main. Check the PR
+pages for the final hosted CI results; all seven remain reviewable separately.
+
+The reviewed-artifact CI check additionally found that the original comparison
+captured a Windows CRLF hash of the exact historical OSM snapshot while Git
+stores LF. Its recorded hash and artifacts remain unchanged. Reconciliation
+accepts only the proven historical LF/CRLF SHA256 pair; all other mismatches
+still abort. Five review tests cover exact equivalence and changed-byte rejection.
+
+Cross-branch CI exposed intermittent persistence deadlines and CDP GPS override
+noise even after a complete integrated run passed all 36 legacy cases plus the
+four Phase 2 scenarios. Nominal navigation tests now share the uninterrupted GPS
+fixture; permission-denial tests retain the browser API. Standard two-core CI
+runners execute browser cases serially. Multi-page persistence tests have a
+90-second total budget while individual assertion deadlines stay unchanged.
+All 10 affected desktop/mobile cases passed locally after this stabilization.
+
+CI includes the same synthetic-only database setup and both Phase 2 browser
+modes. Repository visibility was confirmed public; standard ubuntu-latest runners
+are free for public repositories. New verification commits can therefore run CI
+without spending. Earlier skip markers document the initial precaution, not a
+remaining account-authorization requirement. Hosted CI results are recorded below
+after execution. No actual parking data was approved or published. The legacy public
+API/table RLS cutover remains a separately authorized rollout gate.

@@ -12,6 +12,37 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  database:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .node-version
+      - run: pnpm install --frozen-lockfile
+      - name: Use synthetic test fixtures only
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          path = Path('supabase/config.toml')
+          config = path.read_text()
+          start = config.index('[db.seed]')
+          end = config.index('\n[', start + 1)
+          section, count = re.subn(r'^enabled = true$', 'enabled = false', config[start:end], count=1, flags=re.M)
+          assert count == 1, 'Expected the existing seed configuration'
+          path.write_text(config[:start] + section + config[end:])
+          PY
+      # Isolated ephemeral runner only. No project linking, remote secrets or reset.
+      # CLI startup prints local credentials: keep that output off CI logs.
+      - run: pnpm exec supabase start > "$RUNNER_TEMP/supabase-start.log" 2>&1
+      - run: pnpm exec supabase test db --local
+      - run: pnpm exec supabase db lint --local --schema public,parkey_private --fail-on error
+      - if: always()
+        run: pnpm exec supabase stop --no-backup
+
   validate:
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -42,6 +73,12 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm exec playwright install --with-deps chromium
       - run: pnpm test:e2e --max-failures=3
+      - run: pnpm exec playwright test --project mobile-chromium
+        env:
+          PARKEY_E2E_DISCOVERY_MODE: hosted
+      - run: pnpm exec playwright test --project mobile-chromium --grep 'synthetic mode'
+        env:
+          PARKEY_E2E_DISCOVERY_MODE: synthetic
       - uses: actions/upload-artifact@v4
         if: failure()
         with:

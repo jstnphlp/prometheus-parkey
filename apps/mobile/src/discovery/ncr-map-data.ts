@@ -30,6 +30,13 @@ export function ncrMapSources(
       featureType: item.featureType,
       selected: item.id === selectedId,
       restricted: item.restrictedAccess,
+      hasDestinationLabel:
+        data?.mode === 'research_preview' &&
+        item.nameReview?.destinationLabel !== undefined,
+      label:
+        data?.mode === 'research_preview'
+          ? item.nameReview?.destinationLabel?.label || item.name
+          : item.name,
     }
     shapes.features.push({
       type: 'Feature',

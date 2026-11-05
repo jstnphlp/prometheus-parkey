@@ -13,6 +13,7 @@ import { pathToFileURL } from 'node:url'
 import { gunzipSync, gzipSync } from 'node:zlib'
 
 import { HOTSPOT_WINDOWS } from './ncr-coverage.mjs'
+import { parkingDestinationUnsuitable } from './ncr-destination-labels.mjs'
 import { geometryBounds, pointInNcrGeometry } from './ncr-geography.mjs'
 import { classifyGeojson } from './ncr-parking-research.mjs'
 import {
@@ -37,12 +38,58 @@ const CONTEXT_KINDS = {
     'college',
     'marketplace',
     'school',
+  ]),
+  tourism: new Set(['hotel', 'motel']),
+  building: new Set([
+    'commercial',
+    'retail',
+    'office',
+    'hotel',
+    'supermarket',
+    'hospital',
+  ]),
+}
+const DESTINATION_KINDS = {
+  shop: new Set([
+    'mall',
+    'department_store',
+    'supermarket',
+    'shopping_centre',
+    'convenience',
+    'bakery',
+    'books',
+    'electronics',
+    'furniture',
+    'hardware',
+    'doityourself',
+    'garden_centre',
+    'variety_store',
+    'wholesale',
+    'clothes',
+    'sports',
+    'toys',
+  ]),
+  amenity: new Set([
+    'hospital',
+    'university',
+    'college',
+    'marketplace',
+    'school',
     'restaurant',
     'cafe',
     'food_court',
     'theatre',
     'cinema',
     'arts_centre',
+    'fast_food',
+    'ice_cream',
+    'pub',
+    'bar',
+    'library',
+    'clinic',
+    'conference_centre',
+    'community_centre',
+    'events_venue',
   ]),
   tourism: new Set([
     'hotel',
@@ -52,9 +99,29 @@ const CONTEXT_KINDS = {
     'gallery',
     'zoo',
     'theme_park',
+    'hostel',
+    'guest_house',
+    'aquarium',
   ]),
-  leisure: new Set(['park', 'stadium', 'sports_centre']),
-  historic: new Set(['monument', 'memorial']),
+  leisure: new Set([
+    'park',
+    'stadium',
+    'sports_centre',
+    'garden',
+    'water_park',
+    'fitness_centre',
+    'swimming_pool',
+    'bowling_alley',
+    'golf_course',
+  ]),
+  historic: new Set([
+    'monument',
+    'memorial',
+    'castle',
+    'fort',
+    'ruins',
+    'archaeological_site',
+  ]),
   building: new Set([
     'commercial',
     'retail',
@@ -179,7 +246,7 @@ const unsuitable = (record) =>
     ].includes(f),
   )
 
-function extractRefreshedOsm(refreshed) {
+function extractRefreshedOsm(refreshed, destinationEvidence = false) {
   if (!refreshed) return new Map()
   ensureGeojson(refreshed)
   const byId = new Map()
@@ -213,14 +280,17 @@ function extractRefreshedOsm(refreshed) {
       sourceLicense: 'ODbL-1.0',
       coordinate: geoPoint(f.geometry),
       accessClass: normalized.accessClass,
-      unsuitable: !!unsuitable(normalized),
+      unsuitable:
+        !!unsuitable(normalized) ||
+        (destinationEvidence &&
+          parkingDestinationUnsuitable({ ...normalized, sourceTags: p })),
       sourceRecordUrl: 'https://www.openstreetmap.org/' + id.slice(4),
       sourceEditedAt: p['@timestamp'] || null,
     })
   }
   return byId
 }
-function osmContext(context) {
+function osmContext(context, destinationEvidence = false) {
   if (!context) return []
   ensureGeojson(context)
   const result = [],
@@ -231,8 +301,9 @@ function osmContext(context) {
       name = textName(p.name)
     if (!id || !name) continue
     rejectGoogleWazeOrigin(p)
-    const kind = Object.keys(CONTEXT_KINDS).find((key) =>
-      CONTEXT_KINDS[key].has(String(p[key] || '')),
+    const kinds = destinationEvidence ? DESTINATION_KINDS : CONTEXT_KINDS
+    const kind = Object.keys(kinds).find((key) =>
+      kinds[key].has(String(p[key] || '')),
     )
     if (!kind || seen.has(id)) continue
     seen.add(id)
@@ -246,6 +317,15 @@ function osmContext(context) {
       placeKind: kind + ':' + p[kind],
       sourceRecordUrl: 'https://www.openstreetmap.org/' + id.slice(4),
       sourceLicense: 'ODbL-1.0',
+      ...(destinationEvidence
+        ? {
+            sourceCoordinate: point,
+            sourceRecordEditedAt: p['@timestamp'] || null,
+            sourceVersion: p['@version'] || null,
+            sourceSnapshotSha256: context.sourceMetadata?.inputSha256 || null,
+            sourceTags: p,
+          }
+        : {}),
     })
   }
   return result
@@ -330,7 +410,7 @@ function contextIndex(contexts) {
   }
   return bins
 }
-function nearbyContexts(member, contexts) {
+function nearbyContexts(member, contexts, destinationEvidence = false) {
   const [x, y] = member.representativePoint
   const ix = Math.floor(x * 1000),
     iy = Math.floor(y * 1000)
@@ -347,7 +427,7 @@ function nearbyContexts(member, contexts) {
     if (['Polygon', 'MultiPolygon'].includes(c.geometry.type))
       contains = pointInNcrGeometry(member.representativePoint, c.geometry)
     const meters = distanceMeters(member.representativePoint, c.point)
-    if (!contains && meters > 90) continue
+    if (!contains && meters > (destinationEvidence ? 180 : 90)) continue
     results.push({
       name: c.name,
       sourceId: c.sourceId,
@@ -360,6 +440,18 @@ function nearbyContexts(member, contexts) {
       approximateMeters: Math.round(meters),
       // A mall/hotel name is not the parking facility's name.
       usableAsParkingName: false,
+      ...(destinationEvidence
+        ? {
+            geometry: c.geometry,
+            sourceCoordinate: c.sourceCoordinate,
+            sourceRecordEditedAt: c.sourceRecordEditedAt,
+            sourceVersion: c.sourceVersion,
+            sourceSnapshotSha256: c.sourceSnapshotSha256,
+            sourceTags: c.sourceTags,
+            parkingRecordId: member.id,
+            anchorCoordinate: member.representativePoint,
+          }
+        : {}),
     })
   }
   return results
@@ -370,7 +462,7 @@ function nearbyContexts(member, contexts) {
         a.approximateMeters - b.approximateMeters ||
         a.sourceId.localeCompare(b.sourceId),
     )
-    .slice(0, 5)
+    .slice(0, destinationEvidence ? Infinity : 5)
 }
 const providerKeys = (record) =>
   (record.sourceProviders || []).map((p) => {
@@ -558,12 +650,16 @@ export function buildPermittedEnrichment(
     contextOsm = null,
     refreshedOverture = null,
     osmUpdates = null,
+    destinationEvidence = false,
   } = {},
 ) {
   const base = buildNameReconciliation(research)
   const sourceById = new Map(research.candidates.map((c) => [c.id, c]))
-  const refreshed = extractRefreshedOsm(refreshedOsm)
-  for (const [id, update] of extractRefreshedOsm(osmUpdates)) {
+  const refreshed = extractRefreshedOsm(refreshedOsm, destinationEvidence)
+  for (const [id, update] of extractRefreshedOsm(
+    osmUpdates,
+    destinationEvidence,
+  )) {
     const prior = refreshed.get(id)
     if (
       !update.sourceEditedAt ||
@@ -587,7 +683,7 @@ export function buildPermittedEnrichment(
       : refreshedOsm,
     refreshedOverture,
   )
-  const contexts = osmContext(contextOsm),
+  const contexts = osmContext(contextOsm, destinationEvidence),
     index = contextIndex(contexts)
   const records = []
   for (const group of base.groups) {
@@ -638,7 +734,7 @@ export function buildPermittedEnrichment(
           recordId: member.id,
           usableAsFacilityName: false,
         })
-      contextClues.push(...nearbyContexts(member, index))
+      contextClues.push(...nearbyContexts(member, index, destinationEvidence))
       reviewLinks.push({
         recordId: member.id,
         sourceRecordUrl: member.sourceRecordUrl,
@@ -666,10 +762,17 @@ export function buildPermittedEnrichment(
       group.candidateIds,
     )
     const uniqueContexts = [
-      ...new Map(contextClues.map((c) => [c.sourceId, c])).values(),
+      ...new Map(
+        contextClues.map((c) => [
+          destinationEvidence
+            ? c.sourceId + '|' + c.parkingRecordId
+            : c.sourceId,
+          c,
+        ]),
+      ).values(),
     ]
       .sort((a, b) => a.approximateMeters - b.approximateMeters)
-      .slice(0, 5)
+      .slice(0, destinationEvidence ? Infinity : 5)
     // Priority is for reviewer efficiency only, NOT market demand or a probability.
     const priority = group.sourceIdentityConflict
       ? 'identity_conflict'

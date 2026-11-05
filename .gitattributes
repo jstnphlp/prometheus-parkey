@@ -15,3 +15,5 @@ data/ncr-research/*.gz -text
 # Keep versioned name-evidence hashes stable on Windows and Linux.
 data/ncr-enrichment/**/*.json text eol=lf
 data/ncr-enrichment/**/*.gz -text
+data/ncr-destinations/**/*.json text eol=lf
+data/ncr-destinations/**/*.gz -text

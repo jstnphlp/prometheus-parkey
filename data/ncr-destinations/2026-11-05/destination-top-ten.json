@@ -1,0 +1,1760 @@
+[
+  {
+    "priority": 3,
+    "groupId": "facility:3182a5f9285aaccfdb52",
+    "parkeyRecordIds": [
+      "osm:way/208167717:MultiPolygon"
+    ],
+    "area": "poblacion",
+    "outcome": "described",
+    "proposedDescriptiveLabel": "Parking near The People's Park",
+    "proposedAlternativesForReview": [
+      "Parking near The People's Park"
+    ],
+    "alternatives": [
+      {
+        "label": "Parking near The People's Park",
+        "destination": "The People's Park",
+        "category": "leisure:park",
+        "sourceId": "osm:way/1111668493",
+        "sourceRecordUrl": "https://www.openstreetmap.org/way/1111668493",
+        "sourceLicense": "ODbL-1.0",
+        "sourceRecordEditedAt": "2026-04-11T10:13:52Z",
+        "sourceVersion": 6,
+        "sourceSnapshotSha256": "1d0c37f90af5666473ee5df9f6691e94dfbded65aec40a507474eded60efe1d5",
+        "sourceCoordinate": [
+          121.02630155,
+          14.56943135
+        ],
+        "anchorCoordinate": [
+          121.026875,
+          14.5699716
+        ],
+        "parkingRecordId": "osm:way/208167717:MultiPolygon",
+        "distanceBasis": "source_geometry_anchor_haversine",
+        "approximateStraightLineMeters": 86.1,
+        "insideSourcePropertyFootprint": false,
+        "score": 67.7,
+        "scoreComponents": {
+          "category": 36.4,
+          "proximity": 31.3,
+          "containment": 0
+        },
+        "duplicateSourceIds": [
+          "osm:way/1111668493"
+        ],
+        "uncertainties": [
+          "Nearby destination context does not establish parking ownership or visitor eligibility.",
+          "Source anchors are not verified vehicle entrances; straight-line distance is not a walkable route.",
+          "Current operation, fees, hours and availability are unverified.",
+          "Visitor access conditions require verification."
+        ],
+        "status": "research_context_only",
+        "parkingNameConfirmed": false,
+        "visitorAccessConfirmed": false,
+        "navigationEntranceConfirmed": false,
+        "publicationApproved": false
+      }
+    ],
+    "sourceCoordinatesAndInspectionLinks": [
+      {
+        "recordId": "osm:way/208167717:MultiPolygon",
+        "sourceRecordUrl": "https://www.openstreetmap.org/way/208167717",
+        "sourceLicense": "ODbL-1.0",
+        "sourceRecordEditedAt": "2024-04-02T06:54:45Z",
+        "accessClass": "customers",
+        "coordinate": [
+          121.026875,
+          14.5699716
+        ],
+        "googleMaps": "https://www.google.com/maps/search/?api=1&query=14.5699716%2C121.026875",
+        "waze": "https://www.waze.com/ul?ll=14.5699716%2C121.026875&z=18"
+      }
+    ],
+    "access": "customer_conditions_unconfirmed",
+    "restrictions": [],
+    "uncertainties": [
+      "Physical identity, operation, visitor access and vehicle entrance remain unverified.",
+      "Nearby property names do not establish a parking-facility name.",
+      "Selected by category relevance, straight-line proximity and verified source-polygon containment."
+    ],
+    "physicalChecks": [
+      "At each retained source coordinate, identify the actual parking boundary and posted facility name; record dated first-party signage evidence where permitted. The anchor is not a vehicle entrance.",
+      "Check whether each named nearby property actually operates this parking facility and whether its parking has its own visitor name. A property name alone does not name this lot.",
+      "Confirm current operation, ordinary visitor eligibility, customer/resident/permit conditions, restrictions and posted hours with signs or an authorized operator. Leave unconfirmed facts unknown.",
+      "Record the separately observed lawful vehicle entrance, approach direction and coordinates; record posted rates only with date and permission. Do not infer vacancy, capacity or booking rights.",
+      "Submit dated observations and evidence references for identity/access review. Operator reuse permission and final publication approval require separate human decisions; this task remains uncompleted.",
+      "Check whether motorists visiting the proposed destination may legally use this parking; proximity alone does not establish permission or ownership.",
+      "Identify the actual vehicle entrance and any barriers, one-way restrictions, pedestrian connections or separate properties between the source anchor and destination.",
+      "If several destinations are plausible, record signage and visitor conditions without choosing an official parking name from proximity."
+    ],
+    "physicalVerificationComplete": false,
+    "publicationApproved": false
+  },
+  {
+    "priority": 8,
+    "groupId": "facility:0ba504b5a1d40f835f78",
+    "parkeyRecordIds": [
+      "osm:node/6614510827:Point"
+    ],
+    "area": "poblacion",
+    "outcome": "described",
+    "proposedDescriptiveLabel": "Parking near Hop Inn",
+    "proposedAlternativesForReview": [
+      "Parking near Hop Inn",
+      "Parking near Malaya Lumber and Hardware Supply",
+      "Parking near WCHA Fashion House",
+      "Parking near Maxx Hotel Makati"
+    ],
+    "alternatives": [
+      {
+        "label": "Parking near Hop Inn",
+        "destination": "Hop Inn",
+        "category": "tourism:hotel",
+        "sourceId": "osm:way/208167741",
+        "sourceRecordUrl": "https://www.openstreetmap.org/way/208167741",
+        "sourceLicense": "ODbL-1.0",
+        "sourceRecordEditedAt": "2025-08-09T14:30:07Z",
+        "sourceVersion": 6,
+        "sourceSnapshotSha256": "1d0c37f90af5666473ee5df9f6691e94dfbded65aec40a507474eded60efe1d5",
+        "sourceCoordinate": [
+          121.0304258,
+          14.5674259
+        ],
+        "anchorCoordinate": [
+          121.0305311,
+          14.5675564
+        ],
+        "parkingRecordId": "osm:node/6614510827:Point",
+        "distanceBasis": "source_geometry_anchor_haversine",
+        "approximateStraightLineMeters": 18.4,
+        "insideSourcePropertyFootprint": true,
+        "score": 119.3,
+        "scoreComponents": {
+          "category": 30.4,
+          "proximity": 53.9,
+          "containment": 35
+        },
+        "duplicateSourceIds": [
+          "osm:way/208167741"
+        ],
+        "uncertainties": [
+          "Nearby destination context does not establish parking ownership or visitor eligibility.",
+          "Source anchors are not verified vehicle entrances; straight-line distance is not a walkable route.",
+          "Current operation, fees, hours and availability are unverified.",
+          "Visitor access conditions require verification."
+        ],
+        "status": "research_context_only",
+        "parkingNameConfirmed": false,
+        "visitorAccessConfirmed": false,
+        "navigationEntranceConfirmed": false,
+        "publicationApproved": false
+      },
+      {
+        "label": "Parking near Malaya Lumber and Hardware Supply",
+        "destination": "Malaya Lumber and Hardware Supply",
+        "category": "shop:doityourself",
+        "sourceId": "osm:way/208167697",
+        "sourceRecordUrl": "https://www.openstreetmap.org/way/208167697",
+        "sourceLicense": "ODbL-1.0",
+        "sourceRecordEditedAt": "2019-06-28T10:40:21Z",
+        "sourceVersion": 2,
+        "sourceSnapshotSha256": "1d0c37f90af5666473ee5df9f6691e94dfbded65aec40a507474eded60efe1d5",
+        "sourceCoordinate": [
+          121.03048659999999,
+          14.567642
+        ],
+        "anchorCoordinate": [
+          121.0305311,
+          14.5675564
+        ],
+        "parkingRecordId": "osm:node/6614510827:Point",
+        "distanceBasis": "source_geometry_anchor_haversine",
+        "approximateStraightLineMeters": 10.7,
+        "insideSourcePropertyFootprint": false,
+        "score": 82.8,
+        "scoreComponents": {
+          "category": 26.4,
+          "proximity": 56.4,
+          "containment": 0
+        },
+        "duplicateSourceIds": [
+          "osm:way/208167697"
+        ],
+        "uncertainties": [
+          "Nearby destination context does not establish parking ownership or visitor eligibility.",
+          "Source anchors are not verified vehicle entrances; straight-line distance is not a walkable route.",
+          "Current operation, fees, hours and availability are unverified.",
+          "Visitor access conditions require verification."
+        ],
+        "status": "research_context_only",
+        "parkingNameConfirmed": false,
+        "visitorAccessConfirmed": false,
+        "navigationEntranceConfirmed": false,
+        "publicationApproved": false
+      },
+      {
+        "label": "Parking near WCHA Fashion House",
+        "destination": "WCHA Fashion House",
+        "category": "shop:clothes",
+        "sourceId": "osm:node/13435934640",
+        "sourceRecordUrl": "https://www.openstreetmap.org/node/13435934640",
+        "sourceLicense": "ODbL-1.0",
+        "sourceRecordEditedAt": "2026-01-06T17:50:31Z",
+        "sourceVersion": 1,
+        "sourceSnapshotSha256": "1d0c37f90af5666473ee5df9f6691e94dfbded65aec40a507474eded60efe1d5",
+        "sourceCoordinate": [
+          121.030462,
+          14.5679283
+        ],
+        "anchorCoordinate": [
+          121.0305311,
+          14.5675564
+        ],
+        "parkingRecordId": "osm:node/6614510827:Point",
+        "distanceBasis": "source_geometry_anchor_haversine",
+        "approximateStraightLineMeters": 42,
+        "insideSourcePropertyFootprint": false,
+        "score": 72.4,
+        "scoreComponents": {
+          "category": 26.4,
+          "proximity": 46,
+          "containment": 0
+        },
+        "duplicateSourceIds": [
+          "osm:node/13435934640"
+        ],
+        "uncertainties": [
+          "Nearby destination context does not establish parking ownership or visitor eligibility.",
+          "Source anchors are not verified vehicle entrances; straight-line distance is not a walkable route.",
+          "Current operation, fees, hours and availability are unverified.",
+          "Visitor access conditions require verification."
+        ],
+        "status": "research_context_only",
+        "parkingNameConfirmed": false,
+        "visitorAccessConfirmed": false,
+        "navigationEntranceConfirmed": false,
+        "publicationApproved": false
+      },
+      {
+        "label": "Parking near Maxx Hotel Makati",
+        "destination": "Maxx Hotel Makati",
+        "category": "tourism:hotel",
+        "sourceId": "osm:way/929035707",
+        "sourceRecordUrl": "https://www.openstreetmap.org/way/929035707",
+        "sourceLicense": "ODbL-1.0",
+        "sourceRecordEditedAt": "2022-05-24T09:12:45Z",
+        "sourceVersion": 2,
+        "sourceSnapshotSha256": "1d0c37f90af5666473ee5df9f6691e94dfbded65aec40a507474eded60efe1d5",
+        "sourceCoordinate": [
+          121.03030645000001,
+          14.56698235
+        ],
+        "anchorCoordinate": [
+          121.0305311,
+          14.5675564
+        ],
+        "parkingRecordId": "osm:node/6614510827:Point",
+        "distanceBasis": "source_geometry_anchor_haversine",
+        "approximateStraightLineMeters": 68.3,
+        "insideSourcePropertyFootprint": false,
+        "score": 67.6,
+        "scoreComponents": {
+          "category": 30.4,
+          "proximity": 37.2,
+          "containment": 0
+        },
+        "duplicateSourceIds": [
+          "osm:way/929035707"
+        ],
+        "uncertainties": [
+          "Nearby destination context does not establish parking ownership or visitor eligibility.",
+          "Source anchors are not verified vehicle entrances; straight-line distance is not a walkable route.",
+          "Current operation, fees, hours and availability are unverified.",
+          "Visitor access conditions require verification."
+        ],
+        "status": "research_context_only",
+        "parkingNameConfirmed": false,
+        "visitorAccessConfirmed": false,
+        "navigationEntranceConfirmed": false,
+        "publicationApproved": false
+      }
+    ],
+    "sourceCoordinatesAndInspectionLinks": [
+      {
+        "recordId": "osm:node/6614510827:Point",
+        "sourceRecordUrl": "https://www.openstreetmap.org/node/6614510827",
+        "sourceLicense": "ODbL-1.0",
+        "sourceRecordEditedAt": "2019-07-17T02:48:15Z",
+        "accessClass": "unknown",
+        "coordinate": [
+          121.0305311,
+          14.5675564
+        ],
+        "googleMaps": "https://www.google.com/maps/search/?api=1&query=14.5675564%2C121.0305311",
+        "waze": "https://www.waze.com/ul?ll=14.5675564%2C121.0305311&z=18"
+      }
+    ],
+    "access": "access_unknown",
+    "restrictions": [],
+    "uncertainties": [
+      "Physical identity, operation, visitor access and vehicle entrance remain unverified.",
+      "Nearby property names do not establish a parking-facility name.",
+      "Selected by category relevance, straight-line proximity and verified source-polygon containment."
+    ],
+    "physicalChecks": [
+      "At each retained source coordinate, identify the actual parking boundary and posted facility name; record dated first-party signage evidence where permitted. The anchor is not a vehicle entrance.",
+      "Check whether each named nearby property actually operates this parking facility and whether its parking has its own visitor name. A property name alone does not name this lot.",
+      "Confirm current operation, ordinary visitor eligibility, customer/resident/permit conditions, restrictions and posted hours with signs or an authorized operator. Leave unconfirmed facts unknown.",
+      "Record the separately observed lawful vehicle entrance, approach direction and coordinates; record posted rates only with date and permission. Do not infer vacancy, capacity or booking rights.",
+      "Submit dated observations and evidence references for identity/access review. Operator reuse permission and final publication approval require separate human decisions; this task remains uncompleted.",
+      "Check whether motorists visiting the proposed destination may legally use this parking; proximity alone does not establish permission or ownership.",
+      "Identify the actual vehicle entrance and any barriers, one-way restrictions, pedestrian connections or separate properties between the source anchor and destination.",
+      "If several destinations are plausible, record signage and visitor conditions without choosing an official parking name from proximity."
+    ],
+    "physicalVerificationComplete": false,
+    "publicationApproved": false
+  },
+  {
+    "priority": 14,
+    "groupId": "facility:8ae65cff677b2177b108",
+    "parkeyRecordIds": [
+      "osm:way/917663459:MultiPolygon"
+    ],
+    "area": "poblacion",
+    "outcome": "described",
+    "proposedDescriptiveLabel": "Parking near Colegio de Santa Rosa",
+    "proposedAlternativesForReview": [
+      "Parking near Colegio de Santa Rosa"
+    ],
+    "alternatives": [
+      {
+        "label": "Parking near Colegio de Santa Rosa",
+        "destination": "Colegio de Santa Rosa",
+        "category": "amenity:college",
+        "sourceId": "osm:relation/17448021",
+        "sourceRecordUrl": "https://www.openstreetmap.org/relation/17448021",
+        "sourceLicense": "ODbL-1.0",
+        "sourceRecordEditedAt": "2024-04-09T06:00:58Z",
+        "sourceVersion": 1,
+        "sourceSnapshotSha256": "1d0c37f90af5666473ee5df9f6691e94dfbded65aec40a507474eded60efe1d5",
+        "sourceCoordinate": [
+          121.04014465,
+          14.5616109
+        ],
+        "anchorCoordinate": [
+          121.0396449,
+          14.56203115
+        ],
+        "parkingRecordId": "osm:way/917663459:MultiPolygon",
+        "distanceBasis": "source_geometry_anchor_haversine",
+        "approximateStraightLineMeters": 71.2,
+        "insideSourcePropertyFootprint": true,
+        "score": 102.5,
+        "scoreComponents": {
+          "category": 31.2,
+          "proximity": 36.3,
+          "containment": 35
+        },
+        "duplicateSourceIds": [
+          "osm:relation/17448021"
+        ],
+        "uncertainties": [
+          "Nearby destination context does not establish parking ownership or visitor eligibility.",
+          "Source anchors are not verified vehicle entrances; straight-line distance is not a walkable route.",
+          "Current operation, fees, hours and availability are unverified.",
+          "Visitor access conditions require verification."
+        ],
+        "status": "research_context_only",
+        "parkingNameConfirmed": false,
+        "visitorAccessConfirmed": false,
+        "navigationEntranceConfirmed": false,
+        "publicationApproved": false
+      }
+    ],
+    "sourceCoordinatesAndInspectionLinks": [
+      {
+        "recordId": "osm:way/917663459:MultiPolygon",
+        "sourceRecordUrl": "https://www.openstreetmap.org/way/917663459",
+        "sourceLicense": "ODbL-1.0",
+        "sourceRecordEditedAt": "2021-03-16T05:00:46Z",
+        "accessClass": "unknown",
+        "coordinate": [
+          121.0396449,
+          14.56203115
+        ],
+        "googleMaps": "https://www.google.com/maps/search/?api=1&query=14.56203115%2C121.0396449",
+        "waze": "https://www.waze.com/ul?ll=14.56203115%2C121.0396449&z=18"
+      }
+    ],
+    "access": "access_unknown",
+    "restrictions": [],
+    "uncertainties": [
+      "Physical identity, operation, visitor access and vehicle entrance remain unverified.",
+      "Nearby property names do not establish a parking-facility name.",
+      "Selected by category relevance, straight-line proximity and verified source-polygon containment."
+    ],
+    "physicalChecks": [
+      "At each retained source coordinate, identify the actual parking boundary and posted facility name; record dated first-party signage evidence where permitted. The anchor is not a vehicle entrance.",
+      "Check whether each named nearby property actually operates this parking facility and whether its parking has its own visitor name. A property name alone does not name this lot.",
+      "Confirm current operation, ordinary visitor eligibility, customer/resident/permit conditions, restrictions and posted hours with signs or an authorized operator. Leave unconfirmed facts unknown.",
+      "Record the separately observed lawful vehicle entrance, approach direction and coordinates; record posted rates only with date and permission. Do not infer vacancy, capacity or booking rights.",
+      "Submit dated observations and evidence references for identity/access review. Operator reuse permission and final publication approval require separate human decisions; this task remains uncompleted.",
+      "Check whether motorists visiting the proposed destination may legally use this parking; proximity alone does not establish permission or ownership.",
+      "Identify the actual vehicle entrance and any barriers, one-way restrictions, pedestrian connections or separate properties between the source anchor and destination.",
+      "If several destinations are plausible, record signage and visitor conditions without choosing an official parking name from proximity."
+    ],
+    "physicalVerificationComplete": false,
+    "publicationApproved": false
+  },
+  {
+    "priority": 17,
+    "groupId": "facility:afdddc137dcd251e3ee7",
+    "parkeyRecordIds": [
+      "osm:way/291350912:MultiPolygon"
+    ],
+    "area": "poblacion",
+    "outcome": "described",
+    "proposedDescriptiveLabel": "Parking near Poblacion Linear Park",
+    "proposedAlternativesForReview": [
+      "Parking near Poblacion Linear Park",
+      "Parking near City Stay Inns"
+    ],
+    "alternatives": [
+      {
+        "label": "Parking near Poblacion Linear Park",
+        "destination": "Poblacion Linear Park",
+        "category": "leisure:park",
+        "sourceId": "osm:way/1412680007",
+        "sourceRecordUrl": "https://www.openstreetmap.org/way/1412680007",
+        "sourceLicense": "ODbL-1.0",
+        "sourceRecordEditedAt": "2026-04-11T10:13:52Z",
+        "sourceVersion": 3,
+        "sourceSnapshotSha256": "1d0c37f90af5666473ee5df9f6691e94dfbded65aec40a507474eded60efe1d5",
+        "sourceCoordinate": [
+          121.0292633,
+          14.57100175
+        ],
+        "anchorCoordinate": [
+          121.02872769999999,
+          14.57103605
+        ],
+        "parkingRecordId": "osm:way/291350912:MultiPolygon",
+        "distanceBasis": "source_geometry_anchor_haversine",
+        "approximateStraightLineMeters": 57.8,
+        "insideSourcePropertyFootprint": false,
+        "score": 77.1,
+        "scoreComponents": {
+          "category": 36.4,
+          "proximity": 40.7,
+          "containment": 0
+        },
+        "duplicateSourceIds": [
+          "osm:way/1412680007"
+        ],
+        "uncertainties": [
+          "Nearby destination context does not establish parking ownership or visitor eligibility.",
+          "Source anchors are not verified vehicle entrances; straight-line distance is not a walkable route.",
+          "Current operation, fees, hours and availability are unverified.",
+          "Visitor access conditions require verification."
+        ],
+        "status": "research_context_only",
+        "parkingNameConfirmed": false,
+        "visitorAccessConfirmed": false,
+        "navigationEntranceConfirmed": false,
+        "publicationApproved": false
+      },
+      {
+        "label": "Parking near City Stay Inns",
+        "destination": "City Stay Inns",
+        "category": "tourism:hotel",
+        "sourceId": "osm:node/11142884805",
+        "sourceRecordUrl": "https://www.openstreetmap.org/node/11142884805",
+        "sourceLicense": "ODbL-1.0",
+        "sourceRecordEditedAt": "2026-05-13T16:07:36Z",
+        "sourceVersion": 3,
+        "sourceSnapshotSha256": "1d0c37f90af5666473ee5df9f6691e94dfbded65aec40a507474eded60efe1d5",
+        "sourceCoordinate": [
+          121.0288994,
+          14.5704067
+        ],
+        "anchorCoordinate": [
+          121.02872769999999,
+          14.57103605
+        ],
+        "parkingRecordId": "osm:way/291350912:MultiPolygon",
+        "distanceBasis": "source_geometry_anchor_haversine",
+        "approximateStraightLineMeters": 72.4,
+        "insideSourcePropertyFootprint": false,
+        "score": 66.3,
+        "scoreComponents": {
+          "category": 30.4,
+          "proximity": 35.9,
+          "containment": 0
+        },
+        "duplicateSourceIds": [
+          "osm:node/11142884805"
+        ],
+        "uncertainties": [
+          "Nearby destination context does not establish parking ownership or visitor eligibility.",
+          "Source anchors are not verified vehicle entrances; straight-line distance is not a walkable route.",
+          "Current operation, fees, hours and availability are unverified.",
+          "Visitor access conditions require verification."
+        ],
+        "status": "research_context_only",
+        "parkingNameConfirmed": false,
+        "visitorAccessConfirmed": false,
+        "navigationEntranceConfirmed": false,
+        "publicationApproved": false
+      }
+    ],
+    "sourceCoordinatesAndInspectionLinks": [
+      {
+        "recordId": "osm:way/291350912:MultiPolygon",
+        "sourceRecordUrl": "https://www.openstreetmap.org/way/291350912",
+        "sourceLicense": "ODbL-1.0",
+        "sourceRecordEditedAt": "2026-04-11T10:13:52Z",
+        "accessClass": "unknown",
+        "coordinate": [
+          121.02872769999999,
+          14.57103605
+        ],
+        "googleMaps": "https://www.google.com/maps/search/?api=1&query=14.57103605%2C121.02872769999999",
+        "waze": "https://www.waze.com/ul?ll=14.57103605%2C121.02872769999999&z=18"
+      }
+    ],
+    "access": "access_unknown",
+    "restrictions": [],
+    "uncertainties": [
+      "Physical identity, operation, visitor access and vehicle entrance remain unverified.",
+      "Nearby property names do not establish a parking-facility name.",
+      "Selected by category relevance, straight-line proximity and verified source-polygon containment."
+    ],
+    "physicalChecks": [
+      "At each retained source coordinate, identify the actual parking boundary and posted facility name; record dated first-party signage evidence where permitted. The anchor is not a vehicle entrance.",
+      "Check whether each named nearby property actually operates this parking facility and whether its parking has its own visitor name. A property name alone does not name this lot.",
+      "Confirm the operating entity and facility-specific visitor name separately; a brand or manager is not the facility identity.",
+      "Confirm current operation, ordinary visitor eligibility, customer/resident/permit conditions, restrictions and posted hours with signs or an authorized operator. Leave unconfirmed facts unknown.",
+      "Record the separately observed lawful vehicle entrance, approach direction and coordinates; record posted rates only with date and permission. Do not infer vacancy, capacity or booking rights.",
+      "Submit dated observations and evidence references for identity/access review. Operator reuse permission and final publication approval require separate human decisions; this task remains uncompleted.",
+      "Check whether motorists visiting the proposed destination may legally use this parking; proximity alone does not establish permission or ownership.",
+      "Identify the actual vehicle entrance and any barriers, one-way restrictions, pedestrian connections or separate properties between the source anchor and destination.",
+      "If several destinations are plausible, record signage and visitor conditions without choosing an official parking name from proximity."
+    ],
+    "physicalVerificationComplete": false,
+    "publicationApproved": false
+  },
+  {
+    "priority": 19,
+    "groupId": "facility:b4a8da1b41216c0e15c7",
+    "parkeyRecordIds": [
+      "osm:node/7078381082:Point"
+    ],
+    "area": "poblacion",
+    "outcome": "described",
+    "proposedDescriptiveLabel": "Parking near Life Fitness",
+    "proposedAlternativesForReview": [
+      "Parking near Life Fitness"
+    ],
+    "alternatives": [
+      {
+        "label": "Parking near Life Fitness",
+        "destination": "Life Fitness",
+        "category": "leisure:fitness_centre",
+        "sourceId": "osm:node/6651749017",
+        "sourceRecordUrl": "https://www.openstreetmap.org/node/6651749017",
+        "sourceLicense": "ODbL-1.0",
+        "sourceRecordEditedAt": "2024-04-10T04:29:18Z",
+        "sourceVersion": 5,
+        "sourceSnapshotSha256": "1d0c37f90af5666473ee5df9f6691e94dfbded65aec40a507474eded60efe1d5",
+        "sourceCoordinate": [
+          121.0311513,
+          14.5596482
+        ],
+        "anchorCoordinate": [
+          121.0314397,
+          14.5596574
+        ],
+        "parkingRecordId": "osm:node/7078381082:Point",
+        "distanceBasis": "source_geometry_anchor_haversine",
+        "approximateStraightLineMeters": 31.1,
+        "insideSourcePropertyFootprint": false,
+        "score": 77.2,
+        "scoreComponents": {
+          "category": 27.6,
+          "proximity": 49.6,
+          "containment": 0
+        },
+        "duplicateSourceIds": [
+          "osm:node/6651749017"
+        ],
+        "uncertainties": [
+          "Nearby destination context does not establish parking ownership or visitor eligibility.",
+          "Source anchors are not verified vehicle entrances; straight-line distance is not a walkable route.",
+          "Current operation, fees, hours and availability are unverified.",
+          "Visitor access conditions require verification."
+        ],
+        "status": "research_context_only",
+        "parkingNameConfirmed": false,
+        "visitorAccessConfirmed": false,
+        "navigationEntranceConfirmed": false,
+        "publicationApproved": false
+      }
+    ],
+    "sourceCoordinatesAndInspectionLinks": [
+      {
+        "recordId": "osm:node/7078381082:Point",
+        "sourceRecordUrl": "https://www.openstreetmap.org/node/7078381082",
+        "sourceLicense": "ODbL-1.0",
+        "sourceRecordEditedAt": "2019-12-22T20:14:41Z",
+        "accessClass": "unknown",
+        "coordinate": [
+          121.0314397,
+          14.5596574
+        ],
+        "googleMaps": "https://www.google.com/maps/search/?api=1&query=14.5596574%2C121.0314397",
+        "waze": "https://www.waze.com/ul?ll=14.5596574%2C121.0314397&z=18"
+      }
+    ],
+    "access": "access_unknown",
+    "restrictions": [],
+    "uncertainties": [
+      "Physical identity, operation, visitor access and vehicle entrance remain unverified.",
+      "Nearby property names do not establish a parking-facility name.",
+      "Selected by category relevance, straight-line proximity and verified source-polygon containment."
+    ],
+    "physicalChecks": [
+      "At each retained source coordinate, identify the actual parking boundary and posted facility name; record dated first-party signage evidence where permitted. The anchor is not a vehicle entrance.",
+      "Check whether each named nearby property actually operates this parking facility and whether its parking has its own visitor name. A property name alone does not name this lot.",
+      "Confirm current operation, ordinary visitor eligibility, customer/resident/permit conditions, restrictions and posted hours with signs or an authorized operator. Leave unconfirmed facts unknown.",
+      "Record the separately observed lawful vehicle entrance, approach direction and coordinates; record posted rates only with date and permission. Do not infer vacancy, capacity or booking rights.",
+      "Submit dated observations and evidence references for identity/access review. Operator reuse permission and final publication approval require separate human decisions; this task remains uncompleted.",
+      "Check whether motorists visiting the proposed destination may legally use this parking; proximity alone does not establish permission or ownership.",
+      "Identify the actual vehicle entrance and any barriers, one-way restrictions, pedestrian connections or separate properties between the source anchor and destination.",
+      "If several destinations are plausible, record signage and visitor conditions without choosing an official parking name from proximity."
+    ],
+    "physicalVerificationComplete": false,
+    "publicationApproved": false
+  },
+  {
+    "priority": 25,
+    "groupId": "facility:ce65e8b662262001d3e1",
+    "parkeyRecordIds": [
+      "osm:way/222312272:MultiPolygon"
+    ],
+    "area": "poblacion",
+    "outcome": "described",
+    "proposedDescriptiveLabel": "Parking near Guadalupe Viejo Barangay Sports Complex",
+    "proposedAlternativesForReview": [
+      "Parking near Guadalupe Viejo Barangay Sports Complex",
+      "Parking near Guadalupe Viejo Community Complex",
+      "Parking near Metropolitan Club"
+    ],
+    "alternatives": [
+      {
+        "label": "Parking near Guadalupe Viejo Barangay Sports Complex",
+        "destination": "Guadalupe Viejo Barangay Sports Complex",
+        "category": "leisure:sports_centre",
+        "sourceId": "osm:way/222312254",
+        "sourceRecordUrl": "https://www.openstreetmap.org/way/222312254",
+        "sourceLicense": "ODbL-1.0",
+        "sourceRecordEditedAt": "2026-04-11T10:13:52Z",
+        "sourceVersion": 6,
+        "sourceSnapshotSha256": "1d0c37f90af5666473ee5df9f6691e94dfbded65aec40a507474eded60efe1d5",
+        "sourceCoordinate": [
+          121.03942555,
+          14.564193
+        ],
+        "anchorCoordinate": [
+          121.03923259999999,
+          14.564013450000001
+        ],
+        "parkingRecordId": "osm:way/222312272:MultiPolygon",
+        "distanceBasis": "source_geometry_anchor_haversine",
+        "approximateStraightLineMeters": 28.8,
+        "insideSourcePropertyFootprint": false,
+        "score": 80,
+        "scoreComponents": {
+          "category": 29.6,
+          "proximity": 50.4,
+          "containment": 0
+        },
+        "duplicateSourceIds": [
+          "osm:way/222312254"
+        ],
+        "uncertainties": [
+          "Nearby destination context does not establish parking ownership or visitor eligibility.",
+          "Source anchors are not verified vehicle entrances; straight-line distance is not a walkable route.",
+          "Current operation, fees, hours and availability are unverified.",
+          "Visitor access conditions require verification."
+        ],
+        "status": "research_context_only",
+        "parkingNameConfirmed": false,
+        "visitorAccessConfirmed": false,
+        "navigationEntranceConfirmed": false,
+        "publicationApproved": false
+      },
+      {
+        "label": "Parking near Guadalupe Viejo Community Complex",
+        "destination": "Guadalupe Viejo Community Complex",
+        "category": "amenity:community_centre",
+        "sourceId": "osm:way/222312249",
+        "sourceRecordUrl": "https://www.openstreetmap.org/way/222312249",
+        "sourceLicense": "ODbL-1.0",
+        "sourceRecordEditedAt": "2026-04-11T10:13:52Z",
+        "sourceVersion": 7,
+        "sourceSnapshotSha256": "1d0c37f90af5666473ee5df9f6691e94dfbded65aec40a507474eded60efe1d5",
+        "sourceCoordinate": [
+          121.0396695,
+          14.56424985
+        ],
+        "anchorCoordinate": [
+          121.03923259999999,
+          14.564013450000001
+        ],
+        "parkingRecordId": "osm:way/222312272:MultiPolygon",
+        "distanceBasis": "source_geometry_anchor_haversine",
+        "approximateStraightLineMeters": 53.9,
+        "insideSourcePropertyFootprint": false,
+        "score": 72.4,
+        "scoreComponents": {
+          "category": 30.4,
+          "proximity": 42,
+          "containment": 0
+        },
+        "duplicateSourceIds": [
+          "osm:way/222312249"
+        ],
+        "uncertainties": [
+          "Nearby destination context does not establish parking ownership or visitor eligibility.",
+          "Source anchors are not verified vehicle entrances; straight-line distance is not a walkable route.",
+          "Current operation, fees, hours and availability are unverified.",
+          "Visitor access conditions require verification."
+        ],
+        "status": "research_context_only",
+        "parkingNameConfirmed": false,
+        "visitorAccessConfirmed": false,
+        "navigationEntranceConfirmed": false,
+        "publicationApproved": false
+      },
+      {
+        "label": "Parking near Metropolitan Club",
+        "destination": "Metropolitan Club",
+        "category": "leisure:sports_centre",
+        "sourceId": "osm:way/259566985",
+        "sourceRecordUrl": "https://www.openstreetmap.org/way/259566985",
+        "sourceLicense": "ODbL-1.0",
+        "sourceRecordEditedAt": "2026-01-06T19:57:22Z",
+        "sourceVersion": 3,
+        "sourceSnapshotSha256": "1d0c37f90af5666473ee5df9f6691e94dfbded65aec40a507474eded60efe1d5",
+        "sourceCoordinate": [
+          121.03945920000001,
+          14.563422549999999
+        ],
+        "anchorCoordinate": [
+          121.03923259999999,
+          14.564013450000001
+        ],
+        "parkingRecordId": "osm:way/222312272:MultiPolygon",
+        "distanceBasis": "source_geometry_anchor_haversine",
+        "approximateStraightLineMeters": 70.1,
+        "insideSourcePropertyFootprint": false,
+        "score": 66.2,
+        "scoreComponents": {
+          "category": 29.6,
+          "proximity": 36.6,
+          "containment": 0
+        },
+        "duplicateSourceIds": [
+          "osm:way/259566985"
+        ],
+        "uncertainties": [
+          "Nearby destination context does not establish parking ownership or visitor eligibility.",
+          "Source anchors are not verified vehicle entrances; straight-line distance is not a walkable route.",
+          "Current operation, fees, hours and availability are unverified.",
+          "Visitor access conditions require verification."
+        ],
+        "status": "research_context_only",
+        "parkingNameConfirmed": false,
+        "visitorAccessConfirmed": false,
+        "navigationEntranceConfirmed": false,
+        "publicationApproved": false
+      }
+    ],
+    "sourceCoordinatesAndInspectionLinks": [
+      {
+        "recordId": "osm:way/222312272:MultiPolygon",
+        "sourceRecordUrl": "https://www.openstreetmap.org/way/222312272",
+        "sourceLicense": "ODbL-1.0",
+        "sourceRecordEditedAt": "2013-05-20T12:49:53Z",
+        "accessClass": "unknown",
+        "coordinate": [
+          121.03923259999999,
+          14.564013450000001
+        ],
+        "googleMaps": "https://www.google.com/maps/search/?api=1&query=14.564013450000001%2C121.03923259999999",
+        "waze": "https://www.waze.com/ul?ll=14.564013450000001%2C121.03923259999999&z=18"
+      }
+    ],
+    "access": "access_unknown",
+    "restrictions": [],
+    "uncertainties": [
+      "Physical identity, operation, visitor access and vehicle entrance remain unverified.",
+      "Nearby property names do not establish a parking-facility name.",
+      "Selected by category relevance, straight-line proximity and verified source-polygon containment."
+    ],
+    "physicalChecks": [
+      "At each retained source coordinate, identify the actual parking boundary and posted facility name; record dated first-party signage evidence where permitted. The anchor is not a vehicle entrance.",
+      "Check whether each named nearby property actually operates this parking facility and whether its parking has its own visitor name. A property name alone does not name this lot.",
+      "Confirm current operation, ordinary visitor eligibility, customer/resident/permit conditions, restrictions and posted hours with signs or an authorized operator. Leave unconfirmed facts unknown.",
+      "Record the separately observed lawful vehicle entrance, approach direction and coordinates; record posted rates only with date and permission. Do not infer vacancy, capacity or booking rights.",
+      "Submit dated observations and evidence references for identity/access review. Operator reuse permission and final publication approval require separate human decisions; this task remains uncompleted.",
+      "Check whether motorists visiting the proposed destination may legally use this parking; proximity alone does not establish permission or ownership.",
+      "Identify the actual vehicle entrance and any barriers, one-way restrictions, pedestrian connections or separate properties between the source anchor and destination.",
+      "If several destinations are plausible, record signage and visitor conditions without choosing an official parking name from proximity."
+    ],
+    "physicalVerificationComplete": false,
+    "publicationApproved": false
+  },
+  {
+    "priority": 32,
+    "groupId": "facility:3ee494494a51dd96d77d",
+    "parkeyRecordIds": [
+      "osm:way/37236992:MultiPolygon"
+    ],
+    "area": "bgc",
+    "outcome": "described",
+    "proposedDescriptiveLabel": "Parking near The Bikeyard",
+    "proposedAlternativesForReview": [
+      "Parking near The Bikeyard",
+      "Parking near La Chinessa",
+      "Parking near Italianni's",
+      "Parking near Go'Bento",
+      "Parking near Ensogo Philippines"
+    ],
+    "alternatives": [
+      {
+        "label": "Parking near The Bikeyard",
+        "destination": "The Bikeyard",
+        "category": "leisure:park",
+        "sourceId": "osm:relation/13512336",
+        "sourceRecordUrl": "https://www.openstreetmap.org/relation/13512336",
+        "sourceLicense": "ODbL-1.0",
+        "sourceRecordEditedAt": "2021-12-05T07:11:50Z",
+        "sourceVersion": 1,
+        "sourceSnapshotSha256": "1d0c37f90af5666473ee5df9f6691e94dfbded65aec40a507474eded60efe1d5",
+        "sourceCoordinate": [
+          121.0518852,
+          14.54934755
+        ],
+        "anchorCoordinate": [
+          121.05175725,
+          14.54953595
+        ],
+        "parkingRecordId": "osm:way/37236992:MultiPolygon",
+        "distanceBasis": "source_geometry_anchor_haversine",
+        "approximateStraightLineMeters": 25.1,
+        "insideSourcePropertyFootprint": false,
+        "score": 88,
+        "scoreComponents": {
+          "category": 36.4,
+          "proximity": 51.6,
+          "containment": 0
+        },
+        "duplicateSourceIds": [
+          "osm:relation/13512336"
+        ],
+        "uncertainties": [
+          "Nearby destination context does not establish parking ownership or visitor eligibility.",
+          "Source anchors are not verified vehicle entrances; straight-line distance is not a walkable route.",
+          "Current operation, fees, hours and availability are unverified.",
+          "Visitor access conditions require verification."
+        ],
+        "status": "research_context_only",
+        "parkingNameConfirmed": false,
+        "visitorAccessConfirmed": false,
+        "navigationEntranceConfirmed": false,
+        "publicationApproved": false
+      },
+      {
+        "label": "Parking near La Chinessa",
+        "destination": "La Chinessa",
+        "category": "amenity:restaurant",
+        "sourceId": "osm:node/14251408074",
+        "sourceRecordUrl": "https://www.openstreetmap.org/node/14251408074",
+        "sourceLicense": "ODbL-1.0",
+        "sourceRecordEditedAt": "2026-10-05T08:21:57Z",
+        "sourceVersion": 1,
+        "sourceSnapshotSha256": "1d0c37f90af5666473ee5df9f6691e94dfbded65aec40a507474eded60efe1d5",
+        "sourceCoordinate": [
+          121.0519106,
+          14.5490664
+        ],
+        "anchorCoordinate": [
+          121.05175725,
+          14.54953595
+        ],
+        "parkingRecordId": "osm:way/37236992:MultiPolygon",
+        "distanceBasis": "source_geometry_anchor_haversine",
+        "approximateStraightLineMeters": 54.8,
+        "insideSourcePropertyFootprint": false,
+        "score": 76.9,
+        "scoreComponents": {
+          "category": 35.2,
+          "proximity": 41.7,
+          "containment": 0
+        },
+        "duplicateSourceIds": [
+          "osm:node/14251408074"
+        ],
+        "uncertainties": [
+          "Nearby destination context does not establish parking ownership or visitor eligibility.",
+          "Source anchors are not verified vehicle entrances; straight-line distance is not a walkable route.",
+          "Current operation, fees, hours and availability are unverified.",
+          "Visitor access conditions require verification."
+        ],
+        "status": "research_context_only",
+        "parkingNameConfirmed": false,
+        "visitorAccessConfirmed": false,
+        "navigationEntranceConfirmed": false,
+        "publicationApproved": false
+      },
+      {
+        "label": "Parking near Italianni's",
+        "destination": "Italianni's",
+        "category": "amenity:restaurant",
+        "sourceId": "osm:node/702562358",
+        "sourceRecordUrl": "https://www.openstreetmap.org/node/702562358",
+        "sourceLicense": "ODbL-1.0",
+        "sourceRecordEditedAt": "2026-07-11T02:04:07Z",
+        "sourceVersion": 7,
+        "sourceSnapshotSha256": "1d0c37f90af5666473ee5df9f6691e94dfbded65aec40a507474eded60efe1d5",
+        "sourceCoordinate": [
+          121.0519819,
+          14.550022
+        ],
+        "anchorCoordinate": [
+          121.05175725,
+          14.54953595
+        ],
+        "parkingRecordId": "osm:way/37236992:MultiPolygon",
+        "distanceBasis": "source_geometry_anchor_haversine",
+        "approximateStraightLineMeters": 59.2,
+        "insideSourcePropertyFootprint": false,
+        "score": 75.5,
+        "scoreComponents": {
+          "category": 35.2,
+          "proximity": 40.3,
+          "containment": 0
+        },
+        "duplicateSourceIds": [
+          "osm:node/702562358"
+        ],
+        "uncertainties": [
+          "Nearby destination context does not establish parking ownership or visitor eligibility.",
+          "Source anchors are not verified vehicle entrances; straight-line distance is not a walkable route.",
+          "Current operation, fees, hours and availability are unverified.",
+          "Visitor access conditions require verification."
+        ],
+        "status": "research_context_only",
+        "parkingNameConfirmed": false,
+        "visitorAccessConfirmed": false,
+        "navigationEntranceConfirmed": false,
+        "publicationApproved": false
+      },
+      {
+        "label": "Parking near Go'Bento",
+        "destination": "Go'Bento",
+        "category": "amenity:fast_food",
+        "sourceId": "osm:node/6979576238",
+        "sourceRecordUrl": "https://www.openstreetmap.org/node/6979576238",
+        "sourceLicense": "ODbL-1.0",
+        "sourceRecordEditedAt": "2019-11-15T12:01:29Z",
+        "sourceVersion": 1,
+        "sourceSnapshotSha256": "1d0c37f90af5666473ee5df9f6691e94dfbded65aec40a507474eded60efe1d5",
+        "sourceCoordinate": [
+          121.0512029,
+          14.5497162
+        ],
+        "anchorCoordinate": [
+          121.05175725,
+          14.54953595
+        ],
+        "parkingRecordId": "osm:way/37236992:MultiPolygon",
+        "distanceBasis": "source_geometry_anchor_haversine",
+        "approximateStraightLineMeters": 62.9,
+        "insideSourcePropertyFootprint": false,
+        "score": 68.6,
+        "scoreComponents": {
+          "category": 29.6,
+          "proximity": 39,
+          "containment": 0
+        },
+        "duplicateSourceIds": [
+          "osm:node/6979576238"
+        ],
+        "uncertainties": [
+          "Nearby destination context does not establish parking ownership or visitor eligibility.",
+          "Source anchors are not verified vehicle entrances; straight-line distance is not a walkable route.",
+          "Current operation, fees, hours and availability are unverified.",
+          "Unresolved OpenStreetMap source warning (fixme): location",
+          "Visitor access conditions require verification."
+        ],
+        "status": "research_context_only",
+        "parkingNameConfirmed": false,
+        "visitorAccessConfirmed": false,
+        "navigationEntranceConfirmed": false,
+        "publicationApproved": false
+      },
+      {
+        "label": "Parking near Ensogo Philippines",
+        "destination": "Ensogo Philippines",
+        "category": "amenity:marketplace",
+        "sourceId": "osm:node/2198981414",
+        "sourceRecordUrl": "https://www.openstreetmap.org/node/2198981414",
+        "sourceLicense": "ODbL-1.0",
+        "sourceRecordEditedAt": "2013-03-13T02:36:47Z",
+        "sourceVersion": 2,
+        "sourceSnapshotSha256": "1d0c37f90af5666473ee5df9f6691e94dfbded65aec40a507474eded60efe1d5",
+        "sourceCoordinate": [
+          121.052449,
+          14.5492306
+        ],
+        "anchorCoordinate": [
+          121.05175725,
+          14.54953595
+        ],
+        "parkingRecordId": "osm:way/37236992:MultiPolygon",
+        "distanceBasis": "source_geometry_anchor_haversine",
+        "approximateStraightLineMeters": 81.8,
+        "insideSourcePropertyFootprint": false,
+        "score": 67.9,
+        "scoreComponents": {
+          "category": 35.2,
+          "proximity": 32.7,
+          "containment": 0
+        },
+        "duplicateSourceIds": [
+          "osm:node/2198981414"
+        ],
+        "uncertainties": [
+          "Nearby destination context does not establish parking ownership or visitor eligibility.",
+          "Source anchors are not verified vehicle entrances; straight-line distance is not a walkable route.",
+          "Current operation, fees, hours and availability are unverified.",
+          "Visitor access conditions require verification."
+        ],
+        "status": "research_context_only",
+        "parkingNameConfirmed": false,
+        "visitorAccessConfirmed": false,
+        "navigationEntranceConfirmed": false,
+        "publicationApproved": false
+      }
+    ],
+    "sourceCoordinatesAndInspectionLinks": [
+      {
+        "recordId": "osm:way/37236992:MultiPolygon",
+        "sourceRecordUrl": "https://www.openstreetmap.org/way/37236992",
+        "sourceLicense": "ODbL-1.0",
+        "sourceRecordEditedAt": "2024-05-02T02:25:21Z",
+        "accessClass": "customers",
+        "coordinate": [
+          121.05175725,
+          14.54953595
+        ],
+        "googleMaps": "https://www.google.com/maps/search/?api=1&query=14.54953595%2C121.05175725",
+        "waze": "https://www.waze.com/ul?ll=14.54953595%2C121.05175725&z=18"
+      }
+    ],
+    "access": "customer_conditions_unconfirmed",
+    "restrictions": [],
+    "uncertainties": [
+      "Physical identity, operation, visitor access and vehicle entrance remain unverified.",
+      "Nearby property names do not establish a parking-facility name.",
+      "Selected by category relevance, straight-line proximity and verified source-polygon containment."
+    ],
+    "physicalChecks": [
+      "At each retained source coordinate, identify the actual parking boundary and posted facility name; record dated first-party signage evidence where permitted. The anchor is not a vehicle entrance.",
+      "Check whether each named nearby property actually operates this parking facility and whether its parking has its own visitor name. A property name alone does not name this lot.",
+      "Confirm current operation, ordinary visitor eligibility, customer/resident/permit conditions, restrictions and posted hours with signs or an authorized operator. Leave unconfirmed facts unknown.",
+      "Record the separately observed lawful vehicle entrance, approach direction and coordinates; record posted rates only with date and permission. Do not infer vacancy, capacity or booking rights.",
+      "Submit dated observations and evidence references for identity/access review. Operator reuse permission and final publication approval require separate human decisions; this task remains uncompleted.",
+      "Check whether motorists visiting the proposed destination may legally use this parking; proximity alone does not establish permission or ownership.",
+      "Identify the actual vehicle entrance and any barriers, one-way restrictions, pedestrian connections or separate properties between the source anchor and destination.",
+      "If several destinations are plausible, record signage and visitor conditions without choosing an official parking name from proximity."
+    ],
+    "physicalVerificationComplete": false,
+    "publicationApproved": false
+  },
+  {
+    "priority": 33,
+    "groupId": "facility:9bd74ef4bad258b8c272",
+    "parkeyRecordIds": [
+      "osm:way/205968626:MultiPolygon"
+    ],
+    "area": "bgc",
+    "outcome": "described",
+    "proposedDescriptiveLabel": "Parking near Bonifacio High Street Central",
+    "proposedAlternativesForReview": [
+      "Parking near Bonifacio High Street Central",
+      "Parking near The Alley by Vikings",
+      "Parking near Din Tai Fung",
+      "Parking near Lorenzo's Way",
+      "Parking near Earth Kitchen",
+      "Parking near Geisha",
+      "Parking near BHS Central",
+      "Parking near Burnt Bean",
+      "Parking near Toby's Sports",
+      "Parking near Central Square"
+    ],
+    "alternatives": [
+      {
+        "label": "Parking near Bonifacio High Street Central",
+        "destination": "Bonifacio High Street Central",
+        "category": "shop:mall",
+        "sourceId": "osm:relation/17552611",
+        "sourceRecordUrl": "https://www.openstreetmap.org/relation/17552611",
+        "sourceLicense": "ODbL-1.0",
+        "sourceRecordEditedAt": "2024-05-03T10:55:13Z",
+        "sourceVersion": 1,
+        "sourceSnapshotSha256": "1d0c37f90af5666473ee5df9f6691e94dfbded65aec40a507474eded60efe1d5",
+        "sourceCoordinate": [
+          121.04870085,
+          14.55122625
+        ],
+        "anchorCoordinate": [
+          121.0482212,
+          14.5508049
+        ],
+        "parkingRecordId": "osm:way/205968626:MultiPolygon",
+        "distanceBasis": "source_geometry_anchor_haversine",
+        "approximateStraightLineMeters": 69.7,
+        "insideSourcePropertyFootprint": true,
+        "score": 111.8,
+        "scoreComponents": {
+          "category": 40,
+          "proximity": 36.8,
+          "containment": 35
+        },
+        "duplicateSourceIds": [
+          "osm:relation/17552611"
+        ],
+        "uncertainties": [
+          "Nearby destination context does not establish parking ownership or visitor eligibility.",
+          "Source anchors are not verified vehicle entrances; straight-line distance is not a walkable route.",
+          "Current operation, fees, hours and availability are unverified.",
+          "Visitor access conditions require verification."
+        ],
+        "status": "research_context_only",
+        "parkingNameConfirmed": false,
+        "visitorAccessConfirmed": false,
+        "navigationEntranceConfirmed": false,
+        "publicationApproved": false
+      },
+      {
+        "label": "Parking near The Alley by Vikings",
+        "destination": "The Alley by Vikings",
+        "category": "amenity:restaurant",
+        "sourceId": "osm:node/11955988334",
+        "sourceRecordUrl": "https://www.openstreetmap.org/node/11955988334",
+        "sourceLicense": "ODbL-1.0",
+        "sourceRecordEditedAt": "2026-06-22T05:48:21Z",
+        "sourceVersion": 3,
+        "sourceSnapshotSha256": "1d0c37f90af5666473ee5df9f6691e94dfbded65aec40a507474eded60efe1d5",
+        "sourceCoordinate": [
+          121.0480838,
+          14.5511721
+        ],
+        "anchorCoordinate": [
+          121.0482212,
+          14.5508049
+        ],
+        "parkingRecordId": "osm:way/205968626:MultiPolygon",
+        "distanceBasis": "source_geometry_anchor_haversine",
+        "approximateStraightLineMeters": 43.4,
+        "insideSourcePropertyFootprint": false,
+        "score": 80.7,
+        "scoreComponents": {
+          "category": 35.2,
+          "proximity": 45.5,
+          "containment": 0
+        },
+        "duplicateSourceIds": [
+          "osm:node/11955988334"
+        ],
+        "uncertainties": [
+          "Nearby destination context does not establish parking ownership or visitor eligibility.",
+          "Source anchors are not verified vehicle entrances; straight-line distance is not a walkable route.",
+          "Current operation, fees, hours and availability are unverified.",
+          "Visitor access conditions require verification."
+        ],
+        "status": "research_context_only",
+        "parkingNameConfirmed": false,
+        "visitorAccessConfirmed": false,
+        "navigationEntranceConfirmed": false,
+        "publicationApproved": false
+      },
+      {
+        "label": "Parking near Din Tai Fung",
+        "destination": "Din Tai Fung",
+        "category": "amenity:restaurant",
+        "sourceId": "osm:node/5625968978",
+        "sourceRecordUrl": "https://www.openstreetmap.org/node/5625968978",
+        "sourceLicense": "ODbL-1.0",
+        "sourceRecordEditedAt": "2026-06-22T05:48:21Z",
+        "sourceVersion": 4,
+        "sourceSnapshotSha256": "1d0c37f90af5666473ee5df9f6691e94dfbded65aec40a507474eded60efe1d5",
+        "sourceCoordinate": [
+          121.0480982,
+          14.5512129
+        ],
+        "anchorCoordinate": [
+          121.0482212,
+          14.5508049
+        ],
+        "parkingRecordId": "osm:way/205968626:MultiPolygon",
+        "distanceBasis": "source_geometry_anchor_haversine",
+        "approximateStraightLineMeters": 47.3,
+        "insideSourcePropertyFootprint": false,
+        "score": 79.4,
+        "scoreComponents": {
+          "category": 35.2,
+          "proximity": 44.2,
+          "containment": 0
+        },
+        "duplicateSourceIds": [
+          "osm:node/5625968978"
+        ],
+        "uncertainties": [
+          "Nearby destination context does not establish parking ownership or visitor eligibility.",
+          "Source anchors are not verified vehicle entrances; straight-line distance is not a walkable route.",
+          "Current operation, fees, hours and availability are unverified.",
+          "Visitor access conditions require verification."
+        ],
+        "status": "research_context_only",
+        "parkingNameConfirmed": false,
+        "visitorAccessConfirmed": false,
+        "navigationEntranceConfirmed": false,
+        "publicationApproved": false
+      },
+      {
+        "label": "Parking near Lorenzo's Way",
+        "destination": "Lorenzo's Way",
+        "category": "amenity:restaurant",
+        "sourceId": "osm:node/2310932521",
+        "sourceRecordUrl": "https://www.openstreetmap.org/node/2310932521",
+        "sourceLicense": "ODbL-1.0",
+        "sourceRecordEditedAt": "2024-05-03T12:23:46Z",
+        "sourceVersion": 2,
+        "sourceSnapshotSha256": "1d0c37f90af5666473ee5df9f6691e94dfbded65aec40a507474eded60efe1d5",
+        "sourceCoordinate": [
+          121.0486973,
+          14.5508746
+        ],
+        "anchorCoordinate": [
+          121.0482212,
+          14.5508049
+        ],
+        "parkingRecordId": "osm:way/205968626:MultiPolygon",
+        "distanceBasis": "source_geometry_anchor_haversine",
+        "approximateStraightLineMeters": 51.8,
+        "insideSourcePropertyFootprint": false,
+        "score": 77.9,
+        "scoreComponents": {
+          "category": 35.2,
+          "proximity": 42.7,
+          "containment": 0
+        },
+        "duplicateSourceIds": [
+          "osm:node/2310932521"
+        ],
+        "uncertainties": [
+          "Nearby destination context does not establish parking ownership or visitor eligibility.",
+          "Source anchors are not verified vehicle entrances; straight-line distance is not a walkable route.",
+          "Current operation, fees, hours and availability are unverified.",
+          "Visitor access conditions require verification."
+        ],
+        "status": "research_context_only",
+        "parkingNameConfirmed": false,
+        "visitorAccessConfirmed": false,
+        "navigationEntranceConfirmed": false,
+        "publicationApproved": false
+      },
+      {
+        "label": "Parking near Earth Kitchen",
+        "destination": "Earth Kitchen",
+        "category": "amenity:restaurant",
+        "sourceId": "osm:node/2310932523",
+        "sourceRecordUrl": "https://www.openstreetmap.org/node/2310932523",
+        "sourceLicense": "ODbL-1.0",
+        "sourceRecordEditedAt": "2024-05-03T12:23:46Z",
+        "sourceVersion": 4,
+        "sourceSnapshotSha256": "1d0c37f90af5666473ee5df9f6691e94dfbded65aec40a507474eded60efe1d5",
+        "sourceCoordinate": [
+          121.0487766,
+          14.5508366
+        ],
+        "anchorCoordinate": [
+          121.0482212,
+          14.5508049
+        ],
+        "parkingRecordId": "osm:way/205968626:MultiPolygon",
+        "distanceBasis": "source_geometry_anchor_haversine",
+        "approximateStraightLineMeters": 59.9,
+        "insideSourcePropertyFootprint": false,
+        "score": 75.2,
+        "scoreComponents": {
+          "category": 35.2,
+          "proximity": 40,
+          "containment": 0
+        },
+        "duplicateSourceIds": [
+          "osm:node/2310932523"
+        ],
+        "uncertainties": [
+          "Nearby destination context does not establish parking ownership or visitor eligibility.",
+          "Source anchors are not verified vehicle entrances; straight-line distance is not a walkable route.",
+          "Current operation, fees, hours and availability are unverified.",
+          "Visitor access conditions require verification."
+        ],
+        "status": "research_context_only",
+        "parkingNameConfirmed": false,
+        "visitorAccessConfirmed": false,
+        "navigationEntranceConfirmed": false,
+        "publicationApproved": false
+      },
+      {
+        "label": "Parking near Geisha",
+        "destination": "Geisha",
+        "category": "amenity:restaurant",
+        "sourceId": "osm:node/2310932520",
+        "sourceRecordUrl": "https://www.openstreetmap.org/node/2310932520",
+        "sourceLicense": "ODbL-1.0",
+        "sourceRecordEditedAt": "2024-05-03T12:23:46Z",
+        "sourceVersion": 3,
+        "sourceSnapshotSha256": "1d0c37f90af5666473ee5df9f6691e94dfbded65aec40a507474eded60efe1d5",
+        "sourceCoordinate": [
+          121.0488559,
+          14.5507986
+        ],
+        "anchorCoordinate": [
+          121.0482212,
+          14.5508049
+        ],
+        "parkingRecordId": "osm:way/205968626:MultiPolygon",
+        "distanceBasis": "source_geometry_anchor_haversine",
+        "approximateStraightLineMeters": 68.3,
+        "insideSourcePropertyFootprint": false,
+        "score": 72.4,
+        "scoreComponents": {
+          "category": 35.2,
+          "proximity": 37.2,
+          "containment": 0
+        },
+        "duplicateSourceIds": [
+          "osm:node/2310932520"
+        ],
+        "uncertainties": [
+          "Nearby destination context does not establish parking ownership or visitor eligibility.",
+          "Source anchors are not verified vehicle entrances; straight-line distance is not a walkable route.",
+          "Current operation, fees, hours and availability are unverified.",
+          "Visitor access conditions require verification."
+        ],
+        "status": "research_context_only",
+        "parkingNameConfirmed": false,
+        "visitorAccessConfirmed": false,
+        "navigationEntranceConfirmed": false,
+        "publicationApproved": false
+      },
+      {
+        "label": "Parking near BHS Central",
+        "destination": "BHS Central",
+        "category": "leisure:park",
+        "sourceId": "osm:way/203893623",
+        "sourceRecordUrl": "https://www.openstreetmap.org/way/203893623",
+        "sourceLicense": "ODbL-1.0",
+        "sourceRecordEditedAt": "2024-11-24T20:53:18Z",
+        "sourceVersion": 7,
+        "sourceSnapshotSha256": "1d0c37f90af5666473ee5df9f6691e94dfbded65aec40a507474eded60efe1d5",
+        "sourceCoordinate": [
+          121.04871030000001,
+          14.551248999999999
+        ],
+        "anchorCoordinate": [
+          121.0482212,
+          14.5508049
+        ],
+        "parkingRecordId": "osm:way/205968626:MultiPolygon",
+        "distanceBasis": "source_geometry_anchor_haversine",
+        "approximateStraightLineMeters": 72.2,
+        "insideSourcePropertyFootprint": false,
+        "score": 72.3,
+        "scoreComponents": {
+          "category": 36.4,
+          "proximity": 35.9,
+          "containment": 0
+        },
+        "duplicateSourceIds": [
+          "osm:way/203893623"
+        ],
+        "uncertainties": [
+          "Nearby destination context does not establish parking ownership or visitor eligibility.",
+          "Source anchors are not verified vehicle entrances; straight-line distance is not a walkable route.",
+          "Current operation, fees, hours and availability are unverified.",
+          "Visitor access conditions require verification."
+        ],
+        "status": "research_context_only",
+        "parkingNameConfirmed": false,
+        "visitorAccessConfirmed": false,
+        "navigationEntranceConfirmed": false,
+        "publicationApproved": false
+      },
+      {
+        "label": "Parking near Burnt Bean",
+        "destination": "Burnt Bean",
+        "category": "amenity:restaurant",
+        "sourceId": "osm:node/2080597296",
+        "sourceRecordUrl": "https://www.openstreetmap.org/node/2080597296",
+        "sourceLicense": "ODbL-1.0",
+        "sourceRecordEditedAt": "2026-06-22T05:48:21Z",
+        "sourceVersion": 6,
+        "sourceSnapshotSha256": "1d0c37f90af5666473ee5df9f6691e94dfbded65aec40a507474eded60efe1d5",
+        "sourceCoordinate": [
+          121.0488632,
+          14.5508371
+        ],
+        "anchorCoordinate": [
+          121.0482212,
+          14.5508049
+        ],
+        "parkingRecordId": "osm:way/205968626:MultiPolygon",
+        "distanceBasis": "source_geometry_anchor_haversine",
+        "approximateStraightLineMeters": 69.2,
+        "insideSourcePropertyFootprint": false,
+        "score": 72.1,
+        "scoreComponents": {
+          "category": 35.2,
+          "proximity": 36.9,
+          "containment": 0
+        },
+        "duplicateSourceIds": [
+          "osm:node/2080597296"
+        ],
+        "uncertainties": [
+          "Nearby destination context does not establish parking ownership or visitor eligibility.",
+          "Source anchors are not verified vehicle entrances; straight-line distance is not a walkable route.",
+          "Current operation, fees, hours and availability are unverified.",
+          "Visitor access conditions require verification."
+        ],
+        "status": "research_context_only",
+        "parkingNameConfirmed": false,
+        "visitorAccessConfirmed": false,
+        "navigationEntranceConfirmed": false,
+        "publicationApproved": false
+      },
+      {
+        "label": "Parking near Toby's Sports",
+        "destination": "Toby's Sports",
+        "category": "shop:sports",
+        "sourceId": "osm:node/6846311627",
+        "sourceRecordUrl": "https://www.openstreetmap.org/node/6846311627",
+        "sourceLicense": "ODbL-1.0",
+        "sourceRecordEditedAt": "2026-01-17T07:27:33Z",
+        "sourceVersion": 3,
+        "sourceSnapshotSha256": "1d0c37f90af5666473ee5df9f6691e94dfbded65aec40a507474eded60efe1d5",
+        "sourceCoordinate": [
+          121.0479093,
+          14.5511327
+        ],
+        "anchorCoordinate": [
+          121.0482212,
+          14.5508049
+        ],
+        "parkingRecordId": "osm:way/205968626:MultiPolygon",
+        "distanceBasis": "source_geometry_anchor_haversine",
+        "approximateStraightLineMeters": 49.6,
+        "insideSourcePropertyFootprint": false,
+        "score": 69.9,
+        "scoreComponents": {
+          "category": 26.4,
+          "proximity": 43.5,
+          "containment": 0
+        },
+        "duplicateSourceIds": [
+          "osm:node/6846311627"
+        ],
+        "uncertainties": [
+          "Nearby destination context does not establish parking ownership or visitor eligibility.",
+          "Source anchors are not verified vehicle entrances; straight-line distance is not a walkable route.",
+          "Current operation, fees, hours and availability are unverified.",
+          "Visitor access conditions require verification."
+        ],
+        "status": "research_context_only",
+        "parkingNameConfirmed": false,
+        "visitorAccessConfirmed": false,
+        "navigationEntranceConfirmed": false,
+        "publicationApproved": false
+      },
+      {
+        "label": "Parking near Central Square",
+        "destination": "Central Square",
+        "category": "shop:mall",
+        "sourceId": "osm:way/205968610",
+        "sourceRecordUrl": "https://www.openstreetmap.org/way/205968610",
+        "sourceLicense": "ODbL-1.0",
+        "sourceRecordEditedAt": "2026-04-09T08:16:01Z",
+        "sourceVersion": 17,
+        "sourceSnapshotSha256": "1d0c37f90af5666473ee5df9f6691e94dfbded65aec40a507474eded60efe1d5",
+        "sourceCoordinate": [
+          121.04847405000001,
+          14.5519128
+        ],
+        "anchorCoordinate": [
+          121.0482212,
+          14.5508049
+        ],
+        "parkingRecordId": "osm:way/205968626:MultiPolygon",
+        "distanceBasis": "source_geometry_anchor_haversine",
+        "approximateStraightLineMeters": 126.2,
+        "insideSourcePropertyFootprint": false,
+        "score": 57.9,
+        "scoreComponents": {
+          "category": 40,
+          "proximity": 17.9,
+          "containment": 0
+        },
+        "duplicateSourceIds": [
+          "osm:way/205968610"
+        ],
+        "uncertainties": [
+          "Nearby destination context does not establish parking ownership or visitor eligibility.",
+          "Source anchors are not verified vehicle entrances; straight-line distance is not a walkable route.",
+          "Current operation, fees, hours and availability are unverified.",
+          "Visitor access conditions require verification."
+        ],
+        "status": "research_context_only",
+        "parkingNameConfirmed": false,
+        "visitorAccessConfirmed": false,
+        "navigationEntranceConfirmed": false,
+        "publicationApproved": false
+      }
+    ],
+    "sourceCoordinatesAndInspectionLinks": [
+      {
+        "recordId": "osm:way/205968626:MultiPolygon",
+        "sourceRecordUrl": "https://www.openstreetmap.org/way/205968626",
+        "sourceLicense": "ODbL-1.0",
+        "sourceRecordEditedAt": "2024-05-03T12:23:46Z",
+        "accessClass": "customers",
+        "coordinate": [
+          121.0482212,
+          14.5508049
+        ],
+        "googleMaps": "https://www.google.com/maps/search/?api=1&query=14.5508049%2C121.0482212",
+        "waze": "https://www.waze.com/ul?ll=14.5508049%2C121.0482212&z=18"
+      }
+    ],
+    "access": "customer_conditions_unconfirmed",
+    "restrictions": [],
+    "uncertainties": [
+      "Physical identity, operation, visitor access and vehicle entrance remain unverified.",
+      "Nearby property names do not establish a parking-facility name.",
+      "Selected by category relevance, straight-line proximity and verified source-polygon containment."
+    ],
+    "physicalChecks": [
+      "At each retained source coordinate, identify the actual parking boundary and posted facility name; record dated first-party signage evidence where permitted. The anchor is not a vehicle entrance.",
+      "Check whether each named nearby property actually operates this parking facility and whether its parking has its own visitor name. A property name alone does not name this lot.",
+      "Confirm current operation, ordinary visitor eligibility, customer/resident/permit conditions, restrictions and posted hours with signs or an authorized operator. Leave unconfirmed facts unknown.",
+      "Record the separately observed lawful vehicle entrance, approach direction and coordinates; record posted rates only with date and permission. Do not infer vacancy, capacity or booking rights.",
+      "Submit dated observations and evidence references for identity/access review. Operator reuse permission and final publication approval require separate human decisions; this task remains uncompleted.",
+      "Check whether motorists visiting the proposed destination may legally use this parking; proximity alone does not establish permission or ownership.",
+      "Identify the actual vehicle entrance and any barriers, one-way restrictions, pedestrian connections or separate properties between the source anchor and destination.",
+      "If several destinations are plausible, record signage and visitor conditions without choosing an official parking name from proximity."
+    ],
+    "physicalVerificationComplete": false,
+    "publicationApproved": false
+  },
+  {
+    "priority": 36,
+    "groupId": "facility:fd74fb10d78ca28079e1",
+    "parkeyRecordIds": [
+      "osm:node/13902737489:Point"
+    ],
+    "area": "bgc",
+    "outcome": "described",
+    "proposedDescriptiveLabel": "Parking near Dali",
+    "proposedAlternativesForReview": [
+      "Parking near Dali"
+    ],
+    "alternatives": [
+      {
+        "label": "Parking near Dali",
+        "destination": "Dali",
+        "category": "shop:convenience",
+        "sourceId": "osm:way/317215094",
+        "sourceRecordUrl": "https://www.openstreetmap.org/way/317215094",
+        "sourceLicense": "ODbL-1.0",
+        "sourceRecordEditedAt": "2026-06-01T19:41:03Z",
+        "sourceVersion": 2,
+        "sourceSnapshotSha256": "1d0c37f90af5666473ee5df9f6691e94dfbded65aec40a507474eded60efe1d5",
+        "sourceCoordinate": [
+          121.04899485000001,
+          14.560850349999999
+        ],
+        "anchorCoordinate": [
+          121.048919,
+          14.5609428
+        ],
+        "parkingRecordId": "osm:node/13902737489:Point",
+        "distanceBasis": "source_geometry_anchor_haversine",
+        "approximateStraightLineMeters": 13.1,
+        "insideSourcePropertyFootprint": false,
+        "score": 82,
+        "scoreComponents": {
+          "category": 26.4,
+          "proximity": 55.6,
+          "containment": 0
+        },
+        "duplicateSourceIds": [
+          "osm:way/317215094"
+        ],
+        "uncertainties": [
+          "Nearby destination context does not establish parking ownership or visitor eligibility.",
+          "Source anchors are not verified vehicle entrances; straight-line distance is not a walkable route.",
+          "Current operation, fees, hours and availability are unverified.",
+          "Visitor access conditions require verification."
+        ],
+        "status": "research_context_only",
+        "parkingNameConfirmed": false,
+        "visitorAccessConfirmed": false,
+        "navigationEntranceConfirmed": false,
+        "publicationApproved": false
+      }
+    ],
+    "sourceCoordinatesAndInspectionLinks": [
+      {
+        "recordId": "osm:node/13902737489:Point",
+        "sourceRecordUrl": "https://www.openstreetmap.org/node/13902737489",
+        "sourceLicense": "ODbL-1.0",
+        "sourceRecordEditedAt": "2026-06-01T19:41:03Z",
+        "accessClass": "customers",
+        "coordinate": [
+          121.048919,
+          14.5609428
+        ],
+        "googleMaps": "https://www.google.com/maps/search/?api=1&query=14.5609428%2C121.048919",
+        "waze": "https://www.waze.com/ul?ll=14.5609428%2C121.048919&z=18"
+      }
+    ],
+    "access": "customer_conditions_unconfirmed",
+    "restrictions": [],
+    "uncertainties": [
+      "Physical identity, operation, visitor access and vehicle entrance remain unverified.",
+      "Nearby property names do not establish a parking-facility name.",
+      "Selected by category relevance, straight-line proximity and verified source-polygon containment."
+    ],
+    "physicalChecks": [
+      "At each retained source coordinate, identify the actual parking boundary and posted facility name; record dated first-party signage evidence where permitted. The anchor is not a vehicle entrance.",
+      "Check whether each named nearby property actually operates this parking facility and whether its parking has its own visitor name. A property name alone does not name this lot.",
+      "Confirm current operation, ordinary visitor eligibility, customer/resident/permit conditions, restrictions and posted hours with signs or an authorized operator. Leave unconfirmed facts unknown.",
+      "Record the separately observed lawful vehicle entrance, approach direction and coordinates; record posted rates only with date and permission. Do not infer vacancy, capacity or booking rights.",
+      "Submit dated observations and evidence references for identity/access review. Operator reuse permission and final publication approval require separate human decisions; this task remains uncompleted.",
+      "Check whether motorists visiting the proposed destination may legally use this parking; proximity alone does not establish permission or ownership.",
+      "Identify the actual vehicle entrance and any barriers, one-way restrictions, pedestrian connections or separate properties between the source anchor and destination.",
+      "If several destinations are plausible, record signage and visitor conditions without choosing an official parking name from proximity."
+    ],
+    "physicalVerificationComplete": false,
+    "publicationApproved": false
+  },
+  {
+    "priority": 38,
+    "groupId": "facility:2314024439f9754daca7",
+    "parkeyRecordIds": [
+      "osm:way/589135508:MultiPolygon"
+    ],
+    "area": "bgc",
+    "outcome": "described",
+    "proposedDescriptiveLabel": "Parking near Taupe Dining",
+    "proposedAlternativesForReview": [
+      "Parking near Taupe Dining"
+    ],
+    "alternatives": [
+      {
+        "label": "Parking near Taupe Dining",
+        "destination": "Taupe Dining",
+        "category": "amenity:restaurant",
+        "sourceId": "osm:node/12644509184",
+        "sourceRecordUrl": "https://www.openstreetmap.org/node/12644509184",
+        "sourceLicense": "ODbL-1.0",
+        "sourceRecordEditedAt": "2025-03-08T03:30:15Z",
+        "sourceVersion": 1,
+        "sourceSnapshotSha256": "1d0c37f90af5666473ee5df9f6691e94dfbded65aec40a507474eded60efe1d5",
+        "sourceCoordinate": [
+          121.0500996,
+          14.5482351
+        ],
+        "anchorCoordinate": [
+          121.05013475,
+          14.54765735
+        ],
+        "parkingRecordId": "osm:way/589135508:MultiPolygon",
+        "distanceBasis": "source_geometry_anchor_haversine",
+        "approximateStraightLineMeters": 64.4,
+        "insideSourcePropertyFootprint": false,
+        "score": 73.7,
+        "scoreComponents": {
+          "category": 35.2,
+          "proximity": 38.5,
+          "containment": 0
+        },
+        "duplicateSourceIds": [
+          "osm:node/12644509184"
+        ],
+        "uncertainties": [
+          "Nearby destination context does not establish parking ownership or visitor eligibility.",
+          "Source anchors are not verified vehicle entrances; straight-line distance is not a walkable route.",
+          "Current operation, fees, hours and availability are unverified.",
+          "Visitor access conditions require verification."
+        ],
+        "status": "research_context_only",
+        "parkingNameConfirmed": false,
+        "visitorAccessConfirmed": false,
+        "navigationEntranceConfirmed": false,
+        "publicationApproved": false
+      }
+    ],
+    "sourceCoordinatesAndInspectionLinks": [
+      {
+        "recordId": "osm:way/589135508:MultiPolygon",
+        "sourceRecordUrl": "https://www.openstreetmap.org/way/589135508",
+        "sourceLicense": "ODbL-1.0",
+        "sourceRecordEditedAt": "2019-11-15T11:44:17Z",
+        "accessClass": "unknown",
+        "coordinate": [
+          121.05013475,
+          14.54765735
+        ],
+        "googleMaps": "https://www.google.com/maps/search/?api=1&query=14.54765735%2C121.05013475",
+        "waze": "https://www.waze.com/ul?ll=14.54765735%2C121.05013475&z=18"
+      }
+    ],
+    "access": "access_unknown",
+    "restrictions": [],
+    "uncertainties": [
+      "Physical identity, operation, visitor access and vehicle entrance remain unverified.",
+      "Nearby property names do not establish a parking-facility name.",
+      "Selected by category relevance, straight-line proximity and verified source-polygon containment."
+    ],
+    "physicalChecks": [
+      "At each retained source coordinate, identify the actual parking boundary and posted facility name; record dated first-party signage evidence where permitted. The anchor is not a vehicle entrance.",
+      "Check whether each named nearby property actually operates this parking facility and whether its parking has its own visitor name. A property name alone does not name this lot.",
+      "Confirm current operation, ordinary visitor eligibility, customer/resident/permit conditions, restrictions and posted hours with signs or an authorized operator. Leave unconfirmed facts unknown.",
+      "Record the separately observed lawful vehicle entrance, approach direction and coordinates; record posted rates only with date and permission. Do not infer vacancy, capacity or booking rights.",
+      "Submit dated observations and evidence references for identity/access review. Operator reuse permission and final publication approval require separate human decisions; this task remains uncompleted.",
+      "Check whether motorists visiting the proposed destination may legally use this parking; proximity alone does not establish permission or ownership.",
+      "Identify the actual vehicle entrance and any barriers, one-way restrictions, pedestrian connections or separate properties between the source anchor and destination.",
+      "If several destinations are plausible, record signage and visitor conditions without choosing an official parking name from proximity."
+    ],
+    "physicalVerificationComplete": false,
+    "publicationApproved": false
+  }
+]

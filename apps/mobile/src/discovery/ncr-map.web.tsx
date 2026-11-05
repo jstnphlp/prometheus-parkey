@@ -116,6 +116,30 @@ export default function NcrMap(props: NcrMapProps) {
         },
       })
       instance.addLayer({
+        id: 'ncr-destination-labels',
+        type: 'symbol',
+        source: 'anchors',
+        minzoom: 16,
+        filter: [
+          'all',
+          ['!', ['has', 'point_count']],
+          ['==', ['get', 'hasDestinationLabel'], true],
+        ],
+        layout: {
+          'text-field': ['get', 'label'],
+          'text-font': ['Noto Sans Bold'],
+          'text-size': 12,
+          'text-anchor': 'top',
+          'text-offset': [0, 1],
+          'text-max-width': 16,
+        },
+        paint: {
+          'text-color': '#5A1643',
+          'text-halo-color': '#FFFFFF',
+          'text-halo-width': 2,
+        },
+      })
+      instance.addLayer({
         id: 'ncr-clusters',
         type: 'circle',
         source: 'anchors',
@@ -146,7 +170,13 @@ export default function NcrMap(props: NcrMapProps) {
     instance.on('error', failed)
     instance.on('click', (event) => {
       const features = instance.queryRenderedFeatures(event.point, {
-        layers: ['ncr-anchors', 'ncr-clusters', 'ncr-streets', 'ncr-areas'],
+        layers: [
+          'ncr-anchors',
+          'ncr-destination-labels',
+          'ncr-clusters',
+          'ncr-streets',
+          'ncr-areas',
+        ],
       })
       const feature = features[0]
       if (
@@ -184,6 +214,7 @@ export default function NcrMap(props: NcrMapProps) {
       'ncr-areas',
       'ncr-streets',
       'ncr-anchors',
+      'ncr-destination-labels',
       'ncr-clusters',
       'ncr-cluster-label',
     ])

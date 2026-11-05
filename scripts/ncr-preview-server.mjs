@@ -18,7 +18,8 @@ import {
   validatePublicationLedger,
 } from './ncr-publication.mjs'
 import { validateReviewLedger } from './ncr-quality-review.mjs'
-import { chooseNearbyDestinationLabel } from './ncr-destination-labels.mjs'
+import { reviewNearbyDestinations } from './ncr-destination-labels.mjs'
+import { summarizeDestinationGroup } from './ncr-destination-report.mjs'
 import {
   buildNameReconciliation,
   meaningfulParkingName,
@@ -34,6 +35,9 @@ export const NCR_FEATURE_TYPES = [
 ]
 const facilityTypes = new Set(['lot', 'garage', 'facility_unspecified'])
 const nameReviewCache = new WeakMap()
+// Only loader-owned, recursively frozen reports can reuse validation. Callers
+// supplying mutable reports still revalidate identities and every review.
+const loadedEnrichmentCache = new WeakMap()
 function nameReviews(research) {
   if (!nameReviewCache.has(research)) {
     const report = buildNameReconciliation(research)
@@ -49,6 +53,8 @@ function nameReviews(research) {
 
 /** Enrichment is a source-bound private review attachment, never authority to publish. */
 export function validateNcrEnrichment(research, report) {
+  const loaded = loadedEnrichmentCache.get(report)
+  if (loaded?.research === research) return new Map(loaded.index)
   if (
     report?.schemaVersion !== 1 ||
     !Array.isArray(report.records) ||
@@ -62,6 +68,9 @@ export function validateNcrEnrichment(research, report) {
     research.facilityGroups.map((group) => [group.id, group]),
   )
   const index = new Map()
+  const candidates = new Map(
+    research.candidates.map((candidate) => [candidate.id, candidate]),
+  )
   const seen = new Set()
   for (const record of report.records) {
     const group = groups.get(record.groupId)
@@ -95,6 +104,22 @@ export function validateNcrEnrichment(research, report) {
         'Enrichment contains invalid group identities or review approvals.',
       )
     seen.add(record.groupId)
+    let destinationReview
+    if (record.destinationReview !== undefined) {
+      const memberReviews = record.candidateIds.map((id) => ({
+        recordId: id,
+        ...reviewNearbyDestinations(candidates.get(id), record, {
+          privatePreview: true,
+        }),
+      }))
+      destinationReview = summarizeDestinationGroup(record, memberReviews)
+      if (
+        contentHash(destinationReview) !== contentHash(record.destinationReview)
+      )
+        throw new Error(
+          'Destination review does not reproduce from the retained source evidence.',
+        )
+    }
     const attachment = {
       groupId: record.groupId,
       classification: record.classification,
@@ -104,6 +129,9 @@ export function validateNcrEnrichment(research, report) {
       operatorClues: record.operatorClues,
       contextClues: record.contextClues,
       reviewLinks: record.reviewLinks,
+      destinationReview,
+      identityConflict: record.identityConflict,
+      unsuitableSourceIds: record.unsuitableSourceIds,
     }
     for (const id of record.candidateIds) index.set(id, attachment)
   }
@@ -114,7 +142,19 @@ export function loadNcrEnrichment(filename, research) {
   const bytes = readFileSync(filename)
   const raw = filename.endsWith('.gz') ? gunzipSync(bytes) : bytes
   const report = JSON.parse(raw.toString('utf8'))
-  validateNcrEnrichment(research, report)
+  const index = validateNcrEnrichment(research, report)
+  const hash = contentHash(report)
+  const seen = new WeakSet()
+  const freeze = (value) => {
+    if (!value || typeof value !== 'object' || seen.has(value)) return
+    seen.add(value)
+    for (const child of Object.values(value)) freeze(child)
+    Object.freeze(value)
+  }
+  freeze(research)
+  freeze(report)
+  for (const attachment of index.values()) freeze(attachment)
+  loadedEnrichmentCache.set(report, { research, index, hash })
   return report
 }
 const loopbackHost = (hostname) =>
@@ -233,9 +273,27 @@ function projection(
   enrichmentIndex,
 ) {
   const enriched = preview ? enrichmentIndex?.get(candidate.id) : null
-  const destinationLabel = chooseNearbyDestinationLabel(candidate, enriched, {
-    privatePreview: preview,
-  })
+  let destinationReview = preview
+    ? reviewNearbyDestinations(candidate, enriched, {
+        privatePreview: preview,
+      })
+    : null
+  const groupReview = enriched?.destinationReview
+  if (destinationReview && groupReview) {
+    const memberReview = groupReview.memberReviews.find(
+      (review) => review.recordId === candidate.id,
+    )
+    destinationReview = {
+      outcome: groupReview.outcome,
+      label:
+        groupReview.outcome === 'described'
+          ? memberReview?.label || null
+          : null,
+      alternatives: groupReview.alternatives,
+      reasons: groupReview.reasons,
+    }
+  }
+  const destinationLabel = destinationReview?.label
   return {
     id: candidate.id,
     name: candidate.name,
@@ -246,8 +304,37 @@ function projection(
       crossSourceCandidate:
         nameIndex.get(candidate.id) === 'cross_source_name_candidate' &&
         meaningfulParkingName(candidate.name),
-      ...(enriched ? { enrichment: enriched } : {}),
+      ...(enriched
+        ? {
+            enrichment: {
+              groupId: enriched.groupId,
+              classification: enriched.classification,
+              proposedName: enriched.proposedName,
+              nameTagLeads: enriched.nameTagLeads,
+              nearbyParkingLeads: enriched.nearbyParkingLeads,
+              operatorClues: enriched.operatorClues,
+              reviewLinks: enriched.reviewLinks,
+              contextClues: enriched.contextClues.map((clue) => ({
+                name: clue.name,
+                sourceId: clue.sourceId,
+                sourceRecordUrl: clue.sourceRecordUrl,
+                sourceLicense: clue.sourceLicense,
+                relation: clue.relation,
+                usableAsParkingName: false,
+              })),
+            },
+          }
+        : {}),
       ...(destinationLabel ? { destinationLabel } : {}),
+      ...(destinationReview
+        ? {
+            destinationReview: {
+              outcome: destinationReview.outcome,
+              alternatives: destinationReview.alternatives,
+              reasons: destinationReview.reasons,
+            },
+          }
+        : {}),
     },
     featureType: candidate.type,
     geometry: candidate.geometry,
@@ -342,7 +429,11 @@ export function queryNcrResearch(
     sourceHashes: research.sourceHashes,
     ledger,
     reviewLedger,
-    ...(preview && enrichment ? { enrichment } : {}),
+    ...(preview && enrichment
+      ? {
+          enrichment: loadedEnrichmentCache.get(enrichment)?.hash || enrichment,
+        }
+      : {}),
   })
   const fingerprint = contentHash({
     dataVersion,

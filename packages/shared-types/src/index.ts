@@ -4,6 +4,8 @@ export type {
   NcrGeometry,
   NcrEvidenceState,
   NcrDiscoveryItem,
+  NcrDestinationLabel,
+  NcrDestinationReview,
   NcrDiscoveryCluster,
   NcrDiscoveryResponse,
 } from './ncr-discovery'

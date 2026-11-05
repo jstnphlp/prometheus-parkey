@@ -1,41 +1,123 @@
-# NCR parking near destinations — private research labels
+# NCR destination descriptions ? private research
 
-Parking near a restaurant, mall or attraction is useful to drivers even if an OSM/Overture parking object has no official business name. **This is a contextual phrase, not an official parking-facility name, and not evidence that vehicles can actually use the space.**
+The fresh November 5 run processes every one of the **3,112 originally unnamed
+facility groups**. It supplies **1,099 evidence-supported private descriptions**,
+including **486 groups that previously displayed generic labels** and 613 retained
+or refined descriptions. The original official/source names remain unchanged.
 
-## Private map behavior
+| Metric                                              | Before | After |
+| --------------------------------------------------- | -----: | ----: |
+| Officially unnamed facility groups                  |  3,112 | 3,112 |
+| Private groups with destination descriptions        |  1,188 | 1,099 |
+| Previously generic groups newly described           |      ? |   486 |
+| Existing descriptions retained/refined              |      ? |   613 |
+| Earlier descriptions withheld after stronger checks |      ? |   575 |
+| Previously named facilities                         |    617 |   617 |
+| Existing identity/name conflict groups              |     15 |    15 |
+| Unnamed groups without a suitable destination       |      ? |   780 |
+| Ambiguous destination/identity matches              |      ? |   903 |
+| Restricted/unsuitable unnamed groups                |      ? |   330 |
+| New official names verified                         |      0 |     0 |
+| Public publication approvals                        |      0 |     0 |
 
-In `/ncr-research`, select **Open private research**, then the filter **Named or near destinations (research)** (the new default). Distinctively named parking observations and eligible unnamed facilities with an OSM-sourced nearby destination are shown. The original source name is immutable and remains visible in the detail panel. Alternative filters still include **Cross-source name matches**, **Distinctive source names**, and **All research (including unnamed)**.
+The four current outcomes partition all 3,112 unnamed groups:
+1,099 described + 780 without a suitable destination + 903 ambiguous + 330
+restricted/unsuitable. The descriptor total decreased because generic building
+associations, arbitrary winners and conflicting evidence no longer qualify.
+The 486 newly useful labels are separate from 575 earlier descriptions withheld.
+The baseline captures unchanged PR #17 commit `905f182` and its attached historical
+report in `baseline-descriptors.json.gz`, with the old policy source and hashes.
 
-The descriptor reads **Parking near [destination]**. A detail warning says the name is only a source-derived destination context, the straight-line approximation isn't a walking route, visitor access and an actual vehicle entrance are unverified, and nothing is approved for public discovery. The descriptor appears only in the private preview and is rejected by the public client/API path.
-
-## Candidate destination types
-
-- Priority: malls, shopping centers, museums, attractions, parks, cinemas, theaters, restaurants, food courts, hospitals, marketplaces and other recognizable trip destinations.
-- Secondary: cafés, supermarkets, universities and hotels.
-- Low priority with strict distance limit: commercial/retail/office buildings. Do not label unnamed parking by arbitrary distant properties.
-- Not eligible: private residential properties, generic unnamed buildings, unsupported source licenses, unrecognized POI types, street segments, individual parking bays or standalone entrances.
-
-Nearby candidates must have a dated/reproducible OSM provenance record from the existing research or a later separately licensed context snapshot. This pipeline accepts no copied Google Maps/Waze place names. Google Maps/Waze remain external coordinate-based human inspection links.
-
-Distance is **source-feature straight-line proximity**, not route distance, walking time, destination intent, shared ownership or usable access. Different POI types have conservative maximum proximity limits (e.g. restaurant 75 m; malls 130 m, offices 35 m). An existing OSM property polygon containing the research anchor may qualify for context, but does not establish garage ownership or that the parking is inside a physically accessible portion of the property.
-
-## Run tests
+## Open the review map
 
 ```powershell
-node --test scripts/ncr-destination-labels.test.mjs scripts/ncr-preview-server.test.mjs
-pnpm test
-pnpm lint
-pnpm typecheck
-pnpm format:check
-pnpm test:e2e
+node scripts/ncr-preview-server.mjs --development-preview --port 8090 --enrichment data/ncr-destinations/2026-11-05/destination-enrichment.json.gz
 ```
 
-The committed November 5 context snapshot covers malls/commercial buildings, hotels and several institutions. The newly supported restaurants, cafés, arts sites, museums, attractions and parks need a **new independently dated OSM extraction** with `scripts/extract-ncr-name-context.py` or `scripts/extract-ncr-name-context.sh`. Rebuild a separate versioned enrichment package and preserve source hashes/attribution. **Do not overwrite the signed November 5 snapshot or mark any older archive row as newly verified.**
+Start the existing Expo web preview as described in
+[ncr-development-preview.md](ncr-development-preview.md), open
+`http://localhost:8088/ncr-research`, and select **Open private research**.
+**Named or near destinations (research)** is the default filter. Cross-source
+name matches, distinctive source names and all research including unnamed remain
+available. MapLibre labels and detail titles may show **Parking near [Destination]**;
+the detail panel retains the original source name, category, measured straight-line
+distance, containment, source reference/license/edit timestamp, alternatives and
+uncertainties. Source coordinates are preserved. No research anchor is a verified
+vehicle entrance, and no driving route or visitor eligibility is inferred.
 
-## User review before public exposure
+The loopback-only API recomputes every group review from its retained evidence
+before loading the immutable attachment. Results and source hashes must match.
+The attachment is absent from public responses; clients reject destination review
+metadata in public mode. Switching mode clears private labels. Existing access,
+license, approval and publication checks remain enforced. Unapproved NCR public
+output remains empty.
 
-Even a useful descriptor must not itself authorize a parking listing. Before a facility can appear to drivers, a reviewer must independently check if the parking actually exists, is currently operating, visitor-accessible, legal, has a vehicle entrance, and meets the application's source-license and publication gates. Do not turn on public-mode labels by copying this research descriptor directly.
+## Sources and selection
 
-## Counters to track
+A new full **612,888,497-byte** Geofabrik Philippines snapshot resolves to
+`philippines-261104.osm.pbf`, with replication timestamp **2026-11-04T21:21:03Z**.
+Publisher MD5 and SHA-256 were verified in
+[acquisition run 42032920734](https://github.com/jstnphlp/prometheus-parkey/actions/runs/42032920734).
+Its source hash differs from the preserved earlier snapshot. Exact frozen NCR
+boundaries select **28,891 named context features** and **5,085 parking features**.
+Full geometry, OSM IDs, versions, edit timestamps, names, tags, hashes and ODbL
+attribution are retained. Two invalid context areas remain explicit extraction
+omissions. Independently acquired Wikidata CC0 evidence retains 776 coordinate
+features for 710 items as corroboration; it does not determine parking labels.
+No Google Maps/Waze place information is imported.
 
-Keep **official-name enrichment** distinct from **private descriptive-label coverage**. Count provisionally unnamed facility groups with a destination descriptor, without converting `unnamedAfter` or `credibleNameProposals` to a fabricated improvement. Track missing destinations, restricted records and unresolved access separately. Do not infer commercial demand merely from proximity to a restaurant or attraction.
+The deterministic score is `0.4 ? category relevance + max(0, 60 ? distance/3)`
+plus 35 for valid source-polygon containment. Haversine measures unchanged parking
+anchors against destination points or geometry bounding-box centers. Polygon
+holes are respected. Category limits apply outside polygons: for example malls
+130 m, restaurants 75 m and cafes 60 m. Generic office/commercial/retail buildings
+cannot independently supply descriptions. Named visitor destinations include
+malls, food destinations, attractions, parks, entertainment, medical facilities,
+universities, hotels and eligible retailers. Category weights and limits remain
+explicit in `scripts/ncr-destination-labels.mjs`.
+
+Same-name duplicate OSM features retain supporting IDs; separate branches remain
+alternatives. Distinct destinations within seven score points remain ambiguous.
+All grouped parking anchors must support the same geographic destination.
+Restricted access, lifecycle warnings, preserved exclusions, identity conflicts,
+contradictory source anchors and explicit geographic/existence warnings prevent
+confident selection. Uncertain source boundaries receive no containment bonus.
+Nothing in this score measures popularity, demand, current operation, live
+availability, parking ownership or legal access.
+
+## Evidence and human review
+
+[The versioned package](../data/ncr-destinations/2026-11-05/README.md) records the
+source acquisition, exact geometry selection, licenses and source hashes.
+`review-manifest.json` records the reproduction command, input/output hashes and
+totals. The full JSON/CSV queue contains all 3,112 original unnamed groups.
+`destination-top-ten.json` contains ten priority accepted examples with original
+Parkey IDs, coordinates, distances and evidence references.
+`destination-ambiguity-shortlist.json` provides the first 30 unresolved tasks in
+the existing Poblacion, BGC, Cubao and other research windows. These are approximate
+research pockets, not official neighborhood boundaries or demand rankings.
+
+For a balanced first pass, [the 15-location launch-area shortlist](../data/ncr-destinations/2026-11-05/launch-area-review-shortlist.json)
+selects the first five ambiguous tasks each in Poblacion, BGC and Cubao. Its
+separate manifest binds the full queue hash and deterministic selection rule.
+
+Start with this shortlist rather than physically visiting every group. Each task
+preserves all source-coordinate Google Maps/Waze inspection links, proposed
+alternatives, geographic relationships, access restrictions, uncertainties and
+specific physical checks: operating parking, actual vehicle entrance, visitor
+eligibility, barriers, signage, destination association and competing destinations.
+Human identity decisions, operator authorization, physical checks and final
+publication approval remain pending. No source archive or prior human decision
+was overwritten.
+
+Reproduce into a new output directory:
+
+```powershell
+node scripts/ncr-destination-report.mjs --context data/ncr-destinations/2026-11-05/acquisition-42032920734/derivatives/ncr-name-context.geojson.gz --parking data/ncr-destinations/2026-11-05/acquisition-42032920734/derivatives/ncr-osm-parking.geojson.gz --acquisition data/ncr-destinations/2026-11-05/acquisition-42032920734/acquisition.json --baseline data/ncr-destinations/2026-11-05/baseline-descriptors.json.gz --out-dir output/ncr/NEW_DESTINATION_REPORT
+node --test scripts/ncr-destination-labels.test.mjs scripts/ncr-destination-report.test.mjs scripts/ncr-destination-evidence.test.mjs scripts/ncr-preview-server.test.mjs
+```
+
+Generators refuse to overwrite reports or source inputs. Initial generated
+results from the evidence-review pass were preserved separately in ignored
+`output/ncr/destination-initial-pass/` before final generation. Check execution
+results and limitations in [ncr-destination-verification.md](ncr-destination-verification.md).

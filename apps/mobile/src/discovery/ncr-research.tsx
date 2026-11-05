@@ -66,6 +66,7 @@ function Action({
       accessibilityRole="button"
       accessibilityLabel={label}
       accessibilityState={{ selected, disabled }}
+      aria-selected={selected}
       disabled={disabled}
       onPress={onPress}
       style={[
@@ -92,19 +93,97 @@ function ItemFacts({
   const destinationLabel = privateReview
     ? item.nameReview?.destinationLabel
     : undefined
+  const destinationReview = privateReview
+    ? item.nameReview?.destinationReview
+    : undefined
   return (
     <View style={styles.detail} testID="ncr-selected-details">
       <Text accessibilityRole="header" selectable style={styles.title}>
         {destinationLabel?.label || item.name}
       </Text>
       {destinationLabel ? (
-        <Text selectable style={styles.warning}>
-          Descriptive label from nearby OpenStreetMap destination only, not the
-          parking facility's official name. Original source: {item.name}.
-          Straight-line source distance: approximately{' '}
-          {Math.round(destinationLabel.approximateStraightLineMeters)} m; actual
-          walking access unverified.
-        </Text>
+        <View testID="ncr-destination-evidence">
+          <Text selectable style={styles.warning}>
+            Descriptive label from nearby OpenStreetMap destination only, not
+            the parking facility's official name. Original source: {item.name}.
+          </Text>
+          <Text selectable>
+            Nearby destination: {destinationLabel.destination} · Category:{' '}
+            {destinationLabel.category.replace(':', ' / ').replaceAll('_', ' ')}
+            . Straight-line source distance: approximately{' '}
+            {Math.round(destinationLabel.approximateStraightLineMeters)} m.
+          </Text>
+          <Text selectable>
+            Geographic relationship:{' '}
+            {destinationLabel.insideSourcePropertyFootprint
+              ? 'source polygon contains the parking anchor'
+              : 'nearby source geometry; ownership is unconfirmed'}
+            . Actual walking access and vehicle entrance unverified.
+          </Text>
+          <Text selectable>
+            Destination evidence: {destinationLabel.sourceId} · © OpenStreetMap
+            contributors · {destinationLabel.sourceLicense || 'ODbL-1.0'}
+            {destinationLabel.sourceRecordEditedAt
+              ? ` · OSM edit: ${destinationLabel.sourceRecordEditedAt}`
+              : ''}
+          </Text>
+          {destinationLabel.uncertainties?.map((uncertainty, index) => (
+            <Text selectable key={`destination-uncertainty:${index}`}>
+              {uncertainty}
+            </Text>
+          ))}
+          <Action
+            title={`Review destination source: ${destinationLabel.destination}`}
+            onPress={() => {
+              void Linking.openURL(destinationLabel.sourceRecordUrl).catch(
+                () => undefined,
+              )
+            }}
+          />
+        </View>
+      ) : null}
+      {destinationReview?.outcome === 'ambiguous' ? (
+        <View testID="ncr-destination-alternatives">
+          <Text accessibilityRole="header" selectable style={styles.title}>
+            Nearby destinations need review
+          </Text>
+          <Text selectable>
+            Several associations are plausible. The source name is retained
+            until the relationship is resolved.
+          </Text>
+          {destinationReview.reasons.map((reason, index) => (
+            <Text selectable key={`destination-reason:${index}`}>
+              {reason}
+            </Text>
+          ))}
+          {destinationReview.alternatives.map((alternative) => (
+            <View
+              key={`destination-alternative:${alternative.sourceId}:${alternative.parkingRecordId || item.id}`}
+            >
+              <Text selectable>
+                {alternative.destination} ·{' '}
+                {alternative.category.replace(':', ' / ')} · approximately{' '}
+                {Math.round(alternative.approximateStraightLineMeters)} m ·{' '}
+                {alternative.insideSourcePropertyFootprint
+                  ? 'source polygon contains anchor'
+                  : 'nearby source geometry'}{' '}
+                · {alternative.sourceId}
+                {alternative.parkingRecordId &&
+                alternative.parkingRecordId !== item.id
+                  ? ` · measured from group observation ${alternative.parkingRecordId}`
+                  : ''}
+              </Text>
+              <Action
+                title={`Review alternative source: ${alternative.destination}`}
+                onPress={() => {
+                  void Linking.openURL(alternative.sourceRecordUrl).catch(
+                    () => undefined,
+                  )
+                }}
+              />
+            </View>
+          ))}
+        </View>
       ) : null}
       <Text selectable>
         {item.id} · {item.featureType}
@@ -490,7 +569,7 @@ export default function NcrResearch() {
             .includes(term)) ||
         item.id.toLocaleLowerCase().includes(term),
     )
-  }, [data, search])
+  }, [data, search, mode])
   const categoryLabel =
     ncrCategories.find((c) => c.value === category)?.label || 'All features'
   return (

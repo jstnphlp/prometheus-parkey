@@ -74,6 +74,46 @@ export type NcrNameEnrichment = {
   }[]
 }
 
+/** A destination association is descriptive research, never a parking identity. */
+export type NcrDestinationLabel = {
+  label: string
+  destination: string
+  category: string
+  sourceId: string
+  sourceRecordUrl: string
+  approximateStraightLineMeters: number
+  insideSourcePropertyFootprint: boolean
+  sourceLicense?: 'ODbL-1.0'
+  sourceSnapshotSha256?: string | null
+  sourceRecordEditedAt?: string | null
+  sourceVersion?: number | null
+  sourceCoordinate?: Coordinate | null
+  anchorCoordinate?: Coordinate | null
+  parkingRecordId?: string | null
+  distanceBasis?: 'source_geometry_anchor_haversine' | 'legacy_context_estimate'
+  score?: number
+  scoreComponents?: { category: number; proximity: number; containment: number }
+  duplicateSourceIds?: string[]
+  uncertainties?: string[]
+  status: 'research_context_only'
+  parkingNameConfirmed: false
+  visitorAccessConfirmed: false
+  navigationEntranceConfirmed: false
+  publicationApproved: false
+}
+
+export type NcrDestinationReview = {
+  outcome:
+    | 'described'
+    | 'ambiguous'
+    | 'restricted_or_unsuitable'
+    | 'no_suitable_destination'
+    | 'previously_named'
+    | 'not_facility'
+  alternatives: NcrDestinationLabel[]
+  reasons: string[]
+}
+
 export type NcrDiscoveryItem = {
   id: string
   name: string
@@ -88,20 +128,8 @@ export type NcrDiscoveryItem = {
     sourceNameIsDistinctive: boolean
     crossSourceCandidate: boolean
     /** Private descriptive context, never an official parking name or public listing. */
-    destinationLabel?: {
-      label: string
-      destination: string
-      category: string
-      sourceId: string
-      sourceRecordUrl: string
-      approximateStraightLineMeters: number
-      insideSourcePropertyFootprint: boolean
-      status: 'research_context_only'
-      parkingNameConfirmed: false
-      visitorAccessConfirmed: false
-      navigationEntranceConfirmed: false
-      publicationApproved: false
-    }
+    destinationLabel?: NcrDestinationLabel
+    destinationReview?: NcrDestinationReview
     enrichment?: NcrNameEnrichment
   }
   featureType: NcrFeatureType

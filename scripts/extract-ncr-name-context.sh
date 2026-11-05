@@ -20,8 +20,10 @@ if [[ -e "$tmp" ]]; then echo "Stale temporary file: $tmp" >&2; exit 2; fi
 # A named property is not a named parking lot; NEVER auto-rename from context.
 osmium tags-filter "$input" \
   nwr/shop=mall,department_store,supermarket,shopping_centre \
-  nwr/amenity=hospital,university,college,marketplace,school \
-  nwr/tourism=hotel,motel \
+  nwr/amenity=hospital,university,college,marketplace,school,restaurant,cafe,food_court,theatre,cinema,arts_centre \
+  nwr/tourism=hotel,motel,attraction,museum,gallery,zoo,theme_park \
+  nwr/leisure=park,stadium,sports_centre \
+  nwr/historic=monument,memorial \
   nwr/building=commercial,retail,office,hotel,supermarket,hospital \
   -o "$tmp"
 osmium export "$tmp" -a type,id,timestamp -f geojson -o "$out"

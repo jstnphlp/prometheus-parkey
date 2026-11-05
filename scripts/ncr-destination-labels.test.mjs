@@ -124,6 +124,7 @@ test('unknown or non-ODbL origin, misleading generic names and invalid distances
       null,
     )
 })
+// The committed research report remains immutable; descriptors are computed at query time.
 test('frozen NCR research can use existing named-property clues without changing any stored names', () => {
   const research = loadNcrResearch()
   const bytes = readFileSync(

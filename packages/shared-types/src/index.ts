@@ -70,6 +70,13 @@ export type DiscoveryParking = {
   verifiedAt: string | null
 }
 
+/** V1 hosted discovery. No occupancy or write capability is implied. */
+export type HostedDiscoveryResponse = {
+  contractVersion: 1
+  records: DiscoveryParking[]
+  truncated: boolean
+}
+
 /** Review drafts never confer verification or permission to park. */
 export type ParkingContribution = {
   id: string

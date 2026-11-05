@@ -78,8 +78,7 @@ export function buildResearchHeatmap(coverage) {
     'document.getElementById("stat").textContent=total[mode].toLocaleString()+" mapped "+'+
     '({mapped:"observations",facilities:"facility observations",street:"street segments",restricted:"restricted observations"}[mode]);'+
     '}'+
-    'function inspect(r){details.textContent="Research grid "+r.dataset.coord+': '+
-    '"+ "+r.dataset.mapped+" mapped observations; "+r.dataset.facilities+" facility observations; "+r.dataset.street+" street segments; "+r.dataset.restricted+" tagged restricted; "+r.dataset.unknown+" access unknown. NOT a count of available parking spaces.";}'+
+    'function inspect(r){details.textContent="Research cell "+r.dataset.coord+"; mapped observations: "+r.dataset.mapped+"; facility observations: "+r.dataset.facilities+"; tagged street segments: "+r.dataset.street+"; restricted: "+r.dataset.restricted+"; access unknown: "+r.dataset.unknown+". NOT available parking spaces.";}'+
     'el.forEach(r=>{r.addEventListener("click",()=>inspect(r));r.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();inspect(r)}})});'+
     'select.addEventListener("change",render);render();'
   return '<!doctype html><html lang="en"><head><meta charset="utf-8">'+

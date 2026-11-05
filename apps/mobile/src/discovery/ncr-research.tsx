@@ -170,10 +170,11 @@ export default function NcrResearch() {
     zoom: number
   }>({ coordinate: [121.035, 14.6], zoom: 11.5 })
   const [category, setCategory] = useState<'all' | NcrFeatureType>('all')
+  const [names, setNames] = useState<'named' | 'all'>('named')
   const [mode, setMode] = useState<'public' | 'research_preview'>('public')
   const [storedData, setData] = useState<NcrDiscoveryResponse | null>(null)
   const [dataQuery, setDataQuery] = useState('')
-  const queryKey = JSON.stringify([viewport, category, mode])
+  const queryKey = JSON.stringify([viewport, category, mode, names])
   const data =
     dataQuery === queryKey && ncrResponseCanDisplay(storedData, mode)
       ? storedData
@@ -223,7 +224,7 @@ export default function NcrResearch() {
         setLoading(false)
         controller.abort()
       }, 12000)
-      void fetchNcrPage(apiUrl, viewport, category, mode, controller.signal)
+      void fetchNcrPage(apiUrl, viewport, category, mode, controller.signal, null, names)
         .then((result) => {
           if (query === latestQuery.current && !controller.signal.aborted) {
             setData(result)
@@ -252,7 +253,7 @@ export default function NcrResearch() {
       clearTimeout(deadline)
       controller.abort()
     }
-  }, [enabled, viewport, category, mode, revision, queryKey])
+  }, [enabled, viewport, category, mode, names, revision, queryKey])
   useEffect(() => {
     if (mode !== 'public' || !data?.totalMatched) return
     const dueAt = Date.parse(data.reviewDueAt || '')
@@ -281,6 +282,7 @@ export default function NcrResearch() {
         mode,
         controller.signal,
         data.nextCursor,
+        names,
       )
       if (query !== latestQuery.current || controller.signal.aborted) return
       if (result.dataVersion !== version) {
@@ -414,6 +416,34 @@ export default function NcrResearch() {
                     />
                   ))}
                 </ScrollView>
+                <ScrollView
+                  horizontal
+                  style={styles.strip}
+                  contentContainerStyle={styles.stripContent}
+                >
+                  <Action
+                    title="Named facilities only"
+                    selected={names === 'named'}
+                    onPress={() => {
+                      invalidate()
+                      setNames('named')
+                    }}
+                  />
+                  <Action
+                    title="All source research (including unnamed)"
+                    selected={names === 'all'}
+                    onPress={() => {
+                      invalidate()
+                      setNames('all')
+                    }}
+                  />
+                </ScrollView>
+                <Text selectable style={styles.warning}>
+                  Source names are not confirmed parking identities. Google Maps
+                  and Waze are external reviewer references only, never imported
+                  names. Named candidates still need evidence and publication
+                  approval; unnamed source records are retained privately.
+                </Text>
                 <View style={styles.map}>
                   <NcrMap
                     data={data}

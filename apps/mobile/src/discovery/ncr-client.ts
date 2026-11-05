@@ -87,6 +87,17 @@ function validItem(value: unknown): value is NcrDiscoveryItem {
     typeof value.id === 'string' &&
     value.id.length > 0 &&
     typeof value.name === 'string' &&
+    (value.nameReview === undefined ||
+      (isObject(value.nameReview) &&
+        [
+          'cross_source_name_candidate',
+          'source_named_requires_cross_reference',
+          'unnamed_pending_reference',
+          'identity_or_name_conflict',
+          'not_independent_facility',
+        ].includes(String(value.nameReview.status)) &&
+        typeof value.nameReview.sourceNameIsDistinctive === 'boolean' &&
+        typeof value.nameReview.crossSourceCandidate === 'boolean')) &&
     typeof value.featureType === 'string' &&
     value.featureType !== 'all' &&
     featureTypes.has(value.featureType) &&

@@ -24,6 +24,56 @@ export type NcrEvidenceState = {
   publicationApproved: boolean
 }
 
+/** Optional private review context; it never replaces the original source name. */
+export type NcrNameEnrichment = {
+  groupId: string
+  classification:
+    | 'credible_reusable_name_pending_review'
+    | 'proposed_name_incomplete_or_conflicting'
+    | 'nearby_named_property_only'
+    | 'operator_or_brand_only'
+    | 'no_reliable_name_evidence'
+    | 'unsuitable_for_public_discovery'
+  proposedName: string | null
+  nameTagLeads: {
+    name: string
+    basis: string
+    sourceId: string
+    sourceRecordUrl: string
+    sourceLicense: string
+    approvedForPublication: false
+  }[]
+  nearbyParkingLeads: {
+    name: string
+    sourceId: string
+    sourceRecordUrl: string
+    sourceLicense: string
+    sourceIndependent: boolean
+    samePhysicalFacilityConfirmed: false
+    usableAsParkingName: false
+  }[]
+  contextClues: {
+    name: string
+    sourceId: string
+    sourceRecordUrl: string
+    sourceLicense: string
+    relation: string
+    usableAsParkingName: false
+  }[]
+  operatorClues: {
+    name: string
+    kind: 'operator' | 'brand'
+    recordId: string
+    usableAsFacilityName: false
+  }[]
+  reviewLinks: {
+    recordId: string
+    coordinate: Coordinate
+    googleMaps: string
+    waze: string
+  }[]
+}
+
 export type NcrDiscoveryItem = {
   id: string
   name: string
@@ -37,6 +87,7 @@ export type NcrDiscoveryItem = {
       | 'not_independent_facility'
     sourceNameIsDistinctive: boolean
     crossSourceCandidate: boolean
+    enrichment?: NcrNameEnrichment
   }
   featureType: NcrFeatureType
   geometry: NcrGeometry

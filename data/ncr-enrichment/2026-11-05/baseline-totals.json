@@ -1,0 +1,38 @@
+{
+  "sourceHashes": {
+    "boundaries": "ea7864d00557f64de39981ccefca370c2d47eb82ceb98c55f554d21601e4ede7",
+    "osm": "5ae2654e12d0ec47c33da193004e009fd628ea9b408b953b37b2fb24fa26335d",
+    "overture": "203a4847b0fa9f8129374442089f4722ddfd49e601bb172c41df02688236cb25",
+    "reviews": "68e702bb733c0134fb505ec5d551c21dd27ac95dbb99a468ea98ae9077511a0b"
+  },
+  "totals": {
+    "facilityGroups": 3744,
+    "priorityGroups": {
+      "cross_source_named_lead": 6,
+      "existing_source_named": 611,
+      "identity_conflict": 15,
+      "no_reusable_name_lead": 2954,
+      "operator_or_brand_only": 158
+    },
+    "groupNameClues": 4,
+    "propertyContextGroups": 0,
+    "approvedForPublication": 0,
+    "unnamedBreakdown": {
+      "groups": 3112,
+      "withUnusedNameTagLead": 0,
+      "withOperatorOrBrandClue": 158,
+      "withNamedPropertyContext": 0,
+      "withNoAdditionalClue": 2954
+    }
+  },
+  "baseNameTotals": {
+    "sourceObservations": 5427,
+    "facilityGroups": 3744,
+    "facilityObservations": 3759,
+    "childAndStreetObservationsExcludedFromFacilityNames": 1668,
+    "cross_source_name_candidate": 6,
+    "identity_or_name_conflict": 15,
+    "source_named_requires_cross_reference": 611,
+    "unnamed_pending_reference": 3112
+  }
+}

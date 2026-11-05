@@ -1,0 +1,305 @@
+{
+  "schemaVersion": 1,
+  "researchDate": "2026-11-05",
+  "purpose": "Operator source and permission research only; no directory-derived facility records.",
+  "publicationApproved": false,
+  "messagesSent": 0,
+  "facilityNamesImported": 0,
+  "reusableFacilityNameProposals": 0,
+  "rawArchivePolicy": "Local ignored research archive only; no operator HTML redistributed as a Parkey data source.",
+  "licensingConclusion": "No commercial directory reuse license or operator permission was established on inspected pages. Privacy policies and robots rules do not supply such a license.",
+  "operators": [
+    {
+      "operatorId": "apmc",
+      "publisher": "Ayala Property Management Corporation",
+      "directoryUrl": "https://www.ayalaproperty.com.ph/what-we-manage/estates-and-carparks",
+      "permissionStatus": "not_obtained",
+      "termsInspected": [
+        "https://www.ayalaproperty.com.ph/data-privacy-notice"
+      ],
+      "reuseAssessment": "Inspected directory and linked privacy notice; no commercial database reuse grant found. Copyright notice present. Do not import directory listings.",
+      "identityQuestions": [
+        "Separate estates from individual parking garages and named sections.",
+        "Confirm stable facility identifiers, management scope and actual vehicle entrances.",
+        "Resolve visible contact email versus mail-link mismatch using official contact form."
+      ],
+      "accessQuestions": [
+        "Request current public visitor eligibility, restrictions and effective dates; address descriptions can be administration offices."
+      ],
+      "contactRoute": "Contact form linked from official directory; no form submitted."
+    },
+    {
+      "operatorId": "upark",
+      "publisher": "UPark Parking Management",
+      "directoryUrl": "https://www.upark.ph/parking-facility/",
+      "permissionStatus": "not_obtained",
+      "termsInspected": [
+        "https://www.upark.ph/privacy-policy/",
+        "https://www.upark.ph/monthly-parking/"
+      ],
+      "reuseAssessment": "Footer states All Rights Reserved; linked privacy policy addresses personal data, not directory reuse. Do not import names, addresses, hours or rates.",
+      "identityQuestions": [
+        "Selected Jade Drive article describes multiple sites; one page is not one facility.",
+        "BGC detail contains opening and promotion language requiring current confirmation.",
+        "Do not copy embedded map coordinates or third-party map details."
+      ],
+      "accessQuestions": [
+        "Monthly application requires verification and payment; FAQ says facility operating hours differ.",
+        "Confirm daily/hourly visitor access separately from monthly enrollment."
+      ],
+      "contactRoute": "https://www.upark.ph/contact-us/ offers partnership inquiries; inquiry@upark.ph is published in page links. No contact made."
+    },
+    {
+      "operatorId": "metro-parking",
+      "publisher": "Metro Parking Management (Philippines) Inc.",
+      "directoryUrl": "https://metro-parking.com.ph/clients.php",
+      "permissionStatus": "not_obtained",
+      "termsInspected": [],
+      "reuseAssessment": "No terms/privacy link or commercial reuse grant found on inspected navigation/pages. No permission inferred from absence. Client partnerships do not establish individual public facilities.",
+      "identityQuestions": [
+        "Legacy contactus.html returns HTTP 404; current official home links contact.php.",
+        "Request an authorized geocoded inventory; client organizations must not become facility names.",
+        "Confirm operator authority over property-owner data."
+      ],
+      "accessQuestions": [
+        "Contact page separates monthly parking inquiries from business development; determine public visitor eligibility per site."
+      ],
+      "contactRoute": "Business development channels on https://metro-parking.com.ph/contact.php; no call or message made."
+    }
+  ],
+  "additionalProspect": {
+    "candidate": "Secure Parking Philippines",
+    "candidateUrl": "https://www.secureparking.com.ph/",
+    "identityConfirmed": false,
+    "status": "homepage_tls_handshake_timeout_and_robots_disallow_all",
+    "action": "No further crawling attempted after robots response. No operator identity, facility inventory or reuse permission asserted."
+  },
+  "pages": [
+    {
+      "url": "https://www.ayalaproperty.com.ph/what-we-manage/estates-and-carparks",
+      "retrievedAt": "2026-11-05T11:45:27.403289+00:00",
+      "status": 200,
+      "finalUrl": "https://www.ayalaproperty.com.ph/what-we-manage/estates-and-carparks",
+      "sha256": "c0ec1e4d72426c0999626d50d85e96c0a207300c1d4996104a59918236a66477",
+      "bytes": 346690,
+      "contentType": "text/html; charset=UTF-8",
+      "localArchive": "output/ncr/operator-2026-11-05/00.html",
+      "sourceId": "operator-page:4b9e41e2bf87a6c06aaa",
+      "importedIntoFacilityInventory": false,
+      "commercialReuseGrantEstablished": false
+    },
+    {
+      "url": "https://www.ayalaproperty.com.ph/robots.txt",
+      "retrievedAt": "2026-11-05T11:45:27.404287+00:00",
+      "status": 200,
+      "finalUrl": "https://www.ayalaproperty.com.ph/robots.txt",
+      "sha256": "e5b0ced34aa0387b2ffc898873fd0f73deed3e2b30c6163b8713f9c7fc629f05",
+      "bytes": 25,
+      "contentType": "text/plain",
+      "localArchive": "output/ncr/operator-2026-11-05/01.html",
+      "sourceId": "operator-page:189e2db5c671e87e16b1",
+      "importedIntoFacilityInventory": false,
+      "commercialReuseGrantEstablished": false
+    },
+    {
+      "url": "https://www.upark.ph/parking-facility/",
+      "retrievedAt": "2026-11-05T11:45:27.404287+00:00",
+      "status": 200,
+      "finalUrl": "https://www.upark.ph/parking-facility/",
+      "sha256": "334f45d269738205afdbbfbb88e772a8918a3d472f8c58d560bf3b50b27dc24b",
+      "bytes": 195242,
+      "contentType": "text/html; charset=UTF-8",
+      "localArchive": "output/ncr/operator-2026-11-05/02.html",
+      "sourceId": "operator-page:f8f35c5402efd6c259e8",
+      "importedIntoFacilityInventory": false,
+      "commercialReuseGrantEstablished": false
+    },
+    {
+      "url": "https://www.upark.ph/monthly-parking/",
+      "retrievedAt": "2026-11-05T11:45:27.405286+00:00",
+      "status": 200,
+      "finalUrl": "https://www.upark.ph/monthly-parking/",
+      "sha256": "eaf05c2394706f81d6e2ca3a0d1f8acb29119866ea1fdaad91b327ad42fac320",
+      "bytes": 184110,
+      "contentType": "text/html; charset=UTF-8",
+      "localArchive": "output/ncr/operator-2026-11-05/03.html",
+      "sourceId": "operator-page:3db73d8b85ce8d9f259f",
+      "importedIntoFacilityInventory": false,
+      "commercialReuseGrantEstablished": false
+    },
+    {
+      "url": "https://www.upark.ph/robots.txt",
+      "retrievedAt": "2026-11-05T11:45:28.227616+00:00",
+      "status": 200,
+      "finalUrl": "https://www.upark.ph/robots.txt",
+      "sha256": "67e4e792e2486ddfe4d9f5dc3093e2affda77d567d089e7e1648caf99204f8c9",
+      "bytes": 120,
+      "contentType": "text/plain; charset=UTF-8",
+      "localArchive": "output/ncr/operator-2026-11-05/04.html",
+      "sourceId": "operator-page:80c100db82f694d03f7d",
+      "importedIntoFacilityInventory": false,
+      "commercialReuseGrantEstablished": false
+    },
+    {
+      "url": "https://metro-parking.com.ph/contactus.html",
+      "retrievedAt": "2026-11-05T11:45:29.009179+00:00",
+      "error": "HTTP Error 404: Not Found",
+      "sourceId": "operator-page:b25d8f347b679bffa44c",
+      "importedIntoFacilityInventory": false,
+      "commercialReuseGrantEstablished": false
+    },
+    {
+      "url": "https://metro-parking.com.ph/",
+      "retrievedAt": "2026-11-05T11:45:29.816642+00:00",
+      "status": 200,
+      "finalUrl": "https://metro-parking.com.ph/",
+      "sha256": "cb3d5fdbbd11dfbb53bffa2bd548eb37ab3cb6ff81bf15a3e51cdb0e278937bf",
+      "bytes": 13716,
+      "contentType": "text/html; charset=UTF-8",
+      "localArchive": "output/ncr/operator-2026-11-05/06.html",
+      "sourceId": "operator-page:12ce50182a1f8d41d8ab",
+      "importedIntoFacilityInventory": false,
+      "commercialReuseGrantEstablished": false
+    },
+    {
+      "url": "https://metro-parking.com.ph/robots.txt",
+      "retrievedAt": "2026-11-05T11:45:30.463890+00:00",
+      "error": "HTTP Error 404: Not Found",
+      "sourceId": "operator-page:ce229f256aa409361199",
+      "importedIntoFacilityInventory": false,
+      "commercialReuseGrantEstablished": false
+    },
+    {
+      "url": "https://www.ayalaproperty.com.ph/data-privacy-notice",
+      "retrievedAt": "2026-11-05T11:46:22.266988+00:00",
+      "status": 200,
+      "finalUrl": "https://www.ayalaproperty.com.ph/data-privacy-notice",
+      "sha256": "796dea80b37dba17b92a1ff51eccce6662cd2f4e7dee8edbe4a3c26ea47cb293",
+      "bytes": 64180,
+      "contentType": "text/html; charset=UTF-8",
+      "localArchive": "output/ncr/operator-2026-11-05/08.html",
+      "sourceId": "operator-page:b4bcdd9b254d598d2bae",
+      "importedIntoFacilityInventory": false,
+      "commercialReuseGrantEstablished": false
+    },
+    {
+      "url": "https://www.upark.ph/privacy-policy/",
+      "retrievedAt": "2026-11-05T11:46:22.266988+00:00",
+      "status": 200,
+      "finalUrl": "https://www.upark.ph/privacy-policy/",
+      "sha256": "093eece1eec5af34f571c4540e447db09e3277a83cbd21084932078ebd0a7dff",
+      "bytes": 131902,
+      "contentType": "text/html; charset=UTF-8",
+      "localArchive": "output/ncr/operator-2026-11-05/09.html",
+      "sourceId": "operator-page:d0c67617be2737e25c5e",
+      "importedIntoFacilityInventory": false,
+      "commercialReuseGrantEstablished": false
+    },
+    {
+      "url": "https://www.upark.ph/parking-facility/open-space/parking-at-bgc-taguig/",
+      "retrievedAt": "2026-11-05T11:46:22.266988+00:00",
+      "status": 200,
+      "finalUrl": "https://www.upark.ph/parking-facility/open-space/parking-at-bgc-taguig/",
+      "sha256": "aae1c88e7c2f70b678a040245ec2aedce0d26077d6b4fa23f403b2a96958a375",
+      "bytes": 195274,
+      "contentType": "text/html; charset=UTF-8",
+      "localArchive": "output/ncr/operator-2026-11-05/10.html",
+      "sourceId": "operator-page:fd306840276aca390c60",
+      "importedIntoFacilityInventory": false,
+      "commercialReuseGrantEstablished": false
+    },
+    {
+      "url": "https://www.upark.ph/parking-facility/open-space/parking-in-jade-drive/",
+      "retrievedAt": "2026-11-05T11:46:22.267987+00:00",
+      "status": 200,
+      "finalUrl": "https://www.upark.ph/parking-facility/open-space/parking-in-jade-drive/",
+      "sha256": "f94bf33edbed86c071db58da9b02cac128d6cdf2ca4414ac54d43c764f8e4735",
+      "bytes": 190623,
+      "contentType": "text/html; charset=UTF-8",
+      "localArchive": "output/ncr/operator-2026-11-05/11.html",
+      "sourceId": "operator-page:e992f1861d02655e9339",
+      "importedIntoFacilityInventory": false,
+      "commercialReuseGrantEstablished": false
+    },
+    {
+      "url": "https://www.upark.ph/contact-us/",
+      "retrievedAt": "2026-11-05T11:46:23.316065+00:00",
+      "status": 200,
+      "finalUrl": "https://www.upark.ph/contact-us/",
+      "sha256": "87ed6b274cc489882dceb3d6d3fcf2aad294914e915551b7d8b2c6af6d916e76",
+      "bytes": 165437,
+      "contentType": "text/html; charset=UTF-8",
+      "localArchive": "output/ncr/operator-2026-11-05/12.html",
+      "sourceId": "operator-page:74b2e65ff5906cb6cb20",
+      "importedIntoFacilityInventory": false,
+      "commercialReuseGrantEstablished": false
+    },
+    {
+      "url": "https://metro-parking.com.ph/contact.php",
+      "retrievedAt": "2026-11-05T11:46:45.574359+00:00",
+      "status": 200,
+      "finalUrl": "https://metro-parking.com.ph/contact.php",
+      "sha256": "9b05461e03a6919365399505ed0fdeaf22d311c6854d5f5caa22a6a42c2af226",
+      "bytes": 11506,
+      "contentType": "text/html; charset=UTF-8",
+      "localArchive": "output/ncr/operator-2026-11-05/13.html",
+      "sourceId": "operator-page:fe73b4a1888706703f0d",
+      "importedIntoFacilityInventory": false,
+      "commercialReuseGrantEstablished": false
+    },
+    {
+      "url": "https://metro-parking.com.ph/clients.php",
+      "retrievedAt": "2026-11-05T11:46:45.842446+00:00",
+      "status": 200,
+      "finalUrl": "https://metro-parking.com.ph/clients.php",
+      "sha256": "4993bce441c9f19f07bbbcec87e6640bce36c78b169ef618841c93f64a8b28dd",
+      "bytes": 20452,
+      "contentType": "text/html; charset=UTF-8",
+      "localArchive": "output/ncr/operator-2026-11-05/14.html",
+      "sourceId": "operator-page:fe1b3ab48ed3d310b05a",
+      "importedIntoFacilityInventory": false,
+      "commercialReuseGrantEstablished": false
+    },
+    {
+      "url": "https://metro-parking.com.ph/aboutus.php",
+      "retrievedAt": "2026-11-05T11:46:45.966142+00:00",
+      "status": 200,
+      "finalUrl": "https://metro-parking.com.ph/aboutus.php",
+      "sha256": "e5d1044e608ab8c2aecf297c7db55951802ac8cf6c8c4ad4f6ce3c94f7a771a5",
+      "bytes": 10020,
+      "contentType": "text/html; charset=UTF-8",
+      "localArchive": "output/ncr/operator-2026-11-05/15.html",
+      "sourceId": "operator-page:9e5f4061727121e454af",
+      "importedIntoFacilityInventory": false,
+      "commercialReuseGrantEstablished": false
+    },
+    {
+      "url": "https://www.secureparking.com.ph/",
+      "retrievedAt": "2026-11-05T11:47:22.423143+00:00",
+      "error": "<urlopen error _ssl.c:983: The handshake operation timed out>",
+      "sourceId": "operator-page:77ff4c1a33695e776f11",
+      "importedIntoFacilityInventory": false,
+      "commercialReuseGrantEstablished": false
+    },
+    {
+      "url": "https://www.secureparking.com.ph/robots.txt",
+      "retrievedAt": "2026-11-05T11:47:22.423143+00:00",
+      "status": 200,
+      "finalUrl": "https://www.secureparking.com.ph/robots.txt",
+      "sha256": "331ea9090db0c9f6f597bd9840fd5b171830f6e0b3ba1cb24dfa91f0c95aedc1",
+      "bytes": 26,
+      "contentType": "text/plain",
+      "localArchive": "output/ncr/operator-2026-11-05/17.html",
+      "sourceId": "operator-page:c39428c7d58616567562",
+      "importedIntoFacilityInventory": false,
+      "commercialReuseGrantEstablished": false
+    }
+  ],
+  "outreachDraft": "docs/ncr-operator-outreach.md",
+  "humanActionsRemaining": [
+    "Authorize actual operator outreach.",
+    "Obtain and review written data permission with field-specific scope.",
+    "Resolve facility identity and public visitor access where sources are incomplete.",
+    "Approve any eventual publication separately."
+  ]
+}

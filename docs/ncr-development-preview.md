@@ -12,6 +12,33 @@ Start these in separate terminals from the repository root:
 node scripts/ncr-preview-server.mjs --development-preview --port 8090
 ```
 
+To attach the separately versioned parking-name review queue, pass its JSON or
+gzip report explicitly:
+
+```powershell
+node scripts/ncr-preview-server.mjs --development-preview --port 8090 --enrichment data/ncr-enrichment/2026-11-05/name-enrichment.json.gz
+```
+
+The server requires the queue's frozen source hashes and complete facility-group
+membership to match the original research snapshot. It rejects claimed name,
+operator, visit, visitor-access or publication approvals in this attachment.
+Private detail responses include `nameReview.enrichment`, with proposed names,
+classifications, source evidence, property/operator clues and coordinate-based
+Google Maps/Waze review links. A nearby property remains a context clue. These
+links identify original source anchors, not confirmed driving entrances or
+permission to copy a map provider's listings. The map keeps each original source
+name, geometry and clustering; the attachment does not rename pins or change
+public eligibility. Private record details add a **Parking-name review** section
+with the separate proposal, readable classification, source links and uncertain
+nearby/property/operator clues. Select **All research (including unnamed)** in
+the category sheet to reach unnamed records; the default name filter remains
+restricted to existing cross-source name leads. Other retained group coordinates
+have review links too, with no driving action. The client rejects malformed
+attachments and any enrichment in public responses. The full evidence queue
+remains available in exported review files. Changing the attached report
+invalidates private pagination cursors. Public
+responses and public data versions never include the attachment.
+
 ```powershell
 $env:CI = '1'
 pnpm.cmd --filter @parkey/mobile web --host localhost --port 8088 --clear

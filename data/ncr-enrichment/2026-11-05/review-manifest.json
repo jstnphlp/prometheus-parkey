@@ -1,0 +1,104 @@
+{
+  "schemaVersion": 1,
+  "sourceHashes": {
+    "boundaries": "ea7864d00557f64de39981ccefca370c2d47eb82ceb98c55f554d21601e4ede7",
+    "osm": "5ae2654e12d0ec47c33da193004e009fd628ea9b408b953b37b2fb24fa26335d",
+    "overture": "203a4847b0fa9f8129374442089f4722ddfd49e601bb172c41df02688236cb25",
+    "reviews": "68e702bb733c0134fb505ec5d551c21dd27ac95dbb99a468ea98ae9077511a0b"
+  },
+  "acquisitionRun": "https://github.com/jstnphlp/prometheus-parkey/actions/runs/42023326894",
+  "sourceManifest": "data/ncr-enrichment/2026-11-05/acquisition-42023326894/derivatives/osm-source-manifest.json",
+  "command": [
+    "node",
+    "scripts/ncr-permitted-enrichment.mjs",
+    "--context-osm",
+    "data/ncr-enrichment/2026-11-05/acquisition-42023326894/derivatives/ncr-name-context.geojson.gz",
+    "--refreshed-osm",
+    "data/ncr-enrichment/2026-11-05/acquisition-42023326894/derivatives/ncr-osm-parking.geojson.gz",
+    "--osm-updates",
+    "data/ncr-enrichment/2026-11-05/current-osm-updates.geojson.gz",
+    "--out",
+    "data/ncr-enrichment/2026-11-05/name-enrichment.json.gz",
+    "--csv",
+    "data/ncr-enrichment/2026-11-05/name-review-queue.csv.gz",
+    "--checklist",
+    "data/ncr-enrichment/2026-11-05/human-inspection-checklist.md.gz"
+  ],
+  "policy": "Research-only. Names remain proposals; no physical visits, operator permission, access or publication approved. Original archives and Poblacion decisions are unchanged.",
+  "totals": {
+    "facilityGroups": 3744,
+    "priorityGroups": {
+      "cross_source_named_lead": 6,
+      "existing_source_named": 611,
+      "identity_conflict": 15,
+      "nearby_parking_identity_review": 56,
+      "no_reusable_name_lead": 1227,
+      "operator_or_brand_only": 35,
+      "property_context_only": 1794
+    },
+    "groupNameClues": 4,
+    "propertyContextGroups": 2263,
+    "approvedForPublication": 0,
+    "classifications": {
+      "credible_reusable_name_pending_review": 581,
+      "nearby_named_property_only": 1651,
+      "no_reliable_name_evidence": 1054,
+      "operator_or_brand_only": 27,
+      "proposed_name_incomplete_or_conflicting": 72,
+      "unsuitable_for_public_discovery": 359
+    },
+    "identityConflicts": 19,
+    "unnamedBefore": 3112,
+    "unnamedAfter": 3112,
+    "unnamedWithoutCredibleProposal": 3112,
+    "allGroupsAwaitingFinalReview": 3744,
+    "unnamedBreakdown": {
+      "groups": 3112,
+      "withUnusedNameTagLead": 0,
+      "withOperatorOrBrandClue": 158,
+      "withNamedPropertyContext": 1833,
+      "withNearbyParkingLead": 56,
+      "withIndependentNearbyParkingLead": 41,
+      "credibleNameProposals": 0,
+      "conflicts": 0,
+      "withoutCredibleNameProposal": 3112,
+      "withNoAdditionalClue": 1227
+    }
+  },
+  "artifacts": [
+    {
+      "filename": "current-osm-updates.geojson.gz",
+      "role": "dated_osm_update_audit",
+      "bytes": 736,
+      "sha256": "767b19e4a57bd21eba283929826f0e40cc28b3c9b9ceff5431f159b4ae9bbc32",
+      "uncompressedSha256": "a840d23bfea82d71f867b2d329be7237b8f5b05cbbd1ea8dd99e6f8bd701acc3"
+    },
+    {
+      "filename": "name-enrichment.json.gz",
+      "role": "private_name_review",
+      "bytes": 671259,
+      "sha256": "011f0a01c36cd40eb49420960793269fa613589439b9d96564b96daaea01201a",
+      "uncompressedSha256": "50f3127a7114172c6c83d7b7e0e0b8155ba9b9c06d1a5f3d46c47fd6d0726df3"
+    },
+    {
+      "filename": "name-review-queue.csv.gz",
+      "role": "private_review_queue",
+      "bytes": 383255,
+      "sha256": "f073b51045e4f613075a4b18ae6029c6a52cf46e53ad24839c4a57eb95a06eec",
+      "uncompressedSha256": "daeb5b50157efa1aedbdc116fdccffdfecb593d135d178b688b684f41b87e6bc"
+    },
+    {
+      "filename": "human-inspection-checklist.md.gz",
+      "role": "human_only_inspection_tasks",
+      "bytes": 375190,
+      "sha256": "de40629f8ff4497a0434adbf026a49b172c5ee1d27db1abd74db0397f5596b63",
+      "uncompressedSha256": "b1494ec1c04d4e3bc168e1a75e755e6171e5c38b1e62d27473468147e0c669ca"
+    },
+    {
+      "filename": "baseline-totals.json",
+      "role": "original_pr16_first_pass",
+      "bytes": 1250,
+      "sha256": "03d5bfd95bdc7abd035635c288a00858cd8c03892577c9bc823f0405b59a5da0"
+    }
+  ]
+}

@@ -1,5 +1,47 @@
 # Parkey Phase 1 — permitted parking-name discovery (research only)
 
+## Completed autonomous evidence pass — 5 November 2026
+
+The [versioned evidence and provenance report](../data/ncr-enrichment/2026-11-05/README.md)
+records the actual result: **3,112 → 3,112 unnamed groups; zero additional
+credible parking-facility names**. The original PR #16 pass found zero new name
+clues in those groups; four unused tags belonged to already named facilities.
+This pass found 56 unconfirmed nearby parking associations (41 with independent
+source provenance), 1,833 property-context groups and 158 operator/brand groups
+among the unnamed facilities. These overlapping counts are clues, not names.
+
+A separate 612,751,019-byte Geofabrik download completed and passed its publisher
+checksum on the research runner. Latest resolved to the same November 3 snapshot
+and SHA-256 as the frozen source. Its separate acquisition manifest and exact-NCR
+derivatives are retained. The current Overture release is unchanged; a live OSM
+update audit found one edited parking object with no name. Operator directories
+were researched, but no reusable directory license was established. Three
+[permission requests](ncr-operator-outreach.md) remain unsent.
+
+The complete JSON/CSV queue and human checklist cover all 3,744 groups, preserve
+all original IDs/coordinates and prior Poblacion decisions, and approve nothing.
+The [first-stop checklist](ncr-name-inspection-checklist.md) prioritizes Poblacion,
+BGC and Cubao, then other promising areas. The private map details show evidence
+and classifications separately when started with the review attachment:
+
+```powershell
+node scripts/ncr-preview-server.mjs --development-preview --enrichment data/ncr-enrichment/2026-11-05/name-enrichment.json.gz
+```
+
+Use the existing `All research (including unnamed)` filter to inspect unresolved
+groups. Source labels remain intact. Public responses withhold the attachment,
+and no approval or driving navigation is enabled. Original source coordinates,
+evidence URLs, uncertainties and exact on-site checks are in every exported task.
+
+The matcher now checks source parking classification, reusable provider licenses,
+same-ID location changes and closure/restriction updates independently of name
+changes. Large containing property footprints remain context even when their
+center is distant. Unknown licenses, source/provider dependence, nearby labels
+and incomplete identities cannot supply automatic facility-name approvals.
+
+See [verification results](ncr-name-enrichment-verification.md) for actual checks
+and limitations. The original archive under `data/ncr-research` is unchanged.
+
 ## What is implemented
 
 The previous matcher compared existing OSM and Overture parking facility names; 3,112/3,744 provisional groups lacked a distinctive source name. This follow-up **searches for additional clues** instead of simply hiding unnamed pins. It does not claim to have automatically discovered real parking businesses via Google Maps or Waze.

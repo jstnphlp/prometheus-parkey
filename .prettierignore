@@ -12,3 +12,8 @@ supabase/.branches/
 # Generated OSM bytes are covered by the extractor manifest.
 apps/mobile/src/discovery/osm-pilot.json
 apps/mobile/src/discovery/osm-pilot.json.manifest.json
+
+# Source bytes are hash-bound; review artifacts use deterministic JSON.stringify.
+poblacion-places.geojson
+data/parking-open-data-review.json
+data/parking-open-data-reviewed.json

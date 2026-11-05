@@ -5,7 +5,7 @@
  * A nearby matching name is corroboration to review, not proof that two
  * physically distinct garages/entrances represent the same parking facility.
  */
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { mkdirSync, writeFileSync } from 'node:fs'
 import { dirname } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import process from 'node:process'

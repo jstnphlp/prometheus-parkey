@@ -13,6 +13,10 @@ export const spotPath = `/?${new URLSearchParams({
   lng: String(spot.longitude),
   lat: String(spot.latitude),
 })}`
+export const spotAreaPath = `/?${new URLSearchParams({
+  lng: String(spot.longitude),
+  lat: String(spot.latitude),
+})}`
 
 export const destination = {
   type: 'FeatureCollection',

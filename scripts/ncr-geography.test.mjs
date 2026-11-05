@@ -39,7 +39,7 @@ test('handles polygon holes, coordinate ordering and crossing street segments', 
   assert.equal(pointInNcrGeometry([120.9 + 2*.016 + 0.006,14.506], makati), true)
   assert.equal(pointInNcrGeometry([14.506,120.938], makati), false)
   const x = 120.9 + 2*.016
-  const road = { type:'LineString', coordinates:[[x-0.005,14.506],[x+0.020,14.506]] }
+  const road = { type:'LineString', coordinates:[[x-0.005,14.506],[x+0.011,14.506]] }
   assert.deepEqual(intersectingLgus(road,b), ['Las Piñas','Makati'])
   assert.deepEqual(intersectingLgus({type:'Point',coordinates:[120.5,14.5]},b),[])
   const outer = [[121,14.5],[121.04,14.5],[121.04,14.54],[121,14.54],[121,14.5]]

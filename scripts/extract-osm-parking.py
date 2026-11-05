@@ -41,6 +41,12 @@ def observed_date(value):
     match = re.fullmatch(pattern, value) if isinstance(value, str) else None
     if not match:
         raise ValueError('Observation date must be an ISO 8601 timestamp with explicit timezone')
+    # datetime.fromisoformat() in newer Python versions accepts 24:00:00 and
+    # normalizes it to the next day. Our snapshot format forbids hour 24.
+    wall_time = re.search(r'T([0-9]{2}):([0-9]{2}):([0-9]{2})', value)
+    hour, minute, second = (int(part) for part in wall_time.groups())
+    if hour > 23 or minute > 59 or second > 59:
+        raise ValueError('Observation date contains invalid wall-clock time')
     offset_hours, offset_minutes = (int(part or 0) for part in match.groups())
     if offset_hours > 14 or offset_minutes > 59 or (offset_hours == 14 and offset_minutes != 0):
         raise ValueError('Observation date UTC offset must be between -14:00 and +14:00')

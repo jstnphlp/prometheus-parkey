@@ -110,7 +110,9 @@ function normalizeOverture(feature) {
   const category = nonempty(p.taxonomy?.primary || p.basic_category)
   if (!id || !name || !parkingCategory(category)) return null
   const cat = String(category).toLowerCase()
-  const type = /garage|parkade|multistorey|multi_storey/.test(cat) ? 'garage' : 'lot'
+  const type = /parking_space|parking_bay/.test(cat) ? 'space' :
+    /parking_entrance/.test(cat) ? 'entrance' :
+    /garage|parkade|multistorey|multi_storey/.test(cat) ? 'garage' : 'lot'
   const rawSources = Array.isArray(p.sources) ? p.sources : (()=> {
     if (typeof p.sources_json !== 'string') return []
     try { return JSON.parse(p.sources_json) } catch { return [] }

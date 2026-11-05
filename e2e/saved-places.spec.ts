@@ -5,6 +5,7 @@ import {
   openMap,
   openSpot,
   spot,
+  spotAreaPath,
 } from './fixtures'
 
 test('favorites persist, reopen parking, and can be removed and restored', async ({
@@ -28,7 +29,6 @@ test('favorites persist, reopen parking, and can be removed and restored', async
   await expect(page.getByTestId('parking-detail-title')).toHaveText(spot.name)
   await page.goto('/?panel=saved')
   await page.getByRole('button', { name: 'Favorites', exact: true }).click()
-  await page.getByRole('button', { name: 'Manage', exact: true }).click()
   await page
     .getByRole('button', {
       name: `Remove ${spot.name} from favorites`,
@@ -43,13 +43,16 @@ test('favorites persist, reopen parking, and can be removed and restored', async
 })
 
 test('viewing parking adds it to Recent', async ({ page }) => {
-  await openMap(page)
+  await openMap(page, spotAreaPath)
   await expandResults(page)
   await page
     .getByRole('button', { name: /^1210\..*Open parking details$/ })
     .click()
   await expect(page.getByTestId('parking-detail-title')).toHaveText(spot.name)
   await page.goto('/?panel=saved')
+  await page
+    .getByRole('button', { name: 'Recently viewed', exact: true })
+    .click()
   await expect(
     page.getByRole('button', {
       name: `${spot.name}. View parking`,
@@ -68,6 +71,9 @@ test('home address can be searched, saved, and reopened after reload', async ({
   await openMap(page)
   await page.getByRole('tab', { name: 'Saved', exact: true }).click()
   await page
+    .getByRole('button', { name: 'Saved addresses', exact: true })
+    .click()
+  await page
     .getByRole('button', { name: 'Home. Set address', exact: true })
     .click()
   await expect(
@@ -84,6 +90,9 @@ test('home address can be searched, saved, and reopened after reload', async ({
     }),
   ).toBeVisible()
   await page.reload()
+  await page
+    .getByRole('button', { name: 'Saved addresses', exact: true })
+    .click()
   await page
     .getByRole('button', { name: 'Home. Poblacion Test Cafe', exact: true })
     .click()
@@ -103,23 +112,23 @@ test('parked location persists, can be cleared, and supports undo', async ({
     .getByRole('button', { name: 'Save where I parked', exact: true })
     .click()
   await expect(
-    page.getByText('Parking location saved', { exact: true }),
+    page.getByRole('button', { name: 'Clear parked location', exact: true }),
   ).toBeVisible()
   await page.reload()
   await expect(
-    page.getByText('Parking location saved', { exact: true }),
+    page.getByRole('button', { name: 'Clear parked location', exact: true }),
   ).toBeVisible()
   await page
     .getByRole('button', { name: 'Clear parked location', exact: true })
     .click()
   await expect(
-    page.getByText('Parking location saved', { exact: true }),
+    page.getByRole('button', { name: 'Clear parked location', exact: true }),
   ).toHaveCount(0)
   await page
     .getByRole('button', { name: 'Undo last change', exact: true })
     .click()
   await expect(
-    page.getByText('Parking location saved', { exact: true }),
+    page.getByRole('button', { name: 'Clear parked location', exact: true }),
   ).toBeVisible()
   await page.getByRole('button', { name: 'Show on map', exact: true }).click()
   await expect(page).toHaveURL(/lng=121.0308&lat=14.5653/)
@@ -143,7 +152,7 @@ test('denied location leaves parked location unsaved and shows recovery guidance
     ),
   ).toBeVisible()
   await expect(
-    page.getByText('Parking location saved', { exact: true }),
+    page.getByRole('button', { name: 'Clear parked location', exact: true }),
   ).toHaveCount(0)
   await expect(
     page.getByRole('button', { name: 'Save where I parked', exact: true }),

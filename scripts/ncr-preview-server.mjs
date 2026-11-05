@@ -232,6 +232,10 @@ function projection(
   nameIndex,
   enrichmentIndex,
 ) {
+  const enriched = preview ? enrichmentIndex?.get(candidate.id) : null
+  const destinationLabel = chooseNearbyDestinationLabel(candidate, enriched, {
+    privatePreview: preview,
+  })
   return {
     id: candidate.id,
     name: candidate.name,
@@ -242,24 +246,8 @@ function projection(
       crossSourceCandidate:
         nameIndex.get(candidate.id) === 'cross_source_name_candidate' &&
         meaningfulParkingName(candidate.name),
-      ...(preview && enrichmentIndex?.has(candidate.id)
-        ? {
-            enrichment: enrichmentIndex.get(candidate.id),
-            ...(chooseNearbyDestinationLabel(
-              candidate,
-              enrichmentIndex.get(candidate.id),
-              { privatePreview: true },
-            ) instanceof Object
-              ? {
-                  destinationLabel: chooseNearbyDestinationLabel(
-                    candidate,
-                    enrichmentIndex.get(candidate.id),
-                    { privatePreview: true },
-                  ),
-                }
-              : {}),
-          }
-        : {}),
+      ...(enriched ? { enrichment: enriched } : {}),
+      ...(destinationLabel ? { destinationLabel } : {}),
     },
     featureType: candidate.type,
     geometry: candidate.geometry,

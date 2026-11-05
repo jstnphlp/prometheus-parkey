@@ -89,12 +89,14 @@ test('cold backend failure stays empty and Retry recovers without pilot fallback
       .filter({ visible: true }),
   ).toBeVisible()
   await expect(page.getByTestId(/^parking-row-/)).toHaveCount(0)
-  fail = false
   await page
     .getByRole('button', { name: 'Retry', exact: true })
     .filter({ visible: true })
     .first()
     .click()
+  // Retry debounces the request. Recover only after the gesture so a settling
+  // viewport cannot remove the Retry button through an earlier automatic load.
+  fail = false
   await expect(page.getByTestId(`parking-row-${fixture.id}`)).toBeVisible()
 })
 

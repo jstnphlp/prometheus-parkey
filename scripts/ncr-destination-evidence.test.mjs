@@ -78,6 +78,11 @@ test('fresh OSM destination derivatives and report outputs retain linked source 
     baseline.uncompressedPolicySha256,
   )
   assert.equal(baseline.originalUnnamedFacilityGroups, 3112)
+  const wikidata = json(join(directory, 'wikidata/acquisition.json'))
+  assert.equal(
+    sha(readFileSync(join(directory, 'wikidata/query.rq'))),
+    wikidata.querySha256,
+  )
   assert.equal(
     baseline.describedGroups,
     baseline.descriptors.filter((row) => row.label).length,

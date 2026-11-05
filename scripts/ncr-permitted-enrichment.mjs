@@ -367,11 +367,17 @@ export function buildPermittedEnrichment(
   )
   const unnamedBreakdown = {
     groups: unnamed.length,
-    withUnusedNameTagLead: unnamed.filter((r) => r.nameTagLeads.length > 0).length,
-    withOperatorOrBrandClue: unnamed.filter((r) => r.operatorClues.length > 0).length,
-    withNamedPropertyContext: unnamed.filter((r) => r.contextClues.length > 0).length,
+    withUnusedNameTagLead: unnamed.filter((r) => r.nameTagLeads.length > 0)
+      .length,
+    withOperatorOrBrandClue: unnamed.filter((r) => r.operatorClues.length > 0)
+      .length,
+    withNamedPropertyContext: unnamed.filter((r) => r.contextClues.length > 0)
+      .length,
     withNoAdditionalClue: unnamed.filter(
-      (r) => !r.nameTagLeads.length && !r.operatorClues.length && !r.contextClues.length,
+      (r) =>
+        !r.nameTagLeads.length &&
+        !r.operatorClues.length &&
+        !r.contextClues.length,
     ).length,
   }
   return {

@@ -2,12 +2,12 @@
 
 This is a **source prospect list only**, not an imported parking directory, a reuse license, or a verification record. No facility names, rates or operator assertions from these sites have been added to Parkey's research dataset.
 
-| Operator or publisher | Official / primary source | Research value | Permission status |
-| --- | --- | --- | --- |
-| Ayala Property Management Corporation | https://www.ayalaproperty.com.ph/what-we-manage/estates-and-carparks | Named estate-managed carpark directory with site descriptions; useful for BGC and Makati identity/entrance questions | Not obtained — ask about structured, commercially reusable naming/entry details |
-| UPark Parking Management | https://www.upark.ph/parking-facility/ | Operator-maintained facility directory spanning malls, hotels, office buildings and open spaces | Not obtained — seek explicit name/address/data-sharing permission |
-| UPark monthly parking | https://www.upark.ph/monthly-parking/ | Operator-managed parking and location contact opportunities; confirm visitor eligibility and whether service is subscription-only | Not obtained — do not infer public hourly availability |
-| Metro Parking Management Philippines | https://metro-parking.com.ph/contactus.html | Operator outreach for owned/managed inventory, locations and permitted listing data | Not obtained — ask for authorized data/feed or direct entry |
+| Operator or publisher                 | Official / primary source                                            | Research value                                                                                                                    | Permission status                                                               |
+| ------------------------------------- | -------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| Ayala Property Management Corporation | https://www.ayalaproperty.com.ph/what-we-manage/estates-and-carparks | Named estate-managed carpark directory with site descriptions; useful for BGC and Makati identity/entrance questions              | Not obtained — ask about structured, commercially reusable naming/entry details |
+| UPark Parking Management              | https://www.upark.ph/parking-facility/                               | Operator-maintained facility directory spanning malls, hotels, office buildings and open spaces                                   | Not obtained — seek explicit name/address/data-sharing permission               |
+| UPark monthly parking                 | https://www.upark.ph/monthly-parking/                                | Operator-managed parking and location contact opportunities; confirm visitor eligibility and whether service is subscription-only | Not obtained — do not infer public hourly availability                          |
+| Metro Parking Management Philippines  | https://metro-parking.com.ph/contactus.html                          | Operator outreach for owned/managed inventory, locations and permitted listing data                                               | Not obtained — ask for authorized data/feed or direct entry                     |
 
 ## Agent workflow
 

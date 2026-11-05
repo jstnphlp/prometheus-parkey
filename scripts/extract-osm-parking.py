@@ -37,7 +37,9 @@ def restriction_text(key, value):
     return label + ' (' + side + '): ' + value.replace('_', ' ')
 
 def observed_date(value):
-    pattern = r'[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(?:\.[0-9]+)?(?:Z|[+-]([0-9]{2}):([0-9]{2}))'
+    # Enforce the shared contract before Python's ISO parser: newer Python
+    # versions accept 24:00:00 and normalize it into the following calendar day.
+    pattern = r'[0-9]{4}-[0-9]{2}-[0-9]{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\.[0-9]+)?(?:Z|[+-]([0-9]{2}):([0-9]{2}))'
     match = re.fullmatch(pattern, value) if isinstance(value, str) else None
     if not match:
         raise ValueError('Observation date must be an ISO 8601 timestamp with explicit timezone')

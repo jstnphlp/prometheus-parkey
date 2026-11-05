@@ -1,3 +1,8 @@
 # Preserve generated snapshot bytes and manifest hashes across platforms.
 apps/mobile/src/discovery/osm-pilot.json text eol=lf
 apps/mobile/src/discovery/osm-pilot.json.manifest.json text eol=lf
+
+# Immutable research input hashes and deterministic generated review bytes.
+poblacion-places.geojson text eol=lf
+data/parking-open-data-review.json text eol=lf
+data/parking-open-data-reviewed.json text eol=lf

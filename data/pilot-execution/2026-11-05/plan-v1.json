@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "planId": "manila-mandaluyong-engineering-v1",
+  "recordedAt": "2026-11-05T13:55:13.100Z",
+  "startingCommit": "2e91da86b9ba67b13ae057e9ba5e60708d5c0dbf",
+  "startingPr": "https://github.com/jstnphlp/prometheus-parkey/pull/17",
+  "scope": {
+    "basis": "founder_directive",
+    "cities": ["Manila", "Mandaluyong"],
+    "cityNames": ["City of Manila", "Mandaluyong City"],
+    "boundarySource": "data/ncr-research/ncr-lgus-osm.geojson.gz",
+    "rationale": "Founder selected pilot geography based on preliminary land-area/population research; no market conclusions are inferred.",
+    "demandValidated": false,
+    "willingnessToPayValidated": false,
+    "operatorParticipationValidated": false
+  },
+  "phasePolicy": {
+    "1E": "DEFERRED_TO_PILOT",
+    "1F": "IN_PROGRESS",
+    "1G": "DEFERRED_TO_PILOT"
+  },
+  "historicalGate": {
+    "path": "data/ncr-research/phase1-gates.json",
+    "sha256": "a3cba00ea807d21a43f6c1644bca0ab5c068d7c0e96ea553b543f2d362b949c0",
+    "status": "BLOCKED",
+    "phases": [
+      {
+        "id": "1A",
+        "status": "PASS"
+      },
+      {
+        "id": "1B",
+        "status": "PASS"
+      },
+      {
+        "id": "1C",
+        "status": "PASS"
+      },
+      {
+        "id": "1D",
+        "status": "PASS"
+      },
+      {
+        "id": "1E",
+        "status": "BLOCKED"
+      },
+      {
+        "id": "1F",
+        "status": "BLOCKED"
+      },
+      {
+        "id": "1G",
+        "status": "BLOCKED"
+      }
+    ]
+  },
+  "stageOrder": ["A", "B"],
+  "stageAPolicy": "Native validation is mandatory. A documented native blocker leaves Stage A blocked and Stage B unstarted.",
+  "stageBPolicy": "Only execute after all Stage A technical checks pass; market and physical validation are deferred, not completed.",
+  "pilotReleaseAuthorized": false,
+  "publicParkingPublicationApproved": false,
+  "productionDeploymentAuthorized": false,
+  "paidBuildsAuthorized": false,
+  "publicEvidenceUploadAuthorized": false,
+  "notices": [
+    "Engineering readiness and public publication eligibility are separate.",
+    "No research match, descriptive label or evidence submission authorizes identity, visitor access, entrance navigation, reservations or public display.",
+    "Frozen NCR sources and prior human decisions must remain unchanged."
+  ]
+}

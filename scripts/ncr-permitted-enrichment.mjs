@@ -180,7 +180,7 @@ function sourceClues(member, refreshedById) {
     p = member.sourceTags || {}
   const offer = (value, field, basis) => {
     const name = textName(value)
-    if (!name) return
+    if (!name || norm(name) === norm(member.name)) return
     if (clues.some((x) => norm(x.name) === norm(name))) return
     clues.push({
       name,
@@ -325,15 +325,17 @@ export function buildPermittedEnrichment(
     // Priority is for reviewer efficiency only, NOT market demand or a probability.
     const priority = group.sourceIdentityConflict
       ? 'identity_conflict'
-      : uniqueClues.length
-        ? 'name_tag_or_refresh_lead'
-        : group.nameStatus === 'cross_source_name_candidate'
-          ? 'cross_source_named_lead'
-          : uniqueContexts.length
-            ? 'property_context_only'
-            : operatorClues.length
-              ? 'operator_or_brand_only'
-              : 'no_reusable_name_lead'
+      : group.nameStatus === 'cross_source_name_candidate'
+        ? 'cross_source_named_lead'
+        : group.nameStatus === 'source_named_requires_cross_reference'
+          ? 'existing_source_named'
+          : uniqueClues.length
+            ? 'name_tag_or_refresh_lead'
+            : uniqueContexts.length
+              ? 'property_context_only'
+              : operatorClues.length
+                ? 'operator_or_brand_only'
+                : 'no_reusable_name_lead'
     records.push({
       groupId: group.groupId,
       candidateIds: group.candidateIds,

@@ -40,16 +40,16 @@ The CSV is a **review queue**, not a clean parking directory. Sort `priority` an
 
 ### Naming outcomes
 
-| Evidence | Permitted action | Not permitted as an automated conclusion |
-| --- | --- | --- |
-| Same OSM object gains a name in a newer snapshot | Propose source-name update and retain both OSM references/versions | Do not claim independent cross-platform verification or auto-publish |
-| OSM `official_name` or other alternate name tag | Create attributed review proposal | Do not silently overwrite reviewed names |
-| OSM `operator` or `brand` tag | Contact/entity context | Do not assume brand/operator is the facility name |
-| Named mall/building containing the parking anchor | Label property association as an uncertain clue | Do not convert `Unnamed parking` to `Mall Parking` |
-| Named building/property within 90 m | Investigate nearby association | Do not assert it is the same parking property |
-| Official operator website/public directory | Document source, date, owner permission and right to reuse; then add through a reviewed authorized-evidence workflow | Do not assume every website permits commercial database reuse |
-| Google Maps or Waze link | Open for reviewer navigation/location inspection | Do not automate scraping or permanently copy provider place content |
-| No credible name or confirmed public access | Keep hidden from public discovery, retain archive and assign follow-up | Do not delete original OSM/Overture record |
+| Evidence                                          | Permitted action                                                                                                     | Not permitted as an automated conclusion                             |
+| ------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| Same OSM object gains a name in a newer snapshot  | Propose source-name update and retain both OSM references/versions                                                   | Do not claim independent cross-platform verification or auto-publish |
+| OSM `official_name` or other alternate name tag   | Create attributed review proposal                                                                                    | Do not silently overwrite reviewed names                             |
+| OSM `operator` or `brand` tag                     | Contact/entity context                                                                                               | Do not assume brand/operator is the facility name                    |
+| Named mall/building containing the parking anchor | Label property association as an uncertain clue                                                                      | Do not convert `Unnamed parking` to `Mall Parking`                   |
+| Named building/property within 90 m               | Investigate nearby association                                                                                       | Do not assert it is the same parking property                        |
+| Official operator website/public directory        | Document source, date, owner permission and right to reuse; then add through a reviewed authorized-evidence workflow | Do not assume every website permits commercial database reuse        |
+| Google Maps or Waze link                          | Open for reviewer navigation/location inspection                                                                     | Do not automate scraping or permanently copy provider place content  |
+| No credible name or confirmed public access       | Keep hidden from public discovery, retain archive and assign follow-up                                               | Do not delete original OSM/Overture record                           |
 
 ## Verification workflow
 

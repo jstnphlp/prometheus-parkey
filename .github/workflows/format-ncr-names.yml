@@ -1,0 +1,37 @@
+name: Format NCR name-reconciliation PR once
+
+on:
+  push:
+    branches:
+      - feat/ncr-named-inventory-v2
+    paths:
+      - .github/workflows/format-ncr-names.yml
+
+permissions:
+  contents: write
+
+jobs:
+  format-once:
+    if: github.repository == 'jstnphlp/prometheus-parkey' && github.ref == 'refs/heads/feat/ncr-named-inventory-v2'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: feat/ncr-named-inventory-v2
+          persist-credentials: true
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Format name-reconciliation files and remove this temporary workflow
+        run: |
+          pnpm exec prettier --write scripts/ncr-name-reconciliation.mjs scripts/ncr-name-reconciliation.test.mjs scripts/ncr-preview-server.mjs scripts/ncr-preview-server.test.mjs packages/shared-types/src/ncr-discovery.ts apps/mobile/src/discovery/ncr-client.ts apps/mobile/src/discovery/ncr-research.tsx e2e/ncr-research.spec.ts docs/ncr-named-inventory.md
+          rm .github/workflows/format-ncr-names.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add scripts/ncr-name-reconciliation.mjs scripts/ncr-name-reconciliation.test.mjs scripts/ncr-preview-server.mjs scripts/ncr-preview-server.test.mjs packages/shared-types/src/ncr-discovery.ts apps/mobile/src/discovery/ncr-client.ts apps/mobile/src/discovery/ncr-research.tsx e2e/ncr-research.spec.ts docs/ncr-named-inventory.md .github/workflows/format-ncr-names.yml
+          git commit -m 'style: format NCR name reconciliation and private filter UI'
+          git push origin HEAD:feat/ncr-named-inventory-v2

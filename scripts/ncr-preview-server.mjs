@@ -18,6 +18,7 @@ import {
   validatePublicationLedger,
 } from './ncr-publication.mjs'
 import { validateReviewLedger } from './ncr-quality-review.mjs'
+import { buildNameReconciliation, meaningfulParkingName } from './ncr-name-reconciliation.mjs'
 
 export const NCR_FEATURE_TYPES = [
   'lot',
@@ -28,6 +29,16 @@ export const NCR_FEATURE_TYPES = [
   'entrance',
 ]
 const facilityTypes = new Set(['lot', 'garage', 'facility_unspecified'])
+const nameReviewCache = new WeakMap()
+function nameReviews(research) {
+  if (!nameReviewCache.has(research)) {
+    const report = buildNameReconciliation(research)
+    const index = new Map(report.groups.flatMap((group) =>
+      group.candidateIds.map((id) => [id, group.nameStatus])))
+    nameReviewCache.set(research, index)
+  }
+  return nameReviewCache.get(research)
+}
 const loopbackHost = (hostname) =>
   ['localhost', '127.0.0.1', '[::1]'].includes(hostname)
 const loopbackAddress = (value) =>
@@ -135,10 +146,18 @@ export function parseNcrQuery(searchParams) {
   return { bbox, zoom, category, limit, cursor: searchParams.get('cursor') }
 }
 
-function projection(candidate, state, research, preview) {
+function projection(candidate, state, research, preview, nameIndex) {
   return {
     id: candidate.id,
     name: candidate.name,
+    nameReview: {
+      status: nameIndex.get(candidate.id) || 'not_independent_facility',
+      sourceNameIsDistinctive: meaningfulParkingName(candidate.name),
+      // Independent OSM/Overture name agreement is an unverified research lead.
+      crossSourceCandidate:
+        nameIndex.get(candidate.id) === 'cross_source_name_candidate' &&
+        meaningfulParkingName(candidate.name),
+    },
     featureType: candidate.type,
     geometry: candidate.geometry,
     representativePoint: candidate.representativePoint,
@@ -174,6 +193,9 @@ function projection(candidate, state, research, preview) {
           : []),
         ...(candidate.type === 'street_segment'
           ? ['Street parking legality and time restrictions need review.']
+          : []),
+        ...(preview && meaningfulParkingName(candidate.name)
+          ? ['Source name has not been independently confirmed with the operator or an on-site check.']
           : []),
         ...(candidate.flags || []),
       ]),
@@ -244,8 +266,12 @@ export function queryNcrResearch(
       throw badQuery('Cursor is invalid or belongs to another snapshot/query.')
     }
   }
+  const nameIndex = nameReviews(research)
   const matched = []
   for (const candidate of research.candidates) {
+    // Source research is retained privately. A future human approval cannot
+    // accidentally publish a placeholder like "Unnamed parking facility".
+    if (!preview && !meaningfulParkingName(candidate.name)) continue
     if (
       (query.category !== 'all' && candidate.type !== query.category) ||
       !geometryIntersectsViewport(candidate.geometry, query.bbox)
@@ -301,7 +327,7 @@ export function queryNcrResearch(
     items = matched
       .slice(offset, offset + query.limit)
       .map(({ candidate, state }) =>
-        projection(candidate, state, research, preview),
+        projection(candidate, state, research, preview, nameIndex),
       )
     truncated = offset + items.length < matched.length
     if (truncated)

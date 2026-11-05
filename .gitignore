@@ -34,3 +34,6 @@ __pycache__/
 output/playwright/
 supabase/.temp/
 supabase/.branches/
+
+# Large Metro Manila research inputs and generated outputs (not published app data)
+output/ncr/

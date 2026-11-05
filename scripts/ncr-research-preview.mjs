@@ -7,7 +7,6 @@ import { dirname } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import process from 'node:process'
 
-const assertNumber=(v)=>Number.isFinite(v)&&v>=0
 const integer=(v)=>Number.isInteger(v)&&v>=0
 const validBox=(b)=>Array.isArray(b)&&b.length===4&&b.every(Number.isFinite)&&
   b[0]>=-180&&b[2]<=180&&b[1]>=-90&&b[3]<=90&&b[0]<b[2]&&b[1]<b[3]

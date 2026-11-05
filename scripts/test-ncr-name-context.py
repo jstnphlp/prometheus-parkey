@@ -35,6 +35,29 @@ class ContextTests(unittest.TestCase):
         self.assertEqual((p["@type"], p["@id"], p["@version"]), ("node", 1, 3))
         self.assertEqual(p["@timestamp"], "2026-11-03T00:00:00Z")
 
+    def test_named_restaurants_and_attractions_are_context_only(self):
+        handler = self.extract('''
+          <node id="101" lat="14.56" lon="121.03">
+            <tag k="name" v="The Corner Restaurant"/>
+            <tag k="amenity" v="restaurant"/>
+          </node>
+          <node id="102" lat="14.5601" lon="121.0301">
+            <tag k="name" v="Local Museum"/>
+            <tag k="tourism" v="museum"/>
+          </node>
+          <node id="103" lat="14.5602" lon="121.0302">
+            <tag k="name" v="Community Park"/>
+            <tag k="leisure" v="park"/>
+          </node>
+          <node id="104" lat="14.5603" lon="121.0303">
+            <tag k="name" v="Parking"/>
+            <tag k="amenity" v="parking"/>
+          </node>
+        ''')
+        self.assertEqual(len(handler.features), 3)
+        names = sorted(feature["properties"]["name"] for feature in handler.features)
+        self.assertEqual(names, ["Community Park", "Local Museum", "The Corner Restaurant"])
+
     def test_polygon_preserves_geometry_without_duplicate_line(self):
         handler = self.extract('''
           <node id="1" lat="14.56" lon="121.03"/>

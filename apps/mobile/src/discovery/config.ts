@@ -1,4 +1,7 @@
+import { discoveryMode } from './hosted-mode.ts'
+
 export const config = {
+  discoveryMode: discoveryMode(process.env.EXPO_PUBLIC_DISCOVERY_MODE),
   analyticsEndpoint: process.env.EXPO_PUBLIC_ANALYTICS_ENDPOINT || '',
   analyticsDomain: process.env.EXPO_PUBLIC_ANALYTICS_DOMAIN || '',
   sentryDsn: process.env.EXPO_PUBLIC_SENTRY_DSN || '',

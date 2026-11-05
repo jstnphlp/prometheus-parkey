@@ -24,6 +24,7 @@ import { StatusBar } from 'expo-status-bar'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { discoveryState } from './discovery-state'
+import { config } from './config'
 import { StateCard } from './state-card'
 import { useConnectivity } from './use-connectivity'
 import { ArrivalCelebration } from './arrival-celebration'
@@ -207,10 +208,9 @@ export default function Explore() {
       ? updateNavigation({ panel: value })
       : closeNavigation({ panel: null })
   const [samplesRequested, setSamples] = useState(false)
-  const samples = developmentSamplesEnabled(
-    samplesRequested,
-    process.env.NODE_ENV,
-  )
+  const samples =
+    config.discoveryMode === 'synthetic' ||
+    developmentSamplesEnabled(samplesRequested, process.env.NODE_ENV)
   const [revision, setRevision] = useState(0)
   const [mapRevision, setMapRevision] = useState(0)
   const [mapStatus, setMapStatus] = useState<'loading' | 'ready' | 'error'>(

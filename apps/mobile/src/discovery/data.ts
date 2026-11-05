@@ -1,4 +1,10 @@
-import type { Coordinate, DiscoveryParking } from '@parkey/shared-types'
+import type {
+  Coordinate,
+  DiscoveryParking,
+  HostedDiscoveryResponse,
+} from '@parkey/shared-types'
+
+import { validHostedConfig } from './hosted-mode.ts'
 
 import {
   geometryMatchesKind,
@@ -98,6 +104,56 @@ export async function fetchParking(
   )
     throw new Error('The parking service returned an unsupported response.')
   return { records: payload.records, truncated: payload.truncated }
+}
+
+export async function fetchApprovedParking(
+  url: string,
+  key: string,
+  bounds: Viewport,
+  signal: AbortSignal,
+): Promise<HostedDiscoveryResponse> {
+  if (!validHostedConfig(url, key))
+    throw new Error('Hosted discovery is not configured safely.')
+  const response = await fetch(
+    `${url.replace(/\/$/, '')}/rest/v1/rpc/discover_approved_parking`,
+    {
+      method: 'POST',
+      headers: { apikey: key, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        west: bounds.west,
+        south: bounds.south,
+        east: bounds.east,
+        north: bounds.north,
+      }),
+      signal,
+    },
+  )
+  if (!response.ok)
+    throw new Error('Approved parking could not be loaded. Try again.')
+  const payload: unknown = await response.json()
+  if (
+    !isObject(payload) ||
+    payload.contractVersion !== 1 ||
+    typeof payload.truncated !== 'boolean' ||
+    !Array.isArray(payload.records) ||
+    payload.records.length > 250 ||
+    !payload.records.every(
+      (record) =>
+        isParking(record) &&
+        record.verification === 'verified' &&
+        record.sourceKind !== 'sample' &&
+        record.verifiedAt !== null &&
+        Date.parse(record.verifiedAt) <= Date.now(),
+    )
+  )
+    throw new Error(
+      'The approved parking service returned an unsupported response.',
+    )
+  return {
+    contractVersion: 1,
+    records: payload.records,
+    truncated: payload.truncated,
+  }
 }
 
 export type Destination = {

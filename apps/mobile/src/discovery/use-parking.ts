@@ -2,10 +2,11 @@ import { useEffect, useMemo, useReducer } from 'react'
 import type { DiscoveryParking } from '@parkey/shared-types'
 
 import { config, hasDiscoveryBackend } from './config'
-import { fetchParking, isParking } from './data'
+import { fetchApprovedParking, fetchParking, isParking } from './data'
 import { queryableViewport } from './model'
 import type { Viewport } from './model'
 import snapshot from './osm-pilot.json'
+import { sampleParking } from './sample-data'
 import {
   mergeParking,
   parkingLoadReducer,
@@ -13,9 +14,15 @@ import {
 } from './parking-results'
 
 const rawSnapshot: unknown = snapshot
-const pilotRecords: DiscoveryParking[] = Array.isArray(rawSnapshot)
+const legacyRecords: DiscoveryParking[] = Array.isArray(rawSnapshot)
   ? rawSnapshot.filter(isParking)
   : []
+const pilotRecords =
+  config.discoveryMode === 'legacy'
+    ? legacyRecords
+    : config.discoveryMode === 'synthetic'
+      ? sampleParking
+      : []
 
 export function useParking(viewport: Viewport, revision: number) {
   const [remote, dispatch] = useReducer(parkingLoadReducer, {
@@ -26,10 +33,22 @@ export function useParking(viewport: Viewport, revision: number) {
   const canQuery = queryableViewport(viewport)
 
   useEffect(() => {
-    if (!hasDiscoveryBackend || !queryableViewport(viewport)) return
+    if (
+      !['legacy', 'hosted'].includes(config.discoveryMode) ||
+      !hasDiscoveryBackend ||
+      !queryableViewport(viewport)
+    )
+      return
     return scheduleParkingRefresh(
       (signal) =>
-        fetchParking(config.supabaseUrl, config.supabaseKey, viewport, signal),
+        (config.discoveryMode === 'hosted'
+          ? fetchApprovedParking
+          : fetchParking)(
+          config.supabaseUrl,
+          config.supabaseKey,
+          viewport,
+          signal,
+        ),
       dispatch,
     )
   }, [viewport, revision])

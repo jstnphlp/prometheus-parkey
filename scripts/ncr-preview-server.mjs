@@ -18,7 +18,10 @@ import {
   validatePublicationLedger,
 } from './ncr-publication.mjs'
 import { validateReviewLedger } from './ncr-quality-review.mjs'
-import { buildNameReconciliation, meaningfulParkingName } from './ncr-name-reconciliation.mjs'
+import {
+  buildNameReconciliation,
+  meaningfulParkingName,
+} from './ncr-name-reconciliation.mjs'
 
 export const NCR_FEATURE_TYPES = [
   'lot',
@@ -33,8 +36,11 @@ const nameReviewCache = new WeakMap()
 function nameReviews(research) {
   if (!nameReviewCache.has(research)) {
     const report = buildNameReconciliation(research)
-    const index = new Map(report.groups.flatMap((group) =>
-      group.candidateIds.map((id) => [id, group.nameStatus])))
+    const index = new Map(
+      report.groups.flatMap((group) =>
+        group.candidateIds.map((id) => [id, group.nameStatus]),
+      ),
+    )
     nameReviewCache.set(research, index)
   }
   return nameReviewCache.get(research)
@@ -195,7 +201,9 @@ function projection(candidate, state, research, preview, nameIndex) {
           ? ['Street parking legality and time restrictions need review.']
           : []),
         ...(preview && meaningfulParkingName(candidate.name)
-          ? ['Source name has not been independently confirmed with the operator or an on-site check.']
+          ? [
+              'Source name has not been independently confirmed with the operator or an on-site check.',
+            ]
           : []),
         ...(candidate.flags || []),
       ]),

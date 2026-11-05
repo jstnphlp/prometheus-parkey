@@ -8,11 +8,11 @@ Make the private NCR preview useful without displaying thousands of placeholder-
 
 ## How the three filters work
 
-| Private preview filter | Meaning |
-| --- | --- |
-| Cross-source name matches (default) | Distinctive names appearing in OSM and Overture within 75 meters, with no obvious shared source-provider identity, for investigation. These are candidate corroborations only and may still represent two distinct facilities. |
-| Source-named facilities | Facility observations with distinctive OSM/Overture names, whether matched or not. Names are unverified. |
-| All source research (including unnamed) | Original lots, garages, unspecified facilities, individual spaces, street segments and entrances, including generic/unmatched names. Available only via explicit private research mode. |
+| Private preview filter                  | Meaning                                                                                                                                                                                                                        |
+| --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Cross-source name matches (default)     | Distinctive names appearing in OSM and Overture within 75 meters, with no obvious shared source-provider identity, for investigation. These are candidate corroborations only and may still represent two distinct facilities. |
+| Source-named facilities                 | Facility observations with distinctive OSM/Overture names, whether matched or not. Names are unverified.                                                                                                                       |
+| All source research (including unnamed) | Original lots, garages, unspecified facilities, individual spaces, street segments and entrances, including generic/unmatched names. Available only via explicit private research mode.                                        |
 
 The public endpoint never exposes a generic placeholder name even if a synthetic publication approval event were otherwise valid. Every real public record still requires separate human approval for source rights, identity/visitor access, safety and field scope. This filter does not replace those publication checks.
 

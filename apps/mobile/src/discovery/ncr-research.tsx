@@ -146,9 +146,9 @@ function ItemFacts({ item }: { item: NcrDiscoveryItem }) {
         }}
       />
       <Text selectable style={styles.warning}>
-        Google Maps and Waze references use the existing source coordinate.
-        They do not confirm a vehicle entrance, legal parking, or a business name.
-        Do not import provider place content into Parkey.
+        Google Maps and Waze references use the existing source coordinate. They
+        do not confirm a vehicle entrance, legal parking, or a business name. Do
+        not import provider place content into Parkey.
       </Text>
       <Action
         title="Inspect coordinate on Google Maps"
@@ -198,7 +198,9 @@ export default function NcrResearch() {
     camera.current = next
   }, [])
   const [category, setCategory] = useState<'all' | NcrFeatureType>('all')
-  const [nameFilter, setNameFilter] = useState<'cross_source' | 'source_named' | 'all'>('cross_source')
+  const [nameFilter, setNameFilter] = useState<
+    'cross_source' | 'source_named' | 'all'
+  >('cross_source')
   const [mode, setMode] = useState<'public' | 'research_preview'>('public')
   const [storedData, setData] = useState<NcrDiscoveryResponse | null>(null)
   const privateCache = useRef<NcrDiscoveryResponse | null>(null)
@@ -467,7 +469,8 @@ export default function NcrResearch() {
                 </Text>
               ) : (
                 <Text style={styles.warning}>
-                  Unverified research · {mode === 'research_preview'
+                  Unverified research ·{' '}
+                  {mode === 'research_preview'
                     ? nameFilter === 'cross_source'
                       ? 'Cross-source name agreement only; identity not verified'
                       : nameFilter === 'source_named'
@@ -568,9 +571,10 @@ export default function NcrResearch() {
         <ModalSheet title="Parking categories" onClose={() => setPanel(null)}>
           <ScrollView contentContainerStyle={styles.modalContent}>
             <Text selectable style={styles.warning}>
-              Parking names are source evidence, not verified business identities.
-              Google Maps and Waze are external coordinate references only.
-              Missing-name records remain preserved in private research.
+              Parking names are source evidence, not verified business
+              identities. Google Maps and Waze are external coordinate
+              references only. Missing-name records remain preserved in private
+              research.
             </Text>
             <Action
               title="Cross-source name matches"

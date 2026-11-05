@@ -299,7 +299,10 @@ test('public projection excludes unapproved/rejected/expired records before pagi
 })
 
 test('name review annotates all research, but generic names never pass public output', () => {
-  const candidateWithNoName = { ...candidate('z'), name: 'Unnamed parking facility' }
+  const candidateWithNoName = {
+    ...candidate('z'),
+    name: 'Unnamed parking facility',
+  }
   const source = {
     ...research,
     candidates: [candidateWithNoName],
@@ -310,11 +313,17 @@ test('name review annotates all research, but generic names never pass public ou
   assert.equal(preview.items[0].nameReview.status, 'unnamed_pending_reference')
   assert.equal(preview.items[0].nameReview.sourceNameIsDistinctive, false)
   assert.equal(preview.items[0].nameReview.crossSourceCandidate, false)
-  const approvedLedger = appendPublicationEvent(emptyLedger(), approval(candidateWithNoName), {
-    authorizedHuman: true, now,
-  })
+  const approvedLedger = appendPublicationEvent(
+    emptyLedger(),
+    approval(candidateWithNoName),
+    {
+      authorizedHuman: true,
+      now,
+    },
+  )
   const publicState = queryNcrResearch(source, query(), {
-    ...queryOptions(false), ledger: approvedLedger,
+    ...queryOptions(false),
+    ledger: approvedLedger,
   })
   assert.equal(publicState.totalMatched, 0)
   assert.equal(publicState.items.length, 0)

@@ -484,6 +484,45 @@ test('name review annotates all research, but generic names never pass public ou
   assert.deepEqual(source.candidates, [candidateWithNoName])
 })
 
+test('private API provides destination context without changing source name or public results', () => {
+  const source = {
+    ...research,
+    candidates: research.candidates.map((c) =>
+      c.id === 'a' ? { ...c, name: 'Unnamed parking facility' } : c,
+    ),
+  }
+  const enrichment = enrichmentReport(source)
+  enrichment.records[0].classification = 'nearby_named_property_only'
+  enrichment.records[0].proposedName = null
+  enrichment.records[0].contextClues = [{
+    name: 'The Community Mall',
+    sourceId: 'osm:way/987',
+    sourceRecordUrl: 'https://www.openstreetmap.org/way/987',
+    sourceLicense: 'ODbL-1.0',
+    placeKind: 'shop:mall',
+    relation: 'nearby_named_property_only',
+    approximateMeters: 42,
+    usableAsParkingName: false,
+  }]
+  const privateData = queryNcrResearch(source, query(), {
+    ...queryOptions(), enrichment,
+  })
+  const named = privateData.items.find((item) => item.id === 'a')
+  assert.equal(named.name, 'Unnamed parking facility')
+  assert.equal(named.nameReview.destinationLabel.label,
+    'Parking near The Community Mall')
+  assert.equal(named.nameReview.destinationLabel.parkingNameConfirmed, false)
+  assert.equal(named.nameReview.destinationLabel.publicationApproved, false)
+  assert.equal(named.canNavigate, false)
+  const other = privateData.items.find((item) => item.id === 'd')
+  assert.equal(other.nameReview.destinationLabel, undefined)
+  const publicData = queryNcrResearch(source, query(), {
+    ...queryOptions(false), enrichment,
+  })
+  assert.equal(publicData.totalMatched, 0)
+  assert.equal(publicData.items.length, 0)
+})
+
 test('actual frozen 5,427 observations cannot appear in the public projection', () => {
   const source = loadFrozenResearch('data/ncr-research')
   const review = JSON.parse(

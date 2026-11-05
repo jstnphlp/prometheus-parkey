@@ -16,6 +16,36 @@ const bounds = {
 const url = 'https://project.supabase.co'
 const key = 'sb_publishable_synthetic'
 
+test('hosted reads require valid nonempty public provenance on every record', async (t) => {
+  const record = {
+    ...sampleParking[0],
+    sourceKind: 'parkey',
+    sourceLabel: 'Fictional test',
+    sourceUrl: 'https://example.org/synthetic',
+    license: 'CC0-1.0',
+    verification: 'verified',
+    verifiedAt: '2026-11-01T00:00:00Z',
+  }
+  let payload = { contractVersion: 1, records: [record], truncated: false }
+  t.mock.method(globalThis, 'fetch', async () => Response.json(payload))
+  const read = () =>
+    fetchApprovedParking(url, key, bounds, new AbortController().signal)
+  assert.deepEqual(await read(), payload)
+  for (const invalid of [
+    { sourceUrl: null },
+    { sourceUrl: 'http://example.org/source' },
+    { sourceUrl: 'https://user:password@example.org/source' },
+    { sourceLabel: '' },
+    { license: '' },
+    { license: 'unknown' },
+    { verification: 'unverified', verifiedAt: null },
+    { sourceKind: 'sample' },
+  ]) {
+    payload = { ...payload, records: [{ ...record, ...invalid }] }
+    await assert.rejects(read(), /unsupported response/)
+  }
+})
+
 test('explicit modes preserve legacy and fail closed on typos and secret keys', () => {
   assert.equal(discoveryMode(undefined), 'legacy')
   assert.equal(discoveryMode('hosted'), 'hosted')

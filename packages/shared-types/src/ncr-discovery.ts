@@ -87,6 +87,21 @@ export type NcrDiscoveryItem = {
       | 'not_independent_facility'
     sourceNameIsDistinctive: boolean
     crossSourceCandidate: boolean
+    /** Private descriptive context, never an official parking name or public listing. */
+    destinationLabel?: {
+      label: string
+      destination: string
+      category: string
+      sourceId: string
+      sourceRecordUrl: string
+      approximateStraightLineMeters: number
+      insideSourcePropertyFootprint: boolean
+      status: 'research_context_only'
+      parkingNameConfirmed: false
+      visitorAccessConfirmed: false
+      navigationEntranceConfirmed: false
+      publicationApproved: false
+    }
     enrichment?: NcrNameEnrichment
   }
   featureType: NcrFeatureType

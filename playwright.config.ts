@@ -5,7 +5,11 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: Boolean(process.env.CI),
   retries: process.env.CI ? 1 : 0,
-  workers: process.env.CI ? 2 : 4,
+  // Software WebGL plus Metro overloads the standard two-core CI runner when
+  // browser tests run concurrently. Keep each assertion's normal deadline.
+  workers: process.env.CI ? 1 : 4,
+  // Persistence cases intentionally cross several pages and reload bundles.
+  timeout: 90_000,
   reporter: process.env.CI
     ? [
         ['line'],

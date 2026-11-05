@@ -5,6 +5,7 @@ import {
   openSpot,
   spot,
   spotPath,
+  useNavigationGps,
 } from './fixtures'
 
 test('directions require consent, start navigation, and return to the map', async ({
@@ -16,6 +17,7 @@ test('directions require consent, start navigation, and return to the map', asyn
     if (request.url().includes('/route/v1/driving/'))
       requests.push(request.url())
   })
+  await useNavigationGps(page)
   await openSpot(page)
   await page.getByTestId('parking-get-directions').click()
   const consent = page.getByRole('alertdialog', { name: 'Directions privacy' })
@@ -60,6 +62,7 @@ test('routing failure offers external maps and retry recovers', async ({
   await page.route('https://e2e.parkey.test/route/v1/driving/**', (route) =>
     route.fulfill({ status: 503, body: 'Unavailable' }),
   )
+  await useNavigationGps(page)
   await openSpot(page)
   await page.getByTestId('parking-get-directions').click()
   await page
@@ -85,54 +88,7 @@ test('arriving allows parking confirmation and saves the car location', async ({
   page,
   context,
 }) => {
-  await page.addInitScript(() => {
-    // Replacing Chromium's CDP geolocation override emits POSITION_UNAVAILABLE
-    // before each fix. This fixture models uninterrupted GPS for the dwell test.
-    const watches = new Map<number, PositionCallback>()
-    let next = 0
-    function position(
-      longitude: number,
-      latitude: number,
-    ): GeolocationPosition {
-      const values = {
-        longitude,
-        latitude,
-        accuracy: 5,
-        altitude: null,
-        altitudeAccuracy: null,
-        heading: null,
-        speed: null,
-      }
-      const coords = { ...values, toJSON: () => values }
-      const timestamp = Date.now()
-      return {
-        coords,
-        timestamp,
-        toJSON: () => ({ coords: values, timestamp }),
-      }
-    }
-    navigator.geolocation.watchPosition = (callback) => {
-      const id = ++next
-      watches.set(id, callback)
-      queueMicrotask(() => callback(position(121.0308, 14.5653)))
-      return id
-    }
-    navigator.geolocation.clearWatch = (id) => {
-      watches.delete(id)
-    }
-    window.addEventListener('parkey-test-fix', (event) => {
-      if (!(event instanceof CustomEvent)) return
-      const point: unknown = event.detail
-      if (
-        !Array.isArray(point) ||
-        typeof point[0] !== 'number' ||
-        typeof point[1] !== 'number'
-      )
-        throw new Error('Invalid synthetic GPS fixture')
-      const fix = position(point[0], point[1])
-      for (const callback of watches.values()) callback(fix)
-    })
-  })
+  await useNavigationGps(page)
   await openSpot(page)
   await page.getByTestId('parking-get-directions').click()
   await page

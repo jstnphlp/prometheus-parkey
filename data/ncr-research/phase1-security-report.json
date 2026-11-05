@@ -37,7 +37,16 @@
     "pnpm peers check (no peer dependency issues)"
   ],
   "databaseTests": {
-    "status": "BLOCKED",
-    "reason": "Docker executable is not installed on this host; Supabase SQL tests cannot run locally. No database or production action attempted."
+    "status": "PASS",
+    "localStatus": "BLOCKED",
+    "localReason": "Docker executable absent on Windows host.",
+    "remoteCI": {
+      "url": "https://github.com/jstnphlp/prometheus-parkey/actions/runs/41996957155/job/127142370004",
+      "verifiedCommit": "4f7c9444050897f89d238f730e294cefc4a968e9",
+      "files": 4,
+      "assertions": 186,
+      "result": "PASS"
+    },
+    "scope": "Disposable runner-local SQL only; no production database actions."
   }
 }

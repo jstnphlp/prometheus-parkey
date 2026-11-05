@@ -125,6 +125,7 @@ export default function NcrMap(props: NcrMapProps) {
         source: 'clusters',
         layout: {
           'text-field': ['to-string', ['get', 'observations']],
+          'text-font': ['Noto Sans Bold'],
           'text-size': 12,
         },
         paint: { 'text-color': '#FFFFFF' },

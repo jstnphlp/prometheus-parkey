@@ -124,6 +124,7 @@ export default function NcrMap(props: NcrMapProps) {
           type="symbol"
           layout={{
             'text-field': ['to-string', ['get', 'observations']],
+            'text-font': ['Noto Sans Bold'],
             'text-size': 12,
           }}
           paint={{ 'text-color': '#FFFFFF' }}

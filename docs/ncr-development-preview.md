@@ -56,5 +56,9 @@ contains actual commands/results. Browser tests cover desktop Chromium and a
 Pixel 7 Chromium viewport, the actual frozen research API, empty public output,
 clusters, category filters, geometry/warnings and return to the pilot. Synthetic
 approval/sensor/field-form fixtures are labeled and do not create actual human
-approvals or visits. Native map code is typechecked; no physical Android/iOS
-device or native simulator was run on this host.
+approvals or visits. Native Android smoke testing ran on the existing Pixel 10 Pro Android 17 AVD
+with the installed development client and current Metro code: public-empty,
+private overview, BGC details, warnings, public clearing and return to the pilot.
+It exposed and verified a correction for missing cluster-count glyphs; both maps
+now request the supported Noto Sans Bold stack. No new native APK or iOS device/
+simulator was built or tested.

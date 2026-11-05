@@ -166,23 +166,107 @@
       "executed": true,
       "exitCode": 0,
       "note": "Validates consistency and missing-evidence blockers; a valid report is not release approval."
+    },
+    {
+      "id": "android-native-smoke",
+      "status": "PASS",
+      "executed": true,
+      "recordedAt": "2026-11-05T09:04:40.518220+00:00",
+      "platform": "Android 17, Pixel 10 Pro AVD, WHPX acceleration",
+      "app": "com.parkey.discovery",
+      "method": "Existing installed development APK, current feature JavaScript from local Metro; local API via adb reverse, inspected with agent-device.",
+      "checks": [
+        "Existing pilot map opens",
+        "NCR app route starts with 0 approved observations",
+        "Explicit private research shows 1797 observations in the native overview viewport",
+        "BGC viewport shows 54 observations",
+        "Actual mapped entrance detail separates unverified, unapproved, unknown facts and disabled driving navigation",
+        "Private-to-public transition clears source details and shows 0 approved observations",
+        "Return to existing Poblacion pilot works",
+        "Native-discovered missing glyph font corrected; reloaded native private map has no glyph error overlay"
+      ],
+      "evidence": [
+        {
+          "localLog": "output/ncr/android-ncr-clusters.txt",
+          "sha256": "95dd7de888661c488f7587ee340df60f6296c6f9b9400993f4edb31f8f7e3bc2"
+        },
+        {
+          "localLog": "output/ncr/android-ncr-details.txt",
+          "sha256": "7a5641f91b09bc08347b3e760e480bded12e314684291fa464fe9eba229ad826"
+        },
+        {
+          "localLog": "output/ncr/android-ncr-public.txt",
+          "sha256": "a9d5c3aa3de01a9238d2feeab377a6a963ba2ba8a417c99dae42acc4a823e15a"
+        },
+        {
+          "localLog": "output/ncr/android-return-pilot.txt",
+          "sha256": "9f4a32fde23d4d1e02ea6cd17b4226b957a59aa8c20c9caa2260e93e0abdd516"
+        }
+      ],
+      "limitations": [
+        "No new native APK was built.",
+        "No iOS simulator/device executed on Windows.",
+        "No actual site visit, live parking measurement or real GPS navigation validation.",
+        "Saved PNG is a captured artifact, not a claim of automated visual-image validation."
+      ]
+    },
+    {
+      "id": "sql-ci",
+      "command": "pnpm exec supabase db start && pnpm exec supabase db reset --local && pnpm exec supabase test db",
+      "executed": true,
+      "status": "PASS",
+      "exitCode": 0,
+      "files": 4,
+      "assertions": 186,
+      "evidenceReference": "https://github.com/jstnphlp/prometheus-parkey/actions/runs/41996957155/job/127142370004",
+      "scope": "Disposable GitHub runner-local PostgreSQL, no hosted database."
+    },
+    {
+      "id": "cluster-font-regression",
+      "command": "pnpm exec playwright test e2e/ncr-research.spec.ts --workers=2 --reporter=line",
+      "executed": true,
+      "status": "PASS",
+      "exitCode": 0,
+      "passed": 2,
+      "failed": 0,
+      "localLog": "output/ncr/e2e-ncr-glyph-regression.log",
+      "logSha256": "530e17ca54b19e740e2133e3ce425e74da591ae68f8b7d017975ad7e2aceb4d4",
+      "note": "Both browser projects verify actual glyph font requests use supported Noto Sans Bold after native-discovered default stack 404. Existing E2E case extended, not extra distinct tests."
+    },
+    {
+      "id": "font-static-checks",
+      "command": "pnpm --filter @parkey/mobile typecheck; pnpm typecheck:e2e; targeted ESLint; pnpm format:check",
+      "executed": true,
+      "status": "PASS",
+      "exitCode": 0,
+      "note": "After font regression correction and evidence/report updates."
     }
   ],
   "remoteCI": {
-    "status": "PENDING",
-    "note": "New feature commit must execute CI after push; previous baseline validate passed but E2E failed. Do not infer remote success from this local record."
+    "status": "PASS",
+    "verifiedCommit": "4f7c9444050897f89d238f730e294cefc4a968e9",
+    "runs": [
+      "https://github.com/jstnphlp/prometheus-parkey/actions/runs/41996957155",
+      "https://github.com/jstnphlp/prometheus-parkey/actions/runs/41996950927"
+    ],
+    "jobs": {
+      "validate": "PASS",
+      "e2e": "PASS",
+      "database": "PASS"
+    },
+    "e2e": {
+      "passed": 42,
+      "failed": 0,
+      "flaky": 0
+    },
+    "sql": {
+      "files": 4,
+      "assertions": 186,
+      "result": "PASS"
+    },
+    "note": "Both complete CI runs passed on the first implementation commit. Final native-discovered font correction is additionally tested and the follow-up head reruns CI; check PR #13 for newest head status."
   },
   "limitations": [
-    {
-      "id": "local-database",
-      "status": "BLOCKED",
-      "reason": "Docker executable absent; new runner-local CI job executes SQL tests, actual remote result pending."
-    },
-    {
-      "id": "native-device",
-      "status": "BLOCKED",
-      "reason": "No physical/native Android/iOS device or simulator executed. Mobile Chromium is browser emulation."
-    },
     {
       "id": "field-and-market-evidence",
       "status": "BLOCKED",
@@ -192,6 +276,11 @@
       "id": "release-authorization",
       "status": "BLOCKED",
       "reason": "No legal/distribution/access/display approval; no public deployment/merge authorized."
+    },
+    {
+      "id": "ios-native",
+      "status": "BLOCKED",
+      "reason": "No iOS device/simulator executed; Windows has no local iOS simulator. Android native smoke was executed."
     }
   ],
   "targetedAfterFullSuite": [
@@ -203,5 +292,9 @@
       "failed": 0,
       "note": "Gate metadata/reference checks and field import lock/hash/idempotency regressions; existing test cases, not extra distinct tests."
     }
+  ],
+  "notes": [
+    "Docker absent locally; SQL integration verified in CI instead.",
+    "Native correction: Noto Sans Bold used for both cluster layers because the default Open Sans/Arial font stack returned 404. Browser regression checks actual glyph font requests."
   ]
 }

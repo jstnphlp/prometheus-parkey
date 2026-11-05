@@ -74,12 +74,20 @@ approval endpoint and no automated promotion from a field-form submission.
 
 ## Technical and evidence limits
 
-Docker is absent on the local host, so local Supabase SQL integration tests
-cannot execute here. A disposable runner-local database CI job was added;
-its actual outcome is recorded separately. It does not contact a hosted database.
-Native map code was typechecked; no Android/iOS native device or simulator was
-available for native rendering or sensor verification. Chromium mobile emulation
-is recorded as browser verification only.
+Docker is absent locally. The new disposable runner-local database job passed
+all 186 SQL assertions across four files in both CI runs; no hosted database was
+contacted. The first implementation commit passed validation and all 42 browser
+tests remotely with no retries. Exact commits/run references are in the
+execution record; PR checks show subsequent-head status.
+
+Android native smoke testing also ran on the existing Pixel 10 Pro Android 17
+AVD, using the installed development client and current Metro JavaScript. It
+covered private overview/BGC details, explicit unknown/unverified labels, public
+clearing and return to the pilot. It caught a missing cluster font: the default
+font stack returned 404. Both maps now use Noto Sans Bold, checked in the native
+reload and a browser regression for actual font requests. No new native APK was
+built, no iOS device/simulator ran, and no physical location or real navigation
+sensor evidence was collected.
 
 Some official pages were unavailable, redirected, or did not publish current
 parking rates/conditions. Retrieval statuses and limits remain in the evidence

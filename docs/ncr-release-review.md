@@ -69,4 +69,8 @@ exercise loopback/Origin/mode restrictions and prove unapproved actual NCR data
 stays out of the public projection. Runtime approval checks cover expiry,
 revocation, source revisions, restricted access and unresolved research issues.
 This implementation does not supply legal, field, access or publication approval.
-Use the machine-readable Phase 1 gate report for final CI/E2E execution status.
+Both first-implementation CI runs passed validation, 42 browser tests and 186
+SQL assertions. Android native smoke testing additionally caught and verified a
+cluster-font correction, covered by a new browser assertion. Use the execution
+record for exact tested commits and PR checks for the newest head status.
+Release gates remain blocked on actual human evidence and authorization.

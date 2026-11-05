@@ -436,6 +436,16 @@
           "checkId": "dependency-audit",
           "result": "PASS",
           "evidenceReference": "data/ncr-research/phase1-verification.json#dependency-audit"
+        },
+        {
+          "checkId": "android-native-smoke",
+          "result": "PASS",
+          "evidenceReference": "data/ncr-research/phase1-verification.json#android-native-smoke"
+        },
+        {
+          "checkId": "sql-ci",
+          "result": "PASS",
+          "evidenceReference": "data/ncr-research/phase1-verification.json#sql-ci"
         }
       ],
       "evidenceReferences": [
@@ -537,9 +547,9 @@
   ],
   "crossCutting": {
     "automatedCheckEvidence": "data/ncr-research/phase1-verification.json",
-    "remoteCI": "Pending execution on new feature head; not claimed green.",
-    "localSQL": "BLOCKED: Docker absent; runner-local CI job added.",
-    "nativeRendering": "BLOCKED: no native device/simulator executed.",
+    "remoteCI": "PASS on 4f7c9444050897f89d238f730e294cefc4a968e9; validate, 42 browser tests, 186 SQL assertions. Final font correction has native/targeted verification; PR checks execute follow-up head.",
+    "localSQL": "PASS via disposable runner CI: 4 files, 186 assertions. Docker remains absent locally.",
+    "nativeRendering": "PASS limited Android 17 emulator smoke on existing development client/current Metro code. iOS not executed.",
     "deployment": "NOT_AUTHORIZED",
     "productionDatabase": "UNMODIFIED",
     "mergeToMain": "NOT_AUTHORIZED"

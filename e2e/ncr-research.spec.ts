@@ -3,6 +3,12 @@ import { test, expect } from './fixtures'
 test('NCR development preview keeps actual candidates private and displays honest research geometry', async ({
   page,
 }) => {
+  const requestedFonts = new Set<string>()
+  page.on('request', (request) => {
+    const url = new URL(request.url())
+    if (url.pathname.startsWith('/fonts/'))
+      requestedFonts.add(decodeURIComponent(url.pathname.split('/')[2] || ''))
+  })
   const published = await page.request.get(
     'http://127.0.0.1:8090/api/ncr/discovery?bbox=120.85,14.3,121.27,14.86&zoom=15',
   )
@@ -29,6 +35,9 @@ test('NCR development preview keeps actual candidates private and displays hones
   await expect(
     page.getByRole('button', { name: /^Inspect cluster / }).first(),
   ).toBeVisible()
+  // OpenFreeMap serves this font. MapLibre's default Open Sans/Arial stack
+  // returns 404, leaving native/web observation clusters without their counts.
+  await expect.poll(() => [...requestedFonts]).toEqual(['Noto Sans Bold'])
   await page.getByRole('button', { name: 'BGC', exact: true }).click()
   const first = page
     .getByRole('button', { name: /^Research details for / })

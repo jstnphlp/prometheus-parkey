@@ -22,6 +22,16 @@ const nullableDate = (value: unknown) =>
 const safeUrl = (value: unknown) =>
   value === null || (typeof value === 'string' && /^https?:\/\//.test(value))
 
+const publicEvidenceUrl = (value: string | null) => {
+  if (!value) return false
+  try {
+    const url = new URL(value)
+    return url.protocol === 'https:' && !url.username && !url.password
+  } catch {
+    return false
+  }
+}
+
 export function isParking(value: unknown): value is DiscoveryParking {
   if (!isObject(value)) return false
   if (
@@ -142,6 +152,12 @@ export async function fetchApprovedParking(
         isParking(record) &&
         record.verification === 'verified' &&
         record.sourceKind !== 'sample' &&
+        publicEvidenceUrl(record.sourceUrl) &&
+        record.sourceLabel.trim().length > 0 &&
+        record.license.trim().length > 0 &&
+        !['unknown', 'pending', 'none'].includes(
+          record.license.trim().toLowerCase(),
+        ) &&
         record.verifiedAt !== null &&
         Date.parse(record.verifiedAt) <= Date.now(),
     )

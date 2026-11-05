@@ -205,6 +205,12 @@ PR targets its predecessor. Verified prerequisite commits were propagated using
 ordinary branch merges without rewriting history or merging main. Check the PR
 pages for the final hosted CI results; all seven remain reviewable separately.
 
+The reviewed-artifact CI check additionally found that the original comparison
+captured a Windows CRLF hash of the exact historical OSM snapshot while Git
+stores LF. Its recorded hash and artifacts remain unchanged. Reconciliation
+accepts only the proven historical LF/CRLF SHA256 pair; all other mismatches
+still abort. Five review tests cover exact equivalence and changed-byte rejection.
+
 CI includes the same synthetic-only database setup and both Phase 2 browser
 modes. Repository visibility was confirmed public; standard ubuntu-latest runners
 are free for public repositories. New verification commits can therefore run CI

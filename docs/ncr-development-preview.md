@@ -82,3 +82,29 @@ The [full-screen UI execution record](../data/ncr-research/ncr-ui-verification.j
 contains the subsequent layout/data-loading tests and actual normal-preview
 smoke results. The earlier Android smoke below predates this full-screen
 continuation; the new native renderer was typechecked, not rerun on a device.
+## Named-facility research filters
+
+The private Metro Manila map now opens with **cross-source name candidates**:
+distinctive parking names occurring in nearby OpenStreetMap and Overture
+records with no obvious shared provider identity. This is research evidence,
+not a guarantee that the two records are one facility or publicly accessible.
+
+Open **Parking categories** to choose **Distinctive source names (unconfirmed)**
+or **All research (including unnamed)**. These filters run locally after the
+existing complete 5,427-record snapshot download; switching them does not
+trigger another source download. Entrances, bays and street segments remain
+available in the full source research view, not as distinct named facilities.
+
+Private record details link to Google Maps and Waze coordinate searches based
+only on preserved OSM/Overture coordinates. Neither map provider's name or
+other place content is ingested into Parkey. A match has no physical
+verification, operating-hours, access or publication approval status.
+
+To reproduce per-facility suggestions and the human review queue, run:
+
+```powershell
+node scripts/ncr-name-reconciliation.mjs --out output/ncr/name-reconciliation.json
+```
+
+See [name reconciliation](ncr-named-inventory.md) for evidence limitations.
+

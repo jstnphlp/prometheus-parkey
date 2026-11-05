@@ -5,6 +5,8 @@ The Philippines' geoBoundaries ADM2 is provinces; ADM3 is cities/municipalities.
 This data is for research geography, not an official 2026 legal boundary survey.
 """
 import argparse
+import datetime
+import hashlib
 import json
 import pathlib
 import re
@@ -28,6 +30,14 @@ def simplify_name(name):
 
 
 LOOKUP = {simplify_name(name): name for name in NAMES}
+# geoBoundaries PHL ADM3 represents Manila as districts, rather than a city.
+# Require the complete published set before dissolving; never draw a substitute.
+MANILA_DISTRICTS = (
+    "Binondo", "Ermita", "Intramuros", "Malate", "Paco", "Pandacan",
+    "Port Area", "Quiapo", "Sampaloc", "San Miguel", "San Nicolas",
+    "Santa Ana", "Santa Cruz", "Tondo I / II",
+)
+DISTRICT_LOOKUP = {simplify_name(name): name for name in MANILA_DISTRICTS}
 
 
 def vertices(geometry):
@@ -62,11 +72,19 @@ def select_ncr(source, metadata):
     if source.get("type") != "FeatureCollection":
         raise ValueError("Expected GeoJSON FeatureCollection.")
     selected = {}
+    districts = {}
     for item in source.get("features", []):
         props = item.get("properties") or {}
         name = props.get("shapeName") or props.get("name")
-        canonical = LOOKUP.get(simplify_name(name))
-        if not canonical or not intersects_study_extent(item["geometry"]):
+        normalized_name = simplify_name(name)
+        canonical = LOOKUP.get(normalized_name)
+        district = DISTRICT_LOOKUP.get(normalized_name)
+        if not (canonical or district) or not intersects_study_extent(item["geometry"]):
+            continue
+        if district:
+            if district in districts:
+                raise ValueError("Ambiguous or duplicate Manila district: " + district)
+            districts[district] = item
             continue
         if canonical in selected:
             raise ValueError("Ambiguous or duplicate NCR LGU: " + canonical)
@@ -78,6 +96,32 @@ def select_ncr(source, metadata):
                 "sourceId": props.get("shapeID"),
             },
             "geometry": item["geometry"],
+        }
+    if "Manila" not in selected and districts:
+        missing_districts = [name for name in MANILA_DISTRICTS if name not in districts]
+        if missing_districts:
+            raise ValueError("Incomplete Manila district coverage: " + ", ".join(missing_districts))
+        from shapely.geometry import mapping, shape
+        from shapely.ops import unary_union
+
+        ordered = [districts[name] for name in MANILA_DISTRICTS]
+        geometries = [shape(item["geometry"]) for item in ordered]
+        if any(not geometry.is_valid for geometry in geometries):
+            raise ValueError("Invalid Manila source geometry; explicit review required.")
+        dissolved = unary_union(geometries)
+        if not dissolved.is_valid or dissolved.geom_type not in ("Polygon", "MultiPolygon"):
+            raise ValueError("Manila district union is not a valid polygon.")
+        selected["Manila"] = {
+            "type": "Feature",
+            "properties": {
+                "lgu": "Manila",
+                "sourceName": "Manila (dissolved geoBoundaries ADM3 districts)",
+                "sourceId": None,
+                "sourceIds": [item["properties"]["shapeID"] for item in ordered],
+                "sourceDistricts": list(MANILA_DISTRICTS),
+                "geometryOperation": "shapely.ops.unary_union; no boundary redrawing",
+            },
+            "geometry": mapping(dissolved),
         }
     missing = [name for name in NAMES if name not in selected]
     if missing:
@@ -93,6 +137,7 @@ def select_ncr(source, metadata):
             "boundaryLicense": metadata.get("boundaryLicense"),
             "boundarySourceURL": metadata.get("boundarySourceURL"),
             "rawGeometry": metadata.get("gjDownloadURL"),
+            "boundaryCaveat": "Historical research geography; not current legal city boundaries. Review EMBO reassignment and reclamation changes before current-city decisions.",
         },
         "features": [selected[name] for name in NAMES],
     }
@@ -117,9 +162,15 @@ def main():
     meta = json.loads(pathlib.Path(args.metadata).read_text(encoding="utf-8")) \
         if args.metadata else read_url(API)
     key = "simplifiedGeometryGeoJSON" if args.simplified else "gjDownloadURL"
-    source = json.loads(pathlib.Path(args.input).read_text(encoding="utf-8")) \
-        if args.input else read_url(meta[key])
+    source_bytes = pathlib.Path(args.input).read_bytes() if args.input else None
+    if source_bytes is None:
+        with urllib.request.urlopen(meta[key], timeout=180) as response:
+            source_bytes = response.read()
+    source = json.loads(source_bytes)
     result = select_ncr(source, meta)
+    result["sourceMetadata"]["inputSha256"] = hashlib.sha256(source_bytes).hexdigest()
+    result["sourceMetadata"]["downloadedGeometry"] = meta[key]
+    result["sourceMetadata"]["observedAt"] = datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00", "Z")
     if args.simplified:
         result["sourceMetadata"]["geometrySimplified"] = True
     path.parent.mkdir(parents=True, exist_ok=True)

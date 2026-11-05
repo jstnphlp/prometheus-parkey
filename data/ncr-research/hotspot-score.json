@@ -1,0 +1,203 @@
+{
+  "schemaVersion": 1,
+  "asOf": "2026-11-05T04:51:08.825887+00:00",
+  "weights": {
+    "demand": 0.3,
+    "usableSupplyGap": 0.25,
+    "willingnessToPay": 0.2,
+    "partnerPotential": 0.15,
+    "launchFeasibility": 0.1
+  },
+  "policy": "Research-only human-supplied scores. Mapped supply does not measure parking demand, legal access, current vacancies, or available spaces. Scores do not constitute proof of market fit. Human review and site visits required.",
+  "areaCount": 11,
+  "ranked": [],
+  "incomplete": [
+    {
+      "id": "alabang",
+      "name": "Alabang / Filinvest City",
+      "lgu": "Muntinlupa",
+      "rankable": false,
+      "researchScore": null,
+      "missingMetrics": [
+        "demand",
+        "usableSupplyGap",
+        "willingnessToPay",
+        "partnerPotential",
+        "launchFeasibility"
+      ],
+      "lowConfidenceMetrics": [],
+      "evidenceCount": 0,
+      "status": "more_evidence_needed"
+    },
+    {
+      "id": "bgc",
+      "name": "Bonifacio Global City",
+      "lgu": "Taguig",
+      "rankable": false,
+      "researchScore": null,
+      "missingMetrics": [
+        "demand",
+        "usableSupplyGap",
+        "willingnessToPay",
+        "partnerPotential",
+        "launchFeasibility"
+      ],
+      "lowConfidenceMetrics": [],
+      "evidenceCount": 0,
+      "status": "more_evidence_needed"
+    },
+    {
+      "id": "binondo",
+      "name": "Binondo",
+      "lgu": "Manila",
+      "rankable": false,
+      "researchScore": null,
+      "missingMetrics": [
+        "demand",
+        "usableSupplyGap",
+        "willingnessToPay",
+        "partnerPotential",
+        "launchFeasibility"
+      ],
+      "lowConfidenceMetrics": [],
+      "evidenceCount": 0,
+      "status": "more_evidence_needed"
+    },
+    {
+      "id": "cubao",
+      "name": "Cubao / Araneta City",
+      "lgu": "Quezon City",
+      "rankable": false,
+      "researchScore": null,
+      "missingMetrics": [
+        "demand",
+        "usableSupplyGap",
+        "willingnessToPay",
+        "partnerPotential",
+        "launchFeasibility"
+      ],
+      "lowConfidenceMetrics": [],
+      "evidenceCount": 0,
+      "status": "more_evidence_needed"
+    },
+    {
+      "id": "maginhawa",
+      "name": "Maginhawa",
+      "lgu": "Quezon City",
+      "rankable": false,
+      "researchScore": null,
+      "missingMetrics": [
+        "demand",
+        "usableSupplyGap",
+        "willingnessToPay",
+        "partnerPotential",
+        "launchFeasibility"
+      ],
+      "lowConfidenceMetrics": [],
+      "evidenceCount": 0,
+      "status": "more_evidence_needed"
+    },
+    {
+      "id": "makati-cbd",
+      "name": "Makati CBD",
+      "lgu": "Makati",
+      "rankable": false,
+      "researchScore": null,
+      "missingMetrics": [
+        "demand",
+        "usableSupplyGap",
+        "willingnessToPay",
+        "partnerPotential",
+        "launchFeasibility"
+      ],
+      "lowConfidenceMetrics": [],
+      "evidenceCount": 0,
+      "status": "more_evidence_needed"
+    },
+    {
+      "id": "moa",
+      "name": "Mall of Asia area",
+      "lgu": "Pasay",
+      "rankable": false,
+      "researchScore": null,
+      "missingMetrics": [
+        "demand",
+        "usableSupplyGap",
+        "willingnessToPay",
+        "partnerPotential",
+        "launchFeasibility"
+      ],
+      "lowConfidenceMetrics": [],
+      "evidenceCount": 0,
+      "status": "more_evidence_needed"
+    },
+    {
+      "id": "north-edsa",
+      "name": "North EDSA",
+      "lgu": "Quezon City",
+      "rankable": false,
+      "researchScore": null,
+      "missingMetrics": [
+        "demand",
+        "usableSupplyGap",
+        "willingnessToPay",
+        "partnerPotential",
+        "launchFeasibility"
+      ],
+      "lowConfidenceMetrics": [],
+      "evidenceCount": 0,
+      "status": "more_evidence_needed"
+    },
+    {
+      "id": "ortigas",
+      "name": "Ortigas",
+      "lgu": "Pasig",
+      "rankable": false,
+      "researchScore": null,
+      "missingMetrics": [
+        "demand",
+        "usableSupplyGap",
+        "willingnessToPay",
+        "partnerPotential",
+        "launchFeasibility"
+      ],
+      "lowConfidenceMetrics": [],
+      "evidenceCount": 0,
+      "status": "more_evidence_needed"
+    },
+    {
+      "id": "poblacion",
+      "name": "Poblacion",
+      "lgu": "Makati",
+      "rankable": false,
+      "researchScore": null,
+      "missingMetrics": [
+        "demand",
+        "usableSupplyGap",
+        "willingnessToPay",
+        "partnerPotential",
+        "launchFeasibility"
+      ],
+      "lowConfidenceMetrics": [],
+      "evidenceCount": 0,
+      "status": "more_evidence_needed"
+    },
+    {
+      "id": "tomas-morato",
+      "name": "Tomas Morato / Timog",
+      "lgu": "Quezon City",
+      "rankable": false,
+      "researchScore": null,
+      "missingMetrics": [
+        "demand",
+        "usableSupplyGap",
+        "willingnessToPay",
+        "partnerPotential",
+        "launchFeasibility"
+      ],
+      "lowConfidenceMetrics": [],
+      "evidenceCount": 0,
+      "status": "more_evidence_needed"
+    }
+  ]
+}

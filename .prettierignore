@@ -8,6 +8,12 @@ dist/
 apps/web/src/routeTree.gen.ts
 supabase/.temp/
 supabase/.branches/
+output/ncr/
+
+# Immutable Poblacion input and byte-compared research reports.
+poblacion-places.geojson
+data/parking-open-data-review.json
+data/parking-open-data-reviewed.json
 
 # Generated OSM bytes are covered by the extractor manifest.
 apps/mobile/src/discovery/osm-pilot.json

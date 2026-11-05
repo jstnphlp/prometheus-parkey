@@ -14,6 +14,7 @@ export default defineConfig(
     '**/expo-env.d.ts',
     '**/routeTree.gen.ts',
     'output/playwright/**',
+    'output/ncr/**',
     'apps/mobile/android/**',
     'apps/mobile/ios/**',
     'apps/mobile/public/maplibre/**',

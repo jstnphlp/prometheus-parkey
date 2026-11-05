@@ -160,3 +160,19 @@ An individual metric has fields metric, score (0–5), confidence (0–1), sourc
 
     node scripts/ncr-hotspot-score.mjs --evidence output/ncr/hotspot-evidence.json --research output/ncr/metro-parking-research.json --out output/ncr/hotspot-score.json
     node --test scripts/ncr-hotspot-score.test.mjs
+
+## Local-only Phase 1F research heatmap preview
+
+This is not the public Parkey map, a hosted data feed, or a usable-parking inventory. It renders the generated `coverage.json` as an offline geographic grid. It displays only **aggregate mapped-source counts** by cell; no individual candidate pins, directions, operator details or access claims are exposed.
+
+From the repository root:
+
+```powershell
+node --test scripts/ncr-research-preview.test.mjs
+node scripts/ncr-research-preview.mjs data/ncr-research/coverage.json output/ncr/research-preview.html
+Start-Process output/ncr/research-preview.html
+```
+
+The HTML contains no external map tiles, remote libraries or API requests. It is intended for internal research only. Filters cover all observations, facility source observations, street-parking tags with unconfirmed legality, and restricted-access observations. Counts are not a number of empty spaces or independently verified facilities. The `output/ncr/` directory remains Git-ignored. For a public app, implement reviewed server-side display eligibility, current access/legality and attribution requirements described in `docs/ncr-phase-1fg-plan.md`.
+
+Also see `docs/ncr-release-review.md` for the licensing, duplication, street-legality and approval gates and `docs/ncr-hotspot-fieldwork.md` for the next actual demand-data collection wave.

@@ -82,6 +82,10 @@ Resolve every blocking imported issue in `issueResolutions` with `issueId`,
 establish existence, observed operation, public visitors, an entrance coordinate
 and operator evidence. Restricted, closed, prohibited, unsafe, unresolved-license,
 entrance/bay child and street observations remain blocked by source policy.
+Public facility types are limited to original source classifications `lot` and
+`garage`. A `facility_unspecified` observation can be imported privately but
+cannot be published as a lot or garage. Its original type remains immutable;
+supporting a reviewed reclassification requires a separate design.
 Do not edit source facts to bypass a block.
 
 ```powershell

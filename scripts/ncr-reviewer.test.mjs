@@ -19,11 +19,11 @@ import {
 } from './ncr-reviewer.mjs'
 
 const now = Date.parse('2026-11-05T12:00:00.000Z')
-export const reviewerFixture = () => {
+export const reviewerFixture = (type = 'lot') => {
   const candidate = {
     id: 'osm:node/1:Point',
     name: 'Unnamed parking facility',
-    type: 'lot',
+    type,
     geometry: { type: 'Point', coordinates: [121.03, 14.567] },
     representativePoint: [121.03, 14.567],
     sourceRecordUrl: 'https://www.openstreetmap.org/node/1',
@@ -202,6 +202,30 @@ test('tampered archives, unreconciled submissions and source versions are refuse
       { ...f.submission, sourceHashes: { osm: 'changed' } },
       now,
     ),
+  )
+})
+
+test('unspecified facility types remain immutable private evidence and cannot be classified as lots by publication', () => {
+  const f = reviewerFixture('facility_unspecified')
+  assert.equal(
+    validateReviewerPackage(f.prepared).candidate.type,
+    'facility_unspecified',
+  )
+  assert.match(
+    reviewerImportSql(f.prepared, f.approval.actorId),
+    /import_discovery_evidence/,
+  )
+  assert.throws(
+    () => prepareReviewerDecision(f.prepared, empty, f.approval, now),
+    /supported lot or garage source type; unclassified observations remain private/,
+  )
+  assert.equal(
+    validateReviewerPackage(f.prepared).candidate.type,
+    'facility_unspecified',
+  )
+  const garage = reviewerFixture('garage')
+  assert.doesNotThrow(() =>
+    prepareReviewerDecision(garage.prepared, empty, garage.approval, now),
   )
 })
 

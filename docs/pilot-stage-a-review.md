@@ -151,3 +151,24 @@ This report supersedes the earlier integration audit's broad no-defect statement
 for the subsequently added Stage A implementation and explicitly records the
 legacy navigation issue found during the continuation. It grants no Stage B
 start, publication approval, verification claim or deployment permission.
+
+## Addendum — unspecified facility classification
+
+Reviewed `432bb98` plus the additive
+`20261105140200_reviewer_supported_facility_types.sql` migration and accompanying
+CLI, tests and runbook changes. **Important finding resolved:** publication
+previously accepted `facility_unspecified` and the SQL insertion mapped every
+nongarage facility to `lot`, inventing a source classification. CLI and SQL
+approval now require an original `lot` or `garage` type; insertion copies that
+supported type directly. Unspecified observations remain importable as private
+evidence and cannot receive publication approval or a successful ledger event.
+
+An extracted function-body comparison confirmed that the additive replacement
+changes only the supported-type guard and insertion classification; prior
+reviewer, provenance, expiry and navigation checks remain intact. The targeted
+Node classification regression passed independently, including private import,
+refused unspecified publication, unchanged original type and permitted garage
+approval. The backend owner reported 65 SQL checks and six Node checks passing,
+including the actual local database roundtrip. No database test was rerun by this
+read-only reviewer. No unresolved code finding remains from this addendum;
+overall Stage A still depends on its separately recorded execution gates.

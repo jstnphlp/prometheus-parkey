@@ -124,6 +124,18 @@ set local role anon;
 select is((select count(*)::integer from public.discovery_parking where source_observation_id = 'osm:node/991:Point'),0,'revocation removes public access immediately');
 reset role;
 select is(jsonb_array_length(public.export_discovery_publication_ledger('a3100000-0000-4000-8000-000000000001')->'events'),6,'original-format export preserves correction, rejection, approvals and revocation');
+-- A new private source revision with unknown facility subtype must not be
+-- silently coerced into a supported public lot classification.
+update reviewer_fixture set package_text = jsonb_set(package_text::jsonb,'{candidateText}',
+  to_jsonb(parkey_private.canonical_review_json(jsonb_set((package_text::jsonb->>'candidateText')::jsonb,'{type}','"facility_unspecified"'::jsonb))))::text;
+update reviewer_fixture set package_text = jsonb_set(package_text::jsonb,'{recordHash}',
+  to_jsonb(encode(digest(package_text::jsonb->>'candidateText','sha256'),'hex')))::text;
+update reviewer_fixture set package_hash = encode(digest(package_text,'sha256'),'hex'),record_hash = package_text::jsonb->>'recordHash';
+select lives_ok($$select public.import_discovery_evidence('a3100000-0000-4000-8000-000000000001',package_text,package_hash) from reviewer_fixture$$,'unspecified source subtype can be imported as private evidence');
+select throws_like($$select pg_temp.review_decide('approve_publication')$$,'%supported lot or garage source type%','explicit publication cannot invent a lot classification for unspecified source type');
+select is((select ((p.package_text::jsonb)->>'candidateText')::jsonb->>'type' from parkey_private.discovery_evidence_packages p join reviewer_fixture f using(package_hash)),'facility_unspecified','rejected publication preserves original unspecified source type');
+select is((select count(*)::integer from public.discovery_parking where source_observation_id = 'osm:node/991:Point' and published),0,'unclassified revision never becomes public parking');
+select is(jsonb_array_length(public.export_discovery_publication_ledger('a3100000-0000-4000-8000-000000000001')->'events'),6,'unsupported classification does not append a successful approval');
 delete from parkey_private.discovery_reviewers where user_id = 'a3100000-0000-4000-8000-000000000001';
 select throws_like($$select pg_temp.review_decide('approve_publication')$$,'%Reviewer access required%','removed reviewer cannot reuse old access');
 

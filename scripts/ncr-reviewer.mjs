@@ -129,6 +129,10 @@ export function prepareReviewerDecision(
   )
     throw new Error('Decision must cite the immutable imported submission')
   if (payload.action === 'approve_publication') {
+    if (!['lot', 'garage'].includes(candidate.type))
+      throw new Error(
+        'Publication requires a supported lot or garage source type; unclassified observations remain private',
+      )
     const decisions = payload.reviewDecisions
     if (
       payload.recordHash !== evidence.recordHash ||

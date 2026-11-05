@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
+import process from 'node:process'
 import { buildNameReconciliation, meaningfulParkingName } from './ncr-name-reconciliation.mjs'
 import { loadNcrResearch } from './ncr-quality-review.mjs'
 
@@ -113,5 +114,5 @@ test('frozen NCR names reconcile without deleting or approving any of the 5,427 
   const sourceIds = new Set(research.candidates.map((c) => c.id))
   assert.ok(report.groups.every((g) => g.candidateIds.every((id) => sourceIds.has(id))))
   // This is source-side matching only; never a Google/Waze place-content import.
-  console.log('NCR name-reconciliation research counts:', report.totals)
+  process.stdout.write('NCR name-reconciliation research counts: '+JSON.stringify(report.totals)+'\n')
 })

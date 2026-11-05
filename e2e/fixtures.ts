@@ -153,3 +153,55 @@ export async function expandResults(page: Page) {
   await handle.click()
   await expect(handle).toHaveAccessibleName(/Parking sheet: full/)
 }
+
+/** Uninterrupted GPS for nominal navigation; denial tests use the real browser API. */
+export async function useNavigationGps(page: Page) {
+  await page.addInitScript(() => {
+    // Replacing Chromium's CDP geolocation override emits POSITION_UNAVAILABLE
+    // before each fix. This fixture models uninterrupted GPS for the dwell test.
+    const watches = new Map<number, PositionCallback>()
+    let next = 0
+    function position(
+      longitude: number,
+      latitude: number,
+    ): GeolocationPosition {
+      const values = {
+        longitude,
+        latitude,
+        accuracy: 5,
+        altitude: null,
+        altitudeAccuracy: null,
+        heading: null,
+        speed: null,
+      }
+      const coords = { ...values, toJSON: () => values }
+      const timestamp = Date.now()
+      return {
+        coords,
+        timestamp,
+        toJSON: () => ({ coords: values, timestamp }),
+      }
+    }
+    navigator.geolocation.watchPosition = (callback) => {
+      const id = ++next
+      watches.set(id, callback)
+      queueMicrotask(() => callback(position(121.0308, 14.5653)))
+      return id
+    }
+    navigator.geolocation.clearWatch = (id) => {
+      watches.delete(id)
+    }
+    window.addEventListener('parkey-test-fix', (event) => {
+      if (!(event instanceof CustomEvent)) return
+      const point: unknown = event.detail
+      if (
+        !Array.isArray(point) ||
+        typeof point[0] !== 'number' ||
+        typeof point[1] !== 'number'
+      )
+        throw new Error('Invalid synthetic GPS fixture')
+      const fix = position(point[0], point[1])
+      for (const callback of watches.values()) callback(fix)
+    })
+  })
+}

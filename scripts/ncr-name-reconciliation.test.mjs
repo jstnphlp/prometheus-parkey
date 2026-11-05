@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import { buildNameReconciliation, meaningfulParkingName } from './ncr-name-reconciliation.mjs'
+import { loadNcrResearch } from './ncr-quality-review.mjs'
 
 const facility=(id,name,sourceKind,point=[121.03,14.565],type='lot')=>({
   id,name,type,sourceKind,sourceRecordUrl:sourceKind==='osm'
@@ -93,4 +94,24 @@ test('report is deterministic and does not mutate source research',()=>{
   const d=data(),before=JSON.stringify(d)
   assert.deepEqual(buildNameReconciliation(d),buildNameReconciliation(d))
   assert.equal(JSON.stringify(d),before)
+})
+
+test('frozen NCR names reconcile without deleting or approving any of the 5,427 records', () => {
+  const research = loadNcrResearch('data/ncr-research')
+  const report = buildNameReconciliation(research)
+  assert.equal(report.totals.sourceObservations, 5427)
+  assert.equal(report.totals.facilityGroups, 3744)
+  assert.equal(report.totals.facilityObservations, 3759)
+  assert.equal(report.totals.childAndStreetObservationsExcludedFromFacilityNames, 1668)
+  assert.equal(report.groups.length, 3744)
+  assert.equal(report.activePublicFacilityIds.length, 0)
+  assert.ok(report.groups.every((g) =>
+    g.humanNameReviewRequired &&
+    !g.publicationApproved &&
+    !g.publicVisitorAccessConfirmed &&
+    !g.operatingStatusConfirmed))
+  const sourceIds = new Set(research.candidates.map((c) => c.id))
+  assert.ok(report.groups.every((g) => g.candidateIds.every((id) => sourceIds.has(id))))
+  // This is source-side matching only; never a Google/Waze place-content import.
+  console.log('NCR name-reconciliation research counts:', report.totals)
 })

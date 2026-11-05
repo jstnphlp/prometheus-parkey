@@ -11,7 +11,7 @@ python -m pip install overturemaps
 overturemaps download --bbox=121.024,14.558,121.041,14.572 -f geojson --type=place -o poblacion-places.geojson
 ```
 
-The bounding box is **a pilot rectangle**, not the administrative boundary of Barangay Poblacion. This downloads *all* places in the rectangle; the script filters for parking-related categories. Confirm the downloaded file is a GeoJSON FeatureCollection and inspect unexpected data before continuing.
+The bounding box is **a pilot rectangle**, not the administrative boundary of Barangay Poblacion. This downloads _all_ places in the rectangle; the script filters for parking-related categories. Confirm the downloaded file is a GeoJSON FeatureCollection and inspect unexpected data before continuing.
 
 ## 2. Stage possible matching names
 
@@ -44,6 +44,7 @@ The optional CSV may include `address`, `date_closed`, and `date_refreshed`. Exa
 Every candidate is `researched`/`unverified`. Review its source ID, claimed name, coordinate and category. For any possible match within 100 metres, check whether the candidate is **really the same facility**, rather than a nearby shop, building, driveway, or separate car park. The simple radius comparison is not a validated entity-resolution model.
 
 Before approval or publication, independently confirm:
+
 - Parking exists and still operates.
 - Operator-approved/public/customer-only/private access and current parking legality.
 - Actual **vehicle** entrance and usable directions (not just a map centroid).
@@ -86,14 +87,16 @@ This repository now keeps the **machine-generated source comparison separate fro
 
 \`online_corroborated\` is intentionally **not** \`verified\`. It means the owner reports finding the place when searching its name in Google Maps; this has not independently established that the candidate's Overture coordinate is the correct parking entrance, that the facility operates, or that visitors are allowed to park there. The export retains the name and coordinates from the open-source Overture input, not copied Google Maps coordinates or API content.
 
-**Current counts:** 15 original source candidates; 8 online-corroborated, 5 needing site visits, 2 excluded pending reasons. Thirteen remain on the review shortlist; six are potential new locations based on a *100-metre heuristic*, and six distinct unnamed OSM records have at least one potential match. All 15 require licensing review because source-level license fields were absent from this export.
+**Current counts:** 15 original source candidates; 8 online-corroborated, 5 needing site visits, 2 excluded pending reasons. Thirteen remain on the review shortlist; six are potential new locations based on a _100-metre heuristic_, and six distinct unnamed OSM records have at least one potential match. All 15 require licensing review because source-level license fields were absent from this export.
 
 To validate or regenerate the joined review file without changing the decisions ledger:
 
 \`\`\`powershell
 node --test scripts/parking-reviewed-data.test.mjs
 node scripts/parking-reviewed-data.mjs --check
+
 # If the derived file is stale and the human ledger has been reviewed:
+
 node scripts/parking-reviewed-data.mjs --write
 \`\`\`
 

@@ -30,15 +30,24 @@ test('adding a private parking draft survives reload and updates the profile', a
     'E2E private parking',
   )
   await page.goto('/?panel=you')
-  await expect(page.getByRole('button', { name: /1 Drafts/ })).toBeVisible()
+  await expect(
+    page.getByRole('heading', { name: 'Drafts on this device', exact: true }),
+  ).toBeVisible()
+  await expect(
+    page.getByRole('button', { name: /^Delete device draft / }),
+  ).toHaveCount(1)
+  await expect(
+    page.getByRole('button', {
+      name: 'Delete device draft E2E private parking',
+      exact: true,
+    }),
+  ).toBeVisible()
 })
 
 test('a correction requires an explanation before saving', async ({ page }) => {
   await openSpot(page)
   await page.getByTestId('parking-sheet-handle').click()
-  await page
-    .getByRole('button', { name: 'Suggest a correction', exact: true })
-    .click()
+  await page.getByRole('button', { name: /^Suggest a correction/ }).click()
   await page
     .getByRole('textbox', { name: 'Parking name', exact: true })
     .fill('Test parking')

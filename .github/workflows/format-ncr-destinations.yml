@@ -1,0 +1,37 @@
+name: Format NCR destination labels once
+
+on:
+  push:
+    branches:
+      - feat/ncr-near-destination-labels
+    paths:
+      - .github/workflows/format-ncr-destinations.yml
+
+permissions:
+  contents: write
+
+jobs:
+  format-once:
+    if: github.repository == 'jstnphlp/prometheus-parkey' && github.ref == 'refs/heads/feat/ncr-near-destination-labels'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: feat/ncr-near-destination-labels
+          persist-credentials: true
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Format new source and remove temporary workflow
+        run: |
+          pnpm exec prettier --write scripts/ncr-destination-labels.mjs scripts/ncr-destination-labels.test.mjs scripts/ncr-preview-server.mjs scripts/ncr-preview-server.test.mjs scripts/ncr-permitted-enrichment.mjs apps/mobile/src/discovery/ncr-client.ts apps/mobile/src/discovery/ncr-client.test.mjs apps/mobile/src/discovery/ncr-research.tsx packages/shared-types/src/ncr-discovery.ts e2e/ncr-research.spec.ts docs/ncr-near-destination-labels.md
+          rm .github/workflows/format-ncr-destinations.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add scripts/ncr-destination-labels.mjs scripts/ncr-destination-labels.test.mjs scripts/ncr-preview-server.mjs scripts/ncr-preview-server.test.mjs scripts/ncr-permitted-enrichment.mjs apps/mobile/src/discovery/ncr-client.ts apps/mobile/src/discovery/ncr-client.test.mjs apps/mobile/src/discovery/ncr-research.tsx packages/shared-types/src/ncr-discovery.ts e2e/ncr-research.spec.ts docs/ncr-near-destination-labels.md .github/workflows/format-ncr-destinations.yml
+          git commit -m 'style: format nearby destination research labels'
+          git push origin HEAD:feat/ncr-near-destination-labels

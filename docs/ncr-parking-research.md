@@ -61,3 +61,16 @@ Initial investigation shortlist: Poblacion, BGC, Binondo, Makati CBD, Ortigas, M
 Only after approvals: implement viewport queries/clustering and clear mapped-unverified/operator-confirmed/Parkey-verified labels. Do not present known illegal/private/closed parking as usable merely because a warning is displayed. Keep the previous Poblacion user decisions and three site-visit pins intact.
 
 **Phase 1 exit:** real licensed boundary and source exports; tests and coverage/duplicate audit; separately grounded hotspot demand evidence; physical-visit/operator-verification plan. The scripts do not directly publish records.
+
+### Evidence-gated hotspot scoring (Stage E implementation)
+
+The separate script accepts a reviewed JSON evidence file and a generated Metro Manila supply report. A hotspot is ranked ONLY when all five human-scored 0–5 metrics have dated evidence references and confidence >=0.6: demand (30%), usable supply gap (25%), willingness to pay (20%), partner potential (15%), and launch feasibility (10%). Missing/low-confidence evidence results in more_evidence_needed, never a fabricated score.
+
+Evidence JSON structure (save under output/ncr/hotspot-evidence.json, which Git ignores):
+
+    {"schemaVersion":1,"asOf":"2026-11-05T00:00:00Z","areas":[{"id":"poblacion","name":"Poblacion","lgu":"Makati","metrics":[]}]}
+
+An individual metric has fields metric, score (0–5), confidence (0–1), sourceKind (field_survey, interview, first_party, licensed_public), observedOn (YYYY-MM-DD) and evidenceReference (dated URL or internal reference). The empty example intentionally ranks nobody. Fill metrics using real observations; do not copy restricted Google Maps content.
+
+    node scripts/ncr-hotspot-score.mjs --evidence output/ncr/hotspot-evidence.json --research output/ncr/metro-parking-research.json --out output/ncr/hotspot-score.json
+    node --test scripts/ncr-hotspot-score.test.mjs

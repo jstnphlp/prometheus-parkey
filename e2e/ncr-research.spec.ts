@@ -29,6 +29,14 @@ test('NCR development preview keeps actual candidates private and displays hones
   await page
     .getByRole('button', { name: 'Open private research', exact: true })
     .click()
+  // Public/default development view prioritizes cross-source names;
+  // the full archive remains accessible only by explicit research selection.
+  await expect(
+    page.getByRole('button', { name: 'Cross-source name matches' }),
+  ).toHaveAttribute('aria-selected', 'true')
+  await page
+    .getByRole('button', { name: 'All source research (including unnamed)' })
+    .click()
   await expect(page.getByTestId('ncr-result-summary')).toContainText(
     'research observations',
   )

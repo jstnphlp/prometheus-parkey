@@ -197,7 +197,7 @@ export async function fetchNcrPage(
   mode: 'public' | 'research_preview',
   signal: AbortSignal,
   cursor: string | null = null,
-  names: 'all' | 'named' = 'all',
+  names: 'all' | 'named' | 'corroborated' = 'all',
 ): Promise<NcrDiscoveryResponse> {
   const url = new URL(
     mode === 'public' ? '/api/ncr/discovery' : '/api/ncr/research-preview',

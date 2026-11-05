@@ -19,7 +19,9 @@ export default defineConfig({
   expect: { timeout: 10_000 },
   forbidOnly: Boolean(process.env.CI),
   retries: process.env.CI ? 1 : 0,
-  workers: process.env.CI ? 2 : 4,
+  // Local Metro route bundling competes with existing previews. Serial local
+  // execution avoids the reload/navigation timeouts observed in parallel runs.
+  workers: process.env.CI ? 2 : 1,
   reporter: process.env.CI
     ? [
         ['line'],

@@ -73,6 +73,29 @@ name-review section and public clearing, with the original assertions preserved.
 Final clean browser and CI outcomes are recorded on PR #16; the earlier failed
 local run is not described as passing.
 
+The complete implementation at commit `3b419c9` passed clean
+[CI run 42025799721](https://github.com/jstnphlp/prometheus-parkey/actions/runs/42025799721):
+validate, database and browser E2E all succeeded. Browser output recorded
+**48 passed (5.1 minutes)**, including private evidence details and public
+clearing on both desktop and mobile Chromium viewports.
+
+The subsequent fresh isolated local run passed **46 of 48**; a desktop favorites
+flow and mobile directions flow exceeded their 60-second deadlines. All six NCR
+name-review/loading/retry cases passed. Those two unrelated local flows were
+selected for a serial rerun with unchanged assertions; its outcome is recorded
+in the PR description. No application assertions were weakened to mask them.
+
+Both selected tests passed serially, **2 passed (1.3 minutes)**. Local Playwright
+now defaults to one worker to avoid the observed contention with Metro route
+bundling and existing previews; clean CI retains two workers. The final local
+browser evidence is 46 passed in the fresh full run plus those two successful
+serial reruns, not a claim that its first attempt was uniformly green.
+
+The additional [Wikidata/Foursquare source audit](ncr-additional-open-sources.md)
+records the successful zero-row actual-parking Wikidata query and Foursquare
+access/licensing limitations. No additional names or verification claims were
+created from that audit.
+
 ## Limits and human decisions
 
 There are **zero new credible names** for the original 3,112 unnamed groups.

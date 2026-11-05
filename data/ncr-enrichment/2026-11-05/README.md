@@ -54,6 +54,9 @@ None has publication approval from this package.
 - `current-osm-updates.geojson.gz`: dated revision-comparison derivative of that
   run's raw Overpass response. Its metadata retains raw-source hash and query.
 - `operator-research.json`: dated operator-source retrieval/permission register.
+- `additional-open-sources.json`: actual Wikidata parking-class query, CC0
+  licensing evidence, and current Foursquare licensing/access audit; see the
+  [additional source report](../../../docs/ncr-additional-open-sources.md).
 - `osm-source-manifest.json`, `ncr-*.geojson.gz`, `osm-parking-updates.geojson.gz`
   and `source-research.json` at this directory's top level retain the preliminary
   local re-extraction and source-probe audit. The completed acquisition subfolder

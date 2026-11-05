@@ -362,6 +362,18 @@ export function buildPermittedEnrichment(
       .sort()
       .map((s) => [s, records.filter((r) => r.priority === s).length]),
   )
+  const unnamed = records.filter(
+    (r) => r.originalStatus === 'unnamed_pending_reference',
+  )
+  const unnamedBreakdown = {
+    groups: unnamed.length,
+    withUnusedNameTagLead: unnamed.filter((r) => r.nameTagLeads.length > 0).length,
+    withOperatorOrBrandClue: unnamed.filter((r) => r.operatorClues.length > 0).length,
+    withNamedPropertyContext: unnamed.filter((r) => r.contextClues.length > 0).length,
+    withNoAdditionalClue: unnamed.filter(
+      (r) => !r.nameTagLeads.length && !r.operatorClues.length && !r.contextClues.length,
+    ).length,
+  }
   return {
     schemaVersion: 1,
     sourceHashes: research.sourceHashes,
@@ -380,6 +392,7 @@ export function buildPermittedEnrichment(
       propertyContextGroups: records.filter((r) => r.contextClues.length)
         .length,
       approvedForPublication: 0,
+      unnamedBreakdown,
     },
     records: records.sort((a, b) => a.groupId.localeCompare(b.groupId)),
   }

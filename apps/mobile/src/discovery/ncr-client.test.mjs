@@ -150,6 +150,36 @@ const enrichedResponse = (enrichment = enrichmentFixture()) => ({
   ],
 })
 
+test('private destination labels are type-checked and rejected in public mode', () => {
+  const response = enrichedResponse()
+  response.items[0].nameReview.destinationLabel = {
+    label: 'Parking near Parkey Museum',
+    destination: 'Parkey Museum',
+    category: 'tourism:museum',
+    sourceId: 'osm:way/123',
+    sourceRecordUrl: 'https://www.openstreetmap.org/way/123',
+    approximateStraightLineMeters: 40,
+    insideSourcePropertyFootprint: false,
+    status: 'research_context_only',
+    parkingNameConfirmed: false,
+    visitorAccessConfirmed: false,
+    navigationEntranceConfirmed: false,
+    publicationApproved: false,
+  }
+  assert.equal(isNcrResponse(response), true)
+  assert.equal(response.items[0].name, 'Synthetic facility')
+  assert.equal(isNcrResponse({ ...response, mode: 'public' }), false)
+  assert.equal(ncrResponseCanDisplay(
+    { ...response, mode: 'public' }, 'public'), false)
+  const tampered = structuredClone(response)
+  tampered.items[0].nameReview.destinationLabel.publicationApproved = true
+  assert.equal(isNcrResponse(tampered), false)
+  const badSource = structuredClone(response)
+  badSource.items[0].nameReview.destinationLabel.sourceRecordUrl =
+    'javascript:alert(1)'
+  assert.equal(isNcrResponse(badSource), false)
+})
+
 test('private enrichment preserves source labels and rejects malformed evidence, approval claims or public leakage', () => {
   const response = enrichedResponse()
   assert.equal(isNcrResponse(response), true)

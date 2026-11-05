@@ -146,6 +146,32 @@ function ItemFacts({ item }: { item: NcrDiscoveryItem }) {
           void Linking.openURL(item.source.url).catch(() => undefined)
         }}
       />
+      <Text selectable style={styles.warning}>
+        External provider searches are for human research only, using the
+        existing source point. They are not a confirmed entrance or evidence
+        of legal visitor parking. Do not import provider place details.
+      </Text>
+      <Action
+        title="Inspect source coordinate on Google Maps"
+        onPress={() => {
+          const [lon, lat] = item.representativePoint
+          const link =
+            'https://www.google.com/maps/search/?api=1&query=' +
+            encodeURIComponent(lat + ',' + lon)
+          void Linking.openURL(link).catch(() => undefined)
+        }}
+      />
+      <Action
+        title="Inspect source coordinate on Waze"
+        onPress={() => {
+          const [lon, lat] = item.representativePoint
+          const link =
+            'https://www.waze.com/ul?ll=' +
+            encodeURIComponent(lat + ',' + lon) +
+            '&z=18'
+          void Linking.openURL(link).catch(() => undefined)
+        }}
+      />
       <Text selectable>
         {item.reviewIssueIds.length} unresolved review issue references. Human
         evidence and approval are required.

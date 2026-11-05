@@ -39,3 +39,15 @@ There are no site visits, measured capacities, validated entrances or occupancy
 claims in this package. Names and coordinates are sourced from OSM/Overture;
 the three existing owner navigation links are references only. No Google Maps
 data was scraped or imported into the research source dataset.
+## Offline aggregate preview
+
+Generate a local research heatmap from the frozen `coverage.json`:
+
+```powershell
+node scripts/ncr-research-preview.mjs data/ncr-research/coverage.json output/ncr/research-preview.html
+```
+
+The preview is for internal audits only. It makes no claims about available
+spaces, legal street parking, visitor access, or verified vehicle entrances.
+See [publication review](../../docs/ncr-release-review.md) and
+[hotspot fieldwork](../../docs/ncr-hotspot-fieldwork.md) before release.

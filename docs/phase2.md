@@ -178,6 +178,17 @@ Completed locally on the integrated stack:
   responses now require a public HTTPS source URL without embedded credentials,
   a nonempty source label and a known nonempty license. A new regression test
   first failed, then passed; the fix is also on mobile PR #9.
+- Native Android checks used the existing SDK 58 development APK and local Metro:
+  native MapLibre map, sample labels, denied location permission, expanded results
+  and synthetic parking detail were observed. The detail remained available with
+  emulator Wi-Fi/mobile data disabled; both were restored. This is session offline
+  behavior, not a release-build cold-offline launch guarantee. Metro needed IPv4
+  localhost resolution for the ADB bridge (`NODE_OPTIONS=--dns-result-order=ipv4first`).
+- Hosted CI exposed two baseline portability issues: setup-node's automatic pnpm
+  cache lookup ran before pnpm installation, and newer Python normalized
+  `24:00:00`. Setup order and explicit clock-component validation now preserve
+  the existing contracts; the nine Python tests pass locally. Both fixes are
+  included in prerequisite PR #11.
 
 CI includes the same synthetic-only database setup and both Phase 2 browser
 modes. Repository visibility was confirmed public; standard ubuntu-latest runners

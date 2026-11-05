@@ -1,12 +1,45 @@
 import assert from 'node:assert/strict'
+import { Buffer } from 'node:buffer'
 import test from 'node:test'
-import { buildReviewedParkingData } from './parking-reviewed-data.mjs'
+import { createHash } from 'node:crypto'
+import { readFileSync } from 'node:fs'
+import { URL } from 'node:url'
+import {
+  buildReviewedParkingData,
+  matchesSnapshotReviewHash,
+} from './parking-reviewed-data.mjs'
+
+const { structuredClone } = globalThis
+
+test('historical CRLF snapshot hash accepts only the exact Git LF equivalent', () => {
+  const bytes = readFileSync(
+    new URL('../apps/mobile/src/discovery/osm-pilot.json', import.meta.url),
+  )
+  const lf = bytes.toString('utf8').replaceAll('\r\n', '\n')
+  const crlf = lf.replaceAll('\n', '\r\n')
+  const expected = createHash('sha256').update(crlf).digest('hex')
+  assert.equal(matchesSnapshotReviewHash(Buffer.from(lf), expected), true)
+  assert.equal(matchesSnapshotReviewHash(Buffer.from(crlf), expected), true)
+  assert.equal(
+    matchesSnapshotReviewHash(Buffer.from(lf + ' '), expected),
+    false,
+  )
+  assert.equal(matchesSnapshotReviewHash(Buffer.from('{}\n'), expected), false)
+  assert.equal(
+    matchesSnapshotReviewHash(Buffer.from(lf), 'different-source'),
+    false,
+  )
+})
 
 const sourceAsOf = '2026-11-03T13:23:54Z'
 const sourceHashes = { bundledOsm: 'bundled-test', overture: 'geojson-test' }
 const existing = [
-  { id: 'osm:node/1', name: 'Unnamed parking · OpenStreetMap', kind: 'lot',
-    geometry: { type: 'Point', coordinates: [121.030, 14.560] } },
+  {
+    id: 'osm:node/1',
+    name: 'Unnamed parking · OpenStreetMap',
+    kind: 'lot',
+    geometry: { type: 'Point', coordinates: [121.03, 14.56] },
+  },
 ]
 const feature = (id, name, lon, lat) => ({
   type: 'Feature',
@@ -26,7 +59,8 @@ const makeDecision = (id, name, reviewStatus, overrides = {}) => ({
   sourceName: name,
   reviewStatus,
   reviewedOn: '2026-11-03',
-  method: reviewStatus === 'online_corroborated' ? 'google_maps_name_search' : null,
+  method:
+    reviewStatus === 'online_corroborated' ? 'google_maps_name_search' : null,
   evidenceReference: null,
   evidenceNote: 'User review notes',
   siteVisitAt: null,
@@ -41,9 +75,15 @@ const ledger = {
     makeDecision('c', 'C Parking', 'excluded_pending_reason'),
   ],
 }
-const run = (overrides = {}) => buildReviewedParkingData({
-  existing, geojson, ledger, sourceAsOf, sourceHashes, ...overrides,
-})
+const run = (overrides = {}) =>
+  buildReviewedParkingData({
+    existing,
+    geojson,
+    ledger,
+    sourceAsOf,
+    sourceHashes,
+    ...overrides,
+  })
 
 test('retains online corroboration without turning it into field verification', () => {
   const result = run()
@@ -68,13 +108,19 @@ test('retains online corroboration without turning it into field verification', 
   assert.equal(matched.verifiedAt, null)
   assert.equal(matched.reviewDecision.publicationApproved, false)
   assert.equal(matched.possibleBundledMatches[0].id, 'osm:node/1')
-  assert.equal(result.candidates.find((c) => c.id === 'overture:c').reviewDecision.status,
-    'excluded_pending_reason')
+  assert.equal(
+    result.candidates.find((c) => c.id === 'overture:c').reviewDecision.status,
+    'excluded_pending_reason',
+  )
 })
 
 test('rejects missing, duplicate, unauthorized or fabricated human decisions', () => {
-  const bad = (patch) => ({ ...ledger, decisions: ledger.decisions.map((x, i) =>
-    i === 0 ? { ...x, ...patch } : x) })
+  const bad = (patch) => ({
+    ...ledger,
+    decisions: ledger.decisions.map((x, i) =>
+      i === 0 ? { ...x, ...patch } : x,
+    ),
+  })
   for (const patch of [
     { sourceName: 'Invented Place' },
     { reviewStatus: 'physically_verified' },
@@ -84,25 +130,44 @@ test('rejects missing, duplicate, unauthorized or fabricated human decisions', (
     { publicationApproved: true },
     { evidenceReference: 'https://google.com/maps' },
     { evidenceNote: '' },
-  ]) assert.throws(() => run({ ledger: bad(patch) }))
-  assert.throws(() => run({ ledger: { ...ledger, decisions: ledger.decisions.slice(1) } }),
-    /every Overture source candidate/)
-  assert.throws(() => run({ ledger: { ...ledger,
-    decisions: [ledger.decisions[0], ...ledger.decisions] } }),
-    /Invalid or mismatched/)
+  ])
+    assert.throws(() => run({ ledger: bad(patch) }))
+  assert.throws(
+    () => run({ ledger: { ...ledger, decisions: ledger.decisions.slice(1) } }),
+    /every Overture source candidate/,
+  )
+  assert.throws(
+    () =>
+      run({
+        ledger: {
+          ...ledger,
+          decisions: [ledger.decisions[0], ...ledger.decisions],
+        },
+      }),
+    /Invalid or mismatched/,
+  )
 })
 
 test('rejects a new candidate without a matching decision; preserves source inputs', () => {
   const original = JSON.stringify({ existing, geojson, ledger })
   const other = structuredClone(geojson)
   other.features.push(feature('d', 'D Parking', 121.038, 14.568))
-  assert.throws(() => run({ geojson: other }), /every Overture source candidate/)
+  assert.throws(
+    () => run({ geojson: other }),
+    /every Overture source candidate/,
+  )
   assert.equal(JSON.stringify({ existing, geojson, ledger }), original)
 })
 
 test('review output is deterministic and never labels online checks as live parking availability', () => {
   assert.deepEqual(run(), run())
-  assert.ok(run().candidates.every((x) =>
-    x.fees === null && x.hours === null && x.access === null &&
-    x.verification === 'unverified'))
+  assert.ok(
+    run().candidates.every(
+      (x) =>
+        x.fees === null &&
+        x.hours === null &&
+        x.access === null &&
+        x.verification === 'unverified',
+    ),
+  )
 })

@@ -5,16 +5,19 @@ import {
   openSpot,
   spot,
   spotPath,
+  useNavigationGps,
 } from './fixtures'
 
 test('directions require consent, start navigation, and return to the map', async ({
   page,
+  context,
 }) => {
   const requests: string[] = []
   page.on('request', (request) => {
     if (request.url().includes('/route/v1/driving/'))
       requests.push(request.url())
   })
+  await useNavigationGps(page)
   await openSpot(page)
   await page.getByTestId('parking-get-directions').click()
   const consent = page.getByRole('alertdialog', { name: 'Directions privacy' })
@@ -40,6 +43,11 @@ test('directions require consent, start navigation, and return to the map', asyn
     page.getByRole('tab', { name: 'Map', exact: true }),
   ).toBeVisible()
   await page.goto(spotPath)
+  await context.setGeolocation({
+    longitude: 121.0308,
+    latitude: 14.5653,
+    accuracy: 5,
+  })
   await page.getByTestId('parking-get-directions').click()
   await expect(page.getByTestId('navigation-banner')).toBeVisible()
   await expect(consent).toHaveCount(0)
@@ -54,6 +62,7 @@ test('routing failure offers external maps and retry recovers', async ({
   await page.route('https://e2e.parkey.test/route/v1/driving/**', (route) =>
     route.fulfill({ status: 503, body: 'Unavailable' }),
   )
+  await useNavigationGps(page)
   await openSpot(page)
   await page.getByTestId('parking-get-directions').click()
   await page
@@ -79,6 +88,7 @@ test('arriving allows parking confirmation and saves the car location', async ({
   page,
   context,
 }) => {
+  await useNavigationGps(page)
   await openSpot(page)
   await page.getByTestId('parking-get-directions').click()
   await page
@@ -87,16 +97,17 @@ test('arriving allows parking confirmation and saves the car location', async ({
     .click()
   await expect(page.getByTestId('navigation-banner')).toBeVisible()
   const panel = page.getByTestId('route-panel')
-  // Feed fresh fixes until arrival is confirmed. A single teleported sample
-  // must not complete navigation, and a stopped browser watch emits no ticks.
+  // Arrival still requires multiple fresh accurate fixes across two seconds.
   await expect
     .poll(
       async () => {
-        await context.setGeolocation({
-          longitude: spot.longitude,
-          latitude: spot.latitude,
-          accuracy: 5,
-        })
+        await page.evaluate(
+          (point) =>
+            window.dispatchEvent(
+              new CustomEvent('parkey-test-fix', { detail: point }),
+            ),
+          [spot.longitude, spot.latitude],
+        )
         return panel
           .getByRole('heading', { name: 'You made it!', exact: true })
           .isVisible()
@@ -104,6 +115,11 @@ test('arriving allows parking confirmation and saves the car location', async ({
       { intervals: [1000], timeout: 12000 },
     )
     .toBe(true)
+  await context.setGeolocation({
+    longitude: spot.longitude,
+    latitude: spot.latitude,
+    accuracy: 5,
+  })
   await panel
     .getByRole('button', { name: 'I parked here', exact: true })
     .click()
@@ -112,7 +128,7 @@ test('arriving allows parking confirmation and saves the car location', async ({
   ).toBeVisible()
   await page.goto('/?panel=saved')
   await expect(
-    page.getByText('Parking location saved', { exact: true }),
+    page.getByRole('button', { name: 'Clear parked location', exact: true }),
   ).toBeVisible()
   await page.getByRole('button', { name: 'Show on map', exact: true }).click()
   await expect(page).toHaveURL(

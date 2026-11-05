@@ -76,3 +76,6 @@ Codex should automate operator-directory discovery **subject to each source's pe
 - [Waze official deep links](https://developers.google.com/waze/deeplinks)
 - [Overture Places sources and licensing](https://docs.overturemaps.org/guides/places/)
 - [OpenStreetMap copyright/ODbL](https://www.openstreetmap.org/copyright)
+
+For permitted direct-source partnerships, see the
+[operator research source list](ncr-operator-research-sources.md).

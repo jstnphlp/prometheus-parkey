@@ -73,6 +73,33 @@ class ContextTests(unittest.TestCase):
         self.assertEqual(f["properties"]["@id"], 4)
         self.assertEqual(handler.expected - handler.assembled, set())
 
+    def test_extended_visitor_categories_preserve_all_original_tags(self):
+        examples = (("shop", "hardware"), ("amenity", "fast_food"),
+                    ("amenity", "food_court"), ("amenity", "library"),
+                    ("tourism", "aquarium"), ("tourism", "hostel"),
+                    ("leisure", "bowling_alley"), ("historic", "fort"))
+        nodes = []
+        for identity, (key, value) in enumerate(examples, 1):
+            nodes.append(f'''<node id="{identity}" lat="14.56" lon="121.03"
+                              version="2" timestamp="2026-11-03T00:00:00Z">
+              <tag k="name" v="Destination {identity}"/><tag k="{key}" v="{value}"/>
+              <tag k="access" v="private"/><tag k="disused" v="yes"/>
+            </node>''')
+        handler = self.extract("".join(nodes))
+        self.assertEqual(len(handler.features), len(examples))
+        for feature in handler.features:
+            self.assertEqual(feature["properties"]["access"], "private")
+            self.assertEqual(feature["properties"]["disused"], "yes")
+            self.assertEqual(feature["properties"]["@version"], 2)
+
+    def test_unnamed_extended_categories_are_excluded(self):
+        handler = self.extract('''
+          <node id="1" lat="14.56" lon="121.03"><tag k="amenity" v="fast_food"/></node>
+          <node id="2" lat="14.56" lon="121.03"><tag k="name" v="  "/><tag k="shop" v="hardware"/></node>
+          <node id="3" lat="14.56" lon="121.03"><tag k="name" v="Private House"/><tag k="building" v="house"/></node>
+        ''')
+        self.assertEqual(handler.features, [])
+
 
 if __name__ == "__main__":
     unittest.main()

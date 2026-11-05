@@ -33,10 +33,13 @@ const makeDecision = (id, name, reviewStatus, overrides = {}) => ({
   publicationApproved: false,
   ...overrides,
 })
+const sharedPin = 'https://www.google.com/maps/place/Test/@14.56001,121.03001,17z/data=!4m4!3m3!8m2!3d14.56001!4d121.03001'
 const ledger = {
   schemaVersion: 1,
   decisions: [
-    makeDecision('a', 'A Parking', 'online_corroborated'),
+    makeDecision('a', 'A Parking', 'online_corroborated', {
+      siteVisitRequired: true, siteVisitReferenceUrl: sharedPin,
+    }),
     makeDecision('b', 'B Parking', 'needs_site_visit'),
     makeDecision('c', 'C Parking', 'excluded_pending_reason'),
   ],
@@ -54,6 +57,8 @@ test('retains online corroboration without turning it into field verification', 
     retainedForReview: 2,
     onlineCorroborated: 1,
     needsSiteVisit: 1,
+    siteVisitQueue: 2,
+    siteVisitReferenceLinks: 1,
     excludedPendingReason: 1,
     potentialNewFacilities: 1,
     potentiallyMatchingUnnamed: 1,
@@ -64,6 +69,9 @@ test('retains online corroboration without turning it into field verification', 
   assert.equal(result.candidates.length, 3)
   const matched = result.candidates.find((c) => c.id === 'overture:a')
   assert.equal(matched.reviewDecision.method, 'google_maps_name_search')
+  assert.equal(matched.reviewDecision.siteVisitRequired, true)
+  assert.equal(matched.reviewDecision.siteVisitReferenceUrl, sharedPin)
+  assert.equal(result.candidates.find((c) => c.id === 'overture:b').reviewDecision.siteVisitRequired, true)
   assert.equal(matched.verification, 'unverified')
   assert.equal(matched.verifiedAt, null)
   assert.equal(matched.reviewDecision.publicationApproved, false)
@@ -84,6 +92,10 @@ test('rejects missing, duplicate, unauthorized or fabricated human decisions', (
     { publicationApproved: true },
     { evidenceReference: 'https://google.com/maps' },
     { evidenceNote: '' },
+    { siteVisitRequired: 'yes' },
+    { siteVisitReferenceUrl: 'https://www.google.com/maps/place/Test/data=!4m4!3m3!8m2!3d14.5700!4d121.0400' },
+    { siteVisitReferenceUrl: 'https://evil.example/maps/place/Test/data=!4m4!3m3!8m2!3d14.56001!4d121.03001' },
+    { siteVisitRequired: false, siteVisitReferenceUrl: sharedPin },
   ]) assert.throws(() => run({ ledger: bad(patch) }))
   assert.throws(() => run({ ledger: { ...ledger, decisions: ledger.decisions.slice(1) } }),
     /every Overture source candidate/)
@@ -105,4 +117,13 @@ test('review output is deterministic and never labels online checks as live park
   assert.ok(run().candidates.every((x) =>
     x.fees === null && x.hours === null && x.access === null &&
     x.verification === 'unverified'))
+})
+
+test('site-visit pins are only navigation aids, never a claim of field verification', () => {
+  const item = run().candidates.find((c) => c.id === 'overture:a')
+  assert.equal(item.reviewDecision.status, 'online_corroborated')
+  assert.equal(item.reviewDecision.siteVisitAt, null)
+  assert.equal(item.verifiedAt, null)
+  assert.equal(item.reviewDecision.publicationApproved, false)
+  assert.equal(run().counts.physicallyVerified, 0)
 })

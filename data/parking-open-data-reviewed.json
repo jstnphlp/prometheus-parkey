@@ -19,6 +19,8 @@
     "retainedForReview": 13,
     "onlineCorroborated": 8,
     "needsSiteVisit": 5,
+    "siteVisitQueue": 6,
+    "siteVisitReferenceLinks": 3,
     "excludedPendingReason": 2,
     "potentialNewFacilities": 6,
     "potentiallyMatchingUnnamed": 6,
@@ -75,6 +77,8 @@
         "evidenceReference": null,
         "evidenceNote": "Removed from the owner's shortlist; reason not provided. Preserve for audit rather than silently dropping it.",
         "siteVisitAt": null,
+        "siteVisitRequired": false,
+        "siteVisitReferenceUrl": null,
         "publicationApproved": false
       }
     },
@@ -118,6 +122,8 @@
         "evidenceReference": null,
         "evidenceNote": "Project owner reports finding a Google Maps result when searching this parking name. Name/listing corroboration only; precise location, public access, entrance, fees, hours and operating status not independently confirmed.",
         "siteVisitAt": null,
+        "siteVisitRequired": false,
+        "siteVisitReferenceUrl": null,
         "publicationApproved": false
       }
     },
@@ -169,6 +175,8 @@
         "evidenceReference": null,
         "evidenceNote": "Project owner reports finding a Google Maps result when searching this parking name. Name/listing corroboration only; precise location, public access, entrance, fees, hours and operating status not independently confirmed.",
         "siteVisitAt": null,
+        "siteVisitRequired": false,
+        "siteVisitReferenceUrl": null,
         "publicationApproved": false
       }
     },
@@ -212,6 +220,8 @@
         "evidenceReference": null,
         "evidenceNote": "Removed from the owner's shortlist; reason not provided. Preserve for audit rather than silently dropping it.",
         "siteVisitAt": null,
+        "siteVisitRequired": false,
+        "siteVisitReferenceUrl": null,
         "publicationApproved": false
       }
     },
@@ -263,6 +273,8 @@
         "evidenceReference": null,
         "evidenceNote": "Project owner flagged this candidate for physical confirmation. No site visit recorded.",
         "siteVisitAt": null,
+        "siteVisitRequired": true,
+        "siteVisitReferenceUrl": null,
         "publicationApproved": false
       }
     },
@@ -318,8 +330,10 @@
         "reviewedOn": "2026-11-03",
         "method": "google_maps_name_search",
         "evidenceReference": null,
-        "evidenceNote": "Project owner reports finding a Google Maps result when searching this parking name. Name/listing corroboration only; precise location, public access, entrance, fees, hours and operating status not independently confirmed.",
+        "evidenceNote": "Project owner reports finding a Google Maps result when searching this parking name. Name/listing corroboration only; precise location, public access, entrance, fees, hours and operating status not independently confirmed. User supplied a coordinate pin for a future site visit; no physical check has been completed.",
         "siteVisitAt": null,
+        "siteVisitRequired": true,
+        "siteVisitReferenceUrl": "https://www.google.com/maps/place/14%C2%B034'01.7%22N+121%C2%B001'50.4%22E/@14.5677898,121.0299767,18z/data=!4m4!3m3!8m2!3d14.5671261!4d121.0306714?entry=ttu",
         "publicationApproved": false
       }
     },
@@ -361,8 +375,10 @@
         "reviewedOn": "2026-11-03",
         "method": null,
         "evidenceReference": null,
-        "evidenceNote": "Project owner flagged this candidate for physical confirmation. No site visit recorded.",
+        "evidenceNote": "Project owner flagged this candidate for physical confirmation. No site visit recorded. User supplied a coordinate pin for a future site visit; no physical check has been completed.",
         "siteVisitAt": null,
+        "siteVisitRequired": true,
+        "siteVisitReferenceUrl": "https://www.google.com/maps/place/14%C2%B034'08.2%22N+121%C2%B001'50.3%22E/@14.5689496,121.028064,17z/data=!3m1!4b1!4m4!3m3!8m2!3d14.5689444!4d121.0306389?entry=ttu",
         "publicationApproved": false
       }
     },
@@ -406,6 +422,8 @@
         "evidenceReference": null,
         "evidenceNote": "Project owner reports finding a Google Maps result when searching this parking name. Name/listing corroboration only; precise location, public access, entrance, fees, hours and operating status not independently confirmed.",
         "siteVisitAt": null,
+        "siteVisitRequired": false,
+        "siteVisitReferenceUrl": null,
         "publicationApproved": false
       }
     },
@@ -449,6 +467,8 @@
         "evidenceReference": null,
         "evidenceNote": "Project owner reports finding a Google Maps result when searching this parking name. Name/listing corroboration only; precise location, public access, entrance, fees, hours and operating status not independently confirmed.",
         "siteVisitAt": null,
+        "siteVisitRequired": false,
+        "siteVisitReferenceUrl": null,
         "publicationApproved": false
       }
     },
@@ -506,6 +526,8 @@
         "evidenceReference": null,
         "evidenceNote": "Project owner flagged this candidate for physical confirmation. No site visit recorded.",
         "siteVisitAt": null,
+        "siteVisitRequired": true,
+        "siteVisitReferenceUrl": null,
         "publicationApproved": false
       }
     },
@@ -549,6 +571,8 @@
         "evidenceReference": null,
         "evidenceNote": "Project owner reports finding a Google Maps result when searching this parking name. Name/listing corroboration only; precise location, public access, entrance, fees, hours and operating status not independently confirmed.",
         "siteVisitAt": null,
+        "siteVisitRequired": false,
+        "siteVisitReferenceUrl": null,
         "publicationApproved": false
       }
     },
@@ -592,6 +616,8 @@
         "evidenceReference": null,
         "evidenceNote": "Project owner flagged this candidate for physical confirmation. No site visit recorded.",
         "siteVisitAt": null,
+        "siteVisitRequired": true,
+        "siteVisitReferenceUrl": null,
         "publicationApproved": false
       }
     },
@@ -641,8 +667,10 @@
         "reviewedOn": "2026-11-03",
         "method": null,
         "evidenceReference": null,
-        "evidenceNote": "Project owner flagged this candidate for physical confirmation. No site visit recorded.",
+        "evidenceNote": "Project owner flagged this candidate for physical confirmation. No site visit recorded. User supplied a coordinate pin for a future site visit; no physical check has been completed.",
         "siteVisitAt": null,
+        "siteVisitRequired": true,
+        "siteVisitReferenceUrl": "https://www.google.com/maps/place/14%C2%B033'40.4%22N+121%C2%B001'26.6%22E/@14.5612254,121.0240513,17z/data=!3m1!4b1!4m4!3m3!8m2!3d14.5612254!4d121.0240513?entry=ttu",
         "publicationApproved": false
       }
     },
@@ -694,6 +722,8 @@
         "evidenceReference": null,
         "evidenceNote": "Project owner reports finding a Google Maps result when searching this parking name. Name/listing corroboration only; precise location, public access, entrance, fees, hours and operating status not independently confirmed.",
         "siteVisitAt": null,
+        "siteVisitRequired": false,
+        "siteVisitReferenceUrl": null,
         "publicationApproved": false
       }
     },
@@ -769,6 +799,8 @@
         "evidenceReference": null,
         "evidenceNote": "Project owner reports finding a Google Maps result when searching this parking name. Name/listing corroboration only; precise location, public access, entrance, fees, hours and operating status not independently confirmed.",
         "siteVisitAt": null,
+        "siteVisitRequired": false,
+        "siteVisitReferenceUrl": null,
         "publicationApproved": false
       }
     }

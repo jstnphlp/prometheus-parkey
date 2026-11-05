@@ -79,26 +79,50 @@ pnpm test:data
 
 This repository now keeps the **machine-generated source comparison separate from human review decisions**:
 
-- \`poblacion-places.geojson\` — 15 downloaded Overture records (unchanged source snapshot).
-- \`data/parking-open-data-review.json\` — baseline comparison for all 15 records; no human verification claims.
-- \`data/parking-open-data-decisions.json\` — human decision ledger, keyed by Overture ID. The project owner reported checking eight names using Google Maps on **2026-11-03**; five require physical inspection, and two were removed from the shortlist without a recorded exclusion reason.
-- \`data/parking-open-data-reviewed.json\` — deterministic joined view for human inspection, not an app publication feed.
+- `poblacion-places.geojson` — 15 downloaded Overture records (unchanged source snapshot).
+- `data/parking-open-data-review.json` — baseline comparison for all 15 records; no human verification claims.
+- `data/parking-open-data-decisions.json` — human decision ledger, keyed by Overture ID. The project owner reported checking eight names using Google Maps on **2026-11-03**; five require physical inspection, and two were removed from the shortlist without a recorded exclusion reason.
+- `data/parking-open-data-reviewed.json` — deterministic joined view for human inspection, not an app publication feed.
 
-\`online_corroborated\` is intentionally **not** \`verified\`. It means the owner reports finding the place when searching its name in Google Maps; this has not independently established that the candidate's Overture coordinate is the correct parking entrance, that the facility operates, or that visitors are allowed to park there. The export retains the name and coordinates from the open-source Overture input, not copied Google Maps coordinates or API content.
+`online_corroborated` is intentionally **not** `verified`. It means the owner reports finding the place when searching its name in Google Maps; this has not independently established that the candidate's Overture coordinate is the correct parking entrance, that the facility operates, or that visitors are allowed to park there. The export retains the name and coordinates from the open-source Overture input, not copied Google Maps coordinates or API content.
 
 **Current counts:** 15 original source candidates; 8 online-corroborated, 5 needing site visits, 2 excluded pending reasons. Thirteen remain on the review shortlist; six are potential new locations based on a *100-metre heuristic*, and six distinct unnamed OSM records have at least one potential match. All 15 require licensing review because source-level license fields were absent from this export.
 
 To validate or regenerate the joined review file without changing the decisions ledger:
 
-\`\`\`powershell
+```powershell
 node --test scripts/parking-reviewed-data.test.mjs
 node scripts/parking-reviewed-data.mjs --check
 # If the derived file is stale and the human ledger has been reviewed:
 node scripts/parking-reviewed-data.mjs --write
-\`\`\`
+```
 
-**Do not edit the derived file to make review decisions.** Edit \`data/parking-open-data-decisions.json\` instead, preserving every source ID, even for excluded candidates. The validation is designed to fail if a source candidate is added without a human status, if a decision name does not match the source, if a status falsely claims physical verification, or if it tries to mark publication approved.
+**Do not edit the derived file to make review decisions.** Edit `data/parking-open-data-decisions.json` instead, preserving every source ID, even for excluded candidates. The validation is designed to fail if a source candidate is added without a human status, if a decision name does not match the source, if a status falsely claims physical verification, or if it tries to mark publication approved.
 
 Site reviewers should later record independent dated evidence for operation, correct vehicle entrance and parking restrictions in a separate verified-publication workflow. Any Google Maps confirmation here remains research evidence only, not an importable Google Maps Places dataset. Do not copy Google Maps listings, coordinates, reviews or opening hours into Overture/OSM records.
 
 **Local Supabase config note:** Port overrides on a developer's Windows machine do not imply a hosted Parkey database migration or production publication.
+
+## November 5: user-provided map pins for site visits
+
+Three Google Maps **coordinate-pin URLs supplied directly by the project owner** have been linked to existing Overture review IDs in `data/parking-open-data-decisions.json` and the derived review report. These are navigation aids for future field checks, **not** a Google Places API import or evidence that parking is legal, publicly accessible, open, or available.
+
+| Source candidate | Approximate Overture coordinates (longitude, latitude) | Review interpretation |
+| --- | --- | --- |
+| Riki Carreon Parking Lot | 121.03067135, 14.5671261 | Earlier Google Maps name corroboration retained; **now also queued for a physical visit** |
+| Osmeña St | 121.030627, 14.568952 | Existing needs-site-visit record with owner-supplied pin |
+| Classica 1 Parking Garage | 121.02405134, 14.56122542 | Existing needs-site-visit record with owner-supplied pin |
+
+The pin validation requires the URL to be a Google Maps coordinate link no more than 100 metres from the Overture candidate; it **does not** establish that the map pin depicts an actual parking entrance. Riki and Classica pins match their Overture points to within rounding precision; Osmeña's is about 2 metres away.
+
+The total physical-visit queue is now **6 candidates** (5 originally needing a visit, plus Riki's additional visit requirement), while the eight online name checks remain recorded as before. Three of those six have owner-supplied location links. Nobody has conducted or recorded these site visits yet, so **0 are physically verified or approved for publication**.
+
+For each visit, photograph signage only where permitted, check parking eligibility and operating status, note the usable vehicle entrance, restrictions, rate and hours if available, and preserve dated evidence. Use an independent first-party source or on-site inspection for those claims. Do not copy Google Maps business content into open-data records.
+
+After updating the human ledger, regenerate and validate the derived report:
+
+```powershell
+node scripts/parking-reviewed-data.mjs --write
+node scripts/parking-reviewed-data.mjs --check
+node --test scripts/parking-reviewed-data.test.mjs
+```

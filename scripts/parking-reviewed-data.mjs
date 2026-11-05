@@ -8,7 +8,7 @@ import { createHash } from 'node:crypto'
 import { readFileSync, writeFileSync } from 'node:fs'
 import { pathToFileURL } from 'node:url'
 import process from 'node:process'
-import { buildOpenDataReview, fromOvertureGeojson } from './parking-open-data.mjs'
+import { buildOpenDataReview, fromOvertureGeojson, distanceMeters } from './parking-open-data.mjs'
 
 const statuses = new Set([
   'online_corroborated', 'needs_site_visit', 'excluded_pending_reason',
@@ -19,6 +19,21 @@ const yyyyMmDd = (value) =>
   typeof value === 'string' &&
   /^\d{4}-\d{2}-\d{2}$/.test(value) &&
   new Date(value + 'T00:00:00Z').toISOString().slice(0, 10) === value
+
+/** Coordinate-only Google Maps pins are visit references, not parking evidence. */
+function isNearbyUserMapPin(value, coordinate) {
+  if (typeof value !== 'string') return false
+  try {
+    const url = new URL(value)
+    if (url.protocol !== 'https:' || url.hostname !== 'www.google.com' ||
+        !url.pathname.startsWith('/maps/place/')) return false
+    const match = /!3d(-?\d+(?:\.\d+)?)!4d(-?\d+(?:\.\d+)?)/.exec(url.pathname)
+    if (!match) return false
+    return distanceMeters([Number(match[2]), Number(match[1])], coordinate) <= 100
+  } catch {
+    return false
+  }
+}
 
 export function buildReviewedParkingData({ existing, geojson, ledger, sourceAsOf, sourceHashes }) {
   if (!ledger || ledger.schemaVersion !== 1 || !Array.isArray(ledger.decisions))
@@ -47,6 +62,19 @@ export function buildReviewedParkingData({ existing, geojson, ledger, sourceAsOf
       (decision.reviewStatus !== 'online_corroborated' && decision.method !== null)
     )
       throw new Error('Review method does not match review status for ' + decision.id)
+    const needsVisit = decision.reviewStatus === 'needs_site_visit' ||
+      decision.siteVisitRequired === true
+    if (
+      (decision.siteVisitRequired !== undefined &&
+       typeof decision.siteVisitRequired !== 'boolean') ||
+      (decision.reviewStatus === 'needs_site_visit' &&
+       decision.siteVisitRequired === false) ||
+      (decision.reviewStatus === 'excluded_pending_reason' && needsVisit) ||
+      (decision.siteVisitReferenceUrl != null &&
+       (!needsVisit ||
+        !isNearbyUserMapPin(decision.siteVisitReferenceUrl, byId.get(decision.id).coordinate)))
+    )
+      throw new Error('Invalid site-visit pin or state for ' + decision.id)
     byDecisionId.set(decision.id, decision)
   }
   if (byDecisionId.size !== baseline.candidates.length)
@@ -66,6 +94,9 @@ export function buildReviewedParkingData({ existing, geojson, ledger, sourceAsOf
         evidenceReference: decision.evidenceReference,
         evidenceNote: decision.evidenceNote,
         siteVisitAt: null,
+        siteVisitRequired: decision.reviewStatus === 'needs_site_visit' ||
+          decision.siteVisitRequired === true,
+        siteVisitReferenceUrl: decision.siteVisitReferenceUrl ?? null,
         publicationApproved: false,
       },
     }
@@ -92,6 +123,9 @@ export function buildReviewedParkingData({ existing, geojson, ledger, sourceAsOf
       retainedForReview: eligibleForFurtherReview.length,
       onlineCorroborated: countStatus('online_corroborated'),
       needsSiteVisit: countStatus('needs_site_visit'),
+      siteVisitQueue: candidates.filter((c) => c.reviewDecision.siteVisitRequired).length,
+      siteVisitReferenceLinks: candidates.filter((c) =>
+        c.reviewDecision.siteVisitReferenceUrl !== null).length,
       excludedPendingReason: countStatus('excluded_pending_reason'),
       potentialNewFacilities: eligibleForFurtherReview.filter(
         (c) => !c.possibleBundledMatches.length,

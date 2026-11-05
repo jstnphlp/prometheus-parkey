@@ -211,6 +211,14 @@ stores LF. Its recorded hash and artifacts remain unchanged. Reconciliation
 accepts only the proven historical LF/CRLF SHA256 pair; all other mismatches
 still abort. Five review tests cover exact equivalence and changed-byte rejection.
 
+Cross-branch CI exposed intermittent persistence deadlines and CDP GPS override
+noise even after a complete integrated run passed all 36 legacy cases plus the
+four Phase 2 scenarios. Nominal navigation tests now share the uninterrupted GPS
+fixture; permission-denial tests retain the browser API. Standard two-core CI
+runners execute browser cases serially. Multi-page persistence tests have a
+90-second total budget while individual assertion deadlines stay unchanged.
+All 10 affected desktop/mobile cases passed locally after this stabilization.
+
 CI includes the same synthetic-only database setup and both Phase 2 browser
 modes. Repository visibility was confirmed public; standard ubuntu-latest runners
 are free for public repositories. New verification commits can therefore run CI

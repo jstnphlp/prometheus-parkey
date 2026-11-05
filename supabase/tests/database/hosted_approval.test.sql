@@ -1,0 +1,37 @@
+begin;
+create extension if not exists pgtap with schema extensions;
+set local search_path = public, extensions;
+select no_plan();
+select ok(not has_table_privilege('anon', 'parkey_private.discovery_publication_approvals', 'select'), 'approval evidence private');
+select ok(not has_table_privilege('service_role', 'parkey_private.discovery_publication_approvals', 'insert'), 'server cannot bypass approval function');
+select ok(not has_function_privilege('authenticated', 'public.approve_discovery_publication(uuid,uuid,text,text,text,text)', 'execute'), 'clients cannot approve');
+select ok(not has_function_privilege('anon', 'parkey_private.discovery_fingerprint(uuid)', 'execute'), 'fingerprints private');
+insert into auth.users(id) values ('e1000000-0000-4000-8000-000000000001');
+insert into parkey_private.discovery_reviewers(user_id,can_publish) values ('e1000000-0000-4000-8000-000000000001',true);
+insert into discovery_sources(id,kind,label,url,license,attribution) values
+ ('e2000000-0000-4000-8000-000000000001','parkey','Synthetic test only','https://example.org/source','CC0-1.0','Fictional pgTAP fixture');
+insert into discovery_parking(id,source_id,source_record_id,source_url,name,kind,geometry,published) values
+ ('e3000000-0000-4000-8000-000000000001','e2000000-0000-4000-8000-000000000001','synthetic','https://example.org/source','SAMPLE approval test','lot',st_point(121.03,14.56,4326),false);
+select throws_like($$select approve_discovery_publication('e3000000-0000-4000-8000-000000000001','e1000000-0000-4000-8000-000000000001','https://example.org/physical','https://example.org/license','https://example.org/access','https://example.org/dedup')$$, '%physical verification%', 'online corroboration/unverified cannot approve');
+select ok(not has_discovery_approval('e3000000-0000-4000-8000-000000000001'), 'unverified denied');
+update discovery_parking set verification = 'verified', verified_at = now() - interval '1 day', verification_url = 'https://example.org/physical' where id = 'e3000000-0000-4000-8000-000000000001';
+select lives_ok($$select approve_discovery_publication('e3000000-0000-4000-8000-000000000001','e1000000-0000-4000-8000-000000000001','https://example.org/physical','https://example.org/license','https://example.org/access','https://example.org/dedup')$$, 'explicit manual evidence accepted');
+select lives_ok($$select approve_discovery_publication('e3000000-0000-4000-8000-000000000001','e1000000-0000-4000-8000-000000000001','https://example.org/physical','https://example.org/license','https://example.org/access','https://example.org/dedup')$$, 'identical replay idempotent');
+select ok(not has_discovery_approval('e3000000-0000-4000-8000-000000000001'), 'approved staged record remains hidden');
+update discovery_parking set published = true where id = 'e3000000-0000-4000-8000-000000000001';
+set local role anon;
+select ok(has_discovery_approval('e3000000-0000-4000-8000-000000000001'), 'anonymous may check approval only');
+select is(discover_approved_parking(121.02,14.55,121.04,14.57)->>'contractVersion','1','versioned API');
+select ok(exists(select 1 from jsonb_array_elements(discover_approved_parking(121.02,14.55,121.04,14.57)->'records') r where r->>'id' = 'e3000000-0000-4000-8000-000000000001'), 'approved fixture visible');
+reset role;
+update discovery_sources set attribution = 'Changed attribution' where id = 'e2000000-0000-4000-8000-000000000001';
+set local role authenticated;
+select ok(not has_discovery_approval('e3000000-0000-4000-8000-000000000001'), 'source drift invalidates approval for authenticated clients');
+select ok(not exists(select 1 from jsonb_array_elements(discover_approved_parking(121.02,14.55,121.04,14.57)->'records') r where r->>'id' = 'e3000000-0000-4000-8000-000000000001'), 'drifted fixture hidden');
+reset role;
+select throws_like($$select approve_discovery_publication('e3000000-0000-4000-8000-000000000001','e1000000-0000-4000-8000-000000000001','https://example.org/physical','https://example.org/license','https://example.org/access','https://example.org/dedup')$$, '%reconciliation%', 'drift never silently overwritten');
+update discovery_sources set attribution = 'Fictional pgTAP fixture' where id = 'e2000000-0000-4000-8000-000000000001';
+update parkey_private.discovery_publication_approvals set approved_at = now() - interval '100 days', expires_at = now() - interval '1 day';
+select ok(not has_discovery_approval('e3000000-0000-4000-8000-000000000001'), 'expired approval denied');
+select * from finish();
+rollback;

@@ -12,6 +12,24 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  database:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .node-version
+      - uses: pnpm/action-setup@v4
+      - run: pnpm install --frozen-lockfile
+      # Isolated ephemeral runner only. No project linking, remote secrets or reset.
+      # CLI startup prints local credentials: keep that output off CI logs.
+      - run: pnpm exec supabase start > "$RUNNER_TEMP/supabase-start.log" 2>&1
+      - run: pnpm exec supabase test db --local
+      - run: pnpm exec supabase db lint --local --schema public,parkey_private --fail-on error
+      - if: always()
+        run: pnpm exec supabase stop --no-backup
+
   validate:
     runs-on: ubuntu-latest
     timeout-minutes: 15

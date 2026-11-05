@@ -170,7 +170,7 @@ export default function NcrResearch() {
     zoom: number
   }>({ coordinate: [121.035, 14.6], zoom: 11.5 })
   const [category, setCategory] = useState<'all' | NcrFeatureType>('all')
-  const [names, setNames] = useState<'named' | 'all'>('named')
+  const [names, setNames] = useState<'corroborated' | 'named' | 'all'>('corroborated')
   const [mode, setMode] = useState<'public' | 'research_preview'>('public')
   const [storedData, setData] = useState<NcrDiscoveryResponse | null>(null)
   const [dataQuery, setDataQuery] = useState('')
@@ -422,7 +422,15 @@ export default function NcrResearch() {
                   contentContainerStyle={styles.stripContent}
                 >
                   <Action
-                    title="Named facilities only"
+                    title="Cross-source name matches"
+                    selected={names === 'corroborated'}
+                    onPress={() => {
+                      invalidate()
+                      setNames('corroborated')
+                    }}
+                  />
+                  <Action
+                    title="Source-named facilities"
                     selected={names === 'named'}
                     onPress={() => {
                       invalidate()
@@ -439,10 +447,10 @@ export default function NcrResearch() {
                   />
                 </ScrollView>
                 <Text selectable style={styles.warning}>
-                  Source names are not confirmed parking identities. Google Maps
-                  and Waze are external reviewer references only, never imported
-                  names. Named candidates still need evidence and publication
-                  approval; unnamed source records are retained privately.
+                  Cross-source names are unverified research matches, not
+                  confirmed businesses. Google Maps and Waze remain external
+                  reviewer references; their content is not imported. Unmatched
+                  locations remain in the private research archive.
                 </Text>
                 <View style={styles.map}>
                   <NcrMap

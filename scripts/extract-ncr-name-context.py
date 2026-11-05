@@ -19,8 +19,11 @@ parking = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(parking)
 KINDS = {
     "shop": ("mall", "department_store", "supermarket", "shopping_centre"),
-    "amenity": ("hospital", "university", "college", "marketplace", "school"),
-    "tourism": ("hotel", "motel"),
+    "amenity": ("hospital", "university", "college", "marketplace", "school",
+                "restaurant", "cafe", "food_court", "theatre", "cinema", "arts_centre"),
+    "tourism": ("hotel", "motel", "attraction", "museum", "gallery", "zoo", "theme_park"),
+    "leisure": ("park", "stadium", "sports_centre"),
+    "historic": ("monument", "memorial"),
     "building": ("commercial", "retail", "office", "hotel", "supermarket", "hospital"),
 }
 

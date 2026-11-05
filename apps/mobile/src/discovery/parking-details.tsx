@@ -4,6 +4,7 @@ import { Linking, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { FigmaAsset } from './figma-assets'
 import { MotionPressable, MotionView } from './motion'
 import { parkingDetailData } from './parking-detail-data'
+import { reviewedParkingEntrance } from './parking-navigation'
 import { ParkingStatus } from './parking-status'
 import { SpotThumbnail } from './spot-photo-view'
 import { fonts } from './typography'
@@ -69,11 +70,17 @@ export function ParkingDetails({
         <Button
           testID="parking-get-directions"
           icon="arrow"
-          disabled={parking.sourceKind === 'sample'}
+          disabled={!reviewedParkingEntrance(parking, now.getTime())}
           onPress={onDirections}
         >
           Go
         </Button>
+        {!reviewedParkingEntrance(parking, now.getTime()) ? (
+          <Text testID="parking-navigation-warning" style={ui.small}>
+            Navigation requires a confirmed entrance, visitor access and
+            operator authorization.
+          </Text>
+        ) : null}
       </View>
       <IconButton
         icon="bookmark"

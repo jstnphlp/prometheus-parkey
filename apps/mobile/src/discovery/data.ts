@@ -7,6 +7,7 @@ import {
   isObject,
 } from './model.ts'
 import type { Viewport } from './model.ts'
+import { isParkingNavigationApproval } from './parking-navigation.ts'
 
 const nullableText = (value: unknown) =>
   value === null || typeof value === 'string'
@@ -25,6 +26,9 @@ export function isParking(value: unknown): value is DiscoveryParking {
   )
     return false
   return (
+    (value.navigationApproval === undefined ||
+      value.navigationApproval === null ||
+      isParkingNavigationApproval(value.navigationApproval)) &&
     (value.osmTags === undefined ||
       (isObject(value.osmTags) &&
         Object.values(value.osmTags).every(

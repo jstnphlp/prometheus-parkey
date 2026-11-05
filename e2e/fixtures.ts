@@ -1,5 +1,8 @@
 import { test as base, expect } from '@playwright/test'
 import type { Page } from '@playwright/test'
+import { readFileSync } from 'node:fs'
+
+import { isParking } from '../apps/mobile/src/discovery/data'
 
 // All provider responses below are test fixtures, never live integration data.
 export const spot = {
@@ -85,8 +88,9 @@ export const drivingRoute = {
   ],
 }
 
-export const test = base.extend({
-  page: async ({ page, context }, use) => {
+export const test = base.extend<{ reviewedNavigation: boolean }>({
+  reviewedNavigation: [false, { option: true }],
+  page: async ({ page, context, reviewedNavigation }, use) => {
     await context.setGeolocation({
       longitude: 121.0308,
       latitude: 14.5653,
@@ -114,6 +118,42 @@ export const test = base.extend({
         await route.fulfill({
           contentType: 'application/x-protobuf',
           body: '',
+        })
+      } else if (pathname === '/rest/v1/rpc/discover_parking') {
+        // Explicitly authorized synthetic entrance for routing tests only.
+        // The bundled historical source archive remains unchanged/unverified.
+        const archive: unknown = JSON.parse(
+          readFileSync(
+            new URL(
+              '../apps/mobile/src/discovery/osm-pilot.json',
+              import.meta.url,
+            ),
+            'utf8',
+          ),
+        )
+        if (!Array.isArray(archive) || !archive.every(isParking))
+          throw new Error('Invalid source fixture')
+        const original = archive.find((record) => record.id === spot.id)
+        if (!original) throw new Error('Expected source fixture record')
+        await route.fulfill({
+          json: {
+            records: reviewedNavigation
+              ? [
+                  {
+                    ...original,
+                    entrances: [[spot.longitude, spot.latitude]],
+                    navigationApproval: {
+                      entrance: [spot.longitude, spot.latitude],
+                      entranceConfirmed: true,
+                      visitorAccessConfirmed: true,
+                      operatorAuthorized: true,
+                      expiresAt: new Date(Date.now() + 86400000).toISOString(),
+                    },
+                  },
+                ]
+              : [],
+            truncated: false,
+          },
         })
       } else if (pathname === '/search') {
         await route.fulfill({ json: destination })

@@ -54,6 +54,13 @@ browser execution is implied.
 
 ## Interface findings
 
+The continuation review subsequently identified and fixed the main app's legacy
+centroid-navigation fallback and two new reviewer-pipeline contract issues. The
+initial audit above describes the preserved dependency-chain snapshots; the
+implementation findings and executed regression evidence are recorded separately
+in [pilot-stage-a-review.md](pilot-stage-a-review.md). Native and browser gates
+remain independently required before Stage A can pass.
+
 - **App/API/shared types:** `ncr-client.ts` consumes the schema-version-1
   projection from `ncr-preview-server.mjs` using the shared type-only contract.
   Complete loading uses eleven pages of at most 500 records, validates each

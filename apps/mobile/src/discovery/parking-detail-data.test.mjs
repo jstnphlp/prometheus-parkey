@@ -91,18 +91,18 @@ test('invalid hours disappear; OSM parser evaluates in the spot timezone', () =>
     'Monday',
   )
 })
-test('directions select the entrance nearest the driver, never a nearby unrelated node', () => {
+test('mapped entrances and facility centers cannot authorize driving directions', () => {
   const entrances = [
     [121.03, 14.566],
     [121.035, 14.566],
   ]
   assert.deepEqual(
     parkingDestination({ ...minimal, entrances }, [121.036, 14.566]),
-    entrances[1],
+    null,
   )
   assert.deepEqual(
     parkingDestination({ ...minimal, entrances: [] }, null),
-    minimal.geometry.coordinates,
+    null,
   )
 })
 test('import geometry warnings do not expand a sparse spot; import date is not edit date', () => {

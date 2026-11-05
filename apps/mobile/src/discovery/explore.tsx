@@ -545,11 +545,12 @@ export default function Explore() {
     updateNavigation({ center: coordinate }, 'replace')
   }
   function startDirections(record: DiscoveryParking) {
-    if (record.sourceKind === 'sample') return
+    if (!parkingDestination(record, currentLocation)) return
     void consent.request((confirmed) => beginDirections(record, confirmed))
   }
   function beginDirections(record: DiscoveryParking, confirmed: boolean) {
-    if (record.sourceKind === 'sample') return
+    const approvedEntrance = parkingDestination(record, currentLocation)
+    if (!approvedEntrance) return
     track({
       name: 'directions_tapped',
       target_type: 'parking',
@@ -557,7 +558,7 @@ export default function Explore() {
     })
     setRouteTarget({
       name: parkingTitle(record),
-      coordinate: parkingDestination(record, currentLocation),
+      coordinate: approvedEntrance,
       parking: record,
     })
     updateNavigation(
@@ -576,6 +577,12 @@ export default function Explore() {
     void loadRoute(
       (origin) => {
         const coordinate = parkingDestination(record, origin)
+        if (!coordinate) {
+          setRouteTarget(null)
+          throw new Error(
+            'Parking entrance authorization expired. Refresh the parking record before requesting directions.',
+          )
+        }
         setRouteTarget({
           name: parkingTitle(record),
           coordinate,

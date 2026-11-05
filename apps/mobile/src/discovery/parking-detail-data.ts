@@ -4,6 +4,7 @@ import { anchor, distanceMeters, kindLabels } from './model.ts'
 import { spotHours } from './spot-hours.ts'
 import { parkingFee } from './parking-fee.ts'
 import type { WeekDay } from './spot-hours.ts'
+import { reviewedParkingEntrance } from './parking-navigation.ts'
 
 export type ParkingDetailRow = {
   icon: 'clock' | 'fees' | 'access' | 'list'
@@ -66,19 +67,10 @@ export function detailDistance(meters: number): string | undefined {
 }
 export function parkingDestination(
   parking: DiscoveryParking,
-  origin: Coordinate | null,
-): Coordinate {
-  const center = anchor(parking.geometry)
-  return (
-    parking.entrances?.reduce(
-      (nearest, entrance) =>
-        distanceMeters(origin ?? center, entrance) <
-        distanceMeters(origin ?? center, nearest)
-          ? entrance
-          : nearest,
-      parking.entrances[0] ?? center,
-    ) ?? center
-  )
+  _origin: Coordinate | null,
+  now = Date.now(),
+): Coordinate | null {
+  return reviewedParkingEntrance(parking, now)
 }
 export function parkingDetailData(
   parking: DiscoveryParking,
@@ -249,12 +241,13 @@ export function parkingDetailData(
       : parking.verification === 'verified'
         ? `Verified ${new Date(parking.verifiedAt ?? '').toLocaleDateString('en-PH', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'Asia/Manila' })}`
         : 'Not field verified'
-  const geometryNote =
-    parking.kind === 'street'
-      ? 'Mapped street extent. Directions use an approximate point; check signs and parking restrictions.'
+  const geometryNote = reviewedParkingEntrance(parking, now.getTime())
+    ? 'Reviewed vehicle entrance. Confirm current access on arrival.'
+    : parking.kind === 'street'
+      ? 'Mapped street extent. Navigation requires a reviewed vehicle entrance; check signs and parking restrictions.'
       : parking.entrances?.length
-        ? 'Mapped entrance. Confirm current vehicle access on arrival.'
-        : 'Entrance not mapped. Directions use a map point; confirm access on arrival.'
+        ? 'Mapped entrance. Vehicle access is unverified; navigation is unavailable.'
+        : 'Entrance not mapped. Navigation requires reviewed entrance and visitor access.'
   const distance = location
     ? detailDistance(distanceMeters(location, anchor(parking.geometry)))
     : undefined

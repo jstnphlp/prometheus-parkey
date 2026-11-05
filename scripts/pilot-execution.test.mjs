@@ -43,6 +43,8 @@ test('deferred commercial and physical phases permit engineering but never publi
   )
   assert.equal(result.engineeringStatus, '1F_ENGINEERING_READY')
   assert.equal(result.pilotReleaseAuthorized, false)
+  assert.equal(result.releaseStatuses['1F_ENGINEERING_READY'], true)
+  assert.equal(result.releaseStatuses.PILOT_RELEASE_AUTHORIZED, false)
   assert.equal(result.historicalPublicDisplayGateStatus, 'BLOCKED')
   assert.equal(result.historicalPublicDisplayGateModified, false)
 })
@@ -70,6 +72,12 @@ test('execution records cannot pass from plans alone, repeated check identities 
   const unexecuted = pass(STAGE_A_CHECKS)
   unexecuted.checks[0].executed = false
   assert.throws(() => evaluatePilotExecution(plan(), unexecuted), /executed/)
+  const emptyReference = pass(STAGE_A_CHECKS)
+  emptyReference.checks[0].evidenceReferences = [null]
+  assert.throws(
+    () => evaluatePilotExecution(plan(), emptyReference),
+    /evidence/,
+  )
   const duplicate = pass(STAGE_A_CHECKS)
   duplicate.checks.push(duplicate.checks[0])
   assert.throws(() => evaluatePilotExecution(plan(), duplicate), /duplicated/)

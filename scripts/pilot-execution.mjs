@@ -53,7 +53,11 @@ function requiredChecks(execution, requirements) {
       (check.executed !== true ||
         check.satisfied !== true ||
         !Array.isArray(check.evidenceReferences) ||
-        !check.evidenceReferences.length)
+        !check.evidenceReferences.length ||
+        !check.evidenceReferences.every(
+          (reference) =>
+            typeof reference === 'string' && reference.trim().length > 0,
+        ))
     )
       throw new Error('A passing check requires executed, satisfied evidence')
     if (
@@ -111,6 +115,11 @@ export function evaluatePilotExecution(plan, stageA, stageB = null) {
         ? '1F_ENGINEERING_READY'
         : 'IN_PROGRESS',
     pilotReleaseAuthorized: false,
+    releaseStatuses: {
+      '1F_ENGINEERING_READY':
+        first.status === 'PASS' && second.status === 'PASS',
+      PILOT_RELEASE_AUTHORIZED: false,
+    },
     historicalPublicDisplayGateModified: false,
     historicalPublicDisplayGateStatus: plan.historicalGate.status,
     notice:

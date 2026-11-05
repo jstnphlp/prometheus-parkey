@@ -3,6 +3,7 @@ import { StyleSheet, Text, View } from 'react-native'
 
 import type { ParkingReference } from './model'
 import { parkingDetailData } from './parking-detail-data'
+import { reviewedParkingEntrance } from './parking-navigation'
 import { FigmaAsset } from './figma-assets'
 import { MotionPressable } from './motion'
 import { colors, IconButton, ui } from './ui'
@@ -55,7 +56,7 @@ export function ParkingRow({
       <IconButton
         icon="arrow"
         label={`Directions to ${text.title}`}
-        disabled={parking.sourceKind === 'sample'}
+        disabled={!reviewedParkingEntrance(parking)}
         color={colors.surface}
         onPress={onDirections}
         style={styles.directions}

@@ -1,0 +1,152 @@
+{
+  "schemaVersion": 1,
+  "executionId": "stage-a-execution-v1",
+  "recordedAt": "2026-11-05T14:27:13.276Z",
+  "baseCommit": "ecf34ff6569503ab90adcfc5fffa6d7a55ae030f",
+  "includesWorkingTreeImplementation": true,
+  "draftPr": "https://github.com/jstnphlp/prometheus-parkey/pull/18",
+  "checks": [
+    {
+      "id": "dependency-chain-audit",
+      "status": "PASS",
+      "executed": true,
+      "satisfied": true,
+      "evidenceReferences": [
+        "docs/pilot-integration-audit.md",
+        "data/pilot-execution/2026-11-05/integration-audit.json"
+      ]
+    },
+    {
+      "id": "frozen-install",
+      "status": "PASS",
+      "executed": true,
+      "satisfied": true,
+      "evidenceReferences": ["output/ncr/integration-stage-a-install.log"]
+    },
+    {
+      "id": "lint",
+      "status": "PASS",
+      "executed": true,
+      "satisfied": true,
+      "evidenceReferences": ["output/ncr/integration-stage-a-lint.log"]
+    },
+    {
+      "id": "typecheck",
+      "status": "PASS",
+      "executed": true,
+      "satisfied": true,
+      "evidenceReferences": ["output/ncr/integration-stage-a-typecheck.log"]
+    },
+    {
+      "id": "format",
+      "status": "PASS",
+      "executed": true,
+      "satisfied": true,
+      "evidenceReferences": ["output/ncr/integration-stage-a-format.log"]
+    },
+    {
+      "id": "unit",
+      "status": "PASS",
+      "executed": true,
+      "satisfied": true,
+      "evidenceReferences": ["output/ncr/integration-stage-a-unit.log"]
+    },
+    {
+      "id": "data-audit",
+      "status": "PASS",
+      "executed": true,
+      "satisfied": true,
+      "evidenceReferences": ["output/ncr/integration-stage-a-audit.log"]
+    },
+    {
+      "id": "web-build",
+      "status": "PASS",
+      "executed": true,
+      "satisfied": true,
+      "evidenceReferences": ["output/ncr/integration-stage-a-build-web.log"]
+    },
+    {
+      "id": "browser-e2e",
+      "status": "IN_PROGRESS",
+      "executed": true,
+      "satisfied": false,
+      "evidenceReferences": [
+        "https://github.com/jstnphlp/prometheus-parkey/pull/18/checks"
+      ],
+      "blocker": "New safety guard and reviewer changes await the new complete browser CI run."
+    },
+    {
+      "id": "local-database",
+      "status": "PASS",
+      "executed": true,
+      "satisfied": true,
+      "evidenceReferences": ["output/ncr/integration-stage-a-database.log"]
+    },
+    {
+      "id": "review-publication-safeguards",
+      "status": "PASS",
+      "executed": true,
+      "satisfied": true,
+      "evidenceReferences": [
+        "docs/pilot-stage-a-review.md",
+        "docs/ncr-reviewer-workflow.md",
+        "supabase/tests/database/reviewer_evidence.test.sql"
+      ]
+    },
+    {
+      "id": "historical-preservation",
+      "status": "PASS",
+      "executed": true,
+      "satisfied": true,
+      "evidenceReferences": [
+        "data/pilot-execution/2026-11-05/integration-contract-check.json",
+        "output/ncr/integration-stage-a-unit.log"
+      ]
+    },
+    {
+      "id": "fresh-android-build",
+      "status": "IN_PROGRESS",
+      "executed": true,
+      "satisfied": false,
+      "evidenceReferences": [
+        "output/ncr/integration-stage-a/android-build-cache-repair.log"
+      ],
+      "blocker": "Fresh x86_64 development APK build is still running after disk, memory and partial-cache remediation. Old installed APK is not accepted as evidence."
+    },
+    {
+      "id": "android-smoke",
+      "status": "IN_PROGRESS",
+      "executed": false,
+      "satisfied": false,
+      "evidenceReferences": ["output/ncr/integration-stage-a/"],
+      "blocker": "Requires installation and actual smoke tests on the freshly built APK; not yet executed."
+    },
+    {
+      "id": "draft-pr-and-report",
+      "status": "PASS",
+      "executed": true,
+      "satisfied": true,
+      "evidenceReferences": [
+        "https://github.com/jstnphlp/prometheus-parkey/pull/18",
+        "docs/pilot-engineering-execution.md"
+      ]
+    }
+  ],
+  "facts": {
+    "javascriptTestsPassed": 316,
+    "pythonTestsPassed": 38,
+    "unitSkipped": 0,
+    "localSqlAssertionsPassed": 246,
+    "localSqlFiles": 5,
+    "hostedDatabaseWrites": 0,
+    "actualPublicationApprovals": 0,
+    "actualPhysicalVerifications": 0
+  },
+  "platforms": {
+    "android": "IN_PROGRESS",
+    "ios": "BLOCKED_NO_LOCAL_APPLE_HOST",
+    "iosTestsExecuted": false
+  },
+  "stageBExecuted": false,
+  "notice": "Interim technical execution record; native readiness and Stage A have not passed. Historical source and publication decisions remain unchanged."
+}

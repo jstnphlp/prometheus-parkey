@@ -23,7 +23,7 @@ const parkingCategory = (v) => /(^|[_\s-])(parking|car_park|carpark|garage|parka
 const geometryTypes = new Set(['Point','LineString','MultiLineString','Polygon','MultiPolygon'])
 const restrictedAccess = new Set(['private','no','residents','permit','military','emergency'])
 const streetPosition = new Set(['yes','lane','street_side','on_kerb',
-  'half_on_kerb','shoulder','separate','on_street','parallel','diagonal','perpendicular'])
+  'half_on_kerb','shoulder','on_street','parallel','diagonal','perpendicular'])
 const restrictedStreet = new Set(['no_parking','no_stopping','loading_only','emergency'])
 const geomCoords = (g) => {
   if (g.type === 'Point') return [g.coordinates]

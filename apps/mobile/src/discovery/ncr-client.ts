@@ -197,6 +197,7 @@ export async function fetchNcrPage(
   mode: 'public' | 'research_preview',
   signal: AbortSignal,
   cursor: string | null = null,
+  names: 'all' | 'named' = 'all',
 ): Promise<NcrDiscoveryResponse> {
   const url = new URL(
     mode === 'public' ? '/api/ncr/discovery' : '/api/ncr/research-preview',
@@ -208,6 +209,7 @@ export async function fetchNcrPage(
   )
   url.searchParams.set('zoom', String(viewport.zoom))
   url.searchParams.set('category', category)
+  url.searchParams.set('names', names)
   url.searchParams.set('limit', '200')
   if (cursor) url.searchParams.set('cursor', cursor)
   const response = await fetch(url.toString(), {

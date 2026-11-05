@@ -291,6 +291,28 @@ test('public projection excludes unapproved/rejected/expired records before pagi
   )
 })
 
+test('name filters hide unnamed/child records without deleting research; generic public approvals fail closed', () => {
+  assert.throws(() => query({ names: 'google_scrape' }), /name filter/)
+  const old = research.candidates
+  const named = queryNcrResearch(research, query({ names: 'named' }), queryOptions())
+  assert.deepEqual(named.items.map((x) => x.id), ['a', 'd'])
+  const strict = queryNcrResearch(
+    research, query({ names: 'corroborated' }), queryOptions(),
+  )
+  assert.equal(strict.totalMatched, 0)
+  const all = queryNcrResearch(research, query({ names: 'all' }), queryOptions())
+  assert.equal(all.items.length, 4)
+  assert.equal(research.candidates, old)
+  const generic = { ...candidate('unlabeled'), name: 'Unnamed parking facility' }
+  const approved = appendPublicationEvent(emptyLedger(), approval(generic), {
+    authorizedHuman: true, now,
+  })
+  const source = { ...research, candidates: [generic] }
+  assert.equal(queryNcrResearch(source, query(), {
+    ...queryOptions(false), ledger: approved,
+  }).totalMatched, 0)
+})
+
 test('actual frozen 5,427 observations cannot appear in the public projection', () => {
   const source = loadFrozenResearch('data/ncr-research')
   const review = JSON.parse(

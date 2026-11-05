@@ -121,7 +121,7 @@ operator agreement before enabling alerts. No live metrics or availability claim
 are supplied. Roll back the mobile mode to synthetic if needed; keep migrations
 and data intact. Never revert by deleting hosted tables.
 
-## Local evidence (2026-11-05)
+## Initial evidence (2026-11-05, superseded by pre-merge checks below)
 
 - Node 24.22.2 / pnpm 11.25.0; shared and mobile targeted typechecks passed.
 - Workspace `pnpm typecheck` and `pnpm build:web` passed. Router generation
@@ -141,8 +141,48 @@ and data intact. Never revert by deleting hosted tables.
 - No browser, emulator, provider integration, hosted migration, import,
   publication, account creation, deployment, spending or merge was performed.
 
-All six PRs remain drafts until baseline failures and DB/device/legacy-cutover
-gates have been resolved with the required authorization. Monitoring here is a
+All six PRs remain drafts until the remaining release gates are resolved.
+Monitoring here is a
 runbook using existing instrumentation; live alert infrastructure is not enabled.
 Commits use `[skip ci]` to avoid starting potentially billable hosted runners.
 Authorize CI execution separately after confirming account runner allowance.
+
+## Pre-merge verification follow-up
+
+The user authorized resolving the pre-merge failures. Baseline-only fixes are
+isolated in [PR #11](https://github.com/jstnphlp/prometheus-parkey/pull/11), based on
+main. Review/merge it before #5–#10. It adds explicit Node global declarations,
+formats the affected scripts/runbook and preserves deterministic LF bytes. The
+reviewed artifact mismatch was exclusively CRLF versus LF; parsed contents and
+all decisions were identical. No source hash, parking fact or approval changed.
+
+Completed locally on the integrated stack:
+
+- Workspace lint, strict typecheck (including E2E/Edge), formatting and web build.
+- Existing Node/Python test commands, data audit and reviewed-data artifact check.
+- All seven migrations applied successfully to a disposable Supabase PostgreSQL
+  17 database using the existing Podman VM and cached images. Existing project
+  containers/volumes stayed untouched; seeds were disabled in the temporary copy.
+- All five pgTAP files passed: 208 assertions, including legacy foundation,
+  discovery RLS, immutable import replay, moderation and Phase 2 approval gates.
+  Database lint found no errors in public or parkey_private. The first run exposed
+  a test fixture that attempted reconciliation while still published; the test
+  now correctly returns to unpublished staging. Additional tests cover fact/rule
+  drift, denied approval/writes and viewport bounds.
+- Phase 2 browser tests passed on mobile Chromium: hosted search/detail,
+  location-denied browsing, cold backend failure/Retry with no pilot fallback,
+  and synthetic mode's banner with zero discovery requests. Responses were
+  fictional intercepted fixtures, not live provider integration. Cold backend
+  failure does not prove a fully offline native app can boot its app bundle.
+- Independent review identified permissive legacy provenance validation. Hosted
+  responses now require a public HTTPS source URL without embedded credentials,
+  a nonempty source label and a known nonempty license. A new regression test
+  first failed, then passed; the fix is also on mobile PR #9.
+
+CI includes the same synthetic-only database setup and both Phase 2 browser
+modes. Repository visibility was confirmed public; standard ubuntu-latest runners
+are free for public repositories. New verification commits can therefore run CI
+without spending. Earlier skip markers document the initial precaution, not a
+remaining account-authorization requirement. Hosted CI results are recorded below
+after execution. No actual parking data was approved or published. The legacy public
+API/table RLS cutover remains a separately authorized rollout gate.

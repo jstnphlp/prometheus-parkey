@@ -1,7 +1,11 @@
 import { defineConfig, devices } from '@playwright/test'
 
+const phase2Mode = process.env.PARKEY_E2E_DISCOVERY_MODE
+
 export default defineConfig({
   testDir: './e2e',
+  testMatch: phase2Mode ? 'phase2.spec.ts' : '**/*.spec.ts',
+  testIgnore: phase2Mode ? [] : ['**/phase2.spec.ts'],
   fullyParallel: true,
   forbidOnly: Boolean(process.env.CI),
   retries: process.env.CI ? 1 : 0,
@@ -38,8 +42,11 @@ export default defineConfig({
       EXPO_PUBLIC_MAP_STYLE_URL: 'https://e2e.parkey.test/map-style.json',
       EXPO_PUBLIC_PHOTON_URL: 'https://e2e.parkey.test/search',
       EXPO_PUBLIC_OSRM_URL: 'https://e2e.parkey.test',
-      EXPO_PUBLIC_SUPABASE_URL: '',
-      EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY: '',
+      EXPO_PUBLIC_DISCOVERY_MODE: phase2Mode || '',
+      EXPO_PUBLIC_SUPABASE_URL:
+        phase2Mode === 'hosted' ? 'https://phase2.parkey.test' : '',
+      EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY:
+        phase2Mode === 'hosted' ? 'sb_publishable_synthetic_test' : '',
       EXPO_PUBLIC_ANALYTICS_ENDPOINT: '',
       EXPO_PUBLIC_SENTRY_DSN: '',
     },

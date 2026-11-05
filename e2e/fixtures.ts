@@ -131,7 +131,11 @@ export { expect }
 
 export async function openMap(page: Page, path = '/') {
   await page.goto(path)
-  await expect(page.getByTestId('discovery-map-ready')).toBeVisible()
+  // Metro may still be compiling the first cold development bundle after HTTP
+  // readiness. Wait for the app, rather than treating the bundling page as ready.
+  await expect(page.getByTestId('discovery-map-ready')).toBeVisible({
+    timeout: 60_000,
+  })
 }
 
 export async function openSpot(page: Page) {

@@ -29,8 +29,23 @@ set local role authenticated;
 select ok(not has_discovery_approval('e3000000-0000-4000-8000-000000000001'), 'source drift invalidates approval for authenticated clients');
 select ok(not exists(select 1 from jsonb_array_elements(discover_approved_parking(121.02,14.55,121.04,14.57)->'records') r where r->>'id' = 'e3000000-0000-4000-8000-000000000001'), 'drifted fixture hidden');
 reset role;
+-- Reapproval operates on unpublished staging, including reconciliation attempts.
+update discovery_parking set published = false where id = 'e3000000-0000-4000-8000-000000000001';
 select throws_like($$select approve_discovery_publication('e3000000-0000-4000-8000-000000000001','e1000000-0000-4000-8000-000000000001','https://example.org/physical','https://example.org/license','https://example.org/access','https://example.org/dedup')$$, '%reconciliation%', 'drift never silently overwritten');
 update discovery_sources set attribution = 'Fictional pgTAP fixture' where id = 'e2000000-0000-4000-8000-000000000001';
+update discovery_parking set published = true, name = 'Changed facts' where id = 'e3000000-0000-4000-8000-000000000001';
+select ok(not has_discovery_approval('e3000000-0000-4000-8000-000000000001'), 'parking fact drift invalidates approval');
+update discovery_parking set name = 'SAMPLE approval test' where id = 'e3000000-0000-4000-8000-000000000001';
+select ok(has_discovery_approval('e3000000-0000-4000-8000-000000000001'), 'exact approved facts restore visibility');
+insert into discovery_regulations(id,parking_id,source_id,description,published) values
+ ('e4000000-0000-4000-8000-000000000001','e3000000-0000-4000-8000-000000000001','e2000000-0000-4000-8000-000000000001','Synthetic restriction',true);
+select ok(not has_discovery_approval('e3000000-0000-4000-8000-000000000001'), 'new regulation invalidates approval');
+delete from discovery_regulations where id = 'e4000000-0000-4000-8000-000000000001';
+set local role anon;
+select throws_like($$update discovery_parking set published = true$$, '%permission denied%', 'anonymous discovery cannot publish');
+select throws_like($$select approve_discovery_publication('e3000000-0000-4000-8000-000000000001','e1000000-0000-4000-8000-000000000001','https://example.org/physical','https://example.org/license','https://example.org/access','https://example.org/dedup')$$, '%permission denied%', 'anonymous cannot invoke manual approval');
+select throws_like($$select discover_approved_parking(120,14,122,15)$$, '%Expected a viewport%', 'hosted API retains viewport bounds validation');
+reset role;
 update parkey_private.discovery_publication_approvals set approved_at = now() - interval '100 days', expires_at = now() - interval '1 day';
 select ok(not has_discovery_approval('e3000000-0000-4000-8000-000000000001'), 'expired approval denied');
 select * from finish();

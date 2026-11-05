@@ -171,6 +171,8 @@ test('all 3,744 actual facility groups produce an untouched publication-denied r
   const research = loadNcrResearch()
   const result = buildPermittedEnrichment(research)
   assert.equal(result.totals.facilityGroups, 3744)
+  assert.equal(result.totals.unnamedBreakdown.groups, 3112)
+  assert.equal(result.totals.unnamedBreakdown.withNamedPropertyContext, 0)
   assert.equal(result.baseNameTotals.unnamed_pending_reference, 3112)
   assert.ok(result.records.every((r) => r.publicationApproved === false))
   assert.ok(result.records.every((r) => r.approvedDisplayName === null))

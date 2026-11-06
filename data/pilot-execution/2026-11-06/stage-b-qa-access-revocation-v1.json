@@ -1,0 +1,79 @@
+{
+  "schemaVersion": 1,
+  "executedAt": "2026-11-06T00:56:45.332Z",
+  "sourceCommit": "da05ae2c98f7b3fd7ad0cd6c280f8a6fa5cc628d",
+  "environment": "local only",
+  "syntheticQaActor": "b1b00000-0000-4000-8000-000000000001",
+  "state": {
+    "cityFlags": [
+      {
+        "city": "Mandaluyong",
+        "candidateResearchEnabled": false,
+        "publicDestinationsEnabled": false
+      },
+      {
+        "city": "Manila",
+        "candidateResearchEnabled": false,
+        "publicDestinationsEnabled": false
+      }
+    ],
+    "canPublish": false,
+    "candidatePermission": false,
+    "retainedPrivateRecords": 4,
+    "actualPublicParkingApprovals": 0,
+    "actualDestinationPublications": 0
+  },
+  "checks": [
+    {
+      "city": "Manila",
+      "rpc": "discover_pilot_parking",
+      "previouslyAuthorizedSessionDenied": true,
+      "httpStatus": 403
+    },
+    {
+      "city": "Manila",
+      "rpc": "discover_pilot_destinations",
+      "previouslyAuthorizedSessionDenied": true,
+      "httpStatus": 403
+    },
+    {
+      "city": "Manila",
+      "rpc": "get_pilot_parking",
+      "previouslyAuthorizedSessionDenied": true,
+      "httpStatus": 403
+    },
+    {
+      "city": "Manila",
+      "rpc": "discover_pilot_parking",
+      "mode": "public",
+      "records": 0,
+      "httpStatus": 200
+    },
+    {
+      "city": "Mandaluyong",
+      "rpc": "discover_pilot_parking",
+      "previouslyAuthorizedSessionDenied": true,
+      "httpStatus": 403
+    },
+    {
+      "city": "Mandaluyong",
+      "rpc": "discover_pilot_destinations",
+      "previouslyAuthorizedSessionDenied": true,
+      "httpStatus": 403
+    },
+    {
+      "city": "Mandaluyong",
+      "rpc": "get_pilot_parking",
+      "previouslyAuthorizedSessionDenied": true,
+      "httpStatus": 403
+    },
+    {
+      "city": "Mandaluyong",
+      "rpc": "discover_pilot_parking",
+      "mode": "public",
+      "records": 0,
+      "httpStatus": 200
+    }
+  ],
+  "notice": "Temporary engineering QA access revoked. Immutable private imports and audit history preserved. No release or actual parking publication approval."
+}

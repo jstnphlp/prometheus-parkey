@@ -1,0 +1,127 @@
+{
+  "schemaVersion": 1,
+  "executionId": "stage-b-execution-v2",
+  "recordedAt": "2026-11-06T01:02:13.383Z",
+  "testedCommit": "da05ae2c98f7b3fd7ad0cd6c280f8a6fa5cc628d",
+  "testedMobileTree": "a4384e807ebe5f1fb8bc27c82f76bd1ea0eb6cec",
+  "stageAPassedCommit": "f54f2b5",
+  "stageAExecutionId": "stage-a-execution-v2",
+  "draftPr": "https://github.com/jstnphlp/prometheus-parkey/pull/19",
+  "checks": [
+    {
+      "id": "server-pilot-geography",
+      "status": "PASS",
+      "executed": true,
+      "satisfied": true,
+      "evidenceReferences": [
+        "data/pilot-geography.v1.json",
+        "supabase/tests/database/pilot_scope.test.sql",
+        "data/pilot-execution/2026-11-06/stage-b-ci-v1.json"
+      ]
+    },
+    {
+      "id": "mobile-pilot-integration",
+      "status": "PASS",
+      "executed": true,
+      "satisfied": true,
+      "evidenceReferences": [
+        "data/pilot-execution/2026-11-06/stage-b-android.json",
+        "data/pilot-execution/2026-11-06/stage-b-ci-v1.json"
+      ]
+    },
+    {
+      "id": "public-research-separation",
+      "status": "PASS",
+      "executed": true,
+      "satisfied": true,
+      "evidenceReferences": [
+        "data/pilot-execution/2026-11-06/stage-b-http-contract-v2.json",
+        "data/pilot-execution/2026-11-06/stage-b-qa-access-revocation-v1.json",
+        "data/pilot-execution/2026-11-06/stage-b-android.json"
+      ]
+    },
+    {
+      "id": "approval-expiry-revocation",
+      "status": "PASS",
+      "executed": true,
+      "satisfied": true,
+      "evidenceReferences": [
+        "supabase/tests/database/reviewer_evidence.test.sql",
+        "supabase/tests/database/pilot_scope.test.sql",
+        "data/pilot-execution/2026-11-06/stage-b-qa-access-revocation-v1.json",
+        "e2e/pilot/discovery.spec.ts"
+      ]
+    },
+    {
+      "id": "bounded-cancelled-queries",
+      "status": "PASS",
+      "executed": true,
+      "satisfied": true,
+      "evidenceReferences": [
+        "apps/mobile/src/discovery/pilot-client.test.mjs",
+        "supabase/tests/database/pilot_scope.test.sql",
+        "data/pilot-execution/2026-11-06/stage-b-ci-v1.json"
+      ]
+    },
+    {
+      "id": "release-configuration",
+      "status": "PASS",
+      "executed": true,
+      "satisfied": true,
+      "evidenceReferences": [
+        "scripts/check-release.test.mjs",
+        "apps/mobile/src/discovery/pilot-config.test.mjs",
+        "docs/manila-mandaluyong-pilot-build.md",
+        "data/pilot-execution/2026-11-06/stage-b-ci-v1.json"
+      ]
+    },
+    {
+      "id": "pilot-flow-tests",
+      "status": "PASS",
+      "executed": true,
+      "satisfied": true,
+      "evidenceReferences": [
+        "data/pilot-execution/2026-11-06/stage-b-ci-v1.json",
+        "data/pilot-execution/2026-11-06/stage-b-http-contract-v2.json"
+      ]
+    },
+    {
+      "id": "native-pilot-smoke",
+      "status": "PASS",
+      "executed": true,
+      "satisfied": true,
+      "evidenceReferences": [
+        "data/pilot-execution/2026-11-06/stage-b-android.json",
+        "docs/evidence/pilot-2026-11-06/manifest.json"
+      ]
+    }
+  ],
+  "facts": {
+    "javascriptTestsPassed": 344,
+    "pythonTestsPassed": 38,
+    "unitSkipped": 0,
+    "localSqlAssertionsPassed": 343,
+    "localSqlFiles": 6,
+    "browserLegacyPassed": 52,
+    "browserPilotPassed": 20,
+    "browserTotalPassed": 72,
+    "nativeAndroidCasesPassed": 17,
+    "privateQaParkingRecords": 2,
+    "privateQaDestinations": 2,
+    "qaPermissionsRevoked": true,
+    "actualOfficialNamesVerified": 0,
+    "actualOperatorApprovals": 0,
+    "actualPublicationApprovals": 0,
+    "actualPhysicalVerifications": 0,
+    "hostedDatabaseWrites": 0,
+    "productionDeployments": 0,
+    "merges": 0
+  },
+  "platforms": {
+    "android": "PASS_FRESH_DEBUG_APK_AND_EMULATOR",
+    "ios": "NOT_EXECUTED_NO_LOCAL_APPLE_HOST",
+    "signedAndroidRelease": "NOT_EXECUTED",
+    "successfulGpsFix": "NOT_DEMONSTRATED"
+  },
+  "notice": "Android discovery engineering criteria passed. iOS device validation and signed distribution remain unverified. No founder release authorization, actual public parking approval, physical verification or market validation is created."
+}

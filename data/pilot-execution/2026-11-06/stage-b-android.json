@@ -1,0 +1,314 @@
+{
+  "schema_version": 1,
+  "stage": "B-native",
+  "platform": "android",
+  "executed_on": "2026-11-06",
+  "completed_at_utc": "2026-11-06T01:00:36.942Z",
+  "status": "passed",
+  "required_cases_executed": 17,
+  "required_cases_passed": 17,
+  "coverage_basis": "Pass is based on actual requested behavior coverage and observed evidence, not a target case count. Release/iOS/GPS-success claims are outside this native debug execution.",
+  "evidence_root": "output/ncr/pilot-stage-b/",
+  "evidence_index": {
+    "path": "native-evidence-index.json",
+    "sha256": "4188ea2ae898fb048815e8b0f2dfef1447137b5a431d8d7c7e0a1076dabc452c"
+  },
+  "source": {
+    "tested_commit": "da05ae2c98f7b3fd7ad0cd6c280f8a6fa5cc628d",
+    "tested_mobile_tree_sha1": "a4384e807ebe5f1fb8bc27c82f76bd1ea0eb6cec",
+    "mobile_working_diff": false,
+    "pnpm_lock_sha256": "06a052d734ec71e65adb567231549b807190cdcaf1699d0a87fd9a9b26da2dc1",
+    "app_json_sha256": "85c9f97e42a66c8d6670fdaf9e576cca634296d25a0de2844eb997476cd776a0"
+  },
+  "apk": {
+    "path": "fresh-stage-b-app-debug.apk",
+    "sha256": "d44de93e814045e42232de704d317d7556902031213ae68fe7c371dcd1149d47",
+    "installed_base_apk_sha256": "d44de93e814045e42232de704d317d7556902031213ae68fe7c371dcd1149d47",
+    "bytes": 113592615,
+    "packaged_at": "2026-11-06T08:27:38+08:00",
+    "installed_update_time_utc": "2026-11-06T00:30:05Z",
+    "package": "com.parkey.discovery",
+    "version_name": "0.1.0",
+    "version_code": 2,
+    "build_type": "local debug development client; not a signed release",
+    "architecture": "x86_64",
+    "compile_sdk": 37,
+    "target_sdk": 36,
+    "min_sdk": 24,
+    "build_command": "gradlew.bat :app:assembleDebug -PreactNativeArchitectures=x86_64 --max-workers=1 --no-parallel --no-daemon -Dorg.gradle.jvmargs=\"-Xmx1536m -XX:MaxMetaspaceSize=512m -XX:ActiveProcessorCount=2\" --console=plain",
+    "result": "BUILD SUCCESSFUL in 12m 43s; 565 tasks: 533 executed, 32 up-to-date",
+    "historical_stage_a_apk_counted": false
+  },
+  "javascript": {
+    "metro": "http://127.0.0.1:8094",
+    "bundle_path": "current-android.bundle",
+    "sha256": "95d4d60c4fbc7ebc8dfc1fa2384591e20f20a25dc7cbedf1a75bc781f36aa2e4",
+    "bytes": 8419302,
+    "bundle_url": "http://127.0.0.1:8094/node_modules/expo-router/entry.bundle?platform=android&dev=true&hot=false&lazy=true&transform.engine=hermes&transform.bytecode=1&transform.routerRoot=src%2Fapp&unstable_transformProfile=hermes-stable",
+    "manifest_path": "metro-manifest.json",
+    "manifest_sha256": "51d2135920fd806eb639fab8a15e4da07c36b628bbcc73b007fa27f3365c3e1c",
+    "expo": "58.0.19",
+    "react_native": "0.88.0",
+    "maplibre_react_native": "11.5.0",
+    "reviewer_token_in_bundle": false,
+    "product_diagnostic_source_changes": false
+  },
+  "device": {
+    "kind": "authorized local emulator; no physical device",
+    "avd": "Pixel_10_Pro",
+    "serial": "emulator-5554",
+    "android": "17",
+    "api": 37,
+    "system_image": "android-37.2/google_apis_playstore_ps16k/x86_64",
+    "fingerprint": "google/sdk_gphone16k_x86_64/emu64xa16k:17/CP41.260831.015/16516427:user/dev-keys",
+    "screen": "Physical size: 1280x2856",
+    "density": "Physical density: 480",
+    "launch_options": "-avd Pixel_10_Pro -no-window -no-audio -no-boot-anim -no-snapshot -gpu host",
+    "gpu": "GLES: Google (NVIDIA Corporation), Android Emulator OpenGL ES Translator (NVIDIA GeForce RTX 2050/PCIe/SSE2), OpenGL ES 3.1 (4.5.0 NVIDIA 581.08)"
+  },
+  "backend": {
+    "kind": "actual disposable local Supabase REST/PostgreSQL; no fabricated API responses",
+    "gateway": "http://127.0.0.1:55431",
+    "api_adb_reverse": "tcp:55431 to tcp:55431",
+    "pilot_flag": true,
+    "cities": ["Manila", "Mandaluyong"],
+    "imported_original_private_qa_records": {
+      "parking": 2,
+      "destinations": 2
+    },
+    "actual_public_approvals": 0,
+    "reviewer": "locally issued synthetic authenticated AAL2 QA session registered server-side; not a real MFA enrollment/login demonstration",
+    "reviewer_input": "secure native field; credential passed over adb stdin; no credential values in this record",
+    "candidate_mode_initially_denied_then_locally_enabled_for_positive_checks": true,
+    "final_qa_access": "reviewer role and both candidate city flags disabled; private imports retained; public0",
+    "revocation_receipt": "data/pilot-execution/2026-11-06/stage-b-qa-access-revocation-v1.json"
+  },
+  "providers": {
+    "map": "https://tiles.openfreemap.org/styles/positron",
+    "source_attribution": "OpenStreetMap contributors / ODbL-1.0",
+    "destination_search": "actual city-scoped local Supabase destination catalog RPC; no geocoder fallback used",
+    "external_navigation": "not opened; both real candidate records had disabled reviewed-entrance Maps actions"
+  },
+  "cases": [
+    {
+      "id": "b-native-01-fresh-build-install",
+      "executed": true,
+      "outcome": "pass",
+      "observed": "Current-source local Android prebuild and fresh x86_64 debug APK assembled successfully. Installed base APK SHA-256 equals the fresh archive; version 0.1.0/code 2. Stage A and historical APKs were excluded.",
+      "evidence": [
+        "android-prebuild.log",
+        "android-build.log",
+        "apk-metadata.json",
+        "runtime-identity.json"
+      ]
+    },
+    {
+      "id": "b-native-02-main-public-map",
+      "executed": true,
+      "outcome": "pass",
+      "observed": "The enabled pilot main screen starts in Manila/public mode with 0 approved records and an honest empty-state explanation. Native MapLibre street text and source points render legibly with the NVIDIA host GPU.",
+      "evidence": [
+        "01-main-public.txt",
+        "01-main-public.png",
+        "08-manila-museum-map-focus.png",
+        "12-mandaluyong-crossings-map-focus-confirmed.png"
+      ]
+    },
+    {
+      "id": "b-native-03-location-denied-manual-recovery",
+      "executed": true,
+      "outcome": "pass",
+      "observed": "Pressed My location, declined Android location permission, observed Location unavailable, then manually selected Mandaluyong and retained working public discovery. No successful GPS fix is claimed.",
+      "evidence": [
+        "02-location-denied.txt",
+        "02-location-denied.png",
+        "02-denied-manual-city-recovery.txt"
+      ]
+    },
+    {
+      "id": "b-native-04-location-service-unavailable",
+      "executed": true,
+      "outcome": "pass",
+      "observed": "Granted location permission but disabled Android device location, pressed My location, declined the Google Location Accuracy offer, and observed the unavailable/manual-selection warning. Manual city/search discovery remains usable.",
+      "evidence": [
+        "03-location-unavailable.txt",
+        "03-location-unavailable.png",
+        "08-manila-museum-map-focus.png"
+      ]
+    },
+    {
+      "id": "b-native-05-anonymous-candidate-denied",
+      "executed": true,
+      "outcome": "pass",
+      "observed": "Opened the restricted access form and submitted the actual local anonymous JWT through its secure input. Server access was refused; the app cleared candidate state and returned to public0 with an explicit access-refused message.",
+      "evidence": [
+        "04-anonymous-candidate-access-prompt.png",
+        "04-anonymous-candidate-denied.txt",
+        "04-anonymous-candidate-denied.png"
+      ]
+    },
+    {
+      "id": "b-native-06-manila-authorized-candidate",
+      "executed": true,
+      "outcome": "pass",
+      "observed": "Entered the locally issued synthetic AAL2 reviewer session through the secure native field. Server returned the one real imported Manila source observation; restricted/unverified warning remained visible. The reviewer credential stayed out of environment configuration and the served JavaScript bundle.",
+      "evidence": [
+        "05-manila-authorized-candidate.txt",
+        "05-manila-authorized-candidate.png",
+        "runtime-identity.json"
+      ]
+    },
+    {
+      "id": "b-native-07-real-category-filter-behavior",
+      "executed": true,
+      "outcome": "pass",
+      "observed": "Manila Lots showed No loaded records match this filter; Unclassified restored its one facility-unspecified observation. Mandaluyong Garages showed empty; Lots restored its one lot/customer-access observation. These were actual filter activations against loaded server data.",
+      "evidence": [
+        "06-manila-lots-empty.txt",
+        "06-manila-lots-empty.png",
+        "06-manila-unclassified-restored.txt",
+        "06-manila-unclassified-restored.png",
+        "10-mandaluyong-garages-empty.txt",
+        "10-mandaluyong-lots-restored.txt"
+      ]
+    },
+    {
+      "id": "b-native-08-manila-detail-provenance-navigation-blocked",
+      "executed": true,
+      "outcome": "pass",
+      "observed": "Selected the real Manila list record and focused its map anchor. Detail preserved Unnamed parking facility as the original source, unknown official name/fees/hours/capacity/access, no operator/physical/publication approval, nearby Museum context with ownership/access disclaimers, OSM/ODbL provenance and source date. Open reviewed entrance in Maps was disabled with the required entrance/access/operator-permission warning.",
+      "evidence": [
+        "07-manila-detail-top.txt",
+        "07-manila-detail-top.png",
+        "07-manila-detail-bottom.txt",
+        "07-manila-detail-bottom.png",
+        "07-manila-record-map-focus.png"
+      ]
+    },
+    {
+      "id": "b-native-09-manila-destination-search-and-map-focus",
+      "executed": true,
+      "outcome": "pass",
+      "observed": "Typed Museum in the Manila destination search. The real Museum of the Chinese in Philippine Life source destination appeared, with destination-not-parking/access disclaimer. Selected it; the main label became Near Museum... and the native map focused the source area while the observation stayed unverified.",
+      "evidence": [
+        "08-manila-museum-search.txt",
+        "08-manila-museum-search.png",
+        "08-manila-museum-map-focus.txt",
+        "08-manila-museum-map-focus.png"
+      ]
+    },
+    {
+      "id": "b-native-10-mandaluyong-candidate-detail",
+      "executed": true,
+      "outcome": "pass",
+      "observed": "Switched to Mandaluyong; the previous Manila destination cleared and one real lot/customer-access observation loaded. Detail showed nearby Crossings context, unknown fees/hours/capacity, no physical/operator/publication approval, ownership/visitor-access disclaimers and OSM/ODbL source date. Reviewed-entrance Maps remained disabled.",
+      "evidence": [
+        "09-mandaluyong-authorized-candidate.txt",
+        "09-mandaluyong-authorized-candidate.png",
+        "11-mandaluyong-detail-top.txt",
+        "11-mandaluyong-detail-top.png",
+        "11-mandaluyong-detail-bottom.txt",
+        "11-mandaluyong-detail-bottom.png"
+      ]
+    },
+    {
+      "id": "b-native-11-mandaluyong-destination-search-and-focus",
+      "executed": true,
+      "outcome": "pass",
+      "observed": "Typed Crossings in the Mandaluyong destination search and selected the real Crossings Department Store result. Confirmed the sheet closed, Near Crossings Department Store appeared and the native map focused the source area. An initial tap did not transition; only the later confirmed transition is counted.",
+      "evidence": [
+        "12-mandaluyong-crossings-search.txt",
+        "12-mandaluyong-crossings-search.png",
+        "12-mandaluyong-crossings-map-focus-confirmed.txt",
+        "12-mandaluyong-crossings-map-focus-confirmed.png"
+      ]
+    },
+    {
+      "id": "b-native-12-city-scope-clears-stale-destination",
+      "executed": true,
+      "outcome": "pass",
+      "observed": "Switching Manila to Mandaluyong cleared the Museum selection and loaded the Mandaluyong record. Querying Museum in Mandaluyong returned no destination; Crossings returned its city-scoped result.",
+      "evidence": [
+        "09-mandaluyong-authorized-candidate.txt",
+        "12-mandaluyong-museum-excluded.txt",
+        "12-mandaluyong-crossings-search.txt"
+      ]
+    },
+    {
+      "id": "b-native-13-process-restart-loses-reviewer-token",
+      "executed": true,
+      "outcome": "pass",
+      "observed": "Force-stopped the actual app while a private reviewer session had been used, then relaunched the same installed APK/current Metro bundle. It started in Manila/public0; opening the reviewer form showed an empty input and required fresh secure credential entry. Reconnecting recovered private1.",
+      "evidence": [
+        "13-process-restart-public.txt",
+        "13-process-restart-public.png",
+        "13-restart-empty-reviewer-input.txt",
+        "14-api-restored-private.txt"
+      ]
+    },
+    {
+      "id": "b-native-14-api-interruption-refresh-recovery",
+      "executed": true,
+      "outcome": "pass",
+      "observed": "Removed only the API adb reverse. Existing keepalive sockets initially still worked and were not counted as an interruption. Restarted the app with that reverse absent to force a new connection; native UI displayed java.net.ConnectException and public0. Restored the reverse and pressed Refresh: error cleared, honest public0 returned. Fresh reviewer connection then recovered actual private1.",
+      "evidence": [
+        "14-api-offline-error.txt",
+        "14-api-offline-error.png",
+        "14-api-restored-public.txt",
+        "14-api-restored-public.png",
+        "14-api-restored-private.txt"
+      ]
+    },
+    {
+      "id": "b-native-15-public-switch-clears-private",
+      "executed": true,
+      "outcome": "pass",
+      "observed": "After private recovery, pressed Approved parking. Candidate mode, warning and private source marker cleared; public0 and the honest empty state returned.",
+      "evidence": [
+        "15-public-mode-cleared-private.txt",
+        "15-public-mode-cleared-private.png"
+      ]
+    },
+    {
+      "id": "b-native-16-development-poblacion-regression",
+      "executed": true,
+      "outcome": "pass",
+      "observed": "Opened the development-only Original Poblacion map. Declined Google accuracy terms using the screenshot-confirmed No thanks control. Bundled parking and native map rendered; selected an actual record. Detail retained Not field verified/No live availability, customer access, unknown hours/spaces, entrance warning and disabled Go. Returned to pilot cities and reconnected the reviewer for the final revocation check.",
+      "evidence": [
+        "16-poblacion-disabled-go.txt",
+        "16-poblacion-map.png",
+        "16-poblacion-detail.txt",
+        "16-poblacion-detail.png",
+        "17-pre-revocation-candidate-current.txt"
+      ]
+    },
+    {
+      "id": "b-native-17-live-server-revocation-clears-private",
+      "executed": true,
+      "outcome": "pass",
+      "observed": "With Manila candidate1 active, the parent disabled only the local synthetic reviewer role and both local candidate city flags. Pressed native Refresh: the app removed private data, returned to Approved/public0 and displayed Reviewer access was refused or expired. Public discovery remains available. Switching Mandaluyong remained public0. No approvals were created.",
+      "evidence": [
+        "17-pre-revocation-candidate-current.txt",
+        "17-live-revocation-cleared-private.txt",
+        "17-live-revocation-cleared-private.png",
+        "17-revoked-mandaluyong-public.txt",
+        "17-revoked-mandaluyong-public.png"
+      ]
+    }
+  ],
+  "resolved_execution_obstacles": [
+    "Inherited Stage A disk/RAM/fbjni-cache failures were resolved before this build; B built successfully with scoped x86_64/single-worker settings. No broad cache deletion was performed for B.",
+    "ADB server initially hung and the prior AVD was offline. Restarted the verified SDK adb server and the owned local AVD; host-GPU cold boot recovered device execution.",
+    "Metro reported a stale file-map cache deserialize warning and automatically rebuilt its dependency map; no product source or manual cache mutation was needed.",
+    "Stage A demonstrated default SwiftShader blank text; explicit NVIDIA host GPU is the passing configuration reused and visually verified for B.",
+    "A test-harness launch URL escaping error produced an Invalid URL development overlay; corrected to the plain valid Metro launch URL and restarted. This was not a product source defect and the failed launch is not counted as a passing case.",
+    "A first Crossings tap did not transition, and semantic bounds for a GMS No thanks button missed the visible button. Retained raw attempts, then verified the actual Crossings transition and used screenshot-observed coordinates solely to decline the GMS offer."
+  ],
+  "limitations": [
+    "Successful device GPS fix was not demonstrated; denied and service-unavailable paths plus manual discovery recovery were executed.",
+    "Google Location Accuracy terms were declined; no unknown remote terms were accepted.",
+    "iOS simulator/device and signed Android release archive were not available/executed on this Windows host. Local release configuration checks and default-off profiles are separate from this debug APK proof.",
+    "The debug QA build uses explicit local HTTP Supabase and a real synthetic QA reviewer. Release HTTPS/public-key/provider guards and production flags are not bypassed by this record.",
+    "No private observation was published or approved; no unverified entrance navigation, booking, payment, hosted deployment or paid cloud resource was exercised."
+  ]
+}

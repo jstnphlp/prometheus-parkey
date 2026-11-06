@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "checkedAt": "2026-11-06T00:44:21.106Z",
+  "purpose": "Confirm dependency heads after overnight continuation",
+  "heads": [
+    {
+      "pr": 13,
+      "sha": "00a9b02be781e783755a27185b65fd8b586aa2ba",
+      "base": "main",
+      "state": "OPEN",
+      "unchangedFromStageAAudit": true,
+      "successfulChecksOnHead": ["validate", "database", "e2e"]
+    },
+    {
+      "pr": 15,
+      "sha": "fb3ec3a3fb5f0d96eae993dd1662b9ba2e562616",
+      "base": "feat/ncr-research-foundation",
+      "state": "OPEN",
+      "unchangedFromStageAAudit": true,
+      "successfulChecksOnHead": ["validate", "database", "e2e"]
+    },
+    {
+      "pr": 16,
+      "sha": "0e5e325eb33ba89b4fa5e1e742c956e71b8c791d",
+      "base": "feat/ncr-named-inventory-v2",
+      "state": "OPEN",
+      "unchangedFromStageAAudit": true,
+      "successfulChecksOnHead": ["validate", "database", "e2e"]
+    },
+    {
+      "pr": 17,
+      "sha": "2e91da86b9ba67b13ae057e9ba5e60708d5c0dbf",
+      "base": "feat/ncr-permitted-name-enrichment",
+      "state": "OPEN",
+      "unchangedFromStageAAudit": true,
+      "successfulChecksOnHead": ["validate", "database", "e2e"]
+    }
+  ],
+  "notice": "Cancelled duplicate historical runs remain visible in GitHub. No branch was merged or modified by this recheck."
+}

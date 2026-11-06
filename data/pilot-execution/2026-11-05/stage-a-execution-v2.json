@@ -1,0 +1,156 @@
+{
+  "schemaVersion": 1,
+  "executionId": "stage-a-execution-v2",
+  "recordedAt": "2026-11-05T15:25:58.262Z",
+  "baseCommit": "ecf34ff6569503ab90adcfc5fffa6d7a55ae030f",
+  "includesWorkingTreeImplementation": false,
+  "draftPr": "https://github.com/jstnphlp/prometheus-parkey/pull/18",
+  "checks": [
+    {
+      "id": "dependency-chain-audit",
+      "status": "PASS",
+      "executed": true,
+      "satisfied": true,
+      "evidenceReferences": [
+        "docs/pilot-integration-audit.md",
+        "data/pilot-execution/2026-11-05/integration-audit.json"
+      ]
+    },
+    {
+      "id": "frozen-install",
+      "status": "PASS",
+      "executed": true,
+      "satisfied": true,
+      "evidenceReferences": ["output/ncr/integration-stage-a-install.log"]
+    },
+    {
+      "id": "lint",
+      "status": "PASS",
+      "executed": true,
+      "satisfied": true,
+      "evidenceReferences": ["output/ncr/integration-stage-a-lint.log"]
+    },
+    {
+      "id": "typecheck",
+      "status": "PASS",
+      "executed": true,
+      "satisfied": true,
+      "evidenceReferences": ["output/ncr/integration-stage-a-typecheck.log"]
+    },
+    {
+      "id": "format",
+      "status": "PASS",
+      "executed": true,
+      "satisfied": true,
+      "evidenceReferences": ["output/ncr/integration-stage-a-format.log"]
+    },
+    {
+      "id": "unit",
+      "status": "PASS",
+      "executed": true,
+      "satisfied": true,
+      "evidenceReferences": ["output/ncr/integration-stage-a-unit.log"]
+    },
+    {
+      "id": "data-audit",
+      "status": "PASS",
+      "executed": true,
+      "satisfied": true,
+      "evidenceReferences": ["output/ncr/integration-stage-a-audit.log"]
+    },
+    {
+      "id": "web-build",
+      "status": "PASS",
+      "executed": true,
+      "satisfied": true,
+      "evidenceReferences": ["output/ncr/integration-stage-a-build-web.log"]
+    },
+    {
+      "id": "browser-e2e",
+      "status": "PASS",
+      "executed": true,
+      "satisfied": true,
+      "evidenceReferences": [
+        "https://github.com/jstnphlp/prometheus-parkey/actions/runs/42051201841"
+      ]
+    },
+    {
+      "id": "local-database",
+      "status": "PASS",
+      "executed": true,
+      "satisfied": true,
+      "evidenceReferences": [
+        "output/ncr/integration-stage-a-database-classification.log"
+      ]
+    },
+    {
+      "id": "review-publication-safeguards",
+      "status": "PASS",
+      "executed": true,
+      "satisfied": true,
+      "evidenceReferences": [
+        "docs/pilot-stage-a-review.md",
+        "docs/ncr-reviewer-workflow.md",
+        "supabase/tests/database/reviewer_evidence.test.sql"
+      ]
+    },
+    {
+      "id": "historical-preservation",
+      "status": "PASS",
+      "executed": true,
+      "satisfied": true,
+      "evidenceReferences": [
+        "data/pilot-execution/2026-11-05/integration-contract-check.json",
+        "output/ncr/integration-stage-a-unit.log"
+      ]
+    },
+    {
+      "id": "fresh-android-build",
+      "status": "PASS",
+      "executed": true,
+      "satisfied": true,
+      "evidenceReferences": [
+        "data/pilot-execution/2026-11-05/stage-a-android.json"
+      ]
+    },
+    {
+      "id": "android-smoke",
+      "status": "PASS",
+      "executed": true,
+      "satisfied": true,
+      "evidenceReferences": [
+        "data/pilot-execution/2026-11-05/stage-a-android.json"
+      ]
+    },
+    {
+      "id": "draft-pr-and-report",
+      "status": "PASS",
+      "executed": true,
+      "satisfied": true,
+      "evidenceReferences": [
+        "https://github.com/jstnphlp/prometheus-parkey/pull/18",
+        "docs/pilot-engineering-execution.md"
+      ]
+    }
+  ],
+  "facts": {
+    "javascriptTestsPassed": 317,
+    "pythonTestsPassed": 38,
+    "unitSkipped": 0,
+    "localSqlAssertionsPassed": 251,
+    "localSqlFiles": 5,
+    "hostedDatabaseWrites": 0,
+    "actualPublicationApprovals": 0,
+    "actualPhysicalVerifications": 0,
+    "javascriptCountBasis": "316 prior full-suite tests plus new facility-classification guard; exact-head validate CI passes full suite; local reviewer incremental 6/6 including database round trip",
+    "androidSmokeCasesPassed": 13
+  },
+  "platforms": {
+    "android": "PASS",
+    "ios": "BLOCKED_NO_LOCAL_APPLE_HOST",
+    "iosTestsExecuted": false
+  },
+  "stageBExecuted": false,
+  "notice": "Stage A passed with fresh APK and actual Android smoke. Stage B had not started when this gate was recorded. Release and publication remain unauthorized.",
+  "testedCommit": "372c6c7c5297ff70af1365db10ad67a5e0b2bb5f"
+}

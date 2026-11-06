@@ -1,0 +1,28 @@
+{
+  "result": "PASS",
+  "checks": [
+    {
+      "enrichment": null,
+      "pages": 11,
+      "sourceObservations": 5427,
+      "privateDestinationLabels": 0,
+      "publicObservations": 0
+    },
+    {
+      "enrichment": "data/ncr-enrichment/2026-11-05/name-enrichment.json.gz",
+      "pages": 11,
+      "sourceObservations": 5427,
+      "privateDestinationLabels": 811,
+      "publicObservations": 0
+    },
+    {
+      "enrichment": "data/ncr-destinations/2026-11-05/destination-enrichment.json.gz",
+      "pages": 11,
+      "sourceObservations": 5427,
+      "privateDestinationLabels": 1099,
+      "publicObservations": 0
+    }
+  ],
+  "poblacionCanonicalFilesPreserved": 5,
+  "publicationEvents": 0
+}

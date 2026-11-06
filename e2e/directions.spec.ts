@@ -8,6 +8,8 @@ import {
   spotPath,
 } from './fixtures'
 
+test.use({ reviewedNavigation: true })
+
 test('directions require consent, start navigation, and return to the map', async ({
   page,
   context,

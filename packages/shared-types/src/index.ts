@@ -76,9 +76,19 @@ export type DiscoveryParking = {
   osmTags?: Record<string, string>
   osmEditedAt?: string | null
   entrances?: Coordinate[]
+  /** Explicit, expiring reviewer authorization; mapped entrances alone grant none. */
+  navigationApproval?: ParkingNavigationApproval | null
   sourceUpdatedAt: string | null
   verification: 'unverified' | 'verified'
   verifiedAt: string | null
+}
+
+export type ParkingNavigationApproval = {
+  entrance: Coordinate
+  entranceConfirmed: true
+  visitorAccessConfirmed: true
+  operatorAuthorized: true
+  expiresAt: string
 }
 
 /** Review drafts never confer verification or permission to park. */

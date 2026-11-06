@@ -24,7 +24,10 @@ test('loads mapped parking, opens details, and returns with browser Back', async
   await expect(
     page.getByRole('button', { name: 'Save parking', exact: true }),
   ).toBeEnabled()
-  await expect(page.getByTestId('parking-get-directions')).toBeEnabled()
+  await expect(page.getByTestId('parking-get-directions')).toBeDisabled()
+  await expect(page.getByTestId('parking-navigation-warning')).toContainText(
+    'confirmed entrance',
+  )
   await expect(page).toHaveURL(/spot=osm%3Away%2F113539118/)
   await page.goBack()
   await expect(page.getByTestId('parking-detail-title')).toHaveCount(0)

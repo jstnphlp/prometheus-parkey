@@ -6,6 +6,7 @@ import { FigmaAsset } from './figma-assets'
 import { MotionPressable } from './motion'
 import { colors } from './palette'
 import { parkingDetailData } from './parking-detail-data'
+import { reviewedParkingEntrance } from './parking-navigation'
 import { ParkingStatus } from './parking-status'
 import { ui } from './ui'
 import { useReducedMotion } from './use-reduced-motion'
@@ -76,6 +77,7 @@ export function NearbyCard({
   onGo: () => void
 }) {
   const details = parkingDetailData(parking, location, now)
+  const canNavigate = Boolean(reviewedParkingEntrance(parking, now.getTime()))
   return (
     <View style={styles.card}>
       <MotionPressable
@@ -95,13 +97,13 @@ export function NearbyCard({
       <MotionPressable
         accessibilityRole="button"
         accessibilityLabel={`Go to ${details.title}`}
-        disabled={parking.sourceKind === 'sample'}
-        accessibilityState={{ disabled: parking.sourceKind === 'sample' }}
+        disabled={!canNavigate}
+        accessibilityState={{ disabled: !canNavigate }}
         onPress={onGo}
         style={({ pressed }) => [
           styles.go,
           pressed && ui.pressed,
-          parking.sourceKind === 'sample' && ui.disabled,
+          !canNavigate && ui.disabled,
         ]}
       >
         <FigmaAsset name="go" size={24} />

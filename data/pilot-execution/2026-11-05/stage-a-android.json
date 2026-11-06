@@ -1,0 +1,229 @@
+{
+  "schema_version": 1,
+  "stage": "A2",
+  "platform": "android",
+  "executed_on": "2026-11-05",
+  "status": "passed",
+  "required_cases_executed": 13,
+  "required_cases_passed": 13,
+  "coverage_basis": "Gate coverage is based on observed requested behaviors and evidence, not the number of cases in this execution breakdown.",
+  "evidence_root": "output/ncr/integration-stage-a/",
+  "source": {
+    "pr17_head": "2e91da86b9ba67b13ae057e9ba5e60708d5c0dbf",
+    "runtime_launch_head": "432bb98bc651fad9d6abc55178aa9225704e35c7",
+    "recorded_head": "372c6c7c5297ff70af1365db10ad67a5e0b2bb5f",
+    "tested_mobile_tree_sha1": "11969eccdf85648d40a7885d973ba3b4be37b2bf",
+    "mobile_working_diff": false,
+    "pnpm_lock_sha256": "06a052d734ec71e65adb567231549b807190cdcaf1699d0a87fd9a9b26da2dc1",
+    "app_config_sha256": "a01ef4bbdf4365ed532ec95b5b113ece7d6fc344f51cf97fc2c3c0af54a898b5"
+  },
+  "apk": {
+    "path": "fresh-nov5-app-debug.apk",
+    "sha256": "1b973776ff94b67977f0f112d26e74cd1aa129bdf7fdf36c9624f50ebd5879e9",
+    "installed_base_apk_sha256": "1b973776ff94b67977f0f112d26e74cd1aa129bdf7fdf36c9624f50ebd5879e9",
+    "bytes": 113592295,
+    "packaged_at": "2026-11-05T22:32:07+08:00",
+    "installed_update_time_utc": "2026-11-05T14:36:11Z",
+    "package": "com.parkey.discovery",
+    "version_name": "0.1.0",
+    "version_code": 1,
+    "build_type": "debug development client",
+    "requested_native_architecture": "x86_64",
+    "compile_sdk": 37,
+    "target_sdk": 36,
+    "min_sdk": 24,
+    "build_command": "gradlew.bat :app:assembleDebug -PreactNativeArchitectures=x86_64 --max-workers=1 --no-parallel --no-daemon -Dorg.gradle.jvmargs='-Xmx1536m -XX:MaxMetaspaceSize=512m -XX:ActiveProcessorCount=2' --console=plain",
+    "result": "BUILD SUCCESSFUL in 9m 6s; packageDebug executed; 565 tasks, 42 executed, 523 up-to-date",
+    "build_log": "android-build-fresh-daemon.log",
+    "historical_apk_excluded": {
+      "path": "historical-nov3-app-debug.apk",
+      "sha256": "10410775aa7ec17fc5dbaab4f8ad132a996b229a5c7601f701541efb4754cef8"
+    }
+  },
+  "javascript": {
+    "metro": "http://127.0.0.1:8093",
+    "bundle_path": "current-android.bundle",
+    "sha256": "5e27a1b729e5d047f8a3b2121e920f16bdb7b536cfefc799a0ba9119314ce6a2",
+    "manifest": "metro-post-safety-manifest.json",
+    "bundle_url": "http://127.0.0.1:8093/node_modules/expo-router/entry.bundle?platform=android&dev=true&hot=false&lazy=true&transform.engine=hermes&transform.bytecode=1&transform.routerRoot=src%2Fapp&unstable_transformProfile=hermes-stable",
+    "expo": "58.0.19",
+    "react_native": "0.88.0",
+    "maplibre_react_native": "11.5.0",
+    "temporary_diagnostics_in_product_source": false
+  },
+  "device": {
+    "kind": "local emulator; no physical device",
+    "avd": "Pixel_10_Pro",
+    "serial": "emulator-5554",
+    "android": "17",
+    "api": 37,
+    "system_image": "android-37.2/google_apis_playstore_ps16k/x86_64",
+    "build_fingerprint": "google/sdk_gphone16k_x86_64/emu64xa16k:17/CP41.260831.015/16516427:user/dev-keys",
+    "screen": "1280x2856; density 480",
+    "passing_launch_options": "-avd Pixel_10_Pro -no-window -no-audio -no-boot-anim -no-snapshot -gpu host",
+    "passing_gpu": "Android Emulator OpenGL ES Translator (NVIDIA GeForce RTX 2050/PCIe/SSE2)",
+    "gpu_log": "emulator-host-gpu.stdout.log"
+  },
+  "providers": {
+    "basemap": "https://tiles.openfreemap.org/styles/positron",
+    "geocoder": "https://photon.komoot.io/api/",
+    "research": "emulator http://127.0.0.1:8090 forwarded to task-owned host http://127.0.0.1:8290",
+    "research_input": "data/ncr-destinations/2026-11-05/destination-enrichment.json.gz",
+    "synthetic_responses_used": false,
+    "glyph_http_evidence": "glyph-http.json",
+    "device_glyph_results": "Noto Sans Bold: HTTP 200, 81170 bytes; Noto Sans Regular: HTTP 200, 76580 bytes"
+  },
+  "cases": [
+    {
+      "id": "a2-01-fresh-build-install",
+      "executed": true,
+      "outcome": "pass",
+      "observed": "Fresh packageDebug and assembleDebug succeeded. Install succeeded; installed base APK hash matches the fresh archive. The older installed APK was excluded.",
+      "evidence": [
+        "android-build-fresh-daemon.log",
+        "fresh-apk-metadata.json",
+        "fresh-nov5-app-debug.apk"
+      ]
+    },
+    {
+      "id": "a2-02-maplibre-startup-and-legible-markers",
+      "executed": true,
+      "outcome": "pass",
+      "observed": "Native basemap, parking labels, street text, research labels and cluster counts render legibly with host GPU. Default SwiftShader rendering failed and is not counted as a passing configuration.",
+      "evidence": [
+        "07-host-gpu-pilot.png",
+        "11-private-host-gpu-overview.png",
+        "emulator-host-gpu.stdout.log"
+      ]
+    },
+    {
+      "id": "a2-03-location-denied",
+      "executed": true,
+      "outcome": "pass",
+      "observed": "Observed Android location prompt and chose Don't allow. Parkey displayed Location is off, settings recovery and manual search.",
+      "evidence": ["02-location-denied.txt", "02-location-denied.png"]
+    },
+    {
+      "id": "a2-04-location-unavailable",
+      "executed": true,
+      "outcome": "pass",
+      "observed": "With app permission granted and location service unavailable, declined Google location-accuracy enablement. Expanded results displayed Couldn't get your location with Retry; mapped records remained viewable.",
+      "evidence": [
+        "08-location-unavailable-expanded.txt",
+        "08-location-unavailable-expanded.png"
+      ]
+    },
+    {
+      "id": "a2-05-real-destination-search",
+      "executed": true,
+      "outcome": "pass",
+      "observed": "Real Photon query Poblacion Makati returned six destination results while location was denied. Selected the Poblacion, District I, Makati result.",
+      "evidence": ["03-poblacion-search.txt", "04-poblacion-results.txt"]
+    },
+    {
+      "id": "a2-06-poblacion-regression-and-entrance-block",
+      "executed": true,
+      "outcome": "pass",
+      "observed": "Pilot list and real 1210 record remain viewable. Unknown facts, OSM attribution, import/edit dates and no-live-availability caveats are visible. Nearby/list/detail navigation controls are disabled without reviewed entrance, visitor access and operator authorization.",
+      "evidence": [
+        "08-location-unavailable-expanded.txt",
+        "09-pilot-details-entrance-block.txt",
+        "09-pilot-details-entrance-block.png"
+      ]
+    },
+    {
+      "id": "a2-07-real-private-ncr-overview",
+      "executed": true,
+      "outcome": "pass",
+      "observed": "Explicit private research loads 5427 real source observations; named-or-near-destination filter shows 2025. Legible clusters, geometries, source notices and unverified visitor-access warning remain visible.",
+      "evidence": ["11-private-host-gpu-overview.png", "06-ncr-private.txt"]
+    },
+    {
+      "id": "a2-08-manila-details-and-map-navigation",
+      "executed": true,
+      "outcome": "pass",
+      "observed": "Selected osm:node/11729826407:Point, Parking near Museum of the Chinese in Philippine Life. Original unnamed identity, descriptive-only label, OSM/ODbL provenance, unknown facts, unconfirmed access and blocked driving navigation were verified. Native map jumped to source anchor [120.9755673,14.5910139] with a legible descriptor.",
+      "evidence": [
+        "12-manila-detail.txt",
+        "12-manila-detail.png",
+        "12-manila-map-jump.png"
+      ]
+    },
+    {
+      "id": "a2-09-mandaluyong-details-and-map-navigation",
+      "executed": true,
+      "outcome": "pass",
+      "observed": "Selected osm:way/1306648012:MultiPolygon, Parking near Crossings Department Store. Descriptive-only identity, original geometry, OSM/ODbL provenance, customer-access uncertainty, unknown facts and blocked driving navigation were verified. Native map jumped to [121.05558005,14.5799771] with a legible descriptor.",
+      "evidence": [
+        "13-mandaluyong-detail.txt",
+        "13-mandaluyong-detail-facts.txt",
+        "13-mandaluyong-detail.png",
+        "13-mandaluyong-map-jump.png"
+      ]
+    },
+    {
+      "id": "a2-10-private-public-clearing",
+      "executed": true,
+      "outcome": "pass",
+      "observed": "Switching from loaded private research to public clears selected details, research markers and descriptors. Public shows zero approved records without asserting that no parking exists.",
+      "evidence": ["14-public-cleared.txt", "14-public-cleared.png"]
+    },
+    {
+      "id": "a2-11-network-interruption-and-retry",
+      "executed": true,
+      "outcome": "pass",
+      "observed": "Removed only the emulator API adb forward and refreshed. Actual connection failure cleared records and offered Retry / refresh. Restoring the forward and tapping Retry recovered the empty public projection without leaking private data.",
+      "evidence": [
+        "15-api-interrupted.txt",
+        "15-api-interrupted.png",
+        "16-api-recovered-public.png"
+      ]
+    },
+    {
+      "id": "a2-12-process-restart-recovery",
+      "executed": true,
+      "outcome": "pass",
+      "observed": "Force-stopped the app while private research was loaded. Reopened the fresh APK/current source and research route: public defaults to zero with no retained private details or markers. Explicitly reopening private research fetched all 5427 observations again, with 2025 shown and legible clusters.",
+      "evidence": [
+        "17-restarted-pilot.txt",
+        "18-restarted-public.txt",
+        "18-restarted-public.png",
+        "19-restarted-private-recovered.txt",
+        "19-restarted-private-recovered.png"
+      ]
+    },
+    {
+      "id": "a2-13-category-filter-and-map-interaction",
+      "executed": true,
+      "outcome": "pass",
+      "covers_user_criterion": "A2 #4: parking markers, categories, and map interaction",
+      "observed": "Activated Lots and Garages in the actual native category chooser. All features showed 2025 records, Lots 523, and Garages 106, with all 5427 source observations still loaded. Visible Lots results all carried lot type; visible Garages results all carried garage type. Tapping the native Zoom in control changed map scale and the legible cluster distribution while Garages retained 106 shown. Restoring All features returned 2025 shown.",
+      "evidence": [
+        "20-category-lots.txt",
+        "20-category-lots.png",
+        "20-category-lots-results.txt",
+        "21-category-garages.txt",
+        "21-category-garages.png",
+        "21-category-garages-results.txt",
+        "22-category-garages-zoom.txt",
+        "22-category-garages-zoom.png",
+        "24-category-all-restored.txt",
+        "24-category-all-restored.png"
+      ]
+    }
+  ],
+  "resolved_environment_failures": [
+    "C: reached zero free bytes during AAR extraction. Removed only verified generated Android app build/intermediates; preserved APKs, source and logs.",
+    "Gradle Java worker startup timed out under severe host memory pressure. Stopped task-owned idle services/emulator; single-worker isolated Java compile passed, followed by bounded single-use Gradle.",
+    "fbjni 0.7.0 transform contained zero files and C++ could not find fbjni.h. Removed only that empty transform and restarted the task-created Gradle daemon; same-version artifact resolution restored it. Official Maven AAR checksum was independently verified.",
+    "Default auto GPU selected Google SwiftShader 4.0.0.1, producing blank or outlined SDF glyphs. Actual emulator font HTTP returned 200. Same APK/source/provider rendered correctly after a cold emulator boot with -gpu host (NVIDIA RTX 2050)."
+  ],
+  "limits": [
+    "Passing rendering evidence requires the recorded host-GPU emulator configuration; default SwiftShader remains unsuitable.",
+    "No physical Android device or physical GPS sensor test was performed. A successful GPS fix is not claimed; injected emulated-fix attempts did not bypass Google location-accuracy consent.",
+    "Google location-accuracy enablement prompts were declined. A restart readiness wait was blocked by that expected prompt before the research-route/public/private recovery checks completed.",
+    "City navigation means actual in-app source-record map jumps. Turn-by-turn driving and external entrance navigation were intentionally unavailable for unverified entrances and are not claimed.",
+    "Network interruption targeted the actual research API connection through adb forwarding; a complete internet outage was not claimed.",
+    "No iOS simulator/device was available or tested. No cloud build, paid resource, deployment or production migration occurred."
+  ]
+}

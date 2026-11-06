@@ -1,0 +1,205 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-11-05T13:53:48.0210533Z",
+  "scope": "Stage A1 independent integration audit; no publication or verification authorization",
+  "sourceCommit": "2e91da86b9ba67b13ae057e9ba5e60708d5c0dbf",
+  "pullRequests": [
+    {
+      "number": 13,
+      "url": "https://github.com/jstnphlp/prometheus-parkey/pull/13",
+      "state": "open",
+      "headRef": "feat/ncr-research-foundation",
+      "headSha": "00a9b02be781e783755a27185b65fd8b586aa2ba",
+      "baseRef": "main",
+      "baseSha": "d3de5d7d7563f5d3166fa41ae70c16ebe4356b13",
+      "successfulChecks": [
+        {
+          "name": "validate",
+          "status": "completed",
+          "conclusion": "success",
+          "headSha": "00a9b02be781e783755a27185b65fd8b586aa2ba",
+          "url": "https://github.com/jstnphlp/prometheus-parkey/actions/runs/42010392517/job/127187627983",
+          "completedAt": "2026-11-05T10:25:19Z"
+        },
+        {
+          "name": "database",
+          "status": "completed",
+          "conclusion": "success",
+          "headSha": "00a9b02be781e783755a27185b65fd8b586aa2ba",
+          "url": "https://github.com/jstnphlp/prometheus-parkey/actions/runs/42010385238/job/127187604217",
+          "completedAt": "2026-11-05T10:26:06Z"
+        },
+        {
+          "name": "e2e",
+          "status": "completed",
+          "conclusion": "success",
+          "headSha": "00a9b02be781e783755a27185b65fd8b586aa2ba",
+          "url": "https://github.com/jstnphlp/prometheus-parkey/actions/runs/42010392517/job/127187628413",
+          "completedAt": "2026-11-05T10:32:34Z"
+        }
+      ],
+      "cancelledDuplicateCheckCount": 3,
+      "failedCheckCount": 0,
+      "pendingCheckCount": 0
+    },
+    {
+      "number": 15,
+      "url": "https://github.com/jstnphlp/prometheus-parkey/pull/15",
+      "state": "open",
+      "headRef": "feat/ncr-named-inventory-v2",
+      "headSha": "fb3ec3a3fb5f0d96eae993dd1662b9ba2e562616",
+      "baseRef": "feat/ncr-research-foundation",
+      "baseSha": "00a9b02be781e783755a27185b65fd8b586aa2ba",
+      "successfulChecks": [
+        {
+          "name": "validate",
+          "status": "completed",
+          "conclusion": "success",
+          "headSha": "fb3ec3a3fb5f0d96eae993dd1662b9ba2e562616",
+          "url": "https://github.com/jstnphlp/prometheus-parkey/actions/runs/42016374208/job/127207813699",
+          "completedAt": "2026-11-05T11:08:51Z"
+        },
+        {
+          "name": "database",
+          "status": "completed",
+          "conclusion": "success",
+          "headSha": "fb3ec3a3fb5f0d96eae993dd1662b9ba2e562616",
+          "url": "https://github.com/jstnphlp/prometheus-parkey/actions/runs/42016374208/job/127207813924",
+          "completedAt": "2026-11-05T11:09:31Z"
+        },
+        {
+          "name": "e2e",
+          "status": "completed",
+          "conclusion": "success",
+          "headSha": "fb3ec3a3fb5f0d96eae993dd1662b9ba2e562616",
+          "url": "https://github.com/jstnphlp/prometheus-parkey/actions/runs/42012587258/job/127195283211",
+          "completedAt": "2026-11-05T10:48:53Z"
+        }
+      ],
+      "cancelledDuplicateCheckCount": 1,
+      "failedCheckCount": 0,
+      "pendingCheckCount": 0
+    },
+    {
+      "number": 16,
+      "url": "https://github.com/jstnphlp/prometheus-parkey/pull/16",
+      "state": "open",
+      "headRef": "feat/ncr-permitted-name-enrichment",
+      "headSha": "0e5e325eb33ba89b4fa5e1e742c956e71b8c791d",
+      "baseRef": "feat/ncr-named-inventory-v2",
+      "baseSha": "fb3ec3a3fb5f0d96eae993dd1662b9ba2e562616",
+      "successfulChecks": [
+        {
+          "name": "validate",
+          "status": "completed",
+          "conclusion": "success",
+          "headSha": "0e5e325eb33ba89b4fa5e1e742c956e71b8c791d",
+          "url": "https://github.com/jstnphlp/prometheus-parkey/actions/runs/42027652219/job/127245798035",
+          "completedAt": "2026-11-05T12:32:11Z"
+        },
+        {
+          "name": "database",
+          "status": "completed",
+          "conclusion": "success",
+          "headSha": "0e5e325eb33ba89b4fa5e1e742c956e71b8c791d",
+          "url": "https://github.com/jstnphlp/prometheus-parkey/actions/runs/42027652219/job/127245797939",
+          "completedAt": "2026-11-05T12:32:02Z"
+        },
+        {
+          "name": "e2e",
+          "status": "completed",
+          "conclusion": "success",
+          "headSha": "0e5e325eb33ba89b4fa5e1e742c956e71b8c791d",
+          "url": "https://github.com/jstnphlp/prometheus-parkey/actions/runs/42027652219/job/127245797645",
+          "completedAt": "2026-11-05T12:38:46Z"
+        }
+      ],
+      "cancelledDuplicateCheckCount": 3,
+      "failedCheckCount": 0,
+      "pendingCheckCount": 0
+    },
+    {
+      "number": 17,
+      "url": "https://github.com/jstnphlp/prometheus-parkey/pull/17",
+      "state": "open",
+      "headRef": "feat/ncr-near-destination-labels",
+      "headSha": "2e91da86b9ba67b13ae057e9ba5e60708d5c0dbf",
+      "baseRef": "feat/ncr-permitted-name-enrichment",
+      "baseSha": "0e5e325eb33ba89b4fa5e1e742c956e71b8c791d",
+      "successfulChecks": [
+        {
+          "name": "validate",
+          "status": "completed",
+          "conclusion": "success",
+          "headSha": "2e91da86b9ba67b13ae057e9ba5e60708d5c0dbf",
+          "url": "https://github.com/jstnphlp/prometheus-parkey/actions/runs/42035822641/job/127273964923",
+          "completedAt": "2026-11-05T13:29:05Z"
+        },
+        {
+          "name": "database",
+          "status": "completed",
+          "conclusion": "success",
+          "headSha": "2e91da86b9ba67b13ae057e9ba5e60708d5c0dbf",
+          "url": "https://github.com/jstnphlp/prometheus-parkey/actions/runs/42035822641/job/127273965301",
+          "completedAt": "2026-11-05T13:29:37Z"
+        },
+        {
+          "name": "e2e",
+          "status": "completed",
+          "conclusion": "success",
+          "headSha": "2e91da86b9ba67b13ae057e9ba5e60708d5c0dbf",
+          "url": "https://github.com/jstnphlp/prometheus-parkey/actions/runs/42035822641/job/127273964545",
+          "completedAt": "2026-11-05T13:37:10Z"
+        }
+      ],
+      "cancelledDuplicateCheckCount": 0,
+      "failedCheckCount": 0,
+      "pendingCheckCount": 0
+    }
+  ],
+  "result": "PASS_WITH_LIMITATIONS",
+  "stageA1TechnicalAudit": "PASS",
+  "overallStageAGate": "NOT_DETERMINED_BY_THIS_AUDIT",
+  "reviewDecision": "No review decision recorded for any of the four PRs at metadata read time",
+  "ancestry": {
+    "pr15ContainsPr13Head": true,
+    "pr16ContainsPr15Head": true,
+    "pr17ContainsPr16Head": true,
+    "pr13MainMergeBase": "576b1f78b1c4307049f6e46a8b05deb9f2ecf083",
+    "mainAndMergeBaseTree": "1d54d380fd2a59856f8071be1db4220bf30e597e"
+  },
+  "verification": [
+    {
+      "command": "node --test --test-reporter=dot apps/mobile/src/discovery/ncr-client.test.mjs scripts/ncr-preview-server.test.mjs scripts/ncr-publication.test.mjs scripts/ncr-name-reconciliation.test.mjs scripts/ncr-destination-labels.test.mjs scripts/ncr-destination-report.test.mjs scripts/ncr-destination-evidence.test.mjs scripts/ncr-fieldwork.test.mjs scripts/ncr-phase-gates.test.mjs scripts/dependency-security.test.mjs",
+      "exitCode": 0
+    },
+    {
+      "command": "node scripts/check-ncr-package.mjs",
+      "exitCode": 0,
+      "archives": 4,
+      "candidates": 5427,
+      "gridConservesObservations": true,
+      "physicallyVerified": 0,
+      "publicationApproved": 0
+    },
+    {
+      "check": "Actual frozen API-to-mobile runtime contract and Poblacion canonical preservation",
+      "exitCode": 0,
+      "evidence": "integration-contract-check.json"
+    }
+  ],
+  "confirmedIntegrationDefects": [],
+  "limits": [
+    "Fresh Android verification and review-workflow gates recorded separately; no claim of overall Stage A completion",
+    "No local SQL/browser/iOS execution in this audit",
+    "No hosted resource, publication or production mutation",
+    "Existing Node mobile module-type inference warning; cross-layer assertions pass"
+  ],
+  "unresolvedHumanDecisions": [
+    "Source licensing and distribution clearance",
+    "Current public visitor access and confirmed vehicle entrances",
+    "On-site and operator confirmation",
+    "Publication approval with expiry and accountable reviewer",
+    "Demand, willingness to pay and partner evidence"
+  ]
+}

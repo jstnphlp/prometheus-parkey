@@ -5,6 +5,7 @@ The admin dashboard and event intake are owned by the separate repository: https
 **Endpoint**: POST https://nuepweyzpkqfihjsbsik.supabase.co/functions/v1/mobile-analytics. Header: Content-Type application/json and project's PUBLIC publishable key in apikey (never a service-role secret). No account token, cookies or review credentials.
 
 Strict JSON object with EXACTLY these keys:
+
 - schema_version: integer 1
 - event_id: randomly generated UUID v4, unique per event, for deduplication
 - installation_id: random UUID v4 stored only with analytics opt-in; never derive from device identifiers; clear on opt-out

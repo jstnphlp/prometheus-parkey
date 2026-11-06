@@ -1,8 +1,8 @@
 # Parkey
 
-**Canonical V1 source of truth:** [Tracks A/C/D and strict phase gates](docs/V1_EXECUTION_PLAN.md) · [privacy-limited analytics event protocol](docs/V1_ANALYTICS_CONTRACT.md).
+**Canonical V1 source of truth:** [Tracks A/D and strict phase gates](docs/V1_EXECUTION_PLAN.md) · [privacy-limited analytics event protocol](docs/V1_ANALYTICS_CONTRACT.md).
 
-Owners: Codex builds the Expo/mobile discovery and mock reservations; ChatGPT owns the separate [Research Console admin analytics](https://github.com/jstnphlp/parkey-research-console). The dashboard is in the console, not this mobile application. No live booking or verification claims until the release gates pass.
+Owners: Codex builds the Expo/mobile discovery only; ChatGPT owns the separate [Research Console admin analytics](https://github.com/jstnphlp/parkey-research-console). The dashboard is in the console, not this mobile application. No booking, mock booking, reservation, payment, QR check-in/out or live vacancy claims are part of V1.
 
 A map-first parking discovery app, with parking information around Poblacion, Makati. Open the map,
 search a destination, inspect a facility or street segment, and get directions.

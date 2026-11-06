@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "provider": "Wikidata",
+  "license": "CC0-1.0",
+  "attribution": "Wikidata contributors",
+  "retrievedAt": "2026-11-05T13:06:45.038543+00:00",
+  "sourceResponseSha256": "165f5f708f917e3c0c67d0175f487e98cc7195ce6f7ac84ee73fa54e042ee546",
+  "boundaryFile": "data/ncr-research/ncr-lgus-osm.geojson.gz",
+  "boundarySha256": "8a77d36f1650efd5e8d349842ca4a2a8972f588e54da386d92aacadc5cafc597",
+  "geographyPolicy": "Original source points covered by frozen 17-LGU NCR polygon union.",
+  "policy": "Corroboration-only independent destination evidence; not used to assign parking names or destination descriptions. No item editing timestamp was returned by this query; retrieval time is not an item modification timestamp.",
+  "filename": "ncr-destinations.geojson.gz",
+  "features": 776,
+  "uniqueItems": 710,
+  "responseBindings": 875,
+  "outsideNcrItems": 84,
+  "unnamedItems": 1,
+  "sha256": "0337124a6fe97fa79e9bd71822f8a953f58b70ef2bde9b59a42641f3b7ae99f6",
+  "uncompressedSha256": "b40ebc2260e6a20087be310fa94d199bda6ee61572bc8830471b7d54dd2bde06"
+}

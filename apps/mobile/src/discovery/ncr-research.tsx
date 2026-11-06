@@ -66,6 +66,7 @@ function Action({
       accessibilityRole="button"
       accessibilityLabel={label}
       accessibilityState={{ selected, disabled }}
+      aria-selected={selected}
       disabled={disabled}
       onPress={onPress}
       style={[
@@ -89,11 +90,101 @@ function ItemFacts({
 }) {
   const e = item.evidence
   const enrichment = privateReview ? item.nameReview?.enrichment : undefined
+  const destinationLabel = privateReview
+    ? item.nameReview?.destinationLabel
+    : undefined
+  const destinationReview = privateReview
+    ? item.nameReview?.destinationReview
+    : undefined
   return (
     <View style={styles.detail} testID="ncr-selected-details">
       <Text accessibilityRole="header" selectable style={styles.title}>
-        {item.name}
+        {destinationLabel?.label || item.name}
       </Text>
+      {destinationLabel ? (
+        <View testID="ncr-destination-evidence">
+          <Text selectable style={styles.warning}>
+            Descriptive label from nearby OpenStreetMap destination only, not
+            the parking facility's official name. Original source: {item.name}.
+          </Text>
+          <Text selectable>
+            Nearby destination: {destinationLabel.destination} · Category:{' '}
+            {destinationLabel.category.replace(':', ' / ').replaceAll('_', ' ')}
+            . Straight-line source distance: approximately{' '}
+            {Math.round(destinationLabel.approximateStraightLineMeters)} m.
+          </Text>
+          <Text selectable>
+            Geographic relationship:{' '}
+            {destinationLabel.insideSourcePropertyFootprint
+              ? 'source polygon contains the parking anchor'
+              : 'nearby source geometry; ownership is unconfirmed'}
+            . Actual walking access and vehicle entrance unverified.
+          </Text>
+          <Text selectable>
+            Destination evidence: {destinationLabel.sourceId} · © OpenStreetMap
+            contributors · {destinationLabel.sourceLicense || 'ODbL-1.0'}
+            {destinationLabel.sourceRecordEditedAt
+              ? ` · OSM edit: ${destinationLabel.sourceRecordEditedAt}`
+              : ''}
+          </Text>
+          {destinationLabel.uncertainties?.map((uncertainty, index) => (
+            <Text selectable key={`destination-uncertainty:${index}`}>
+              {uncertainty}
+            </Text>
+          ))}
+          <Action
+            title={`Review destination source: ${destinationLabel.destination}`}
+            onPress={() => {
+              void Linking.openURL(destinationLabel.sourceRecordUrl).catch(
+                () => undefined,
+              )
+            }}
+          />
+        </View>
+      ) : null}
+      {destinationReview?.outcome === 'ambiguous' ? (
+        <View testID="ncr-destination-alternatives">
+          <Text accessibilityRole="header" selectable style={styles.title}>
+            Nearby destinations need review
+          </Text>
+          <Text selectable>
+            Several associations are plausible. The source name is retained
+            until the relationship is resolved.
+          </Text>
+          {destinationReview.reasons.map((reason, index) => (
+            <Text selectable key={`destination-reason:${index}`}>
+              {reason}
+            </Text>
+          ))}
+          {destinationReview.alternatives.map((alternative) => (
+            <View
+              key={`destination-alternative:${alternative.sourceId}:${alternative.parkingRecordId || item.id}`}
+            >
+              <Text selectable>
+                {alternative.destination} ·{' '}
+                {alternative.category.replace(':', ' / ')} · approximately{' '}
+                {Math.round(alternative.approximateStraightLineMeters)} m ·{' '}
+                {alternative.insideSourcePropertyFootprint
+                  ? 'source polygon contains anchor'
+                  : 'nearby source geometry'}{' '}
+                · {alternative.sourceId}
+                {alternative.parkingRecordId &&
+                alternative.parkingRecordId !== item.id
+                  ? ` · measured from group observation ${alternative.parkingRecordId}`
+                  : ''}
+              </Text>
+              <Action
+                title={`Review alternative source: ${alternative.destination}`}
+                onPress={() => {
+                  void Linking.openURL(alternative.sourceRecordUrl).catch(
+                    () => undefined,
+                  )
+                }}
+              />
+            </View>
+          ))}
+        </View>
+      ) : null}
       <Text selectable>
         {item.id} · {item.featureType}
       </Text>
@@ -323,8 +414,8 @@ export default function NcrResearch() {
   }, [])
   const [category, setCategory] = useState<'all' | NcrFeatureType>('all')
   const [nameFilter, setNameFilter] = useState<
-    'cross_source' | 'source_named' | 'all'
-  >('cross_source')
+    'named_or_nearby' | 'cross_source' | 'source_named' | 'all'
+  >('named_or_nearby')
   const [mode, setMode] = useState<'public' | 'research_preview'>('public')
   const [storedData, setData] = useState<NcrDiscoveryResponse | null>(null)
   const privateCache = useRef<NcrDiscoveryResponse | null>(null)
@@ -339,6 +430,9 @@ export default function NcrResearch() {
                 (category === 'all' || item.featureType === category) &&
                 (mode === 'public' ||
                   nameFilter === 'all' ||
+                  (nameFilter === 'named_or_nearby' &&
+                    (item.nameReview?.sourceNameIsDistinctive === true ||
+                      item.nameReview?.destinationLabel !== undefined)) ||
                   (item.nameReview?.sourceNameIsDistinctive === true &&
                     (nameFilter === 'source_named' ||
                       item.nameReview?.crossSourceCandidate === true))),
@@ -469,9 +563,13 @@ export default function NcrResearch() {
       (item) =>
         !term ||
         item.name.toLocaleLowerCase().includes(term) ||
+        (mode === 'research_preview' &&
+          item.nameReview?.destinationLabel?.label
+            .toLocaleLowerCase()
+            .includes(term)) ||
         item.id.toLocaleLowerCase().includes(term),
     )
-  }, [data, search])
+  }, [data, search, mode])
   const categoryLabel =
     ncrCategories.find((c) => c.value === category)?.label || 'All features'
   return (
@@ -595,11 +693,13 @@ export default function NcrResearch() {
                 <Text style={styles.warning}>
                   Unverified research ·{' '}
                   {mode === 'research_preview'
-                    ? nameFilter === 'cross_source'
-                      ? 'Cross-source name agreement only; identity not verified'
-                      : nameFilter === 'source_named'
-                        ? 'Source names only; not independently confirmed'
-                        : 'All original research including unnamed locations'
+                    ? nameFilter === 'named_or_nearby'
+                      ? 'Source names or nearby-destination context only; visitor access not verified'
+                      : nameFilter === 'cross_source'
+                        ? 'Cross-source name agreement only; identity not verified'
+                        : nameFilter === 'source_named'
+                          ? 'Source names only; not independently confirmed'
+                          : 'All original research including unnamed locations'
                     : 'Check access and posted restrictions'}
                 </Text>
               )}
@@ -701,6 +801,15 @@ export default function NcrResearch() {
               research.
             </Text>
             <Action
+              title="Named or near destinations (research)"
+              selected={nameFilter === 'named_or_nearby'}
+              onPress={() => {
+                setNameFilter('named_or_nearby')
+                setSelectedId(null)
+                setPanel(null)
+              }}
+            />
+            <Action
               title="Cross-source name matches"
               selected={nameFilter === 'cross_source'}
               onPress={() => {
@@ -776,7 +885,7 @@ export default function NcrResearch() {
             renderItem={({ item }) => (
               <Pressable
                 accessibilityRole="button"
-                accessibilityLabel={`Research details for ${item.name}`}
+                accessibilityLabel={`Research details for ${mode === 'research_preview' ? item.nameReview?.destinationLabel?.label || item.name : item.name}`}
                 onPress={() => {
                   setPanel(null)
                   setSelectedId(item.id)
@@ -784,7 +893,11 @@ export default function NcrResearch() {
                 }}
                 style={styles.row}
               >
-                <Text style={styles.rowName}>{item.name}</Text>
+                <Text style={styles.rowName}>
+                  {mode === 'research_preview'
+                    ? item.nameReview?.destinationLabel?.label || item.name
+                    : item.name}
+                </Text>
                 <Text style={styles.caption}>
                   {item.featureType} ·{' '}
                   {item.restrictedAccess

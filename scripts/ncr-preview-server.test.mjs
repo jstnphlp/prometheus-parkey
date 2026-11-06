@@ -18,6 +18,8 @@ import {
   validateNcrEnrichment,
 } from './ncr-preview-server.mjs'
 import { appendPublicationEvent, contentHash } from './ncr-publication.mjs'
+import { reviewNearbyDestinations } from './ncr-destination-labels.mjs'
+import { summarizeDestinationGroup } from './ncr-destination-report.mjs'
 
 const now = Date.parse('2026-11-05T12:00:00.000Z')
 const candidate = (id, type = 'lot', x = 121.03) => ({
@@ -235,6 +237,29 @@ test('plain and gzipped enrichment load with the same snapshot validation', (t) 
   writeFileSync(compressed, gzipSync(raw))
   assert.deepEqual(loadNcrEnrichment(plain, research), report)
   assert.deepEqual(loadNcrEnrichment(compressed, research), report)
+  const immutable = loadNcrEnrichment(compressed, research)
+  assert.throws(() => {
+    research.candidates[0].restrictedAccess = true
+  }, TypeError)
+  assert.equal(Object.isFrozen(immutable.records[0].contextClues), true)
+  assert.throws(
+    () => immutable.records[0].contextClues.push({ name: 'Injected' }),
+    TypeError,
+  )
+  const firstIndex = validateNcrEnrichment(research, immutable)
+  assert.throws(() => {
+    firstIndex.get('a').classification = 'changed'
+  }, TypeError)
+  firstIndex.clear()
+  assert.equal(validateNcrEnrichment(research, immutable).size, 2)
+  assert.throws(
+    () =>
+      validateNcrEnrichment(
+        { ...research, sourceHashes: { tampered: true } },
+        immutable,
+      ),
+    /Enrichment/,
+  )
   assert.throws(
     () =>
       loadNcrEnrichment(plain, {
@@ -482,6 +507,126 @@ test('name review annotates all research, but generic names never pass public ou
   assert.equal(publicState.totalMatched, 0)
   assert.equal(publicState.items.length, 0)
   assert.deepEqual(source.candidates, [candidateWithNoName])
+})
+
+test('private API provides destination context without changing source name or public results', () => {
+  const source = {
+    ...research,
+    candidates: research.candidates.map((c) =>
+      c.id === 'a' ? { ...c, name: 'Unnamed parking facility' } : c,
+    ),
+  }
+  const enrichment = enrichmentReport(source)
+  enrichment.records[0].classification = 'nearby_named_property_only'
+  enrichment.records[0].proposedName = null
+  enrichment.records[0].contextClues = [
+    {
+      name: 'The Community Mall',
+      sourceId: 'osm:way/987',
+      sourceRecordUrl: 'https://www.openstreetmap.org/way/987',
+      sourceLicense: 'ODbL-1.0',
+      placeKind: 'shop:mall',
+      relation: 'nearby_named_property_only',
+      approximateMeters: 42,
+      usableAsParkingName: false,
+    },
+  ]
+  const privateData = queryNcrResearch(source, query(), {
+    ...queryOptions(),
+    enrichment,
+  })
+  const named = privateData.items.find((item) => item.id === 'a')
+  assert.equal(named.name, 'Unnamed parking facility')
+  assert.equal(
+    named.nameReview.destinationLabel.label,
+    'Parking near The Community Mall',
+  )
+  assert.equal(named.nameReview.destinationLabel.parkingNameConfirmed, false)
+  assert.equal(named.nameReview.destinationLabel.publicationApproved, false)
+  assert.equal(named.nameReview.destinationLabel.sourceLicense, 'ODbL-1.0')
+  assert.equal(named.nameReview.destinationReview.outcome, 'described')
+  assert.equal(named.canNavigate, false)
+  const other = privateData.items.find((item) => item.id === 'd')
+  assert.equal(other.nameReview.destinationLabel, undefined)
+  const publicData = queryNcrResearch(source, query(), {
+    ...queryOptions(false),
+    enrichment,
+  })
+  assert.equal(publicData.totalMatched, 0)
+  assert.equal(publicData.items.length, 0)
+
+  enrichment.records[0].identityConflict = true
+  const conflict = queryNcrResearch(source, query(), {
+    ...queryOptions(),
+    enrichment,
+  }).items.find((item) => item.id === 'a')
+  assert.equal(conflict.nameReview.destinationLabel, undefined)
+  assert.equal(conflict.nameReview.destinationReview.outcome, 'ambiguous')
+  assert.equal(conflict.nameReview.enrichment.identityConflict, undefined)
+  delete enrichment.records[0].identityConflict
+  enrichment.records[0].unsuitableSourceIds = ['d']
+  const sourceRestricted = queryNcrResearch(source, query(), {
+    ...queryOptions(),
+    enrichment,
+  }).items.find((item) => item.id === 'a')
+  assert.equal(sourceRestricted.nameReview.destinationLabel, undefined)
+  assert.equal(
+    sourceRestricted.nameReview.destinationReview.outcome,
+    'restricted_or_unsuitable',
+  )
+  assert.equal(
+    sourceRestricted.nameReview.enrichment.unsuitableSourceIds,
+    undefined,
+  )
+  delete enrichment.records[0].unsuitableSourceIds
+
+  // A nearby match for one source observation cannot override unresolved
+  // evidence about the facility group shared with another observation.
+  enrichment.records[0].originalStatus = 'unnamed_pending_reference'
+  const recomputeGroup = () => {
+    const group = enrichment.records[0]
+    group.destinationReview = summarizeDestinationGroup(
+      group,
+      group.candidateIds.map((id) => ({
+        recordId: id,
+        ...reviewNearbyDestinations(
+          source.candidates.find((item) => item.id === id),
+          group,
+          { privatePreview: true },
+        ),
+      })),
+    )
+  }
+  recomputeGroup()
+  const ambiguous = queryNcrResearch(source, query(), {
+    ...queryOptions(),
+    enrichment,
+  }).items.find((item) => item.id === 'a')
+  assert.equal(ambiguous.nameReview.destinationLabel, undefined)
+  assert.equal(ambiguous.nameReview.destinationReview.outcome, 'ambiguous')
+  assert.equal(
+    ambiguous.nameReview.destinationReview.alternatives[0].sourceId,
+    'osm:way/987',
+  )
+  assert.equal(ambiguous.nameReview.enrichment.destinationReview, undefined)
+  enrichment.records[0].destinationReview.alternatives[0].sourceRecordUrl =
+    'https://example.com/unbound'
+  assert.throws(
+    () => validateNcrEnrichment(source, enrichment),
+    /does not reproduce/,
+  )
+  recomputeGroup()
+  enrichment.records[0].unsuitableSourceIds = ['d']
+  recomputeGroup()
+  const restricted = queryNcrResearch(source, query(), {
+    ...queryOptions(),
+    enrichment,
+  }).items.find((item) => item.id === 'a')
+  assert.equal(restricted.nameReview.destinationLabel, undefined)
+  assert.equal(
+    restricted.nameReview.destinationReview.outcome,
+    'restricted_or_unsuitable',
+  )
 })
 
 test('actual frozen 5,427 observations cannot appear in the public projection', () => {

@@ -50,8 +50,8 @@ const nonnegative = (value: unknown) =>
   typeof value === 'number' && Number.isSafeInteger(value) && value >= 0
 const boundedText = (value: unknown): value is string =>
   typeof value === 'string' && value.trim().length > 0 && value.length <= 1000
-const boundedArray = (value: unknown): value is unknown[] =>
-  Array.isArray(value) && value.length <= 100
+const boundedArray = (value: unknown, maximum = 100): value is unknown[] =>
+  Array.isArray(value) && value.length <= maximum
 function validEnrichment(value: unknown) {
   if (!isObject(value)) return false
   const evidence = (clue: unknown) =>
@@ -88,7 +88,7 @@ function validEnrichment(value: unknown) {
         c.samePhysicalFacilityConfirmed === false &&
         c.usableAsParkingName === false,
     ) &&
-    boundedArray(value.contextClues) &&
+    boundedArray(value.contextClues, 512) &&
     value.contextClues.every(
       (c) =>
         isObject(c) &&
@@ -148,6 +148,96 @@ function validGeometry(value: unknown) {
     value.coordinates.every(polygon)
   )
 }
+function validDestinationLabel(value: unknown): boolean {
+  const components =
+    isObject(value) && isObject(value.scoreComponents)
+      ? value.scoreComponents
+      : null
+  return (
+    isObject(value) &&
+    typeof value.label === 'string' &&
+    value.label.startsWith('Parking near ') &&
+    value.label.length <= 100 &&
+    typeof value.destination === 'string' &&
+    value.destination.length > 0 &&
+    typeof value.category === 'string' &&
+    /^osm:(node|way|relation)\/[1-9]\d*$/.test(String(value.sourceId)) &&
+    (value.sourceRecordUrl ===
+      'https://www.openstreetmap.org/' + String(value.sourceId).slice(4) ||
+      value.sourceRecordUrl ===
+        'https://openstreetmap.org/' + String(value.sourceId).slice(4)) &&
+    typeof value.approximateStraightLineMeters === 'number' &&
+    Number.isFinite(value.approximateStraightLineMeters) &&
+    value.approximateStraightLineMeters >= 0 &&
+    typeof value.insideSourcePropertyFootprint === 'boolean' &&
+    (value.sourceLicense === undefined || value.sourceLicense === 'ODbL-1.0') &&
+    (value.sourceSnapshotSha256 === undefined ||
+      value.sourceSnapshotSha256 === null ||
+      (typeof value.sourceSnapshotSha256 === 'string' &&
+        /^[a-f0-9]{64}$/.test(value.sourceSnapshotSha256))) &&
+    (value.sourceRecordEditedAt === undefined ||
+      value.sourceRecordEditedAt === null ||
+      (typeof value.sourceRecordEditedAt === 'string' &&
+        Number.isFinite(Date.parse(value.sourceRecordEditedAt)))) &&
+    (value.sourceVersion === undefined ||
+      value.sourceVersion === null ||
+      (typeof value.sourceVersion === 'number' &&
+        nonnegative(value.sourceVersion) &&
+        value.sourceVersion > 0)) &&
+    (value.sourceCoordinate === undefined ||
+      value.sourceCoordinate === null ||
+      isCoordinate(value.sourceCoordinate)) &&
+    (value.anchorCoordinate === undefined ||
+      value.anchorCoordinate === null ||
+      isCoordinate(value.anchorCoordinate)) &&
+    (value.parkingRecordId === undefined ||
+      value.parkingRecordId === null ||
+      boundedText(value.parkingRecordId)) &&
+    (value.distanceBasis === undefined ||
+      ['source_geometry_anchor_haversine', 'legacy_context_estimate'].includes(
+        String(value.distanceBasis),
+      )) &&
+    (value.score === undefined ||
+      (typeof value.score === 'number' && Number.isFinite(value.score))) &&
+    (value.scoreComponents === undefined ||
+      (components !== null &&
+        ['category', 'proximity', 'containment'].every(
+          (key) =>
+            typeof components[key] === 'number' &&
+            Number.isFinite(components[key]),
+        ))) &&
+    (value.duplicateSourceIds === undefined ||
+      (boundedArray(value.duplicateSourceIds) &&
+        value.duplicateSourceIds.every((id) =>
+          /^osm:(node|way|relation)\/[1-9]\d*$/.test(String(id)),
+        ))) &&
+    (value.uncertainties === undefined ||
+      (boundedArray(value.uncertainties) &&
+        value.uncertainties.every(boundedText))) &&
+    value.status === 'research_context_only' &&
+    value.parkingNameConfirmed === false &&
+    value.visitorAccessConfirmed === false &&
+    value.navigationEntranceConfirmed === false &&
+    value.publicationApproved === false
+  )
+}
+function validDestinationReview(value: unknown): boolean {
+  return (
+    isObject(value) &&
+    [
+      'described',
+      'ambiguous',
+      'restricted_or_unsuitable',
+      'no_suitable_destination',
+      'previously_named',
+      'not_facility',
+    ].includes(String(value.outcome)) &&
+    boundedArray(value.alternatives) &&
+    value.alternatives.every(validDestinationLabel) &&
+    boundedArray(value.reasons) &&
+    value.reasons.every(boundedText)
+  )
+}
 function validItem(value: unknown): value is NcrDiscoveryItem {
   if (
     !isObject(value) ||
@@ -174,6 +264,10 @@ function validItem(value: unknown): value is NcrDiscoveryItem {
         ].includes(String(value.nameReview.status)) &&
         typeof value.nameReview.sourceNameIsDistinctive === 'boolean' &&
         typeof value.nameReview.crossSourceCandidate === 'boolean' &&
+        (value.nameReview.destinationLabel === undefined ||
+          validDestinationLabel(value.nameReview.destinationLabel)) &&
+        (value.nameReview.destinationReview === undefined ||
+          validDestinationReview(value.nameReview.destinationReview)) &&
         (value.nameReview.enrichment === undefined ||
           validEnrichment(value.nameReview.enrichment)))) &&
     typeof value.featureType === 'string' &&
@@ -228,6 +322,8 @@ export function ncrResponseCanDisplay(
       value.items.every(
         (item) =>
           item.nameReview?.enrichment === undefined &&
+          item.nameReview?.destinationLabel === undefined &&
+          item.nameReview?.destinationReview === undefined &&
           item.evidence.publicationApproved &&
           !item.restrictedAccess &&
           item.reviewIssueIds.length === 0 &&
@@ -257,7 +353,12 @@ export function isNcrResponse(value: unknown): value is NcrDiscoveryResponse {
     value.items.length <= 500 &&
     value.items.every(validItem) &&
     (value.mode !== 'public' ||
-      value.items.every((item) => item.nameReview?.enrichment === undefined)) &&
+      value.items.every(
+        (item) =>
+          item.nameReview?.enrichment === undefined &&
+          item.nameReview?.destinationLabel === undefined &&
+          item.nameReview?.destinationReview === undefined,
+      )) &&
     Array.isArray(value.clusters) &&
     value.clusters.length <= 2000 &&
     value.clusters.every(

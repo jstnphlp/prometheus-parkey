@@ -1,0 +1,17 @@
+{
+  "originalUnnamedFacilityGroups": 3112,
+  "destinationDescriptionGroups": 1099,
+  "newlyAssignedDestinationDescriptions": 486,
+  "previouslyDescribedGroups": 1188,
+  "retainedOrRefinedDescriptionGroups": 613,
+  "previousDescriptionsWithheld": 575,
+  "previouslyNamedFacilities": 617,
+  "previousIdentityOrNameConflicts": 15,
+  "unnamedWithNoSuitableDestination": 780,
+  "ambiguousDestinationMatches": 903,
+  "restrictedOrUnsuitableFacilities": 330,
+  "newOfficialNamesVerified": 0,
+  "publicPublicationApprovals": 0,
+  "officiallyUnnamedAfter": 3112,
+  "processedFacilityGroups": 3744
+}

@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "probes": [
+    {
+      "id": "overture-catalog",
+      "requestedUrl": "https://stac.overturemaps.org/catalog.json",
+      "retrievedAt": "2026-11-05T13:10:38.059382+00:00",
+      "resolvedUrl": "https://stac.overturemaps.org/catalog.json",
+      "status": 200,
+      "sha256": "c15e5dfc0d78f4875dbdee941fcd495bff1de887dec3e3cfcf0f7cf84dd40a97",
+      "artifact": "overture-catalog.json.gz",
+      "latestRelease": "2026-10-21.0"
+    },
+    {
+      "id": "overture-places-licensing",
+      "requestedUrl": "https://docs.overturemaps.org/guides/places/",
+      "retrievedAt": "2026-11-05T13:10:38.350392+00:00",
+      "resolvedUrl": "https://docs.overturemaps.org/guides/places/",
+      "status": 200,
+      "sha256": "bca5fcc7bdd8978fa005acf69e22b1bbcebe217aae46b5f8a68cc738c535296e",
+      "reviewReference": "Record-level sources[].license and attribution must be retained. Review source-dependent Places licensing and ODbL obligations for OSM derivatives."
+    },
+    {
+      "id": "osm-parking-delta",
+      "requestedUrl": "https://overpass-api.de/api/interpreter",
+      "retrievedAt": "2026-11-05T13:10:38.775345+00:00",
+      "resolvedUrl": "https://overpass-api.de/api/interpreter",
+      "status": 200,
+      "sha256": "e3695eba683b11b30d761ec140b9d8b8c6bf10f02bd2cafe2a73eb2465228adb",
+      "artifact": "osm-parking-delta.json.gz",
+      "query": "[out:json][timeout:60];(nwr[\"amenity\"~\"^parking(_space|_entrance)?$\"](newer:\"2026-11-03T00:00:00Z\")(14.30,120.85,14.86,121.27);nwr[\"building\"=\"parking\"](newer:\"2026-11-03T00:00:00Z\")(14.30,120.85,14.86,121.27););out meta center;",
+      "osmBase": {
+        "timestamp_osm_base": "2026-11-05T13:09:35Z",
+        "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL."
+      },
+      "elements": 1,
+      "namedElements": 0,
+      "license": "ODbL-1.0",
+      "attribution": "© OpenStreetMap contributors",
+      "policy": "Source update audit; Overpass centers are review anchors, not vehicle entrances."
+    }
+  ]
+}

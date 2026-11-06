@@ -10,6 +10,9 @@ supabase/.temp/
 supabase/.branches/
 output/ncr/
 
+# Source manifests and generated destination reports are hash-bound evidence.
+data/ncr-destinations/**/*.json
+
 # Immutable Poblacion input and byte-compared research reports.
 poblacion-places.geojson
 data/parking-open-data-review.json

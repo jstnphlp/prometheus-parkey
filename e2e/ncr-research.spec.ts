@@ -1,9 +1,129 @@
 import { test, expect } from './fixtures'
+import type {
+  NcrDiscoveryItem,
+  NcrDiscoveryResponse,
+} from '../packages/shared-types/src/ncr-discovery'
 
 const ncrApi = `http://127.0.0.1:${process.env.PARKEY_E2E_NCR_PORT || '8090'}`
 
 // Keep bounded assertions; allow cold compilation plus complete-snapshot loading.
 test.setTimeout(120_000)
+
+test('fresh destination descriptions and ambiguous alternatives are reviewable without changing source identity', async ({
+  page,
+}) => {
+  let described: NcrDiscoveryItem | undefined
+  let ambiguous: NcrDiscoveryItem | undefined
+  let cursor: string | null = null
+  do {
+    const url = new URL('/api/ncr/research-preview', ncrApi)
+    url.searchParams.set('bbox', '120.85,14.3,121.27,14.86')
+    url.searchParams.set('zoom', '20')
+    url.searchParams.set('limit', '500')
+    if (cursor) url.searchParams.set('cursor', cursor)
+    const response = await page.request.get(url.href, {
+      headers: { 'X-Parkey-Research-Preview': 'local-development' },
+    })
+    expect(response.ok()).toBe(true)
+    const body: NcrDiscoveryResponse = await response.json()
+    described ||= body.items.find(
+      (item) =>
+        item.nameReview?.destinationLabel?.distanceBasis ===
+        'source_geometry_anchor_haversine',
+    )
+    ambiguous ||= body.items.find(
+      (item) =>
+        item.nameReview?.destinationReview?.outcome === 'ambiguous' &&
+        item.nameReview.destinationReview.alternatives.length > 1,
+    )
+    cursor = body.nextCursor
+  } while (cursor && (!described || !ambiguous))
+  if (!described?.nameReview?.destinationLabel || !ambiguous)
+    throw new Error(
+      'The real fresh report must contain descriptions and reviewable alternatives.',
+    )
+  const destination = described.nameReview.destinationLabel
+  expect(described.name).not.toBe(destination.label)
+  expect(described.evidence.publicationApproved).toBe(false)
+  expect(described.canNavigate).toBe(false)
+
+  await page.goto('/ncr-research')
+  await expect(page.getByTestId('ncr-empty')).toBeVisible({ timeout: 30000 })
+  await page
+    .getByRole('button', { name: 'Open private research', exact: true })
+    .click()
+  await expect(page.getByTestId('ncr-result-summary')).toContainText(
+    '5,427 research records loaded',
+    { timeout: 30000 },
+  )
+  await page.getByRole('button', { name: 'Locations', exact: true }).click()
+  await page
+    .getByRole('textbox', { name: 'Search loaded locations' })
+    .fill(described.id)
+  await page
+    .getByRole('button', {
+      name: `Research details for ${destination.label}`,
+      exact: true,
+    })
+    .click()
+  const details = page.getByTestId('ncr-selected-details')
+  await expect(
+    details.getByRole('heading', { name: destination.label, exact: true }),
+  ).toBeVisible()
+  const evidence = page.getByTestId('ncr-destination-evidence')
+  for (const fact of [
+    described.name,
+    destination.destination,
+    destination.sourceId,
+    'Category:',
+    'Straight-line source distance:',
+    'OpenStreetMap',
+    'ODbL-1.0',
+    'vehicle entrance unverified',
+  ])
+    await expect(evidence).toContainText(fact)
+  await expect(page.getByTestId('parking-get-directions')).toHaveCount(0)
+  await page
+    .getByRole('button', { name: 'Close Research details', exact: true })
+    .click()
+
+  await page.getByRole('button', { name: 'All features', exact: true }).click()
+  await page
+    .getByRole('button', {
+      name: 'All research (including unnamed)',
+      exact: true,
+    })
+    .click()
+  await page.getByRole('button', { name: 'Locations', exact: true }).click()
+  await page
+    .getByRole('textbox', { name: 'Search loaded locations' })
+    .fill(ambiguous.id)
+  await page
+    .getByRole('button', {
+      name: `Research details for ${ambiguous.name}`,
+      exact: true,
+    })
+    .click()
+  await expect(page.getByTestId('ncr-destination-alternatives')).toContainText(
+    'Several associations are plausible.',
+  )
+  for (const alternative of ambiguous.nameReview?.destinationReview
+    ?.alternatives || [])
+    await expect(
+      page.getByTestId('ncr-destination-alternatives'),
+    ).toContainText(alternative.sourceId)
+  await expect(page.getByTestId('ncr-destination-evidence')).toHaveCount(0)
+  await page
+    .getByRole('button', { name: 'Close Research details', exact: true })
+    .click()
+  await page
+    .getByRole('button', { name: 'Approved projection', exact: true })
+    .click()
+  await expect(page.getByTestId('ncr-empty')).toContainText(
+    'No NCR records are approved',
+  )
+  await expect(details).toHaveCount(0)
+})
 
 test('full-screen NCR map loads the complete private snapshot once and clears it in public mode', async ({
   page,
@@ -38,9 +158,12 @@ test('full-screen NCR map loads the complete private snapshot once and clears it
   await expect(summary).toContainText('5,427 research records loaded', {
     timeout: 30000,
   })
-  // Private archive still loads once. The default visible layer is strict
-  // cross-source name candidates; expanding the archive is an explicit action.
+  // The development preview initially shows source-named parking or nearby
+  // destination context, with the unmodified full archive one filter away.
   await page.getByRole('button', { name: 'All features', exact: true }).click()
+  await expect(
+    page.getByRole('button', { name: 'Named or near destinations (research)' }),
+  ).toHaveAttribute('aria-selected', 'true')
   await page
     .getByRole('button', { name: 'All research (including unnamed)' })
     .click()

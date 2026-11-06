@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Portable pyosmium fallback for the NCR named-property context shell command.
+"""Canonical pyosmium extractor for named NCR visitor destination context.
 
-Only named commercial/institutional OSM features are retained. Geometry and
+Only named visitor destinations and commercial/institutional context are retained. Geometry and
 source identity are evidence of context, never a parking-facility identity.
 """
 import argparse
@@ -18,9 +18,19 @@ SPEC = importlib.util.spec_from_file_location(
 parking = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(parking)
 KINDS = {
-    "shop": ("mall", "department_store", "supermarket", "shopping_centre"),
-    "amenity": ("hospital", "university", "college", "marketplace", "school"),
-    "tourism": ("hotel", "motel"),
+    "shop": ("mall", "department_store", "supermarket", "shopping_centre",
+             "convenience", "bakery", "books", "electronics", "furniture",
+             "hardware", "doityourself", "garden_centre", "variety_store",
+             "wholesale", "clothes", "sports", "toys"),
+    "amenity": ("hospital", "university", "college", "marketplace", "school",
+                "restaurant", "cafe", "food_court", "fast_food", "ice_cream", "pub", "bar",
+                "theatre", "cinema", "arts_centre", "library", "clinic",
+                "conference_centre", "community_centre", "events_venue"),
+    "tourism": ("hotel", "motel", "hostel", "guest_house", "attraction", "museum",
+                "gallery", "zoo", "theme_park", "aquarium"),
+    "leisure": ("park", "stadium", "sports_centre", "garden", "water_park",
+                "fitness_centre", "swimming_pool", "bowling_alley", "golf_course"),
+    "historic": ("monument", "memorial", "castle", "fort", "ruins", "archaeological_site"),
     "building": ("commercial", "retail", "office", "hotel", "supermarket", "hospital"),
 }
 

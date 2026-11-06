@@ -64,7 +64,7 @@ export default defineConfig({
       },
     },
     {
-      command: `node scripts/ncr-preview-server.mjs --development-preview --port ${ncrPort} --enrichment data/ncr-enrichment/2026-11-05/name-enrichment.json.gz`,
+      command: `node scripts/ncr-preview-server.mjs --development-preview --port ${ncrPort} --enrichment data/ncr-destinations/2026-11-05/destination-enrichment.json.gz`,
       url: `http://127.0.0.1:${ncrPort}/api/ncr/discovery?bbox=120.85,14.3,121.27,14.86&zoom=12`,
       reuseExistingServer: false,
       timeout: 30_000,

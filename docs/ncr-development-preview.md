@@ -19,6 +19,12 @@ gzip report explicitly:
 node scripts/ncr-preview-server.mjs --development-preview --port 8090 --enrichment data/ncr-enrichment/2026-11-05/name-enrichment.json.gz
 ```
 
+For the fresh destination-description package, use:
+
+```powershell
+node scripts/ncr-preview-server.mjs --development-preview --port 8090 --enrichment data/ncr-destinations/2026-11-05/destination-enrichment.json.gz
+```
+
 The server requires the queue's frozen source hashes and complete facility-group
 membership to match the original research snapshot. It rejects claimed name,
 operator, visit, visitor-access or publication approvals in this attachment.
@@ -27,12 +33,14 @@ classifications, source evidence, property/operator clues and coordinate-based
 Google Maps/Waze review links. A nearby property remains a context clue. These
 links identify original source anchors, not confirmed driving entrances or
 permission to copy a map provider's listings. The map keeps each original source
-name, geometry and clustering; the attachment does not rename pins or change
-public eligibility. Private record details add a **Parking-name review** section
+name, geometry and clustering. Private map labels may show the separate
+**Parking near [Destination]** description; the attachment does not change the
+official source name or public eligibility. Private record details add a **Parking-name review** section
 with the separate proposal, readable classification, source links and uncertain
 nearby/property/operator clues. Select **All research (including unnamed)** in
-the category sheet to reach unnamed records; the default name filter remains
-restricted to existing cross-source name leads. Other retained group coordinates
+the category sheet to reach remaining unnamed records; the default name filter is
+**Named or near destinations (research)**. Cross-source name matches and distinctive
+source names remain separate filters. Other retained group coordinates
 have review links too, with no driving action. The client rejects malformed
 attachments and any enrichment in public responses. The full evidence queue
 remains available in exported review files. Changing the attached report

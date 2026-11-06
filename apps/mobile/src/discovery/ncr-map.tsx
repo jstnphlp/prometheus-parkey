@@ -129,6 +129,30 @@ export default function NcrMap(props: NcrMapProps) {
           }}
         />
         <Layer
+          id="ncr-destination-labels"
+          type="symbol"
+          minzoom={16}
+          filter={[
+            'all',
+            ['!', ['has', 'point_count']],
+            ['==', ['get', 'hasDestinationLabel'], true],
+          ]}
+          layout={{
+            visibility,
+            'text-field': ['get', 'label'],
+            'text-font': ['Noto Sans Bold'],
+            'text-size': 12,
+            'text-anchor': 'top',
+            'text-offset': [0, 1],
+            'text-max-width': 16,
+          }}
+          paint={{
+            'text-color': '#5A1643',
+            'text-halo-color': '#FFFFFF',
+            'text-halo-width': 2,
+          }}
+        />
+        <Layer
           id="ncr-cluster-circles"
           type="circle"
           filter={['has', 'point_count']}

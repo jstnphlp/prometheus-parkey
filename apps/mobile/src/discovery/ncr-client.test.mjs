@@ -150,6 +150,101 @@ const enrichedResponse = (enrichment = enrichmentFixture()) => ({
   ],
 })
 
+test('private destination labels are type-checked and rejected in public mode', () => {
+  const response = enrichedResponse()
+  response.items[0].nameReview.destinationLabel = {
+    label: 'Parking near Parkey Museum',
+    destination: 'Parkey Museum',
+    category: 'tourism:museum',
+    sourceId: 'osm:way/123',
+    sourceRecordUrl: 'https://www.openstreetmap.org/way/123',
+    approximateStraightLineMeters: 40,
+    insideSourcePropertyFootprint: false,
+    status: 'research_context_only',
+    parkingNameConfirmed: false,
+    visitorAccessConfirmed: false,
+    navigationEntranceConfirmed: false,
+    publicationApproved: false,
+  }
+  assert.equal(isNcrResponse(response), true)
+  assert.equal(response.items[0].name, 'Synthetic facility')
+  assert.equal(
+    ncrMapSources(response, null).anchors.features[0].properties.label,
+    'Parking near Parkey Museum',
+  )
+  assert.equal(
+    ncrMapSources(response, null).anchors.features[0].properties
+      .hasDestinationLabel,
+    true,
+  )
+  assert.equal(
+    ncrMapSources({ ...response, mode: 'public' }, null).anchors.features[0]
+      .properties.label,
+    'Synthetic facility',
+  )
+  assert.equal(
+    ncrMapSources({ ...response, mode: 'public' }, null).anchors.features[0]
+      .properties.hasDestinationLabel,
+    false,
+  )
+  assert.equal(isNcrResponse({ ...response, mode: 'public' }), false)
+  assert.equal(
+    ncrResponseCanDisplay({ ...response, mode: 'public' }, 'public'),
+    false,
+  )
+  const tampered = globalThis.structuredClone(response)
+  tampered.items[0].nameReview.destinationLabel.publicationApproved = true
+  assert.equal(isNcrResponse(tampered), false)
+  const badSource = globalThis.structuredClone(response)
+  badSource.items[0].nameReview.destinationLabel.sourceRecordUrl =
+    'javascript:alert(1)'
+  assert.equal(isNcrResponse(badSource), false)
+  badSource.items[0].nameReview.destinationLabel.sourceRecordUrl =
+    'https://www.openstreetmap.org/way/999'
+  assert.equal(isNcrResponse(badSource), false)
+})
+
+test('ambiguous alternatives remain private and reject invalid geographic evidence', () => {
+  const response = enrichedResponse()
+  response.items[0].nameReview.destinationReview = {
+    outcome: 'ambiguous',
+    reasons: ['Two different destinations are similarly plausible.'],
+    alternatives: [
+      {
+        label: 'Parking near Synthetic Museum',
+        destination: 'Synthetic Museum',
+        category: 'tourism:museum',
+        sourceId: 'osm:way/123',
+        sourceRecordUrl: 'https://www.openstreetmap.org/way/123',
+        sourceLicense: 'ODbL-1.0',
+        sourceCoordinate: [121.03, 14.56],
+        anchorCoordinate: [121.0301, 14.56],
+        approximateStraightLineMeters: 11,
+        insideSourcePropertyFootprint: false,
+        status: 'research_context_only',
+        parkingNameConfirmed: false,
+        visitorAccessConfirmed: false,
+        navigationEntranceConfirmed: false,
+        publicationApproved: false,
+      },
+    ],
+  }
+  assert.equal(isNcrResponse(response), true)
+  assert.equal(response.items[0].nameReview.destinationLabel, undefined)
+  const publicResponse = globalThis.structuredClone(response)
+  delete publicResponse.items[0].nameReview.enrichment
+  publicResponse.mode = 'public'
+  assert.equal(isNcrResponse(publicResponse), false)
+  assert.equal(ncrResponseCanDisplay(publicResponse, 'public'), false)
+  const malformed = globalThis.structuredClone(response)
+  malformed.items[0].nameReview.destinationReview.alternatives[0].sourceCoordinate =
+    [181, 14]
+  assert.equal(isNcrResponse(malformed), false)
+  const claimedApproval = globalThis.structuredClone(response)
+  claimedApproval.items[0].nameReview.destinationReview.alternatives[0].parkingNameConfirmed = true
+  assert.equal(isNcrResponse(claimedApproval), false)
+})
+
 test('private enrichment preserves source labels and rejects malformed evidence, approval claims or public leakage', () => {
   const response = enrichedResponse()
   assert.equal(isNcrResponse(response), true)

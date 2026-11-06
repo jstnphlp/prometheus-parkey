@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "source": "destination-review-queue.json.gz",
+  "sourceSha256": "c23e179036720fa9535ae75c3f7442f028e47b76f971d8eb3697791c25ccd073",
+  "output": "launch-area-review-shortlist.json",
+  "sha256": "53343c50872f963b078b6a1d4920e1d6ed2c003c8bd667719497c505083e015f",
+  "selection": {
+    "outcome": "ambiguous",
+    "areas": [
+      "poblacion",
+      "bgc",
+      "cubao"
+    ],
+    "firstPerArea": 5
+  },
+  "physicalVerificationComplete": false,
+  "publicationApproved": false
+}

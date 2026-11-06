@@ -21,6 +21,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import type { Viewport } from './model'
+import { config } from './config'
 import {
   fetchNcrDataset,
   ncrCategories,
@@ -32,8 +33,7 @@ import { colors } from './palette'
 import { ModalSheet } from './sheets'
 import { IconButton } from './ui'
 
-const apiUrl =
-  process.env.EXPO_PUBLIC_NCR_RESEARCH_URL || 'http://127.0.0.1:8090'
+const apiUrl = config.ncrResearchUrl
 const areas: { name: string; point: Coordinate }[] = [
   { name: 'NCR overview', point: [121.035, 14.6] },
   { name: 'Poblacion', point: [121.0325, 14.565] },

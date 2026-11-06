@@ -1,3 +1,7 @@
+const releaseBuild =
+  process.env.NODE_ENV === 'production' ||
+  process.env.PARKEY_RELEASE_BUILD === 'true'
+
 export const config = {
   analyticsEndpoint: process.env.EXPO_PUBLIC_ANALYTICS_ENDPOINT || '',
   analyticsDomain: process.env.EXPO_PUBLIC_ANALYTICS_DOMAIN || '',
@@ -10,13 +14,18 @@ export const config = {
     'https://tiles.openfreemap.org/styles/dark',
   routingUrl:
     process.env.EXPO_PUBLIC_OSRM_URL ||
-    (process.env.NODE_ENV === 'development'
+    (!releaseBuild && process.env.NODE_ENV === 'development'
       ? 'https://router.project-osrm.org'
       : ''),
   geocoder:
-    process.env.EXPO_PUBLIC_PHOTON_URL || 'https://photon.komoot.io/api/',
+    process.env.EXPO_PUBLIC_PHOTON_URL ||
+    (releaseBuild ? '' : 'https://photon.komoot.io/api/'),
   supabaseUrl: process.env.EXPO_PUBLIC_SUPABASE_URL || '',
   supabaseKey: process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY || '',
+  ncrResearchUrl:
+    !releaseBuild && process.env.NODE_ENV === 'development'
+      ? process.env.EXPO_PUBLIC_NCR_RESEARCH_URL || 'http://127.0.0.1:8090'
+      : '',
 }
 export const hasDiscoveryBackend = Boolean(
   config.supabaseUrl && config.supabaseKey,

@@ -133,6 +133,25 @@ export function prepareReviewerDecision(
       throw new Error(
         'Publication requires a supported lot or garage source type; unclassified observations remain private',
       )
+    const normalizeAccess = (value) =>
+      typeof value === 'string'
+        ? value.trim().toLowerCase()
+        : (value ?? 'unknown')
+    if (
+      [
+        candidate.accessClass,
+        candidate.sourceTags?.access,
+        candidate.sourceTags?.['parking:access'],
+      ].some(
+        (value) =>
+          !['unknown', 'yes', 'public', 'permissive'].includes(
+            normalizeAccess(value),
+          ),
+      )
+    )
+      throw new Error(
+        'Mapped source access is restricted or unsupported; source correction is required before publication',
+      )
     const decisions = payload.reviewDecisions
     if (
       payload.recordHash !== evidence.recordHash ||

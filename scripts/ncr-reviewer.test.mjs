@@ -19,7 +19,12 @@ import {
 } from './ncr-reviewer.mjs'
 
 const now = Date.parse('2026-11-05T12:00:00.000Z')
-export const reviewerFixture = (type = 'lot') => {
+export const reviewerFixture = (
+  type = 'lot',
+  accessClass = 'unknown',
+  rawAccess = undefined,
+  parkingAccess = undefined,
+) => {
   const candidate = {
     id: 'osm:node/1:Point',
     name: 'Unnamed parking facility',
@@ -31,9 +36,15 @@ export const reviewerFixture = (type = 'lot') => {
     sourceProviders: [
       { dataset: 'OpenStreetMap', record_id: 'node/1', license: 'ODbL-1.0' },
     ],
-    sourceTags: { amenity: 'parking' },
+    sourceTags: {
+      amenity: 'parking',
+      ...(rawAccess === undefined ? {} : { access: rawAccess }),
+      ...(parkingAccess === undefined
+        ? {}
+        : { 'parking:access': parkingAccess }),
+    },
     flags: [],
-    accessClass: 'unknown',
+    accessClass,
     operatingStatus: 'unknown',
   }
   const research = {
@@ -226,6 +237,83 @@ test('unspecified facility types remain immutable private evidence and cannot be
   const garage = reviewerFixture('garage')
   assert.doesNotThrow(() =>
     prepareReviewerDecision(garage.prepared, empty, garage.approval, now),
+  )
+})
+
+test('explicit unsupported source access cannot be masked by a human public-visitor approval request', () => {
+  for (const access of [
+    'members',
+    'customers',
+    'destination',
+    'unrecognized_access',
+    '',
+    'public;members',
+  ]) {
+    const f = reviewerFixture('lot', access)
+    assert.throws(
+      () => prepareReviewerDecision(f.prepared, empty, f.approval, now),
+      /Mapped source access is restricted or unsupported/,
+    )
+    assert.equal(
+      validateReviewerPackage(f.prepared).candidate.accessClass,
+      access,
+    )
+  }
+  for (const access of [
+    null,
+    'unknown',
+    'yes',
+    'public',
+    'permissive',
+    'PUBLIC',
+    ' public ',
+  ]) {
+    const f = reviewerFixture('lot', access)
+    assert.doesNotThrow(() =>
+      prepareReviewerDecision(f.prepared, empty, f.approval, now),
+    )
+  }
+  for (const rawAccess of [
+    'members',
+    'unrecognized_access',
+    'public;members',
+    '',
+  ]) {
+    const f = reviewerFixture('lot', 'unknown', rawAccess)
+    assert.throws(
+      () => prepareReviewerDecision(f.prepared, empty, f.approval, now),
+      /Mapped source access is restricted or unsupported/,
+    )
+    assert.equal(
+      validateReviewerPackage(f.prepared).candidate.sourceTags.access,
+      rawAccess,
+    )
+  }
+  const recognized = reviewerFixture('lot', 'unknown', ' PUBLIC ')
+  const conflicting = reviewerFixture('lot', 'unknown', 'yes', 'members')
+  assert.throws(
+    () =>
+      prepareReviewerDecision(
+        conflicting.prepared,
+        empty,
+        conflicting.approval,
+        now,
+      ),
+    /Mapped source access is restricted or unsupported/,
+  )
+  assert.equal(
+    validateReviewerPackage(conflicting.prepared).candidate.sourceTags[
+      'parking:access'
+    ],
+    'members',
+  )
+  assert.doesNotThrow(() =>
+    prepareReviewerDecision(
+      recognized.prepared,
+      empty,
+      recognized.approval,
+      now,
+    ),
   )
 })
 

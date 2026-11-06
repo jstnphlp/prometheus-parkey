@@ -1,10 +1,33 @@
-import type { NcrDiscoveryResponse, Coordinate } from '@parkey/shared-types'
+import type {
+  NcrDiscoveryResponse,
+  NcrDiscoveryItem,
+  Coordinate,
+} from '@parkey/shared-types'
 import type { FeatureCollection, Geometry } from 'geojson'
 
 import type { Viewport } from './model'
 
+/** Map rendering needs source shapes and labels, never fabricated evidence facts. */
+export type ResearchMapData = {
+  mode: NcrDiscoveryResponse['mode']
+  items: (Pick<
+    NcrDiscoveryItem,
+    | 'id'
+    | 'name'
+    | 'featureType'
+    | 'geometry'
+    | 'representativePoint'
+    | 'restrictedAccess'
+  > & {
+    nameReview?: Pick<
+      NonNullable<NcrDiscoveryItem['nameReview']>,
+      'destinationLabel'
+    >
+  })[]
+  clusters: NcrDiscoveryResponse['clusters']
+}
 export type NcrMapProps = {
-  data: NcrDiscoveryResponse | null
+  data: ResearchMapData | null
   selectedId: string | null
   target: { coordinate: Coordinate; zoom: number }
   onViewport: (viewport: Viewport) => void
@@ -13,7 +36,7 @@ export type NcrMapProps = {
   onError: () => void
 }
 export function ncrMapSources(
-  data: NcrDiscoveryResponse | null,
+  data: ResearchMapData | null,
   selectedId: string | null,
 ) {
   const shapes: FeatureCollection<Geometry> = {

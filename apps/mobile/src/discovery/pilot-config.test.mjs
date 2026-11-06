@@ -1,6 +1,9 @@
 import assert from 'node:assert/strict'
 import { Buffer } from 'node:buffer'
+import { execFileSync } from 'node:child_process'
+import process from 'node:process'
 import test from 'node:test'
+import { URL } from 'node:url'
 
 import {
   isPublicSupabaseKey,
@@ -10,6 +13,35 @@ import {
 } from './pilot-config.ts'
 
 const publicKey = 'sb_publishable_synthetic_fixture_public_only'
+
+test('candidate controls require development and are disabled in release builds', () => {
+  const moduleUrl = new URL('./pilot-config.ts', import.meta.url).href
+  for (const [environment, release, expected] of [
+    ['development', '', true],
+    ['development', 'true', false],
+    ['production', '', false],
+    ['production', 'true', false],
+    ['test', '', false],
+  ]) {
+    const output = execFileSync(
+      process.execPath,
+      [
+        '--input-type=module',
+        '-e',
+        `import { candidateResearchEnabled } from ${JSON.stringify(moduleUrl)}; process.stdout.write(String(candidateResearchEnabled))`,
+      ],
+      {
+        env: {
+          ...process.env,
+          NODE_ENV: environment,
+          PARKEY_RELEASE_BUILD: release,
+        },
+        encoding: 'utf8',
+      },
+    )
+    assert.equal(output, String(expected), `${environment}, release=${release}`)
+  }
+})
 const jwt = (role, alg = 'HS256') =>
   [
     Buffer.from(JSON.stringify({ alg, typ: 'JWT' })).toString('base64url'),

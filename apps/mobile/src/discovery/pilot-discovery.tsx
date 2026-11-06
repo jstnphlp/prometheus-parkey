@@ -39,7 +39,11 @@ import {
   pilotSelectedRecord,
 } from './pilot-client'
 import type { PilotRequest } from './pilot-client'
-import { pilotConfig, pilotCities } from './pilot-config'
+import {
+  candidateResearchEnabled,
+  pilotConfig,
+  pilotCities,
+} from './pilot-config'
 import { ModalSheet } from './sheets'
 import { useLocation } from './use-location'
 
@@ -207,8 +211,11 @@ export default function PilotDiscovery({
       records: [],
       next: null,
       notice: '',
-      status: 'loading',
-      error: '',
+      status: pilotConfig.ready ? 'loading' : 'error',
+      error: pilotConfig.ready
+        ? ''
+        : pilotConfig.configurationError ||
+          'Parking information is unavailable.',
     })
     if (!pilotConfig.ready) return () => requests.cancel()
     const timer = setTimeout(() => {
@@ -255,8 +262,15 @@ export default function PilotDiscovery({
       key: searchKey,
       records: [],
       next: null,
-      status: 'loading',
-      error: '',
+      status: !pilotConfig.ready
+        ? 'error'
+        : sheet === 'search'
+          ? 'loading'
+          : 'ready',
+      error: pilotConfig.ready
+        ? ''
+        : pilotConfig.configurationError ||
+          'Destination search is unavailable.',
     })
     if (sheet !== 'search' || !pilotConfig.ready) return () => requests.cancel()
     const timer = setTimeout(() => {
@@ -354,6 +368,10 @@ export default function PilotDiscovery({
     setSheet(null)
   }
   function connect() {
+    if (!candidateResearchEnabled) {
+      publicMode()
+      return
+    }
     const value = draftToken.trim()
     if (value.length > 16000 || !/^[\w-]+\.[\w-]+\.[\w-]+$/.test(value)) {
       setAuthMessage(
@@ -500,7 +518,7 @@ export default function PilotDiscovery({
   return (
     <View testID="pilot-screen" style={styles.screen}>
       <Stack.Screen
-        options={{ headerShown: false, title: 'Parkey pilot discovery' }}
+        options={{ headerShown: false, title: 'Parkey discovery' }}
       />
       <View testID="pilot-map" style={StyleSheet.absoluteFill}>
         <NcrMap
@@ -526,22 +544,24 @@ export default function PilotDiscovery({
             </Action>
           ))}
         </View>
-        <View style={styles.row}>
-          <Action
-            selected={mode === 'public'}
-            onPress={publicMode}
-            testID="pilot-mode-public"
-          >
-            Approved parking
-          </Action>
-          <Action
-            selected={mode === 'candidate_research'}
-            onPress={() => setSheet('access')}
-            testID="pilot-mode-candidate"
-          >
-            Candidate research
-          </Action>
-        </View>
+        {candidateResearchEnabled ? (
+          <View style={styles.row}>
+            <Action
+              selected={mode === 'public'}
+              onPress={publicMode}
+              testID="pilot-mode-public"
+            >
+              Approved parking
+            </Action>
+            <Action
+              selected={mode === 'candidate_research'}
+              onPress={() => setSheet('access')}
+              testID="pilot-mode-candidate"
+            >
+              Candidate research
+            </Action>
+          </View>
+        ) : null}
         <Action onPress={() => setSheet('search')} testID="pilot-search-open">
           {destination
             ? `Near ${destination.name}`
@@ -635,7 +655,7 @@ export default function PilotDiscovery({
           </Action>
         ) : null}
       </View>
-      {sheet === 'access' ? (
+      {sheet === 'access' && candidateResearchEnabled ? (
         <ModalSheet
           title="Restricted candidate research"
           onClose={() => {
@@ -699,7 +719,7 @@ export default function PilotDiscovery({
               ))}
             </ScrollView>
             <Text selectable>
-              Filters apply to loaded observations. Load more to inspect
+              Filters apply to loaded parking records. Load more to inspect
               additional records.
             </Text>
           </View>
@@ -734,7 +754,9 @@ export default function PilotDiscovery({
               <Text selectable>
                 {parking.status === 'loading'
                   ? 'Loading records…'
-                  : 'No loaded records match this filter.'}
+                  : parking.status === 'error'
+                    ? parking.error
+                    : 'No loaded records match this filter.'}
               </Text>
             }
             ListFooterComponent={
@@ -872,7 +894,7 @@ export default function PilotDiscovery({
               Fees: {selected.fees || 'Unknown'} · Hours:{' '}
               {selected.hours || 'Unknown'}
             </Text>
-            <Text selectable>Capacity and live availability: unknown.</Text>
+            <Text selectable>No live availability information.</Text>
             <Text selectable>
               Research: {selected.evidence.researchStatus} · Operator confirmed:{' '}
               {selected.evidence.operatorConfirmed ? 'Yes' : 'No'} · Physically

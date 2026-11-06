@@ -4,6 +4,10 @@ Recorded 2026-11-06 on branch `codex/v1-a0-discovery-baseline`, based on remote
 `main` commit `febd41941e722f0f1e85829176679f1ff88cc7f6`. Mobile tree:
 `35e2860f492c79c91b27bcb66ad66f4abfa496b3`.
 
+Review: [draft PR #23](https://github.com/jstnphlp/prometheus-parkey/pull/23),
+emulator evidence commit `fffda45`. PR creation was explicitly approved by the
+user; no merge, deployment or release is authorized by that approval.
+
 **A0 baseline inventory is complete with emulator evidence.** Architecture,
 routes, automated baseline results, current screenshots and risks are recorded.
 This is a baseline audit pass, not a claim that every smoke outcome or release

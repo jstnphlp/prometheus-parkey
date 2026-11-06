@@ -18,7 +18,7 @@ Status date: 2026-11-06. This is the **only canonical scope and gate checklist**
 
 ## Track A — Discovery (Codex)
 
-- **A0 (TODO):** Read existing architecture; record baseline tests, routes, screenshots and risks
+- **A0 (PASS — baseline audit only):** Architecture, routes, baseline tests, current Android 15/API 35 x86_64 emulator screenshots and risks recorded in [the A0 report](V1_A0_MOBILE_BASELINE.md). Branch `codex/v1-a0-discovery-baseline`, [draft PR #23](https://github.com/jstnphlp/prometheus-parkey/pull/23), evidence commit `fffda45`. Mobile typecheck/lint and 170 unit tests passed; actual emulator observations and open defects are in the [receipt](evidence/v1-a0-api35/receipt.json). This does not mark product defects, physical-device, performance or release checks passed; physical tests remain separate A2/A4 gates per user instruction.
 - **A1 (TODO):** Consolidate confusing legacy vs pilot UX into map-first discovery; preserve flags and private candidate security. Filters, destination search, details, saved locations, directions, loading/empty/errors
 - **A2 (TODO):** Fast and robust map: viewport caching, source deduplication, response cancellation, stable markers, low-memory rendering; measured P50/P95 cold/warm behavior on real Android device
 - **A3 (TODO):** Truthful parking detail cards: fees/hours/entrance/access not guessed; no navigation to unapproved source anchor; photo license and image fallback verified

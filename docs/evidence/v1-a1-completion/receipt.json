@@ -1,0 +1,204 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-06",
+  "branch": "codex/v1-a1-discovery-consolidation",
+  "pr": "https://github.com/jstnphlp/prometheus-parkey/pull/24",
+  "implementation_commits": ["1e8f169", "c7fdf42"],
+  "native_apk_sha256": "d44de93e814045e42232de704d317d7556902031213ae68fe7c371dcd1149d47",
+  "native_shell": "Reused v0.1.0 Android code2 development APK; current committed JavaScript via Metro8096, not a signed release.",
+  "emulator": {
+    "name": "Parkey_A0_API35",
+    "android": 15,
+    "api": 35,
+    "abi": "x86_64",
+    "profile": "pixel_7",
+    "gpu": "swiftshader",
+    "cpu_cores": 2,
+    "memory_argument_mb": 2048,
+    "resolution": "720x1600",
+    "density_dpi": 280,
+    "snapshots": false,
+    "dns_after_network_recovery": ["8.8.8.8", "1.1.1.1"]
+  },
+  "configuration": {
+    "pilot_flag": true,
+    "node_env": "development",
+    "dotenv_loading": false,
+    "hosted_backend": "not configured; no private session used",
+    "telemetry": "locked off in application config"
+  },
+  "verification": {
+    "mobile_unit_tests": {
+      "passed": 187,
+      "failed": 0
+    },
+    "pilot_browser": {
+      "passed": 28,
+      "failed": 0,
+      "duration": "2.0m",
+      "data": "Explicit synthetic browser fixtures, no real parking approvals."
+    },
+    "legacy_browser_final": {
+      "passed": 48,
+      "failed": 0,
+      "duration": "10.7m",
+      "note": "Fresh final run after c7fdf42; includes destination-reference regression. Earlier interrupted run retained separately and not counted as passing."
+    },
+    "workspace": [
+      "pnpm lint",
+      "pnpm typecheck",
+      "pnpm format:check",
+      "pnpm build:web"
+    ],
+    "native_observed": [
+      "Live basemap and shared Map/Saved/You controls",
+      "Parked-car pin persisted across emulator and app restart",
+      "Native price/type controls and explicit unconfigured-backend error/retry",
+      "Fresh real Photon destination results",
+      "Destination-relative straight-line distance labels after cold process reload",
+      "Truthful unknown fees/hours/access, disabled unapproved entrance navigation",
+      "Shared parked-car walking action opened Google Maps onboarding activity",
+      "Actual offline banner and tile/network failure observed; cold AVD restart with explicit DNS restored real search and map access."
+    ],
+    "review": "Independent read-only review found no remaining introduced A1 blocker after reported fixes.",
+    "native_layout_assertions": {
+      "passed": 11,
+      "failed": 0
+    }
+  },
+  "limitations": [
+    "No hosted pilot backend or authenticated private projection tested natively; positive pilot data paths exercised through explicitly synthetic browser fixtures.",
+    "Native glyph404 remains an A2 issue; diagnostics recorded and overlays manually dismissed for the guarded-button check, never suppressed in source.",
+    "An interrupted development Fast Refresh retained stale component props; final native legacy verification used a cold process reload.",
+    "Production-mode startup correctly refused missing public backend configuration; no release guard bypass, release binary or distribution claim.",
+    "No physical Android, iOS, native performance or production approval claimed."
+  ],
+  "files": [
+    {
+      "file": "03-pilot-ready.json",
+      "source_commit": "1e8f169",
+      "bytes": 8945,
+      "sha256": "10e0cbb2d354dc6c2c4fc38880bf7fefdf8ab835e15fd3dc04fd73edf9ec4d71"
+    },
+    {
+      "file": "03-pilot-ready.png",
+      "source_commit": "1e8f169",
+      "bytes": 653459,
+      "sha256": "919d6cce92c1fa8375dd9d6e06bf73496250a507077060e86bfcf42b71d59b16"
+    },
+    {
+      "file": "04-saved-parked.json",
+      "source_commit": "1e8f169",
+      "bytes": 5158,
+      "sha256": "6cca170483e86e87e37de6cae107707f5e5a1a19d00376cda775e83502538196"
+    },
+    {
+      "file": "04-saved-parked.png",
+      "source_commit": "1e8f169",
+      "bytes": 301549,
+      "sha256": "e0ebd4b7f6fbd3187bd3cffdc2319f1b2349810d01cf2d2c56d2df307cda18a0"
+    },
+    {
+      "file": "05-map-information.json",
+      "source_commit": "1e8f169",
+      "bytes": 4658,
+      "sha256": "eb42a06837847d29bcb750776664d9b19f0aa9aab4d01fa627dc69b2e6a2b3d5"
+    },
+    {
+      "file": "05-map-information.png",
+      "source_commit": "1e8f169",
+      "bytes": 376233,
+      "sha256": "749ac1ecbace741e7726fb11f84bdd3c23e6f1a936ad9a62436f687625638b9b"
+    },
+    {
+      "file": "06-search-retry.json",
+      "source_commit": "1e8f169",
+      "bytes": 3839,
+      "sha256": "3f3dd766efb7fc7b715c8af08a79da7fd310f26a15d1c610f3e3fdcfe0d465fa"
+    },
+    {
+      "file": "06-search-retry.png",
+      "source_commit": "1e8f169",
+      "bytes": 440746,
+      "sha256": "bf37dee340ffb31402bd636550bfca391148722b2a1d107daba24562be9aee1d"
+    },
+    {
+      "file": "07-price-filters.json",
+      "source_commit": "1e8f169",
+      "bytes": 8096,
+      "sha256": "f9efcb0989ec1af4271d4ed2fc8dc734700d1e49fe67028daa8c3f7db31508fc"
+    },
+    {
+      "file": "07-price-filters.png",
+      "source_commit": "1e8f169",
+      "bytes": 276895,
+      "sha256": "656b7a0d644c32d969954a27cf6493745c1d14974cd096ee358d2d83c501beef"
+    },
+    {
+      "file": "09-real-search-final.json",
+      "source_commit": "1e8f169",
+      "bytes": 10353,
+      "sha256": "5a5fcb9d67d3d44a2b2a4a7e3aa52fc864a37e37acf376ddc41e15dbec71166a"
+    },
+    {
+      "file": "09-real-search-final.png",
+      "source_commit": "1e8f169",
+      "bytes": 215545,
+      "sha256": "6d83f1fc35295bb76698f3cf89bfb7bdc18b6e0cddec538a02c5a3919eb57114"
+    },
+    {
+      "file": "12-reference-labels-final.json",
+      "source_commit": "c7fdf42",
+      "bytes": 11179,
+      "sha256": "007a42cd27c39045e5f5b1e0fbfac174d430492985733f26bb7187c0591d745b"
+    },
+    {
+      "file": "12-reference-labels-final.png",
+      "source_commit": "c7fdf42",
+      "bytes": 284290,
+      "sha256": "7cb3b88653378c1b8f080b9292318b797186b8d1ed98f684de2e371bda9ef0c6"
+    },
+    {
+      "file": "13-legacy-details.json",
+      "source_commit": "c7fdf42",
+      "bytes": 7048,
+      "sha256": "9504120d2c9011aa254fc94f1980ed902ad7d0c0878654c5ec7b91d0c24348ad"
+    },
+    {
+      "file": "13-legacy-details.png",
+      "source_commit": "c7fdf42",
+      "bytes": 351454,
+      "sha256": "b0ea116dbd195c92b304b3777f1175619f6b0865689faaa86c661d0dde6df4a6"
+    },
+    {
+      "file": "15-maps-handoff.json",
+      "source_commit": "c7fdf42",
+      "bytes": 2566,
+      "sha256": "5029b77df688b850e99814adc22ddcfeda17e0b964d352fdf54d84d8cce93002"
+    },
+    {
+      "file": "15-maps-handoff.png",
+      "source_commit": "c7fdf42",
+      "bytes": 74159,
+      "sha256": "7c4aebb6eaedd3e6bd2bf8d0f97afa5af7ded7c8901b8f7d8c6630925811649d"
+    },
+    {
+      "file": "01-pilot-offline.png",
+      "source_commit": "1e8f169",
+      "bytes": 607060,
+      "sha256": "1328f1d8532ac868488137528d880fc7453712ecf5b507f2d5a256c7a3ec4a05"
+    },
+    {
+      "file": "01-pilot-offline.json",
+      "source_commit": "1e8f169",
+      "bytes": 9200,
+      "sha256": "5b9cab478c279c45249a53dbb6ed75b1a8d9a1f5e95f135be9b48fd5f56bbcbb"
+    },
+    {
+      "file": "14-navigation-refused-final.json",
+      "source_commit": "c7fdf42",
+      "bytes": 7049,
+      "sha256": "aa4b25cdbba06e910e187280694c6a6316e3ab0375a459c4a42fc9448a1efdc2"
+    }
+  ]
+}

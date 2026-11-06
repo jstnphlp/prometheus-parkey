@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "source_commit": "39feebc147074c80a1f11ac6187dda3bdbd27791",
+  "emulator": "Parkey_A0_API35 / Android 15 API 35 x86_64 / SwiftShader, 720x1600 at 280 dpi",
+  "status": "initial A1 regressions verified; A1 gate remains open",
+  "tests": [
+    {
+      "case": "a1-config-error",
+      "assert_absent": "Loading pilot records",
+      "assert_present": "Configure both public Supabase values.",
+      "result": "passed"
+    },
+    {
+      "case": "a1-search-error",
+      "assert_absent": "Searching this city",
+      "assert_present": "Configure both public Supabase values.",
+      "result": "passed"
+    },
+    {
+      "case": "a1-discovery-details",
+      "assert_absent": "Spaces",
+      "assert_present": "Navigation requires a confirmed entrance, visitor access and operator authorization.",
+      "result": "passed"
+    }
+  ],
+  "files": [
+    {
+      "file": "a1-config-error.json",
+      "bytes": 8547,
+      "sha256": "359c5e938f806db812c700043f9b9dad8126ceba29182efbc41f0d4479a136d4"
+    },
+    {
+      "file": "a1-config-error.png",
+      "bytes": 677419,
+      "sha256": "f6914803663e10f537f66ef6747adfa2422cb296c99595d008e91fcec044b7a6"
+    },
+    {
+      "file": "a1-discovery-details.json",
+      "bytes": 10122,
+      "sha256": "008299481bcc8869c0bda494c177a62d36cbb37b8d85213705754566e785a972"
+    },
+    {
+      "file": "a1-discovery-details.png",
+      "bytes": 261590,
+      "sha256": "9c42e897ec694ed1fc8c22f7b5ac15ec14ef47ecf739694e623ac2a0a21d16fb"
+    },
+    {
+      "file": "a1-search-error.json",
+      "bytes": 3297,
+      "sha256": "6fb199fc16e80d8c0f9c83ef630d01b70324382eecd822886adcb7ad1e22f261"
+    },
+    {
+      "file": "a1-search-error.png",
+      "bytes": 493861,
+      "sha256": "6f2fbf30e2fdfaa8ea3de58dc29249b86b2b2676aeab6f03dd453d019d3a7ec2"
+    }
+  ]
+}

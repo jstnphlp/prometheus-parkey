@@ -1,0 +1,214 @@
+[
+  {
+    "window-title": "",
+    "type": "SYSTEM",
+    "layer": 1,
+    "bounds": "[0,0][720,49]",
+    "content": [
+      {
+        "class": "android.widget.TextView",
+        "resource-id": "com.android.systemui:id/clock",
+        "text": "10:48",
+        "content-desc": "10:48 AM",
+        "bounds": "[47,10][130,39]",
+        "center": "[88,24]"
+      },
+      {
+        "class": "android.widget.ImageView",
+        "content-desc": "Android System notification: Serial console enabled",
+        "bounds": "[130,1][169,49]",
+        "center": "[149,25]"
+      },
+      {
+        "class": "android.widget.ImageView",
+        "resource-id": "com.android.systemui:id/wifi_signal",
+        "content-desc": "Wifi signal full.",
+        "bounds": "[582,11][608,37]",
+        "center": "[595,24]"
+      },
+      {
+        "class": "android.widget.FrameLayout",
+        "resource-id": "com.android.systemui:id/mobile_combo",
+        "content-desc": "Phone signal full.",
+        "bounds": "[608,5][634,44]",
+        "center": "[621,24]"
+      },
+      {
+        "class": "android.widget.LinearLayout",
+        "resource-id": "com.android.systemui:id/battery",
+        "content-desc": "Battery charging, 100 percent.",
+        "bounds": "[645,13][659,36]",
+        "center": "[652,24]"
+      }
+    ]
+  },
+  {
+    "window-title": "Parkey",
+    "type": "APPLICATION",
+    "active": true,
+    "focused": true,
+    "layer": 0,
+    "bounds": "[0,0][720,1600]",
+    "content": [
+      {
+        "class": "android.widget.FrameLayout",
+        "content-desc": "Showing a Map created with MapLibre. Scroll by dragging two fingers. Zoom by pinching two fingers.",
+        "interactions": ["CLICKABLE", "LONG_CLICKABLE", "FOCUSABLE"],
+        "bounds": "[0,0][720,1600]",
+        "center": "[360,800]"
+      },
+      {
+        "class": "android.widget.Button",
+        "content-desc": "Return to pilot cities",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "bounds": "[278,56][442,136]",
+        "center": "[360,96]",
+        "children": [
+          {
+            "class": "android.widget.TextView",
+            "text": "Pilot cities",
+            "bounds": "[300,78][419,112]",
+            "center": "[359,95]"
+          }
+        ]
+      },
+      {
+        "class": "android.widget.Button",
+        "content-desc": "Map data sources and attribution",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "bounds": "[28,801][105,878]",
+        "center": "[66,839]"
+      },
+      {
+        "class": "android.widget.Button",
+        "content-desc": "Center on my location",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "bounds": "[594,780][692,878]",
+        "center": "[643,829]"
+      },
+      {
+        "class": "android.widget.Button",
+        "resource-id": "parking-sheet-handle",
+        "content-desc": "Parking sheet: half. Swipe down to dismiss. Activate to expand",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "bounds": "[255,899][465,955]",
+        "center": "[360,927]"
+      },
+      {
+        "class": "android.widget.ScrollView",
+        "resource-id": "parking-preview",
+        "interactions": ["SCROLLABLE", "FOCUSABLE"],
+        "bounds": "[0,955][720,1558]",
+        "center": "[360,1256]",
+        "children": [
+          {
+            "class": "android.view.View",
+            "resource-id": "parking-detail-title",
+            "text": "1210",
+            "bounds": "[28,955][496,997]",
+            "center": "[262,976]"
+          },
+          {
+            "class": "android.widget.TextView",
+            "text": "Parking lot",
+            "bounds": "[28,997][496,1029]",
+            "center": "[262,1013]"
+          },
+          {
+            "class": "android.widget.TextView",
+            "text": "Fee unknown",
+            "bounds": "[517,955][692,1002]",
+            "center": "[604,978]"
+          },
+          {
+            "class": "android.widget.TextView",
+            "resource-id": "parking-verification",
+            "text": "Not field verified. No live availability",
+            "bounds": "[28,1053][692,1085]",
+            "center": "[360,1069]"
+          },
+          {
+            "class": "android.widget.TextView",
+            "text": "Entrance not mapped. Navigation requires reviewed entrance and visitor access.",
+            "bounds": "[28,1110][692,1174]",
+            "center": "[360,1142]"
+          },
+          {
+            "class": "android.widget.HorizontalScrollView",
+            "interactions": ["SCROLLABLE", "FOCUSABLE"],
+            "bounds": "[0,1199][720,1368]",
+            "center": "[360,1283]",
+            "children": [
+              {
+                "class": "android.widget.TextView",
+                "text": "Hours",
+                "bounds": "[105,1227][166,1254]",
+                "center": "[135,1240]"
+              },
+              {
+                "class": "android.widget.TextView",
+                "text": "Not recorded",
+                "bounds": "[52,1269][234,1347]",
+                "center": "[143,1308]"
+              },
+              {
+                "class": "android.widget.TextView",
+                "text": "Fee",
+                "bounds": "[354,1227][389,1254]",
+                "center": "[371,1240]"
+              },
+              {
+                "class": "android.widget.TextView",
+                "text": "Fee unknown",
+                "bounds": "[301,1269][483,1347]",
+                "center": "[392,1308]"
+              },
+              {
+                "class": "android.widget.TextView",
+                "text": "Access",
+                "bounds": "[602,1227][670,1254]",
+                "center": "[636,1240]"
+              },
+              {
+                "class": "android.widget.TextView",
+                "text": "Not recorded",
+                "bounds": "[549,1269][720,1347]",
+                "center": "[634,1308]"
+              }
+            ]
+          },
+          {
+            "class": "android.widget.Button",
+            "resource-id": "parking-get-directions",
+            "content-desc": "Go",
+            "interactions": ["CLICKABLE", "FOCUSABLE"],
+            "bounds": "[28,1392][573,1490]",
+            "center": "[300,1441]",
+            "children": [
+              {
+                "class": "android.widget.TextView",
+                "text": "Go",
+                "bounds": "[254,1420][294,1462]",
+                "center": "[274,1441]"
+              }
+            ]
+          },
+          {
+            "class": "android.widget.TextView",
+            "resource-id": "parking-navigation-warning",
+            "text": "Navigation requires a confirmed entrance, visitor access and operator authorization.",
+            "bounds": "[28,1490][573,1554]",
+            "center": "[300,1522]"
+          },
+          {
+            "class": "android.widget.Button",
+            "content-desc": "Save parking",
+            "interactions": ["CLICKABLE", "FOCUSABLE"],
+            "bounds": "[594,1424][692,1522]",
+            "center": "[643,1473]"
+          }
+        ]
+      }
+    ]
+  }
+]

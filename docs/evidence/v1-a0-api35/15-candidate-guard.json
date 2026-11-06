@@ -1,0 +1,143 @@
+[
+  {
+    "window-title": "",
+    "type": "SYSTEM",
+    "layer": 1,
+    "bounds": "[0,0][720,91]",
+    "content": [
+      {
+        "class": "android.widget.TextView",
+        "resource-id": "com.android.systemui:id/clock",
+        "text": "5:14",
+        "content-desc": "5:14 AM",
+        "bounds": "[47,31][116,60]",
+        "center": "[81,45]"
+      },
+      {
+        "class": "android.widget.ImageView",
+        "content-desc": "Android System notification: Serial console enabled",
+        "bounds": "[116,1][155,91]",
+        "center": "[135,46]"
+      },
+      {
+        "class": "android.widget.ImageView",
+        "resource-id": "com.android.systemui:id/wifi_signal",
+        "content-desc": "Wifi signal full.",
+        "bounds": "[582,32][608,58]",
+        "center": "[595,45]"
+      },
+      {
+        "class": "android.widget.FrameLayout",
+        "resource-id": "com.android.systemui:id/mobile_combo",
+        "content-desc": "Phone signal full.",
+        "bounds": "[608,26][634,65]",
+        "center": "[621,45]"
+      },
+      {
+        "class": "android.widget.LinearLayout",
+        "resource-id": "com.android.systemui:id/battery",
+        "content-desc": "Battery charging, 100 percent.",
+        "bounds": "[645,34][659,57]",
+        "center": "[652,45]"
+      }
+    ]
+  },
+  {
+    "window-title": "",
+    "type": "APPLICATION",
+    "active": true,
+    "focused": true,
+    "layer": 0,
+    "bounds": "[0,0][720,1600]",
+    "content": [
+      {
+        "class": "android.widget.Button",
+        "content-desc": "Close panel",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "bounds": "[0,0][720,1600]",
+        "center": "[360,800]"
+      },
+      {
+        "class": "android.view.View",
+        "text": "Restricted candidate research",
+        "bounds": "[42,891][573,933]",
+        "center": "[307,912]"
+      },
+      {
+        "class": "android.widget.Button",
+        "content-desc": "Close Restricted candidate research",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "bounds": "[594,870][678,954]",
+        "center": "[636,912]"
+      },
+      {
+        "class": "android.widget.ScrollView",
+        "interactions": ["SCROLLABLE", "FOCUSABLE"],
+        "bounds": "[0,996][720,1558]",
+        "center": "[360,1277]",
+        "children": [
+          {
+            "class": "android.widget.TextView",
+            "text": "Only an explicitly authorized reviewer session with MFA can access candidates. The server decides access. Your token stays in memory and is cleared on disconnect or app restart.",
+            "interactions": ["FOCUSABLE", "TEXT_SELECTABLE"],
+            "bounds": "[28,1024][692,1145]",
+            "center": "[360,1084]"
+          },
+          {
+            "class": "android.widget.EditText",
+            "resource-id": "pilot-reviewer-token",
+            "content-desc": "Reviewer session token",
+            "interactions": [
+              "PASSWORD",
+              "CLICKABLE",
+              "LONG_CLICKABLE",
+              "FOCUSABLE",
+              "EDITABLE"
+            ],
+            "bounds": "[28,1166][692,1250]",
+            "center": "[360,1208]"
+          },
+          {
+            "class": "android.widget.TextView",
+            "text": "Enter a valid current reviewer session token. The server checks access and MFA.",
+            "interactions": ["FOCUSABLE", "TEXT_SELECTABLE"],
+            "bounds": "[28,1271][692,1334]",
+            "center": "[360,1302]"
+          },
+          {
+            "class": "android.widget.Button",
+            "resource-id": "pilot-reviewer-connect",
+            "content-desc": "Connect reviewer session",
+            "interactions": ["CLICKABLE", "FOCUSABLE"],
+            "bounds": "[28,1355][692,1432]",
+            "center": "[360,1393]",
+            "children": [
+              {
+                "class": "android.widget.TextView",
+                "text": "Connect reviewer session",
+                "bounds": "[50,1374][670,1408]",
+                "center": "[360,1391]"
+              }
+            ]
+          },
+          {
+            "class": "android.widget.Button",
+            "resource-id": "pilot-reviewer-disconnect",
+            "content-desc": "Disconnect and use approved parking",
+            "interactions": ["CLICKABLE", "FOCUSABLE"],
+            "bounds": "[28,1453][692,1530]",
+            "center": "[360,1491]",
+            "children": [
+              {
+                "class": "android.widget.TextView",
+                "text": "Disconnect and use approved parking",
+                "bounds": "[50,1472][670,1506]",
+                "center": "[360,1489]"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

@@ -1,4 +1,4 @@
-import type { Coordinate, DiscoveryParking } from '@parkey/shared-types'
+import type { DiscoveryParking } from '@parkey/shared-types'
 import { useEffect, useState } from 'react'
 import { Animated, Platform, StyleSheet, Text, View } from 'react-native'
 
@@ -7,6 +7,8 @@ import { MotionPressable } from './motion'
 import { colors } from './palette'
 import { parkingDetailData } from './parking-detail-data'
 import { reviewedParkingEntrance } from './parking-navigation'
+import type { ParkingReference } from './model'
+import { parkingRowText } from './presentation'
 import { ParkingStatus } from './parking-status'
 import { ui } from './ui'
 import { useReducedMotion } from './use-reduced-motion'
@@ -65,24 +67,28 @@ export function NearbyLoading() {
 
 export function NearbyCard({
   parking,
-  location,
+  reference,
   now,
   onPress,
   onGo,
 }: {
   parking: DiscoveryParking
-  location: Coordinate | null
+  reference: ParkingReference
   now: Date
   onPress: () => void
   onGo: () => void
 }) {
-  const details = parkingDetailData(parking, location, now)
+  const details = parkingDetailData(parking, null, now)
+  const row = parkingRowText(parking, reference, now)
+  const summary = [details.meta, `${row.distance} · straight-line`]
+    .filter(Boolean)
+    .join(' · ')
   const canNavigate = Boolean(reviewedParkingEntrance(parking, now.getTime()))
   return (
     <View style={styles.card}>
       <MotionPressable
         accessibilityRole="button"
-        accessibilityLabel={`${details.title}. ${details.meta}. Open parking details`}
+        accessibilityLabel={`${details.title}. ${summary}. Open parking details`}
         onPress={onPress}
         style={({ pressed }) => [styles.content, pressed && ui.pressed]}
       >
@@ -91,7 +97,7 @@ export function NearbyCard({
           {details.title}
         </Text>
         <Text style={ui.small} numberOfLines={1}>
-          {details.meta}
+          {summary}
         </Text>
       </MotionPressable>
       <MotionPressable

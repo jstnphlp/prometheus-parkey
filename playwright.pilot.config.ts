@@ -30,8 +30,8 @@ export default defineConfig({
     { name: 'pilot-mobile', use: { ...devices['Pixel 7'] } },
   ],
   webServer: {
-    command: `pnpm --filter @parkey/mobile web --host localhost --port ${port}`,
-    url: `http://localhost:${port}`,
+    command: `pnpm --filter @parkey/mobile web --host localhost --port ${port} --max-workers 2`,
+    url: `http://localhost:${port}/status`,
     reuseExistingServer: false,
     timeout: 180_000,
     env: {

@@ -1,0 +1,89 @@
+[
+  {
+    "window-title": "",
+    "type": "SYSTEM",
+    "layer": 1,
+    "bounds": "[0,0][720,91]",
+    "content": [
+      {
+        "class": "android.widget.TextView",
+        "resource-id": "com.android.systemui:id/clock",
+        "text": "5:12",
+        "content-desc": "5:12 AM",
+        "bounds": "[47,31][116,60]",
+        "center": "[81,45]"
+      },
+      {
+        "class": "android.widget.ImageView",
+        "content-desc": "Android System notification: Serial console enabled",
+        "bounds": "[116,1][155,91]",
+        "center": "[135,46]"
+      },
+      {
+        "class": "android.widget.ImageView",
+        "resource-id": "com.android.systemui:id/wifi_signal",
+        "content-desc": "Wifi signal full.",
+        "bounds": "[582,32][608,58]",
+        "center": "[595,45]"
+      },
+      {
+        "class": "android.widget.FrameLayout",
+        "resource-id": "com.android.systemui:id/mobile_combo",
+        "content-desc": "Phone signal full.",
+        "bounds": "[608,26][634,65]",
+        "center": "[621,45]"
+      },
+      {
+        "class": "android.widget.LinearLayout",
+        "resource-id": "com.android.systemui:id/battery",
+        "content-desc": "Battery charging, 100 percent.",
+        "bounds": "[645,34][659,57]",
+        "center": "[652,45]"
+      }
+    ]
+  },
+  {
+    "window-title": "Maps",
+    "type": "APPLICATION",
+    "active": true,
+    "focused": true,
+    "layer": 0,
+    "bounds": "[0,0][720,1600]",
+    "content": [
+      {
+        "class": "android.widget.ScrollView",
+        "interactions": ["FOCUSABLE"],
+        "bounds": "[56,430][664,1169]",
+        "center": "[360,799]",
+        "children": [
+          {
+            "class": "android.widget.TextView",
+            "text": "Make it your map",
+            "bounds": "[56,430][664,501]",
+            "center": "[360,465]"
+          },
+          {
+            "class": "android.widget.TextView",
+            "text": "Sign in for quick access to your favorite places and get better recommendations",
+            "bounds": "[56,515][664,595]",
+            "center": "[360,555]"
+          },
+          {
+            "class": "android.widget.Button",
+            "text": "Sign in",
+            "interactions": ["CLICKABLE", "FOCUSABLE"],
+            "bounds": "[283,1085][437,1169]",
+            "center": "[360,1127]"
+          }
+        ]
+      },
+      {
+        "class": "android.widget.Button",
+        "text": "SKIP",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "bounds": "[510,98][664,182]",
+        "center": "[587,140]"
+      }
+    ]
+  }
+]

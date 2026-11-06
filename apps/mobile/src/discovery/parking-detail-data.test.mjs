@@ -52,7 +52,7 @@ test('distance boundaries follow driver-focused units', () => {
   ])
     assert.equal(detailDistance(meters), expected)
 })
-test('explicit fees, capacity and restricted access are preserved without claiming availability', () => {
+test('discovery details preserve fees and access without exposing total inventory', () => {
   const detail = parkingDetailData(
     {
       ...minimal,
@@ -67,7 +67,9 @@ test('explicit fees, capacity and restricted access are preserved without claimi
     },
     null,
   )
-  assert.deepEqual(detail.chips, ['₱40/hr', '120 spaces'])
+  assert.deepEqual(detail.chips, ['₱40/hr'])
+  assert.equal(Object.hasOwn(detail, 'capacity'), false)
+  assert.ok(!detail.rows.some((row) => row.label === 'Spaces'))
   assert.equal(detail.warning, 'Customers only')
   assert.equal(detail.accessibleSpaces, 2)
   assert.deepEqual(detail.paymentMethods, ['cash'])

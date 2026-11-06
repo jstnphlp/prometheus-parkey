@@ -1,5 +1,7 @@
 import { defineConfig, devices } from '@playwright/test'
 
+import { researchConsoleUrl } from './e2e/research-handoff-fixtures'
+
 function e2ePort(value: string | undefined, fallback: number) {
   const port = value === undefined ? fallback : Number(value)
   if (!Number.isInteger(port) || port < 1024 || port > 65535)
@@ -7,8 +9,6 @@ function e2ePort(value: string | undefined, fallback: number) {
   return port
 }
 const webPort = e2ePort(process.env.PARKEY_E2E_WEB_PORT, 8088)
-const ncrPort = e2ePort(process.env.PARKEY_E2E_NCR_PORT, 8090)
-if (webPort === ncrPort) throw new Error('E2E web and NCR ports must differ.')
 
 export default defineConfig({
   testDir: './e2e',
@@ -47,14 +47,17 @@ export default defineConfig({
   ],
   webServer: [
     {
-      command: `pnpm --filter @parkey/mobile web --host localhost --port ${webPort}`,
-      url: `http://localhost:${webPort}`,
+      command: `pnpm --filter @parkey/mobile web --host localhost --port ${webPort} --max-workers 2`,
+      // Metro readiness must not wait for a cold SSR route compilation. Tests
+      // still await the actual route UI and map rather than treating this as UI proof.
+      url: `http://localhost:${webPort}/status`,
       reuseExistingServer: false,
       timeout: 180_000,
       env: {
         CI: '1',
         EXPO_NO_DOTENV: '1',
-        EXPO_PUBLIC_NCR_RESEARCH_URL: `http://127.0.0.1:${ncrPort}`,
+        EXPO_PUBLIC_NCR_RESEARCH_URL: '',
+        EXPO_PUBLIC_RESEARCH_CONSOLE_URL: researchConsoleUrl,
         EXPO_PUBLIC_MAP_STYLE_URL: 'https://e2e.parkey.test/map-style.json',
         EXPO_PUBLIC_PHOTON_URL: 'https://e2e.parkey.test/search',
         EXPO_PUBLIC_OSRM_URL: 'https://e2e.parkey.test',
@@ -63,13 +66,6 @@ export default defineConfig({
         EXPO_PUBLIC_ANALYTICS_ENDPOINT: '',
         EXPO_PUBLIC_SENTRY_DSN: '',
       },
-    },
-    {
-      command: `node scripts/ncr-preview-server.mjs --development-preview --port ${ncrPort} --enrichment data/ncr-destinations/2026-11-05/destination-enrichment.json.gz`,
-      url: `http://127.0.0.1:${ncrPort}/api/ncr/discovery?bbox=120.85,14.3,121.27,14.86&zoom=12`,
-      reuseExistingServer: false,
-      timeout: 30_000,
-      env: { NODE_ENV: 'development' },
     },
   ],
 })

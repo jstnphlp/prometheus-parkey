@@ -54,11 +54,6 @@ export function ParkingDetails({
       icon: 'fees',
     },
     {
-      label: 'Spaces',
-      value: details.capacity?.toLocaleString('en-US') ?? 'Not recorded',
-      icon: 'spaces',
-    },
-    {
       label: 'Access',
       value: details.access?.replaceAll('_', ' ') ?? 'Not recorded',
       icon: 'access',

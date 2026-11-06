@@ -174,6 +174,6 @@ export async function openResults(page: Page) {
 }
 export async function closeDetails(page: Page) {
   await page
-    .getByRole('button', { name: 'Close Parking observation', exact: true })
+    .getByRole('button', { name: /^Close Parking (details|observation)$/ })
     .click()
 }

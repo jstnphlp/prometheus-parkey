@@ -18,13 +18,23 @@ Status date: 2026-11-06. This is the **only canonical scope and gate checklist**
 
 ## Track A — Discovery (Codex)
 
-- **A0 (TODO):** Read existing architecture; record baseline tests, routes, screenshots and risks
-- **A1 (TODO):** Consolidate confusing legacy vs pilot UX into map-first discovery; preserve flags and private candidate security. Filters, destination search, details, saved locations, directions, loading/empty/errors
+- **A0 (PASS — baseline audit only):** Architecture, routes, baseline tests, current Android 15/API 35 x86_64 emulator screenshots and risks recorded in [the A0 report](V1_A0_MOBILE_BASELINE.md). Branch `codex/v1-a0-discovery-baseline`, [draft PR #23](https://github.com/jstnphlp/prometheus-parkey/pull/23), evidence commit `fffda45`. Mobile typecheck/lint and 170 unit tests passed; actual emulator observations and open defects are in the [receipt](evidence/v1-a0-api35/receipt.json). This does not mark product defects, physical-device, performance or release checks passed; physical tests remain separate A2/A4 gates per user instruction.
+- **A1 (PASS — local engineering):** Map-first navigation, search/ranking, type/price filters, truthful details, public-only saved places and parked-car handoff, permission/offline/error recovery and release research guards verified. Branch `codex/v1-a1-discovery-consolidation`, [draft PR #24](https://github.com/jstnphlp/prometheus-parkey/pull/24), source `1e8f169` / `c7fdf42`. 187 mobile units, 28 pilot and 48 legacy browser cases, workspace checks and 11 native layout assertion groups passed; [report and limitations](V1_A1_COMPLETION.md). External review/merge and production approval remain open.
 - **A2 (TODO):** Fast and robust map: viewport caching, source deduplication, response cancellation, stable markers, low-memory rendering; measured P50/P95 cold/warm behavior on real Android device
 - **A3 (TODO):** Truthful parking detail cards: fees/hours/entrance/access not guessed; no navigation to unapproved source anchor; photo license and image fallback verified
 - **A4 (TODO):** Typecheck, lint, unit, browser integration and physical device smoke test; accessibility, offline, denied GPS and regression gates documented
 
 Release gate A: A0–A4 verified, approved records only.
+
+### Engineering acceptance versus production release
+
+The user explicitly authorized Windows 11 / Android 15 API 35 emulator-only
+engineering progression. A2/A4 can pass locally executable engineering gates
+with reproducible emulator measurements and native evidence. The original
+physical Android P50/P95 and physical smoke requirements remain **production
+release blockers**; emulator results never satisfy them or establish iOS support.
+PRs remain separate and unmerged pending required review. A local engineering
+gate does not grant data publication, provider/privacy approval or deployment.
 
 ## Track D — Admin analytics (ChatGPT)
 

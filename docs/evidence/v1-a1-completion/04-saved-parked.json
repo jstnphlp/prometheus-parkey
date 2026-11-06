@@ -1,0 +1,161 @@
+[
+  {
+    "window-title": "",
+    "type": "SYSTEM",
+    "layer": 1,
+    "bounds": "[0,0][720,49]",
+    "content": [
+      {
+        "class": "android.widget.TextView",
+        "resource-id": "com.android.systemui:id/clock",
+        "text": "10:30",
+        "content-desc": "10:30 AM",
+        "bounds": "[47,10][130,39]",
+        "center": "[88,24]"
+      },
+      {
+        "class": "android.widget.ImageView",
+        "content-desc": "Android System notification: Serial console enabled",
+        "bounds": "[130,1][169,49]",
+        "center": "[149,25]"
+      },
+      {
+        "class": "android.widget.ImageView",
+        "resource-id": "com.android.systemui:id/wifi_signal",
+        "content-desc": "Wifi signal full.",
+        "bounds": "[582,11][608,37]",
+        "center": "[595,24]"
+      },
+      {
+        "class": "android.widget.FrameLayout",
+        "resource-id": "com.android.systemui:id/mobile_combo",
+        "content-desc": "Phone signal full.",
+        "bounds": "[608,5][634,44]",
+        "center": "[621,24]"
+      },
+      {
+        "class": "android.widget.LinearLayout",
+        "resource-id": "com.android.systemui:id/battery",
+        "content-desc": "Battery charging, 100 percent.",
+        "bounds": "[645,13][659,36]",
+        "center": "[652,24]"
+      }
+    ]
+  },
+  {
+    "window-title": "",
+    "type": "APPLICATION",
+    "active": true,
+    "focused": true,
+    "layer": 0,
+    "bounds": "[0,0][720,1600]",
+    "content": [
+      {
+        "class": "android.widget.Button",
+        "content-desc": "Close panel",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "bounds": "[0,0][720,1600]",
+        "center": "[360,800]"
+      },
+      {
+        "class": "android.view.View",
+        "text": "Saved places",
+        "bounds": "[42,662][573,704]",
+        "center": "[307,683]"
+      },
+      {
+        "class": "android.widget.Button",
+        "content-desc": "Close Saved places",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "bounds": "[594,641][678,725]",
+        "center": "[636,683]"
+      },
+      {
+        "class": "android.widget.ScrollView",
+        "interactions": ["SCROLLABLE", "FOCUSABLE"],
+        "bounds": "[0,767][720,1558]",
+        "center": "[360,1162]",
+        "children": [
+          {
+            "class": "android.widget.TextView",
+            "text": "Kept on this device only. Saved parking labels are reminders, not current access or entrance approval. Open the saved area to load current public details.",
+            "bounds": "[56,823][664,915]",
+            "center": "[360,869]"
+          },
+          {
+            "class": "android.widget.Button",
+            "content-desc": "Save where I parked",
+            "interactions": ["CLICKABLE", "FOCUSABLE"],
+            "bounds": "[56,936][664,1013]",
+            "center": "[360,974]",
+            "children": [
+              {
+                "class": "android.widget.TextView",
+                "text": "Save where I parked",
+                "bounds": "[78,955][642,989]",
+                "center": "[360,972]"
+              }
+            ]
+          },
+          {
+            "class": "android.widget.TextView",
+            "text": "Your car · Saved 11/6/2026, 5:08:51 AM",
+            "bounds": "[84,1062][636,1096]",
+            "center": "[360,1079]"
+          },
+          {
+            "class": "android.widget.Button",
+            "content-desc": "Show parked location",
+            "interactions": ["CLICKABLE", "FOCUSABLE"],
+            "bounds": "[84,1117][636,1194]",
+            "center": "[360,1155]",
+            "children": [
+              {
+                "class": "android.widget.TextView",
+                "text": "Show parked location",
+                "bounds": "[106,1136][614,1170]",
+                "center": "[360,1153]"
+              }
+            ]
+          },
+          {
+            "class": "android.widget.Button",
+            "content-desc": "Walk back in Maps",
+            "interactions": ["CLICKABLE", "FOCUSABLE"],
+            "bounds": "[84,1215][636,1292]",
+            "center": "[360,1253]",
+            "children": [
+              {
+                "class": "android.widget.TextView",
+                "text": "Walk back in Maps",
+                "bounds": "[106,1234][614,1268]",
+                "center": "[360,1251]"
+              }
+            ]
+          },
+          {
+            "class": "android.widget.Button",
+            "content-desc": "Clear parked location",
+            "interactions": ["CLICKABLE", "FOCUSABLE"],
+            "bounds": "[84,1313][636,1390]",
+            "center": "[360,1351]",
+            "children": [
+              {
+                "class": "android.widget.TextView",
+                "text": "Clear parked location",
+                "bounds": "[106,1332][614,1366]",
+                "center": "[360,1349]"
+              }
+            ]
+          },
+          {
+            "class": "android.widget.TextView",
+            "text": "No saved parking yet. Save an approved parking record from its details.",
+            "bounds": "[28,1467][692,1530]",
+            "center": "[360,1498]"
+          }
+        ]
+      }
+    ]
+  }
+]

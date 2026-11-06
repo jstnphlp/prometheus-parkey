@@ -28,7 +28,6 @@ export type SpotDetails = {
   sparse: boolean
   fee?: string
   access?: string
-  capacity?: number
   maxStay?: string | undefined
   heightLimit?: string | undefined
   parkingType?: string | undefined
@@ -97,7 +96,6 @@ export function parkingDetailData(
     const value = get(key)
     return value && /^\d+$/.test(value) ? Number(value) : undefined
   }
-  const capacity = count('capacity')
   const access =
     get('access') ??
     parking.regulations
@@ -152,12 +150,6 @@ export function parkingDetailData(
           .find((r) => /^Maximum stay:/i.test(r.description))
           ?.description.replace(/^Maximum stay:\s*/i, ''),
       ),
-  )
-  add(
-    'Spaces',
-    capacity === undefined
-      ? undefined
-      : `${capacity.toLocaleString('en-US')} spaces`,
   )
   const disabled = count('capacity:disabled')
   add(
@@ -280,15 +272,7 @@ export function parkingDetailData(
     ]
       .filter(Boolean)
       .join(' · '),
-    chips: [
-      fee,
-      hours.summary,
-      capacity === undefined
-        ? undefined
-        : `${capacity.toLocaleString('en-US')} spaces`,
-    ]
-      .filter((v): v is string => !!v)
-      .slice(0, 3),
+    chips: [fee, hours.summary].filter((v): v is string => !!v).slice(0, 3),
     ...(warning ? { warning } : {}),
     ...(hours.week ? { week: hours.week } : {}),
     rows,
@@ -296,7 +280,6 @@ export function parkingDetailData(
     sparse: !rows.length,
     ...(fee ? { fee } : {}),
     ...(access ? { access } : {}),
-    ...(capacity === undefined ? {} : { capacity }),
     ...(get('operator') ? { operator: get('operator') } : {}),
     ...(phone ? { phone } : {}),
     ...(website ? { website } : {}),

@@ -80,8 +80,15 @@ function Action({
     </Pressable>
   )
 }
-function ItemFacts({ item }: { item: NcrDiscoveryItem }) {
+function ItemFacts({
+  item,
+  privateReview,
+}: {
+  item: NcrDiscoveryItem
+  privateReview: boolean
+}) {
   const e = item.evidence
+  const enrichment = privateReview ? item.nameReview?.enrichment : undefined
   return (
     <View style={styles.detail} testID="ncr-selected-details">
       <Text accessibilityRole="header" selectable style={styles.title}>
@@ -127,6 +134,123 @@ function ItemFacts({ item }: { item: NcrDiscoveryItem }) {
         Driving navigation is unavailable until a usable entrance is
         independently confirmed and approved.
       </Text>
+      {enrichment ? (
+        <>
+          <Text accessibilityRole="header" selectable style={styles.title}>
+            Parking-name review
+          </Text>
+          <Text selectable>Parkey group: {enrichment.groupId}</Text>
+          <Text selectable>
+            {
+              {
+                credible_reusable_name_pending_review:
+                  'Credible reusable name; final review pending',
+                proposed_name_incomplete_or_conflicting:
+                  'Proposed identity; incomplete or conflicting evidence',
+                nearby_named_property_only:
+                  'Nearby property only; parking identity unconfirmed',
+                operator_or_brand_only: 'Operator or brand clue only',
+                no_reliable_name_evidence: 'No reliable parking-name evidence',
+                unsuitable_for_public_discovery:
+                  'Restricted, closed or otherwise unsuitable for public discovery',
+              }[enrichment.classification]
+            }
+          </Text>
+          <Text selectable>
+            Proposed parking name:{' '}
+            {enrichment.proposedName || 'none confirmed for this facility'}
+          </Text>
+          <Text selectable style={styles.warning}>
+            Source-review information only. The original map label is retained.
+            Nearby parking, property and operator names do not establish this
+            facility's identity. No visit, visitor access or publication is
+            approved.
+          </Text>
+          {enrichment.nameTagLeads.map((clue, index) => (
+            <View key={`name:${clue.sourceId}:${index}`}>
+              <Text selectable>
+                Name evidence: {clue.name} · {clue.basis.replaceAll('_', ' ')} ·{' '}
+                {clue.sourceLicense}
+              </Text>
+              <Action
+                title={`Review name source: ${clue.name}`}
+                onPress={() => {
+                  void Linking.openURL(clue.sourceRecordUrl).catch(
+                    () => undefined,
+                  )
+                }}
+              />
+            </View>
+          ))}
+          {enrichment.nearbyParkingLeads.map((clue, index) => (
+            <View key={`parking:${clue.sourceId}:${index}`}>
+              <Text selectable>
+                Nearby parking clue: {clue.name}. Same physical facility
+                unconfirmed
+                {clue.sourceIndependent
+                  ? '; independent source provenance'
+                  : '; source independence not established'}
+                .
+              </Text>
+              <Action
+                title={`Review nearby parking source: ${clue.name}`}
+                onPress={() => {
+                  void Linking.openURL(clue.sourceRecordUrl).catch(
+                    () => undefined,
+                  )
+                }}
+              />
+            </View>
+          ))}
+          {enrichment.contextClues.map((clue, index) => (
+            <View key={`property:${clue.sourceId}:${index}`}>
+              <Text selectable>
+                Property context: {clue.name} ·{' '}
+                {clue.relation.replaceAll('_', ' ')}. This is not a confirmed
+                parking-facility name.
+              </Text>
+              <Action
+                title={`Review property source: ${clue.name}`}
+                onPress={() => {
+                  void Linking.openURL(clue.sourceRecordUrl).catch(
+                    () => undefined,
+                  )
+                }}
+              />
+            </View>
+          ))}
+          {enrichment.operatorClues.map((clue, index) => (
+            <Text selectable key={`operator:${clue.recordId}:${index}`}>
+              {clue.kind === 'brand' ? 'Brand' : 'Operator'} clue: {clue.name} ·{' '}
+              {clue.recordId}. Facility-specific name and current management
+              remain unconfirmed.
+            </Text>
+          ))}
+          {enrichment.reviewLinks
+            .filter((link) => link.recordId !== item.id)
+            .map((link) => (
+              <View key={link.recordId}>
+                <Text selectable>
+                  Other source anchor: {link.recordId} · {link.coordinate[1]},{' '}
+                  {link.coordinate[0]}. Review reference only; not a driving
+                  entrance.
+                </Text>
+                <Action
+                  title={`Inspect ${link.recordId} coordinate on Google Maps`}
+                  onPress={() => {
+                    void Linking.openURL(link.googleMaps).catch(() => undefined)
+                  }}
+                />
+                <Action
+                  title={`Inspect ${link.recordId} coordinate on Waze`}
+                  onPress={() => {
+                    void Linking.openURL(link.waze).catch(() => undefined)
+                  }}
+                />
+              </View>
+            ))}
+        </>
+      ) : null}
       {item.warnings.map((warning) => (
         <Text selectable key={warning} style={styles.warning}>
           {warning.replaceAll('_', ' ')}
@@ -679,7 +803,10 @@ export default function NcrResearch() {
           onClose={() => setSelectedId(null)}
         >
           <ScrollView>
-            <ItemFacts item={selected} />
+            <ItemFacts
+              item={selected}
+              privateReview={mode === 'research_preview'}
+            />
           </ScrollView>
         </ModalSheet>
       ) : null}

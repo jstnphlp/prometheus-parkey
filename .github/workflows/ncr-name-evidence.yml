@@ -1,0 +1,56 @@
+name: NCR name evidence acquisition
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [feat/ncr-permitted-name-enrichment]
+    paths:
+      - .github/workflows/ncr-name-evidence.yml
+      - scripts/acquire-ncr-name-sources.py
+      - scripts/probe-ncr-name-sources.py
+
+permissions:
+  contents: read
+
+jobs:
+  acquire:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: scripts/requirements-ncr-*.txt
+      - run: python -m pip install -r scripts/requirements-ncr-research.txt
+      - name: Acquire official snapshot and verify publisher checksum
+        run: python scripts/acquire-ncr-name-sources.py --out-dir output/ncr/name-acquisition
+      - name: Extract parking objects with stable OSM identities
+        run: |
+          source_url=$(python -c "import json; print(json.load(open('output/ncr/name-acquisition/acquisition.json'))['resolvedUrl'])")
+          python scripts/extract-ncr-osm.py \
+            --input output/ncr/name-acquisition/philippines.osm.pbf \
+            --source-url "$source_url" \
+            --out output/ncr/name-acquisition/osm-parking.geojson
+      - name: Extract named property context through the requested shell command
+        run: bash scripts/extract-ncr-name-context.sh output/ncr/name-acquisition/philippines.osm.pbf output/ncr/name-acquisition/osm-name-context.geojson
+      - name: Select source geometries intersecting the frozen NCR boundaries
+        run: |
+          python scripts/package-ncr-name-sources.py \
+            --parking output/ncr/name-acquisition/osm-parking.geojson \
+            --context output/ncr/name-acquisition/osm-name-context.geojson \
+            --boundaries data/ncr-research/ncr-lgus-osm.geojson.gz \
+            --out-dir output/ncr/name-acquisition/derivatives
+      - name: Record current Overture release and live OSM update evidence
+        run: python scripts/probe-ncr-name-sources.py --out-dir output/ncr/name-acquisition/probes
+      - name: Preserve research evidence and provenance for review
+        uses: actions/upload-artifact@v4
+        with:
+          name: ncr-name-evidence-${{ github.run_id }}
+          path: |
+            output/ncr/name-acquisition/acquisition.json
+            output/ncr/name-acquisition/derivatives/
+            output/ncr/name-acquisition/probes/
+          retention-days: 30
+          if-no-files-found: error

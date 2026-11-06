@@ -1,0 +1,99 @@
+{
+  "schemaVersion": 1,
+  "reviewedAt": "2026-11-05T11:55:46.562516+00:00",
+  "geofabrik": {
+    "latestAvailability": [
+      {
+        "requestedUrl": "https://download.geofabrik.de/asia/philippines-261104.osm.pbf",
+        "retrievedAt": "2026-11-05T11:51:40.374099+00:00",
+        "error": "The read operation timed out"
+      },
+      {
+        "requestedUrl": "https://download.geofabrik.de/asia/philippines-261105.osm.pbf",
+        "retrievedAt": "2026-11-05T11:52:16.001714+00:00",
+        "error": "HTTP Error 404: Not Found"
+      },
+      {
+        "requestedUrl": "https://download.geofabrik.de/asia/philippines-latest.osm.pbf",
+        "retrievedAt": "2026-11-05T11:52:34.423377+00:00",
+        "resolvedUrl": "https://download.geofabrik.de/asia/philippines-261103.osm.pbf",
+        "status": 200,
+        "headers": {
+          "Date": "Wed, 04 Nov 2026 06:46:57 GMT",
+          "Server": "Apache",
+          "Last-Modified": "Wed, 04 Nov 2026 06:18:49 GMT",
+          "ETag": "\"2485d6ab-65f6d5a2c938f\"",
+          "Accept-Ranges": "bytes",
+          "Content-Length": "612751019",
+          "Cache-Control": "max-age=63072000, public",
+          "Content-Type": "application/octet-stream",
+          "Age": "32155",
+          "Cache-Status": "download-proxy13;hit;detail=match",
+          "Via": "1.1 download-proxy13 (squid/6.14)",
+          "Connection": "close"
+        },
+        "text": null
+      },
+      {
+        "requestedUrl": "https://download.geofabrik.de/asia/philippines-261103.osm.pbf.md5",
+        "retrievedAt": "2026-11-05T11:52:35.961921+00:00",
+        "resolvedUrl": "https://download.geofabrik.de/asia/philippines-261103.osm.pbf.md5",
+        "status": 200,
+        "headers": {
+          "Date": "Thu, 05 Nov 2026 03:29:12 GMT",
+          "Server": "Apache",
+          "Last-Modified": "Wed, 04 Nov 2026 06:18:49 GMT",
+          "ETag": "\"3d-65f6d5a37b725\"",
+          "Accept-Ranges": "bytes",
+          "Content-Length": "61",
+          "Cache-Control": "max-age=63072000, public",
+          "Content-Type": "application/octet-stream",
+          "Age": "30204",
+          "Cache-Status": "download-proxy13;hit;detail=match",
+          "Via": "1.1 download-proxy13 (squid/6.14)",
+          "Connection": "close"
+        },
+        "text": "ad2f292321af2cd78b707600e1712730  philippines-261103.osm.pbf\n"
+      }
+    ],
+    "downloadStatus": "stopped_slow_transfer_replaced_by_actions_acquisition",
+    "downloadFile": "output/ncr/name-enrichment-20261105/philippines-261103.osm.pbf",
+    "downloadBytesSoFar": 11534336,
+    "separateDownloadCompleted": false,
+    "evidenceUsed": "Retained original snapshot, re-extracted under new versioned filenames. No claim of newer source editing date.",
+    "retainedPbfSha256": "ba1749901aa7559084dda822f1e2716324208fab8646b8de5309cef6206a5c51",
+    "publisherMd5": "ad2f292321af2cd78b707600e1712730",
+    "retainedPbfPublisherChecksumMatched": true,
+    "limitations": [
+      "Fresh full download proceeding at roughly 16 KB/s, estimated ten hours. Validated HTTP range retry did not improve throughput and was stopped.",
+      "Latest URL resolves to same dated snapshot; separately acquiring it does not establish new evidence."
+    ],
+    "stoppedAt": "2026-11-05T11:57:17.816308+00:00"
+  },
+  "overture": {
+    "catalogUrl": "https://stac.overturemaps.org/catalog.json",
+    "catalogSha256": "c15e5dfc0d78f4875dbdee941fcd495bff1de887dec3e3cfcf0f7cf84dd40a97",
+    "currentRelease": "2026-10-21.0",
+    "baselineRelease": "2026-10-21.0",
+    "newerReleaseFound": false,
+    "downloadDecision": "Reuse frozen per-record licensed extract; current official catalog has no newer Places release.",
+    "licensingUrl": "https://docs.overturemaps.org/guides/places/",
+    "licensingPageSha256": "bca5fcc7bdd8978fa005acf69e22b1bbcebe217aae46b5f8a68cc738c535296e",
+    "review": "Official Places guide lists source-dependent CDLA-Permissive-2.0, Apache-2.0 and CC0-1.0; preserve per-record sources[].license. Guide warns an OSM derivative database may carry ODbL. No Google/Waze data imported."
+  },
+  "overpass": {
+    "url": "https://overpass-api.de/api/interpreter",
+    "query": "[out:json][timeout:60];(nwr[\"amenity\"~\"^parking(_space|_entrance)?$\"](newer:\"2026-11-03T00:00:00Z\")(14.30,120.85,14.86,121.27);nwr[\"building\"=\"parking\"](newer:\"2026-11-03T00:00:00Z\")(14.30,120.85,14.86,121.27););out meta center;",
+    "retrievedAt": "2026-11-05T11:52:27.903847+00:00",
+    "sha256": "36c9d72414194083ab69496d580ea241b3054a9c7ba708866d171aee699909fc",
+    "osmBase": {
+      "timestamp_osm_base": "2026-11-05T11:51:21Z",
+      "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL."
+    },
+    "elements": 1,
+    "artifact": "osm-parking-updates.geojson.gz",
+    "uncompressedSha256": "b811e46b35f6d09ac9e033029ca316036d34ab9e93b9d0f6d70f0c11d07ba5b7",
+    "features": 1,
+    "namedFeatures": 0
+  }
+}

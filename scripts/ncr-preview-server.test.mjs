@@ -1,16 +1,21 @@
 import assert from 'node:assert/strict'
 import { createServer, request as httpRequest } from 'node:http'
-import { readFileSync } from 'node:fs'
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
 import test from 'node:test'
 import { URLSearchParams } from 'node:url'
 import process from 'node:process'
+import { gzipSync } from 'node:zlib'
 
 import {
   createNcrHandler,
   geometryIntersectsViewport,
   loadFrozenResearch,
+  loadNcrEnrichment,
   parseNcrQuery,
   queryNcrResearch,
+  validateNcrEnrichment,
 } from './ncr-preview-server.mjs'
 import { appendPublicationEvent, contentHash } from './ncr-publication.mjs'
 
@@ -89,6 +94,155 @@ const queryOptions = (preview = true) => ({
   reviewLedger: reviewLedger(research.sourceHashes),
   preview,
   now,
+})
+const enrichmentReport = (source = research) => ({
+  schemaVersion: 1,
+  sourceHashes: source.sourceHashes,
+  records: source.facilityGroups.map((group) => ({
+    groupId: group.id,
+    candidateIds: group.sourceCandidateIds,
+    classification: 'credible_name_pending_review',
+    proposedName: 'Synthetic proposed garage',
+    nameTagLeads: [
+      {
+        name: 'Synthetic proposed garage',
+        sourceId: group.sourceCandidateIds[0],
+      },
+    ],
+    nearbyParkingLeads: [],
+    operatorClues: [],
+    contextClues: [],
+    reviewLinks: [],
+    publicationApproved: false,
+    nameConfirmed: false,
+    operatorConfirmed: false,
+    physicalVerified: false,
+    visitorAccessConfirmed: false,
+    approvedDisplayName: null,
+  })),
+})
+
+test('enrichment attaches only to private facility details and never replaces source names or approvals', () => {
+  const enrichment = enrichmentReport()
+  const before = JSON.stringify(research)
+  const result = queryNcrResearch(research, query(), {
+    ...queryOptions(),
+    enrichment,
+  })
+  assert.equal(result.items[0].name, research.candidates[0].name)
+  assert.equal(
+    result.items[0].nameReview.enrichment.proposedName,
+    'Synthetic proposed garage',
+  )
+  assert.equal(result.items[0].nameReview.enrichment.groupId, 'one')
+  assert.equal(result.items[0].evidence.publicationApproved, false)
+  assert.equal(result.items[1].nameReview.enrichment, undefined)
+  assert.equal(result.items[3].nameReview.enrichment.groupId, 'one')
+  assert.equal(JSON.stringify(research), before)
+
+  const approvedSource = {
+    ...research,
+    candidates: [candidate('a')],
+    facilityGroups: [{ id: 'only', sourceCandidateIds: ['a'] }],
+  }
+  const ledger = appendPublicationEvent(
+    emptyLedger(),
+    approval(approvedSource.candidates[0]),
+    { authorizedHuman: true, now },
+  )
+  const options = { ...queryOptions(false), ledger }
+  const plain = queryNcrResearch(approvedSource, query(), options)
+  const attached = queryNcrResearch(approvedSource, query(), {
+    ...options,
+    enrichment: enrichmentReport(approvedSource),
+  })
+  assert.deepEqual(attached, plain)
+  assert.equal(attached.items[0].nameReview.enrichment, undefined)
+  assert.equal(attached.items[0].name, 'Synthetic parking a')
+})
+
+test('enrichment revision invalidates private paging cursors without affecting public versions', () => {
+  const enrichment = enrichmentReport()
+  const options = { ...queryOptions(), enrichment }
+  const first = queryNcrResearch(research, query({ limit: '1' }), options)
+  const revised = globalThis.structuredClone(enrichment)
+  revised.records[0].proposedName = 'Synthetic revised garage'
+  assert.throws(
+    () =>
+      queryNcrResearch(
+        research,
+        query({ limit: '1', cursor: first.nextCursor }),
+        { ...options, enrichment: revised },
+      ),
+    /Cursor/,
+  )
+  const plain = queryNcrResearch(research, query(), queryOptions())
+  assert.notEqual(first.dataVersion, plain.dataVersion)
+})
+
+test('enrichment rejects mismatched snapshots, missing/duplicate groups, foreign members and claimed approvals', () => {
+  const invalid = [
+    (r) => {
+      r.sourceHashes = { other: 'snapshot' }
+    },
+    (r) => {
+      r.records = []
+    },
+    (r) => {
+      r.records[0].candidateIds = ['foreign']
+    },
+    (r) => {
+      r.records[0].candidateIds.push('a')
+    },
+    (r) => {
+      r.records[0].publicationApproved = true
+    },
+    (r) => {
+      r.records[0].physicalVerified = true
+    },
+    (r) => {
+      r.records[0].approvedDisplayName = 'Synthetic approved name'
+    },
+    (r) => {
+      delete r.records[0].contextClues
+    },
+  ]
+  for (const mutate of invalid) {
+    const r = globalThis.structuredClone(enrichmentReport())
+    mutate(r)
+    assert.throws(() => validateNcrEnrichment(research, r), /Enrichment/)
+  }
+  const source = {
+    ...research,
+    facilityGroups: [
+      { id: 'first', sourceCandidateIds: ['a'] },
+      { id: 'second', sourceCandidateIds: ['d'] },
+    ],
+  }
+  const duplicated = enrichmentReport(source)
+  duplicated.records[1] = duplicated.records[0]
+  assert.throws(() => validateNcrEnrichment(source, duplicated), /Enrichment/)
+})
+
+test('plain and gzipped enrichment load with the same snapshot validation', (t) => {
+  const directory = mkdtempSync(join(tmpdir(), 'parkey-enrichment-'))
+  t.after(() => rmSync(directory, { recursive: true, force: true }))
+  const report = enrichmentReport()
+  const raw = JSON.stringify(report)
+  const plain = join(directory, 'report.json')
+  const compressed = join(directory, 'report.json.gz')
+  writeFileSync(plain, raw)
+  writeFileSync(compressed, gzipSync(raw))
+  assert.deepEqual(loadNcrEnrichment(plain, research), report)
+  assert.deepEqual(loadNcrEnrichment(compressed, research), report)
+  assert.throws(
+    () =>
+      loadNcrEnrichment(plain, {
+        ...research,
+        sourceHashes: { different: 'snapshot' },
+      }),
+    /Enrichment/,
+  )
 })
 
 test('exact geometry intersections preserve crossing streets and polygon holes', () => {
@@ -377,6 +531,30 @@ async function start(t, options = {}) {
   return `http://127.0.0.1:${server.address().port}`
 }
 const path = '/api/ncr/research-preview?bbox=121.02,14.55,121.05,14.58&zoom=15'
+
+test('HTTP enrichment is private and mismatched attachments fail closed', async (t) => {
+  const enrichment = enrichmentReport()
+  const url = await start(t, { enrichment })
+  const privateResponse = await globalThis.fetch(url + path, {
+    headers: { 'X-Parkey-Research-Preview': 'local-development' },
+  })
+  assert.equal(privateResponse.status, 200)
+  const body = await privateResponse.json()
+  assert.equal(body.items[0].nameReview.enrichment.groupId, 'one')
+  enrichment.sourceHashes = { different: 'snapshot' }
+  const invalidResponse = await globalThis.fetch(url + path, {
+    headers: { 'X-Parkey-Research-Preview': 'local-development' },
+  })
+  assert.equal(invalidResponse.status, 503)
+  assert.deepEqual(await invalidResponse.json(), {
+    error: 'Research review data is unavailable; no records were released.',
+  })
+  const publicResponse = await globalThis.fetch(
+    url + path.replace('research-preview', 'discovery'),
+  )
+  assert.equal(publicResponse.status, 200)
+  assert.equal((await publicResponse.json()).totalMatched, 0)
+})
 
 test('HTTP research endpoint requires explicit development opt-in and excludes remote origins', async (t) => {
   const url = await start(t)

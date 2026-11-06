@@ -1,0 +1,132 @@
+{
+  "schemaVersion": 1,
+  "scope": "Full source geometries intersecting the frozen 17-LGU NCR polygon union; geometries are not clipped or modified.",
+  "boundaryFile": "data/ncr-research/ncr-lgus-osm.geojson.gz",
+  "boundarySha256": "8a77d36f1650efd5e8d349842ca4a2a8972f588e54da386d92aacadc5cafc597",
+  "license": "ODbL-1.0",
+  "attribution": "© OpenStreetMap contributors",
+  "licenseUrl": "https://www.openstreetmap.org/copyright",
+  "policy": "Private research evidence; no identities, public access, field visits or publication approved.",
+  "artifacts": [
+    {
+      "filename": "ncr-osm-parking.geojson.gz",
+      "role": "parking",
+      "features": 5085,
+      "sha256": "49ee0eb07ef5b59835591fe8728cb2f30a764d424a509d5b7d7791b5de027f79",
+      "uncompressedSha256": "b417a246646e4ffdf6eef1b5aaa3559e817922ff11ac019e9c9d2b8db174a547",
+      "bytes": 302850,
+      "uncompressedBytes": 1765523,
+      "coarseSourceFile": "output/ncr/name-acquisition/osm-parking.geojson",
+      "coarseSourceSha256": "ccf68dd57901e853a0ce83ee5cf35dd9251061ec962f1677861b56b3cc2482fa",
+      "coarseExtractionManifest": {
+        "sourceUrl": "https://download.geofabrik.de/asia/philippines-261103.osm.pbf",
+        "provider": "Geofabrik / OpenStreetMap",
+        "license": "ODbL-1.0",
+        "attribution": "© OpenStreetMap contributors",
+        "copyrightUrl": "https://www.openstreetmap.org/copyright",
+        "observedAt": "2026-11-05T12:00:42.949196Z",
+        "replicationTimestamp": "2026-11-03T21:24:23Z",
+        "generator": "osmium/1.16.0",
+        "inputSha256": "ba1749901aa7559084dda822f1e2716324208fab8646b8de5309cef6206a5c51",
+        "extentPrefilter": [120.85, 14.3, 121.27, 14.86],
+        "extentPolicy": "Coarse geometry envelope only; actual NCR polygons applied downstream.",
+        "verification": "unverified",
+        "extractionPolicy": "parking amenities, explicit parking buildings and supported highway parking positions; all tags preserved on selected objects",
+        "streetPositionValues": [
+          "yes",
+          "lane",
+          "street_side",
+          "on_kerb",
+          "half_on_kerb",
+          "shoulder",
+          "on_street",
+          "parallel",
+          "diagonal",
+          "perpendicular",
+          "marked"
+        ],
+        "streetPositionKeys": [
+          "parking:left",
+          "parking:right",
+          "parking:both",
+          "parking:lane:left",
+          "parking:lane:right",
+          "parking:lane:both"
+        ],
+        "outputSha256": "ccf68dd57901e853a0ce83ee5cf35dd9251061ec962f1677861b56b3cc2482fa",
+        "features": 12074,
+        "byGeometry": {
+          "Point": 2103,
+          "MultiPolygon": 9683,
+          "LineString": 288
+        },
+        "byAmenity": {
+          "parking": 5590,
+          "parking_entrance": 1059,
+          "parking_space": 5128,
+          "building=parking": 12,
+          "parking_tags_on_highway": 285
+        },
+        "rejectedOutsideCoarseExtent": 12438,
+        "geometryErrors": [],
+        "unassembledAreaWaysInExtent": [],
+        "unassembledParkingRelationsInCountry": []
+      }
+    },
+    {
+      "filename": "ncr-name-context.geojson.gz",
+      "role": "property_context",
+      "features": 6951,
+      "sha256": "e204d231fa1864bf647f5308cd9500193a92fbb4afc1bc4f680293595b267959",
+      "uncompressedSha256": "ea814a15d60419e47408b68090463ccbd1e079002f08f5b5e11b5a3221992a28",
+      "bytes": 833935,
+      "uncompressedBytes": 3853118,
+      "coarseSourceFile": "output/ncr/name-acquisition/osm-name-context.geojson",
+      "coarseSourceSha256": "6bece30de3e422ab87d3851904d83bfae9d4e3896fcc5e2f8d2b9f561a93fd42",
+      "coarseExtractionManifest": {
+        "provider": "OpenStreetMap / Geofabrik",
+        "license": "ODbL-1.0",
+        "attribution": "© OpenStreetMap contributors",
+        "licenseUrl": "https://www.openstreetmap.org/copyright",
+        "inputSha256": "ba1749901aa7559084dda822f1e2716324208fab8646b8de5309cef6206a5c51",
+        "replicationTimestamp": "2026-11-03T21:24:23Z",
+        "extractedAt": "2026-11-05T12:02:46.513506+00:00",
+        "extentPrefilter": [120.85, 14.3, 121.27, 14.86],
+        "namedPropertyKinds": {
+          "shop": [
+            "mall",
+            "department_store",
+            "supermarket",
+            "shopping_centre"
+          ],
+          "amenity": [
+            "hospital",
+            "university",
+            "college",
+            "marketplace",
+            "school"
+          ],
+          "tourism": ["hotel", "motel"],
+          "building": [
+            "commercial",
+            "retail",
+            "office",
+            "hotel",
+            "supermarket",
+            "hospital"
+          ]
+        },
+        "policy": "Context only; never use a nearby property name as a parking facility name.",
+        "features": 10971,
+        "geometryErrors": [
+          {
+            "sourceId": "relation/20181304",
+            "error": "invalid area (area_id=40362609)"
+          }
+        ],
+        "unassembledNamedPropertiesInCountry": [],
+        "outputSha256": "6bece30de3e422ab87d3851904d83bfae9d4e3896fcc5e2f8d2b9f561a93fd42"
+      }
+    }
+  ]
+}

@@ -48,6 +48,82 @@ const safeUrl = (value: unknown) =>
   typeof value === 'string' && /^https:\/\//.test(value)
 const nonnegative = (value: unknown) =>
   typeof value === 'number' && Number.isSafeInteger(value) && value >= 0
+const boundedText = (value: unknown): value is string =>
+  typeof value === 'string' && value.trim().length > 0 && value.length <= 1000
+const boundedArray = (value: unknown): value is unknown[] =>
+  Array.isArray(value) && value.length <= 100
+function validEnrichment(value: unknown) {
+  if (!isObject(value)) return false
+  const evidence = (clue: unknown) =>
+    isObject(clue) &&
+    boundedText(clue.name) &&
+    boundedText(clue.sourceId) &&
+    boundedText(clue.sourceLicense) &&
+    safeUrl(clue.sourceRecordUrl)
+  return (
+    boundedText(value.groupId) &&
+    [
+      'credible_reusable_name_pending_review',
+      'proposed_name_incomplete_or_conflicting',
+      'nearby_named_property_only',
+      'operator_or_brand_only',
+      'no_reliable_name_evidence',
+      'unsuitable_for_public_discovery',
+    ].includes(String(value.classification)) &&
+    (value.proposedName === null || boundedText(value.proposedName)) &&
+    boundedArray(value.nameTagLeads) &&
+    value.nameTagLeads.every(
+      (c) =>
+        isObject(c) &&
+        evidence(c) &&
+        boundedText(c.basis) &&
+        c.approvedForPublication === false,
+    ) &&
+    boundedArray(value.nearbyParkingLeads) &&
+    value.nearbyParkingLeads.every(
+      (c) =>
+        isObject(c) &&
+        evidence(c) &&
+        typeof c.sourceIndependent === 'boolean' &&
+        c.samePhysicalFacilityConfirmed === false &&
+        c.usableAsParkingName === false,
+    ) &&
+    boundedArray(value.contextClues) &&
+    value.contextClues.every(
+      (c) =>
+        isObject(c) &&
+        evidence(c) &&
+        boundedText(c.relation) &&
+        c.usableAsParkingName === false,
+    ) &&
+    boundedArray(value.operatorClues) &&
+    value.operatorClues.every(
+      (c) =>
+        isObject(c) &&
+        boundedText(c.name) &&
+        ['operator', 'brand'].includes(String(c.kind)) &&
+        boundedText(c.recordId) &&
+        c.usableAsFacilityName === false,
+    ) &&
+    boundedArray(value.reviewLinks) &&
+    value.reviewLinks.every((link) => {
+      if (
+        !isObject(link) ||
+        !boundedText(link.recordId) ||
+        !isCoordinate(link.coordinate)
+      )
+        return false
+      const q = encodeURIComponent(
+        link.coordinate[1] + ',' + link.coordinate[0],
+      )
+      return (
+        link.googleMaps ===
+          'https://www.google.com/maps/search/?api=1&query=' + q &&
+        link.waze === 'https://www.waze.com/ul?ll=' + q + '&z=18'
+      )
+    })
+  )
+}
 function validGeometry(value: unknown) {
   if (!isObject(value)) return false
   const line = (v: unknown): boolean =>
@@ -97,7 +173,9 @@ function validItem(value: unknown): value is NcrDiscoveryItem {
           'not_independent_facility',
         ].includes(String(value.nameReview.status)) &&
         typeof value.nameReview.sourceNameIsDistinctive === 'boolean' &&
-        typeof value.nameReview.crossSourceCandidate === 'boolean')) &&
+        typeof value.nameReview.crossSourceCandidate === 'boolean' &&
+        (value.nameReview.enrichment === undefined ||
+          validEnrichment(value.nameReview.enrichment)))) &&
     typeof value.featureType === 'string' &&
     value.featureType !== 'all' &&
     featureTypes.has(value.featureType) &&
@@ -149,6 +227,7 @@ export function ncrResponseCanDisplay(
     (mode === 'research_preview' ||
       value.items.every(
         (item) =>
+          item.nameReview?.enrichment === undefined &&
           item.evidence.publicationApproved &&
           !item.restrictedAccess &&
           item.reviewIssueIds.length === 0 &&
@@ -177,6 +256,8 @@ export function isNcrResponse(value: unknown): value is NcrDiscoveryResponse {
     Array.isArray(value.items) &&
     value.items.length <= 500 &&
     value.items.every(validItem) &&
+    (value.mode !== 'public' ||
+      value.items.every((item) => item.nameReview?.enrichment === undefined)) &&
     Array.isArray(value.clusters) &&
     value.clusters.length <= 2000 &&
     value.clusters.every(

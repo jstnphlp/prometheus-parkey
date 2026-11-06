@@ -45,6 +45,77 @@ function nameReviews(research) {
   }
   return nameReviewCache.get(research)
 }
+
+/** Enrichment is a source-bound private review attachment, never authority to publish. */
+export function validateNcrEnrichment(research, report) {
+  if (
+    report?.schemaVersion !== 1 ||
+    !Array.isArray(report.records) ||
+    contentHash(report.sourceHashes) !== contentHash(research.sourceHashes) ||
+    report.records.length !== research.facilityGroups.length
+  )
+    throw new Error(
+      'Enrichment belongs to another or incomplete source snapshot.',
+    )
+  const groups = new Map(
+    research.facilityGroups.map((group) => [group.id, group]),
+  )
+  const index = new Map()
+  const seen = new Set()
+  for (const record of report.records) {
+    const group = groups.get(record.groupId)
+    if (
+      !group ||
+      seen.has(record.groupId) ||
+      !Array.isArray(record.candidateIds) ||
+      contentHash([...record.candidateIds].sort()) !==
+        contentHash([...group.sourceCandidateIds].sort()) ||
+      ![
+        'publicationApproved',
+        'nameConfirmed',
+        'operatorConfirmed',
+        'physicalVerified',
+        'visitorAccessConfirmed',
+      ].every((field) => record[field] === false) ||
+      record.approvedDisplayName !== null ||
+      typeof record.classification !== 'string' ||
+      !(
+        record.proposedName === null || typeof record.proposedName === 'string'
+      ) ||
+      ![
+        'nameTagLeads',
+        'nearbyParkingLeads',
+        'operatorClues',
+        'contextClues',
+        'reviewLinks',
+      ].every((field) => Array.isArray(record[field]))
+    )
+      throw new Error(
+        'Enrichment contains invalid group identities or review approvals.',
+      )
+    seen.add(record.groupId)
+    const attachment = {
+      groupId: record.groupId,
+      classification: record.classification,
+      proposedName: record.proposedName,
+      nameTagLeads: record.nameTagLeads,
+      nearbyParkingLeads: record.nearbyParkingLeads,
+      operatorClues: record.operatorClues,
+      contextClues: record.contextClues,
+      reviewLinks: record.reviewLinks,
+    }
+    for (const id of record.candidateIds) index.set(id, attachment)
+  }
+  return index
+}
+
+export function loadNcrEnrichment(filename, research) {
+  const bytes = readFileSync(filename)
+  const raw = filename.endsWith('.gz') ? gunzipSync(bytes) : bytes
+  const report = JSON.parse(raw.toString('utf8'))
+  validateNcrEnrichment(research, report)
+  return report
+}
 const loopbackHost = (hostname) =>
   ['localhost', '127.0.0.1', '[::1]'].includes(hostname)
 const loopbackAddress = (value) =>
@@ -152,7 +223,14 @@ export function parseNcrQuery(searchParams) {
   return { bbox, zoom, category, limit, cursor: searchParams.get('cursor') }
 }
 
-function projection(candidate, state, research, preview, nameIndex) {
+function projection(
+  candidate,
+  state,
+  research,
+  preview,
+  nameIndex,
+  enrichmentIndex,
+) {
   return {
     id: candidate.id,
     name: candidate.name,
@@ -163,6 +241,9 @@ function projection(candidate, state, research, preview, nameIndex) {
       crossSourceCandidate:
         nameIndex.get(candidate.id) === 'cross_source_name_candidate' &&
         meaningfulParkingName(candidate.name),
+      ...(preview && enrichmentIndex?.has(candidate.id)
+        ? { enrichment: enrichmentIndex.get(candidate.id) }
+        : {}),
     },
     featureType: candidate.type,
     geometry: candidate.geometry,
@@ -219,7 +300,13 @@ function projection(candidate, state, research, preview, nameIndex) {
 export function queryNcrResearch(
   research,
   query,
-  { ledger, reviewLedger, preview = false, now = Date.now() },
+  {
+    ledger,
+    reviewLedger,
+    preview = false,
+    now = Date.now(),
+    enrichment = null,
+  },
 ) {
   validatePublicationLedger(ledger, now)
   validateReviewLedger(reviewLedger)
@@ -230,6 +317,8 @@ export function queryNcrResearch(
     throw new Error(
       'Research review ledger belongs to another source snapshot.',
     )
+  const enrichmentIndex =
+    preview && enrichment ? validateNcrEnrichment(research, enrichment) : null
   const issueIndex = new Map()
   const rejectedIssues = new Set(
     reviewLedger.events
@@ -249,6 +338,7 @@ export function queryNcrResearch(
     sourceHashes: research.sourceHashes,
     ledger,
     reviewLedger,
+    ...(preview && enrichment ? { enrichment } : {}),
   })
   const fingerprint = contentHash({
     dataVersion,
@@ -335,7 +425,14 @@ export function queryNcrResearch(
     items = matched
       .slice(offset, offset + query.limit)
       .map(({ candidate, state }) =>
-        projection(candidate, state, research, preview, nameIndex),
+        projection(
+          candidate,
+          state,
+          research,
+          preview,
+          nameIndex,
+          enrichmentIndex,
+        ),
       )
     truncated = offset + items.length < matched.length
     if (truncated)
@@ -395,6 +492,7 @@ export function createNcrHandler({
   loadPublicationLedger,
   loadReviewLedger,
   developmentPreview = false,
+  enrichment = null,
   now = Date.now,
 }) {
   return (request, response) => {
@@ -488,6 +586,7 @@ export function createNcrHandler({
           reviewLedger: loadReviewLedger(),
           preview,
           now: now(),
+          enrichment,
         }),
       )
     } catch (error) {
@@ -522,20 +621,31 @@ export function loadFrozenResearch(directory) {
 function main() {
   const args = process.argv.slice(2),
     portAt = args.indexOf('--port'),
-    dataAt = args.indexOf('--data')
+    dataAt = args.indexOf('--data'),
+    enrichmentAt = args.indexOf('--enrichment')
   const port = Number(portAt < 0 ? '8090' : args[portAt + 1]),
     directory = dataAt < 0 ? 'data/ncr-research' : args[dataAt + 1]
   const developmentPreview = args.includes('--development-preview')
-  const validFlags = new Set(['--port', '--data', '--development-preview'])
+  const validFlags = new Set([
+    '--port',
+    '--data',
+    '--development-preview',
+    '--enrichment',
+  ])
   for (let i = 0; i < args.length; i++) {
     if (!validFlags.has(args[i])) throw new Error('Unsupported option.')
-    if (args[i] !== '--development-preview') i++
+    if (args[i] !== '--development-preview') {
+      if (!args[i + 1] || args[i + 1].startsWith('--'))
+        throw new Error('Option requires a value.')
+      i++
+    }
   }
   if (
     !Number.isInteger(port) ||
     port < 1024 ||
     port > 65535 ||
     !directory ||
+    (enrichmentAt >= 0 && !developmentPreview) ||
     (developmentPreview && process.env.NODE_ENV === 'production')
   )
     throw new Error(
@@ -547,8 +657,13 @@ function main() {
       throw new Error('Required review ledger not found: ' + filename)
     return JSON.parse(readFileSync(path, 'utf8'))
   }
+  const research = loadFrozenResearch(directory)
   const handler = createNcrHandler({
-    research: loadFrozenResearch(directory),
+    research,
+    enrichment:
+      enrichmentAt < 0
+        ? null
+        : loadNcrEnrichment(args[enrichmentAt + 1], research),
     loadPublicationLedger: readLedger('publication-ledger.json'),
     loadReviewLedger: readLedger('review-ledger.json'),
     developmentPreview,

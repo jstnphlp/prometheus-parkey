@@ -1,0 +1,284 @@
+{
+  "schemaVersion": 1,
+  "researchDate": "2026-11-05",
+  "purpose": "Additional legally reusable evidence audit; research only.",
+  "publicationApproved": false,
+  "facilityNamesImported": 0,
+  "additionalCredibleNameProposals": 0,
+  "wikidata": {
+    "publisher": "Wikidata",
+    "license": "CC0-1.0",
+    "licenseScope": "Structured entity data only; licensing-policy prose is separately licensed.",
+    "licenseSource": "https://www.wikidata.org/wiki/Wikidata:Licensing",
+    "classVerification": "Labels and descriptions verified using official wbsearchentities and wbgetentities APIs.",
+    "parkingClasses": [
+      {
+        "id": "Q6501349",
+        "label": "parking area"
+      },
+      {
+        "id": "Q13218805",
+        "label": "parking garage"
+      }
+    ],
+    "bbox": [120.85, 14.3, 121.27, 14.86],
+    "query": "SELECT DISTINCT ?item ?itemLabel ?coord ?class WHERE {\n  SERVICE wikibase:box {\n    ?item wdt:P625 ?coord .\n    bd:serviceParam wikibase:cornerSouthWest \"Point(120.85 14.30)\"^^geo:wktLiteral .\n    bd:serviceParam wikibase:cornerNorthEast \"Point(121.27 14.86)\"^^geo:wktLiteral .\n  }\n  VALUES ?class { wd:Q6501349 wd:Q13218805 }\n  ?item wdt:P31/wdt:P279* ?class .\n  SERVICE wikibase:label { bd:serviceParam wikibase:language \"en,fil\" . }\n}\n",
+    "querySha256": "c3e7c4fcd72e57e9b98112ac54b4d2ae57cb6fb17e6e5858696c2bb8d81fb692",
+    "queryMethod": "P625 coordinates within wikibase:box, actual P31 parking class or P279 subclasses; no nearby-property name matching.",
+    "boundingBoxParkingResults": 0,
+    "exactNcrBoundaryResults": 0,
+    "exactBoundaryFilter": "Not needed: the bounding-box result set is empty.",
+    "matchedFrozenFacilityGroups": 0,
+    "additionalCredibleNameProposals": 0,
+    "limitation": "An empty class-and-coordinate query is not proof that no named NCR parking exists or that all Wikidata records are properly classified/geocoded."
+  },
+  "foursquare": {
+    "publisher": "Foursquare Labs, Inc.",
+    "license": "Apache-2.0",
+    "licenseSource": "https://opensource.foursquare.com/places-notice-txt/",
+    "noticeRequirements": [
+      "Provide recipients a copy of Apache License 2.0.",
+      "Preserve Foursquare attribution and full NOTICE content.",
+      "Prominently identify modifications where applicable."
+    ],
+    "officialProjectPage": "https://opensource.foursquare.com/os-places/",
+    "accessDocumentation": "https://docs.foursquare.com/data-products/docs/access-fsq-os-places",
+    "schemaDocumentation": "https://docs.foursquare.com/data-products/docs/places-os-data-schema",
+    "releaseNotes": "https://docs.foursquare.com/data-products/docs/fsq-os-places-release-notes",
+    "latestDocumentedRelease": "October 2026",
+    "exactReleaseDay": "2026-10-15",
+    "availabilityAssessment": "Primary Places Portal requires account/token. Officially linked HF alternative is gated; anonymous viewer and parquet access failed. Official documented PMTiles key returns404 NoSuchKey. No accounts, gate terms, tokens, purchases or restricted downloads used.",
+    "documentedAlternativeAccess": [
+      "Officially linked Hugging Face metadata inspected anonymously; dataset is gated=auto. Anonymous README, splits and parquet calls returned HTTP401.",
+      "Attempted bounded PH+NCR coordinate filter (maximum100 rows) returned HTTP500 and no records.",
+      "Official documented latest PMTiles key was probed with Range bytes0-16383; S3 returned HTTP404 NoSuchKey."
+    ],
+    "recordLevelParkingQueryPerformed": false,
+    "recordLevelResultCount": null,
+    "additionalCredibleNameProposals": 0,
+    "independenceAssessment": "Foursquare can underlie Overture Places; a future same-source name/ID match must not be counted as independent corroboration.",
+    "qualityAssessment": "Official schema includes unresolved_flags such as duplicate, closed, privatevenue and doesnt_exist; dates and coordinates are source attributes, not field verification.",
+    "limitation": "A bounded NCR record query was attempted but no result set was obtained. No NCR coverage or absence claim is made; available metadata and current official access paths were audited.",
+    "exactReleaseEvidence": "Official linked HF repository card configs point to release/dt=2026-10-15.",
+    "huggingFaceAudit": {
+      "repository": "foursquare/fsq-os-places",
+      "officialLinkSource": "https://docs.foursquare.com/data-products/docs/access-fsq-os-places",
+      "revision": "49cfbe9515c0756f09143dd1e1fa48929cc5c14b",
+      "lastModified": "2026-10-15T20:47:24.000Z",
+      "gated": "auto",
+      "cliVersionChecked": "2.2.0",
+      "skillUsed": "C:/Users/JAC/.agents/skills/hf-cli/SKILL.md",
+      "gateAssessment": "Metadata prompt requires representing authority on behalf of organization and allowing publisher use of organization name/logo in partner descriptions/marketing. No acceptance or authentication attempted.",
+      "anonymousMetadataAvailable": true,
+      "anonymousReadmeStatus": 401,
+      "anonymousSplitsStatus": 401,
+      "anonymousParquetStatus": 401,
+      "boundedNcrFilterAttempted": true,
+      "boundedNcrFilterHttpStatus": 500,
+      "boundedNcrFilterPredicate": "country=PH and longitude120.85..121.27 and latitude14.30..14.86",
+      "boundedNcrFilterMaxRows": 100,
+      "recordsObtained": 0
+    },
+    "pmtilesAudit": {
+      "documentedUri": "s3://fsq-os-places-us-east-1/release/vector-tiles/latest/fsq-os-places.pmtiles",
+      "requestRange": "bytes=0-16383",
+      "httpStatus": 404,
+      "responseCode": "NoSuchKey",
+      "recordsObtained": 0
+    },
+    "recordLevelParkingQueryAttempted": true
+  },
+  "pages": [
+    {
+      "url": "https://www.wikidata.org/w/api.php?action=wbsearchentities&search=parking%20lot&language=en&format=json&limit=5",
+      "retrievedAt": "2026-11-05T12:18:56.571061+00:00",
+      "status": 200,
+      "finalUrl": "https://www.wikidata.org/w/api.php?action=wbsearchentities&search=parking%20lot&language=en&format=json&limit=5",
+      "sha256": "904ba5bfafde5fc0ccc79f13ce358e3a2a1cf44d9c07cb62d6e9f5de7e63302c",
+      "bytes": 2339,
+      "contentType": "application/json; charset=utf-8",
+      "localArchive": "output/ncr/additional-open-sources-2026-11-05/00.response",
+      "sourceId": "open-source-audit:0f31faf9b8196dd96f6b"
+    },
+    {
+      "url": "https://www.wikidata.org/w/api.php?action=wbsearchentities&search=parking%20garage&language=en&format=json&limit=5",
+      "retrievedAt": "2026-11-05T12:18:56.573075+00:00",
+      "status": 200,
+      "finalUrl": "https://www.wikidata.org/w/api.php?action=wbsearchentities&search=parking%20garage&language=en&format=json&limit=5",
+      "sha256": "e3862c24cfabe64f741358acc6ecfc4cd7923c9511a4d89486b290add8274e5c",
+      "bytes": 2842,
+      "contentType": "application/json; charset=utf-8",
+      "localArchive": "output/ncr/additional-open-sources-2026-11-05/01.response",
+      "sourceId": "open-source-audit:30651890aa626882ee1c"
+    },
+    {
+      "url": "https://www.wikidata.org/wiki/Wikidata:Licensing",
+      "retrievedAt": "2026-11-05T12:18:56.574071+00:00",
+      "status": 200,
+      "finalUrl": "https://www.wikidata.org/wiki/Wikidata:Licensing",
+      "sha256": "970733cf3a9cba52ddc1f1f9325906462c1e501970ce89a06a33a5536b102f27",
+      "bytes": 65016,
+      "contentType": "text/html; charset=UTF-8",
+      "localArchive": "output/ncr/additional-open-sources-2026-11-05/02.response",
+      "sourceId": "open-source-audit:46a07189a0946e80d591"
+    },
+    {
+      "url": "https://opensource.foursquare.com/places/",
+      "retrievedAt": "2026-11-05T12:18:56.575073+00:00",
+      "status": 200,
+      "finalUrl": "https://opensource.foursquare.com/places-notice-txt/",
+      "sha256": "d2db70ca3d42ebcd64c3f5ea040cee704e6a6253402f49d91a84539c08c57fe5",
+      "bytes": 91202,
+      "contentType": "text/html; charset=UTF-8",
+      "localArchive": "output/ncr/additional-open-sources-2026-11-05/03.response",
+      "sourceId": "open-source-audit:35a4998dc7e19356fb38"
+    },
+    {
+      "url": "https://api.github.com/repos/foursquare/fsq-os-places",
+      "retrievedAt": "2026-11-05T12:18:57.128306+00:00",
+      "error": "HTTP Error 404: Not Found",
+      "sourceId": "open-source-audit:dddf943ad94e0d3e3340"
+    },
+    {
+      "url": "https://query.wikidata.org/sparql?query=SELECT+DISTINCT+%3Fitem+%3FitemLabel+%3Fcoord+%3Fclass+WHERE+%7B%0A++SERVICE+wikibase%3Abox+%7B%0A++++%3Fitem+wdt%3AP625+%3Fcoord+.%0A++++bd%3AserviceParam+wikibase%3AcornerSouthWest+%22Point%28120.85+14.30%29%22%5E%5Egeo%3AwktLiteral+.%0A++++bd%3AserviceParam+wikibase%3AcornerNorthEast+%22Point%28121.27+14.86%29%22%5E%5Egeo%3AwktLiteral+.%0A++%7D%0A++VALUES+%3Fclass+%7B+wd%3AQ6501349+wd%3AQ13218805+%7D%0A++%3Fitem+wdt%3AP31%2Fwdt%3AP279%2A+%3Fclass+.%0A++SERVICE+wikibase%3Alabel+%7B+bd%3AserviceParam+wikibase%3Alanguage+%22en%2Cfil%22+.+%7D%0A%7D&format=json",
+      "retrievedAt": "2026-11-05T12:19:54.568356+00:00",
+      "status": 200,
+      "finalUrl": "https://query.wikidata.org/sparql?query=SELECT+DISTINCT+%3Fitem+%3FitemLabel+%3Fcoord+%3Fclass+WHERE+%7B%0A++SERVICE+wikibase%3Abox+%7B%0A++++%3Fitem+wdt%3AP625+%3Fcoord+.%0A++++bd%3AserviceParam+wikibase%3AcornerSouthWest+%22Point%28120.85+14.30%29%22%5E%5Egeo%3AwktLiteral+.%0A++++bd%3AserviceParam+wikibase%3AcornerNorthEast+%22Point%28121.27+14.86%29%22%5E%5Egeo%3AwktLiteral+.%0A++%7D%0A++VALUES+%3Fclass+%7B+wd%3AQ6501349+wd%3AQ13218805+%7D%0A++%3Fitem+wdt%3AP31%2Fwdt%3AP279%2A+%3Fclass+.%0A++SERVICE+wikibase%3Alabel+%7B+bd%3AserviceParam+wikibase%3Alanguage+%22en%2Cfil%22+.+%7D%0A%7D&format=json",
+      "sha256": "caad767ab2ff31f8dde23e78fdcf64efddfd077550bb9aaf616224aa92fc3ba3",
+      "bytes": 117,
+      "contentType": "application/sparql-results+json;charset=utf-8",
+      "localArchive": "output/ncr/additional-open-sources-2026-11-05/05.response",
+      "sourceId": "open-source-audit:94514b8c4140930aab33"
+    },
+    {
+      "url": "https://www.wikidata.org/w/api.php?action=wbgetentities&ids=Q6501349%7CQ13218805&props=labels%7Cdescriptions&languages=en&format=json",
+      "retrievedAt": "2026-11-05T12:19:54.570354+00:00",
+      "status": 200,
+      "finalUrl": "https://www.wikidata.org/w/api.php?action=wbgetentities&ids=Q6501349%7CQ13218805&props=labels%7Cdescriptions&languages=en&format=json",
+      "sha256": "9038b4d27e5e299baaa4ec8b053d40825d00bdcbf5c2a9d0ba88635730ab9512",
+      "bytes": 493,
+      "contentType": "application/json; charset=utf-8",
+      "localArchive": "output/ncr/additional-open-sources-2026-11-05/06.response",
+      "sourceId": "open-source-audit:b993df3ab759b13fe190"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/foursquare/fsq-os-places/main/README.md",
+      "retrievedAt": "2026-11-05T12:19:54.570354+00:00",
+      "error": "HTTP Error 404: Not Found",
+      "sourceId": "open-source-audit:f997b139ce8372eb4fec"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/foursquare/fsq-os-places/main/LICENSE",
+      "retrievedAt": "2026-11-05T12:19:54.571404+00:00",
+      "error": "HTTP Error 404: Not Found",
+      "sourceId": "open-source-audit:ed4b71fe62542e2e066f"
+    },
+    {
+      "url": "https://opensource.foursquare.com/os-places/",
+      "retrievedAt": "2026-11-05T12:20:35.355385+00:00",
+      "status": 200,
+      "finalUrl": "https://opensource.foursquare.com/os-places/",
+      "sha256": "3e732a1a49dd81848c42c963a7d8856d7183a43714b074e7d445b720236c1982",
+      "bytes": 96305,
+      "contentType": "text/html; charset=UTF-8",
+      "localArchive": "output/ncr/additional-open-sources-2026-11-05/09.response",
+      "sourceId": "open-source-audit:ee6e347e61d10b68b9a4"
+    },
+    {
+      "url": "https://docs.foursquare.com/data-products/docs/access-fsq-os-places",
+      "retrievedAt": "2026-11-05T12:20:35.356385+00:00",
+      "status": 200,
+      "finalUrl": "https://docs.foursquare.com/data-products/docs/access-fsq-os-places",
+      "sha256": "aea2a8ed9d96a33302cb41aa6351f55b4b1d19a8a6fa75722c0ef20353119b8f",
+      "bytes": 774477,
+      "contentType": "text/html; charset=utf-8",
+      "localArchive": "output/ncr/additional-open-sources-2026-11-05/10.response",
+      "sourceId": "open-source-audit:80f1e8325da6d7f82280"
+    },
+    {
+      "url": "https://docs.foursquare.com/data-products/docs/places-os-data-schema",
+      "retrievedAt": "2026-11-05T12:20:35.357384+00:00",
+      "status": 200,
+      "finalUrl": "https://docs.foursquare.com/data-products/docs/places-os-data-schema",
+      "sha256": "f1c52676122cc370e7fbadea9e0a8dffb0a3fcfef703c86bc3944e415465ac19",
+      "bytes": 759055,
+      "contentType": "text/html; charset=utf-8",
+      "localArchive": "output/ncr/additional-open-sources-2026-11-05/11.response",
+      "sourceId": "open-source-audit:89ef7b036d9185060786"
+    },
+    {
+      "url": "https://docs.foursquare.com/data-products/docs/fsq-os-places-release-notes",
+      "retrievedAt": "2026-11-05T12:21:27.440952+00:00",
+      "status": 200,
+      "finalUrl": "https://docs.foursquare.com/data-products/docs/fsq-os-places-release-notes",
+      "sha256": "311b4b8f4cbd618f76b07cbfbaa039be4ac318578a0f7f2dc7b63d00c82b3f61",
+      "bytes": 991815,
+      "contentType": "text/html; charset=utf-8",
+      "localArchive": "output/ncr/additional-open-sources-2026-11-05/12.response",
+      "sourceId": "open-source-audit:390bfdd047617fb26352"
+    },
+    {
+      "url": "https://huggingface.co/api/datasets/foursquare/fsq-os-places",
+      "retrievedAt": "2026-11-05T12:23:50.797338+00:00",
+      "authentication": "anonymous_no_token",
+      "status": 200,
+      "finalUrl": "https://huggingface.co/api/datasets/foursquare/fsq-os-places",
+      "sha256": "1a7d35599cbebbf7e680500f576c49cfa6c5373d58fdeaebb1b1b8f783f98a75",
+      "bytes": 201400,
+      "contentType": "application/json; charset=utf-8",
+      "localArchive": "output/ncr/additional-open-sources-2026-11-05/13.response",
+      "sourceId": "open-source-audit:99a558e2bcfbb28c1c0f"
+    },
+    {
+      "url": "https://huggingface.co/datasets/foursquare/fsq-os-places/raw/main/README.md",
+      "retrievedAt": "2026-11-05T12:23:50.799285+00:00",
+      "authentication": "anonymous_no_token",
+      "error": "HTTP Error 401: Unauthorized",
+      "sourceId": "open-source-audit:9613bf2044f4160826f8"
+    },
+    {
+      "url": "https://datasets-server.huggingface.co/splits?dataset=foursquare%2Ffsq-os-places",
+      "retrievedAt": "2026-11-05T12:23:50.799285+00:00",
+      "authentication": "anonymous_no_token",
+      "error": "HTTP Error 401: Unauthorized",
+      "sourceId": "open-source-audit:adddacea44cb72216efe"
+    },
+    {
+      "url": "https://datasets-server.huggingface.co/parquet?dataset=foursquare%2Ffsq-os-places",
+      "retrievedAt": "2026-11-05T12:23:50.800794+00:00",
+      "authentication": "anonymous_no_token",
+      "error": "HTTP Error 401: Unauthorized",
+      "sourceId": "open-source-audit:78ba4e588f8a04ccb946"
+    },
+    {
+      "url": "https://datasets-server.huggingface.co/filter?dataset=foursquare%2Ffsq-os-places&config=places&split=train&where=%22country%22+%3D+%27PH%27+AND+%22longitude%22+%3E%3D+120.85+AND+%22longitude%22+%3C%3D+121.27+AND+%22latitude%22+%3E%3D+14.30+AND+%22latitude%22+%3C%3D+14.86&offset=0&length=100",
+      "retrievedAt": "2026-11-05T12:26:09.721666+00:00",
+      "authentication": "anonymous_no_token",
+      "intendedFilter": "\"country\" = 'PH' AND \"longitude\" >= 120.85 AND \"longitude\" <= 121.27 AND \"latitude\" >= 14.30 AND \"latitude\" <= 14.86",
+      "intendedMaxRows": 100,
+      "status": 500,
+      "error": "HTTP Error 500: Internal Server Error",
+      "sha256": "c960bbe066a9c8419e9530b70f2aa6f40c002e5970888a45dba198331db04d41",
+      "bytes": 134,
+      "localArchive": "output/ncr/additional-open-sources-2026-11-05/18.hf-ncr-filter.response",
+      "sourceId": "open-source-audit:4c6448a9b3b98fe7667c"
+    },
+    {
+      "url": "https://fsq-os-places-us-east-1.s3.amazonaws.com/release/vector-tiles/latest/fsq-os-places.pmtiles",
+      "retrievedAt": "2026-11-05T12:26:46Z",
+      "retrievalTimestampBasis": "Server Date header from bounded curl request",
+      "authentication": "anonymous_no_token",
+      "requestRange": "bytes=0-16383",
+      "status": 404,
+      "error": "S3 NoSuchKey: the official documented PMTiles key does not exist.",
+      "sha256": "05973d77522a012f748e97bd8283701d6f8b417120b828be78846c039645cfbf",
+      "bytes": 320,
+      "localArchive": "output/ncr/additional-open-sources-2026-11-05/pmtiles-curl-body.range",
+      "headersArchive": "output/ncr/additional-open-sources-2026-11-05/pmtiles-curl-headers.txt",
+      "headersSha256": "6db1b49c8dfb5f806fa98dbb7f55024065bbd8c2da7eb9899d8675b4246be183",
+      "sourceId": "open-source-audit:a3eb439f82cb3574d9d7"
+    }
+  ],
+  "rawArchivePolicy": "Raw responses retained only in ignored output/ncr/additional-open-sources-2026-11-05/; no dataset or third-party prose imported into facility inventory.",
+  "notes": "Guessed Foursquare GitHub repository and raw README/LICENSE URLs returned 404; actual official documentation and NOTICE were used instead. No names invented, no field verification or publication approval asserted. Follow-up inspected official public alternatives: HF metadata is accessible but data gated; viewer/parquet calls failed; documented PMTiles key is absent. No inaccessible source was bypassed."
+}

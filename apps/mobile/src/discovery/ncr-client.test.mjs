@@ -82,6 +82,127 @@ const viewport = {
   zoom: 15,
 }
 
+const enrichmentFixture = () => ({
+  groupId: 'facility:synthetic-group',
+  classification: 'credible_reusable_name_pending_review',
+  proposedName: 'Synthetic proposal',
+  nameTagLeads: [
+    {
+      name: 'Synthetic proposal',
+      basis: 'same_osm_identity_new_snapshot',
+      sourceId: 'osm:way/1',
+      sourceRecordUrl: item.source.url,
+      sourceLicense: 'ODbL-1.0',
+      approvedForPublication: false,
+    },
+  ],
+  nearbyParkingLeads: [
+    {
+      name: 'Synthetic nearby garage',
+      sourceId: 'overture:synthetic',
+      sourceRecordUrl: 'https://explore.overturemaps.org/',
+      sourceLicense: 'Apache-2.0',
+      sourceIndependent: true,
+      samePhysicalFacilityConfirmed: false,
+      usableAsParkingName: false,
+    },
+  ],
+  contextClues: [
+    {
+      name: 'Synthetic property',
+      sourceId: 'osm:way/2',
+      sourceRecordUrl: 'https://www.openstreetmap.org/way/2',
+      sourceLicense: 'ODbL-1.0',
+      relation: 'nearby_named_property_only',
+      usableAsParkingName: false,
+    },
+  ],
+  operatorClues: [
+    {
+      name: 'Synthetic operator',
+      kind: 'operator',
+      recordId: item.id,
+      usableAsFacilityName: false,
+    },
+  ],
+  reviewLinks: [
+    {
+      recordId: item.id,
+      coordinate: item.representativePoint,
+      googleMaps:
+        'https://www.google.com/maps/search/?api=1&query=14.505%2C121.005',
+      waze: 'https://www.waze.com/ul?ll=14.505%2C121.005&z=18',
+    },
+  ],
+})
+const enrichedResponse = (enrichment = enrichmentFixture()) => ({
+  ...result,
+  items: [
+    {
+      ...item,
+      nameReview: {
+        status: 'unnamed_pending_reference',
+        sourceNameIsDistinctive: false,
+        crossSourceCandidate: false,
+        enrichment,
+      },
+    },
+  ],
+})
+
+test('private enrichment preserves source labels and rejects malformed evidence, approval claims or public leakage', () => {
+  const response = enrichedResponse()
+  assert.equal(isNcrResponse(response), true)
+  assert.equal(response.items[0].name, item.name)
+  assert.equal(response.items[0].canNavigate, false)
+  assert.equal(
+    response.items[0].nameReview.enrichment.proposedName,
+    'Synthetic proposal',
+  )
+  assert.equal(response.items[0].evidence.publicationApproved, false)
+  assert.equal(isNcrResponse({ ...response, mode: 'public' }), false)
+  assert.equal(
+    ncrResponseCanDisplay({ ...response, mode: 'public' }, 'public'),
+    false,
+  )
+  for (const mutate of [
+    (r) => {
+      r.classification = 'verified'
+    },
+    (r) => {
+      r.nameTagLeads[0].approvedForPublication = true
+    },
+    (r) => {
+      r.nameTagLeads[0].sourceRecordUrl = 'javascript:alert(1)'
+    },
+    (r) => {
+      r.nearbyParkingLeads[0].samePhysicalFacilityConfirmed = true
+    },
+    (r) => {
+      r.contextClues[0].usableAsParkingName = true
+    },
+    (r) => {
+      r.operatorClues[0].usableAsFacilityName = true
+    },
+    (r) => {
+      r.reviewLinks[0].coordinate = [999, 999]
+    },
+    (r) => {
+      r.reviewLinks[0].googleMaps = 'https://attacker.example/'
+    },
+    (r) => {
+      r.reviewLinks[0].waze += '&navigate=yes'
+    },
+    (r) => {
+      r.nameTagLeads = 'not an array'
+    },
+  ]) {
+    const r = enrichmentFixture()
+    mutate(r)
+    assert.equal(isNcrResponse(enrichedResponse(r)), false)
+  }
+})
+
 test('private preview requires development and loopback app/server origins', () => {
   assert.equal(
     ncrPreviewEnabled('development', 'http://127.0.0.1:8090', 'localhost'),

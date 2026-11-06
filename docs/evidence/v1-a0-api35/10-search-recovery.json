@@ -1,0 +1,280 @@
+[
+  {
+    "window-title": "",
+    "type": "SYSTEM",
+    "layer": 1,
+    "bounds": "[0,0][720,91]",
+    "content": [
+      {
+        "class": "android.widget.TextView",
+        "resource-id": "com.android.systemui:id/clock",
+        "text": "5:09",
+        "content-desc": "5:09 AM",
+        "bounds": "[47,31][116,60]",
+        "center": "[81,45]"
+      },
+      {
+        "class": "android.widget.ImageView",
+        "content-desc": "Android System notification: Serial console enabled",
+        "bounds": "[116,1][155,91]",
+        "center": "[135,46]"
+      },
+      {
+        "class": "android.widget.ImageView",
+        "resource-id": "com.android.systemui:id/wifi_signal",
+        "content-desc": "Wifi signal full.",
+        "bounds": "[582,32][608,58]",
+        "center": "[595,45]"
+      },
+      {
+        "class": "android.widget.FrameLayout",
+        "resource-id": "com.android.systemui:id/mobile_combo",
+        "content-desc": "Phone signal full.",
+        "bounds": "[608,26][634,65]",
+        "center": "[621,45]"
+      },
+      {
+        "class": "android.widget.LinearLayout",
+        "resource-id": "com.android.systemui:id/battery",
+        "content-desc": "Battery charging, 100 percent.",
+        "bounds": "[645,34][659,57]",
+        "center": "[652,45]"
+      }
+    ]
+  },
+  {
+    "window-title": "Parkey",
+    "type": "APPLICATION",
+    "active": true,
+    "focused": true,
+    "layer": 0,
+    "bounds": "[0,0][720,1600]",
+    "content": [
+      {
+        "class": "android.widget.ImageView",
+        "content-desc": "Tools",
+        "bounds": "[624,142][670,188]",
+        "center": "[647,165]"
+      },
+      {
+        "class": "android.widget.FrameLayout",
+        "content-desc": "Showing a Map created with MapLibre. Scroll by dragging two fingers. Zoom by pinching two fingers.",
+        "interactions": ["CLICKABLE", "LONG_CLICKABLE", "FOCUSABLE"],
+        "bounds": "[0,0][720,1600]",
+        "center": "[360,800]"
+      },
+      {
+        "class": "android.widget.Button",
+        "resource-id": "parking-sheet-handle",
+        "content-desc": "Parking sheet: full. Swipe down to dismiss. Activate to collapse",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "bounds": "[255,212][465,268]",
+        "center": "[360,240]"
+      },
+      {
+        "class": "android.widget.Button",
+        "content-desc": "Close destination search",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "bounds": "[84,272][168,356]",
+        "center": "[126,314]"
+      },
+      {
+        "class": "android.widget.EditText",
+        "resource-id": "destination-query",
+        "text": "Poblacion Makati",
+        "content-desc": "Where to park today?",
+        "interactions": [
+          "CLICKABLE",
+          "LONG_CLICKABLE",
+          "FOCUSABLE",
+          "EDITABLE",
+          "TEXT_SELECTABLE"
+        ],
+        "state": ["FOCUSED"],
+        "bounds": "[252,273][552,354]",
+        "center": "[402,313]"
+      },
+      {
+        "class": "android.widget.Button",
+        "content-desc": "Clear destination search",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "bounds": "[573,272][657,356]",
+        "center": "[615,314]"
+      },
+      {
+        "class": "android.widget.ScrollView",
+        "resource-id": "destination-results",
+        "interactions": ["SCROLLABLE", "FOCUSABLE"],
+        "bounds": "[56,373][664,1513]",
+        "center": "[360,943]",
+        "children": [
+          {
+            "class": "android.widget.Button",
+            "resource-id": "destination-result-0",
+            "content-desc": "Poblacion, District I, Makati, Philippines",
+            "interactions": ["CLICKABLE", "FOCUSABLE"],
+            "bounds": "[56,373][664,486]",
+            "center": "[360,429]",
+            "children": [
+              {
+                "class": "android.widget.TextView",
+                "text": "Poblacion",
+                "bounds": "[147,394][608,433]",
+                "center": "[377,413]"
+              },
+              {
+                "class": "android.widget.TextView",
+                "text": "District I, Makati, Philippines",
+                "bounds": "[147,433][608,465]",
+                "center": "[377,449]"
+              }
+            ]
+          },
+          {
+            "class": "android.widget.Button",
+            "resource-id": "destination-result-1",
+            "content-desc": "Makati Poblacion Park, Riverwalk Extension, District I, Makati, Philippines",
+            "interactions": ["CLICKABLE", "FOCUSABLE"],
+            "bounds": "[56,486][664,599]",
+            "center": "[360,542]",
+            "children": [
+              {
+                "class": "android.widget.TextView",
+                "text": "Makati Poblacion Park",
+                "bounds": "[147,507][608,546]",
+                "center": "[377,526]"
+              },
+              {
+                "class": "android.widget.TextView",
+                "text": "Riverwalk Extension, District I, Makati, Philippines",
+                "bounds": "[147,546][608,578]",
+                "center": "[377,562]"
+              }
+            ]
+          },
+          {
+            "class": "android.widget.Button",
+            "resource-id": "destination-result-2",
+            "content-desc": "Poblacion Health Center - Makati City Health Department, A. Bonifacio Street, District I, Makati, Philippines",
+            "interactions": ["CLICKABLE", "FOCUSABLE"],
+            "bounds": "[56,599][664,712]",
+            "center": "[360,655]",
+            "children": [
+              {
+                "class": "android.widget.TextView",
+                "text": "Poblacion Health Center - Makati City Health Department",
+                "bounds": "[147,620][608,659]",
+                "center": "[377,639]"
+              },
+              {
+                "class": "android.widget.TextView",
+                "text": "A. Bonifacio Street, District I, Makati, Philippines",
+                "bounds": "[147,659][608,691]",
+                "center": "[377,675]"
+              }
+            ]
+          },
+          {
+            "class": "android.widget.Button",
+            "resource-id": "destination-result-3",
+            "content-desc": "Makati Poblacion Intersection, J. P. Rizal Street, District I, Makati, Philippines",
+            "interactions": ["CLICKABLE", "FOCUSABLE"],
+            "bounds": "[56,712][664,825]",
+            "center": "[360,768]",
+            "children": [
+              {
+                "class": "android.widget.TextView",
+                "text": "Makati Poblacion Intersection",
+                "bounds": "[147,733][608,772]",
+                "center": "[377,752]"
+              },
+              {
+                "class": "android.widget.TextView",
+                "text": "J. P. Rizal Street, District I, Makati, Philippines",
+                "bounds": "[147,772][608,804]",
+                "center": "[377,788]"
+              }
+            ]
+          },
+          {
+            "class": "android.widget.Button",
+            "resource-id": "destination-result-4",
+            "content-desc": "Makati Pumping Station, District I, Makati, Philippines",
+            "interactions": ["CLICKABLE", "FOCUSABLE"],
+            "bounds": "[56,825][664,938]",
+            "center": "[360,881]",
+            "children": [
+              {
+                "class": "android.widget.TextView",
+                "text": "Makati Pumping Station",
+                "bounds": "[147,846][608,885]",
+                "center": "[377,865]"
+              },
+              {
+                "class": "android.widget.TextView",
+                "text": "District I, Makati, Philippines",
+                "bounds": "[147,885][608,917]",
+                "center": "[377,901]"
+              }
+            ]
+          },
+          {
+            "class": "android.widget.Button",
+            "resource-id": "destination-result-5",
+            "content-desc": "Makati City Subway, F. Zobel Street, District I, Makati, Philippines",
+            "interactions": ["CLICKABLE", "FOCUSABLE"],
+            "bounds": "[56,938][664,1051]",
+            "center": "[360,994]",
+            "children": [
+              {
+                "class": "android.widget.TextView",
+                "text": "Makati City Subway",
+                "bounds": "[147,959][608,998]",
+                "center": "[377,978]"
+              },
+              {
+                "class": "android.widget.TextView",
+                "text": "F. Zobel Street, District I, Makati, Philippines",
+                "bounds": "[147,998][608,1030]",
+                "center": "[377,1014]"
+              }
+            ]
+          },
+          {
+            "class": "android.widget.TextView",
+            "text": "Search text and map area are sent to Photon. Details in You → Privacy.",
+            "bounds": "[56,1051][664,1157]",
+            "center": "[360,1104]"
+          }
+        ]
+      },
+      {
+        "class": "android.view.ViewGroup",
+        "content-desc": "4, MapLibre Native [ERROR] [Mbgl] {RenderThread 15}[Style]: Failed to load glyph range 0-255 for font stack Open Sans Regular,Arial Unicode MS Regular:( HTTP status code 404)",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "bounds": "[18,1430][703,1514]",
+        "center": "[360,1472]",
+        "children": [
+          {
+            "class": "android.widget.TextView",
+            "text": "4",
+            "bounds": "[50,1457][68,1489]",
+            "center": "[59,1473]"
+          },
+          {
+            "class": "android.widget.TextView",
+            "text": "MapLibre Native [ERROR] [Mbgl] {RenderThread 15}[Style]: Failed to load glyph range 0-255 for font stack Open Sans Regular,Arial Unicode MS Regular:( HTTP status code 404)",
+            "bounds": "[107,1453][638,1492]",
+            "center": "[372,1472]"
+          },
+          {
+            "class": "android.view.ViewGroup",
+            "interactions": ["CLICKABLE", "FOCUSABLE"],
+            "bounds": "[647,1455][682,1490]",
+            "center": "[664,1472]"
+          }
+        ]
+      }
+    ]
+  }
+]

@@ -4,10 +4,12 @@ Recorded 2026-11-06 on branch `codex/v1-a0-discovery-baseline`, based on remote
 `main` commit `febd41941e722f0f1e85829176679f1ff88cc7f6`. Mobile tree:
 `35e2860f492c79c91b27bcb66ad66f4abfa496b3`.
 
-**A0 is not PASS.** Static baseline work is complete; current native screenshots
-and device review remain unexecuted. No PR has been opened. A1–A4 must not advance
-until A0 evidence is reviewed and its gate passes. The canonical plan remains
-unchanged. No product behavior, dependencies, backend or admin code changed.
+**A0 baseline inventory is complete with emulator evidence.** Architecture,
+routes, automated baseline results, current screenshots and risks are recorded.
+This is a baseline audit pass, not a claim that every smoke outcome or release
+gate passed. Product defects found below remain open for A1/A2. Physical-device
+verification remains a separate A2/A4/release gate, as the user explicitly directed.
+No product behavior, dependencies, backend or admin code changed.
 
 ## Scope and authoritative inputs
 
@@ -74,10 +76,10 @@ discovery, retained results, map data, filters, routing, local storage, hours,
 photos and telemetry helpers. Passing pure-function tests does not establish
 native rendering, network delivery, accessibility or physical GPS behavior.
 
-Browser, emulator, physical-device, live backend, analytics delivery and database
-checks were not run. No dev server, build, deployment or external event was
-started. Workspace-wide checks are unnecessary for this documentation-only
-change. Documentation formatting is checked separately before handoff.
+These automated checks preceded the emulator follow-up below. Browser,
+physical-device, live backend, analytics delivery and database checks were not
+run. No native recompilation or deployment occurred. Workspace-wide checks are
+unnecessary for this documentation-only change.
 
 ## Screenshot and prior-execution inventory
 
@@ -110,26 +112,71 @@ real Android P50/P95 performance.
 | Optional Plausible and JS Sentry activate from public configuration at layout startup; no user opt-in check is present there. Blank examples disable them but do not enforce a release consent gate. | Privacy/release blocker: keep these values unset; require an enforced consent/release policy and negative network tests before collection. This audit does not inspect actual `.env` values or assert deployed telemetry is disabled.                                                                        |
 | Canonical D2 remains IN PROGRESS; an endpoint in the contract is not completion evidence.                                                                                                            | D3 blocked: require documented deployed D2 evidence before adding the mobile adapter. Do not repoint Plausible; future adapter must test exact keys, allowlisted events, UUID lifecycle, opt-out deletion and silence without consent/release approval. D4 requires real-device delivery and privacy review. |
 
-## A0 handoff and stop condition
+## Executed API 35 emulator follow-up
 
-Follow-up completion attempt: Android platform-tools is installed. Both normal
-and elevated `adb devices -l` calls stalled without returning a device list.
-Cleanup targeted only those two enumeration clients; termination could not be
-confirmed because process cleanup returned an error. Existing ADB server/device
-processes were not targeted. No target could be identified, so no app was launched, no data
-was cleared and no new screenshot or device result is claimed. Restore a
-responsive ADB connection and identify the authorized test target before
-continuing native evidence collection. Agent-device is not installed on PATH.
+The user explicitly authorized emulator setup and smoke testing, and separated
+physical-device release gates from A0. Restored ADB by terminating the hung
+snapshot-instrumentation client, enumeration client and ADB server, then starting
+a fresh server. ADB responded immediately. Stopped the old API 37 emulator and
+installed Google APIs API 35 x86_64 revision 9 in a separate `Parkey_A0_API35` AVD.
 
-- Static architecture/routes/risks recorded and baseline automated checks passed.
-- Historical screenshot integrity verified; current native UI not captured or
-  visually reviewed. No physical-device result or performance measurement exists
-  from this run.
-- Next required evidence: current build identity, named device/OS, build flags
-  and public provider configuration (no secrets), screenshots of both flag states
-  and key recovery states, and a signed-off baseline review. Candidate access
-  checks require an explicitly authorized reviewer environment; never create a
-  public candidate dataset for QA.
-- Stop here for device verification/approval, as requested. A0 stays unpassed;
-  A1–A4 and D3 are not started. Attach branch PR and evidence commit SHA at review;
-  update the canonical plan only when the gate truly passes.
+Configuration: Pixel 7 profile, Android 15/API 35/x86_64, emulator binary
+37.2.12.0 (the emulator binary version is not the guest API), WHPX acceleration,
+SwiftShader GPU, two CPU cores, `-memory 2048`, no snapshots, no audio. Initial
+display was 1080×2400/420 dpi; final display was reduced to 720×1600/280 dpi and
+system animation scales set to zero. A host-GPU comparison booted but showed a
+blank app screen and was not counted as passing evidence. Windows memory pressure
+caused System UI ANRs after reboots; reducing test-server concurrency, resolution
+and animations restored interactive testing. No emulator performance claim follows.
+
+Installed the existing native development APK successfully. Its SHA-256 is
+`d44de93e814045e42232de704d317d7556902031213ae68fe7c371dcd1149d47`;
+version `0.1.0`, Android code `2`. Native dependencies and app configuration are
+unchanged from its original build. Current mobile source was served by isolated
+Metro on port 8096 over ADB reverse. This is a reused native shell with current
+JavaScript, not a newly compiled or signed release. Both pilot flag values were
+tested in separate server sessions; the final Metro configuration uses one worker.
+`EXPO_NO_DOTENV=1` and unset analytics/Sentry values kept optional telemetry
+disabled for this run. No new analytics adapter, account, private reviewer token,
+backend data or mock provider response was used.
+
+See the [current screenshots and receipt](evidence/v1-a0-api35/README.md).
+The receipt records artifact sizes/hashes, actual observations and limits.
+
+| Emulator check                     | Result and practical limit                                                                                                                                                                                                               |
+| ---------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Map                                | Actual basemap and bundled parking rendered. Initial tile loading was delayed; native glyph 404 diagnostics remain an open defect.                                                                                                       |
+| Destination search                 | Real Photon results returned for Poblacion Makati; selected the first result.                                                                                                                                                            |
+| Filters                            | Garage selection showed an honest empty/filter state; Show all spots restored records.                                                                                                                                                   |
+| Parking details / directions guard | Missing hours/entrance stayed unknown, customers-only warning visible, Go disabled without reviewed access/entrance approval. No successful parking route claimed.                                                                       |
+| Permissions                        | Actual foreground prompt displayed and denial selected. Later explicit emulator permission grants plus a simulated GPS fix allowed parked-spot saving. Denial-message visibility while details are open still needs regression coverage. |
+| Saved places                       | Saved a real bundled record; favorite persisted after emulator/app restart.                                                                                                                                                              |
+| Walking directions                 | Explicit Walk back opened Google Maps. Google Maps onboarding appeared; no completed walking route or physical navigation claimed.                                                                                                       |
+| Offline / retry                    | Disabling emulator Wi-Fi and mobile data produced Search couldn't connect; reconnecting and Retry search returned real results.                                                                                                          |
+| Pilot / city / access              | Both city controls and filter sheet exercised with no backend configured. Honest configuration error shown, but loading never settles (defect). Blank reviewer token rejected; no private records exposed.                               |
+
+### Newly observed risks carried to implementation
+
+- Pilot missing-configuration paths retain a loading state indefinitely. A1 must
+  settle to a recoverable error and keep search/filter empty states truthful.
+- Native map requests for the default Open Sans/Arial Unicode glyph stack return 404. Diagnostic overlays can obstruct development UI. A2 must investigate the
+  font/style lifecycle and verify readable markers; do not merely suppress logs.
+- Legacy details contain a Spaces field despite V1's discovery-only scope. A1
+  should remove inventory-oriented presentation without adding occupancy claims.
+- Candidate research and legacy navigation controls remain prominent in the
+  development pilot experience. A1 must consolidate consumer navigation while
+  preserving flags and server-side private/public isolation.
+
+## A0 acceptance and next gate
+
+All canonical A0 baseline requirements have evidence: architecture and routes
+reviewed, baseline automated tests passed, current emulator screenshots captured
+and visually reviewed, and risks recorded. Known smoke defects are explicitly
+open rather than being reported as passing product behavior. A1 can proceed on
+an independent branch to address consolidation and these UX defects.
+
+No authenticated pilot integration was tested: that requires a separately
+authorized backend/reviewer environment. No physical GPS, Android P50/P95,
+physical-device smoke, iOS, native crash, analytics delivery or release gate has
+passed. A2/A4 physical-device requirements stay open. D3 stays blocked on D2 and
+privacy/release approval. No permission for publication or deployment is implied.

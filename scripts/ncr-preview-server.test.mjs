@@ -232,7 +232,14 @@ test('research paging preserves feature roles/nulls and clusters deduplicate fac
 
 test('public projection excludes unapproved/rejected/expired records before paging, and revocation invalidates cursors', () => {
   const records = [candidate('a'), candidate('b'), candidate('c')],
-    source = { ...research, candidates: records }
+    source = {
+      ...research,
+      candidates: records,
+      facilityGroups: records.map((record) => ({
+        id: 'group:' + record.id,
+        sourceCandidateIds: [record.id],
+      })),
+    }
   let ledger = emptyLedger()
   for (const [index, record] of records.entries())
     ledger = appendPublicationEvent(ledger, approval(record, index), {
@@ -289,6 +296,38 @@ test('public projection excludes unapproved/rejected/expired records before pagi
       .items.length,
     0,
   )
+})
+
+test('name review annotates all research, but generic names never pass public output', () => {
+  const candidateWithNoName = {
+    ...candidate('z'),
+    name: 'Unnamed parking facility',
+  }
+  const source = {
+    ...research,
+    candidates: [candidateWithNoName],
+    facilityGroups: [{ id: 'only', sourceCandidateIds: ['z'] }],
+  }
+  const preview = queryNcrResearch(source, query(), queryOptions())
+  assert.equal(preview.totalMatched, 1)
+  assert.equal(preview.items[0].nameReview.status, 'unnamed_pending_reference')
+  assert.equal(preview.items[0].nameReview.sourceNameIsDistinctive, false)
+  assert.equal(preview.items[0].nameReview.crossSourceCandidate, false)
+  const approvedLedger = appendPublicationEvent(
+    emptyLedger(),
+    approval(candidateWithNoName),
+    {
+      authorizedHuman: true,
+      now,
+    },
+  )
+  const publicState = queryNcrResearch(source, query(), {
+    ...queryOptions(false),
+    ledger: approvedLedger,
+  })
+  assert.equal(publicState.totalMatched, 0)
+  assert.equal(publicState.items.length, 0)
+  assert.deepEqual(source.candidates, [candidateWithNoName])
 })
 
 test('actual frozen 5,427 observations cannot appear in the public projection', () => {

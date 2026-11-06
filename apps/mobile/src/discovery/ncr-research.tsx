@@ -145,6 +145,32 @@ function ItemFacts({ item }: { item: NcrDiscoveryItem }) {
           void Linking.openURL(item.source.url).catch(() => undefined)
         }}
       />
+      <Text selectable style={styles.warning}>
+        Google Maps and Waze references use the existing source coordinate. They
+        do not confirm a vehicle entrance, legal parking, or a business name. Do
+        not import provider place content into Parkey.
+      </Text>
+      <Action
+        title="Inspect coordinate on Google Maps"
+        onPress={() => {
+          const [lon, lat] = item.representativePoint
+          void Linking.openURL(
+            'https://www.google.com/maps/search/?api=1&query=' +
+              encodeURIComponent(lat + ',' + lon),
+          ).catch(() => undefined)
+        }}
+      />
+      <Action
+        title="Inspect coordinate on Waze"
+        onPress={() => {
+          const [lon, lat] = item.representativePoint
+          void Linking.openURL(
+            'https://www.waze.com/ul?ll=' +
+              encodeURIComponent(lat + ',' + lon) +
+              '&z=18',
+          ).catch(() => undefined)
+        }}
+      />
       <Text selectable>
         {item.reviewIssueIds.length} unresolved review issue references. Human
         evidence and approval are required.
@@ -172,6 +198,9 @@ export default function NcrResearch() {
     camera.current = next
   }, [])
   const [category, setCategory] = useState<'all' | NcrFeatureType>('all')
+  const [nameFilter, setNameFilter] = useState<
+    'cross_source' | 'source_named' | 'all'
+  >('cross_source')
   const [mode, setMode] = useState<'public' | 'research_preview'>('public')
   const [storedData, setData] = useState<NcrDiscoveryResponse | null>(null)
   const privateCache = useRef<NcrDiscoveryResponse | null>(null)
@@ -181,14 +210,19 @@ export default function NcrResearch() {
       dataset
         ? {
             ...dataset,
-            items:
-              category === 'all'
-                ? dataset.items
-                : dataset.items.filter((item) => item.featureType === category),
+            items: dataset.items.filter(
+              (item) =>
+                (category === 'all' || item.featureType === category) &&
+                (mode === 'public' ||
+                  nameFilter === 'all' ||
+                  (item.nameReview?.sourceNameIsDistinctive === true &&
+                    (nameFilter === 'source_named' ||
+                      item.nameReview?.crossSourceCandidate === true))),
+            ),
             clusters: [],
           }
         : null,
-    [dataset, category],
+    [dataset, category, nameFilter, mode],
   )
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const selected = data?.items.find((item) => item.id === selectedId) || null
@@ -435,7 +469,14 @@ export default function NcrResearch() {
                 </Text>
               ) : (
                 <Text style={styles.warning}>
-                  Unverified research · Check access and posted restrictions
+                  Unverified research ·{' '}
+                  {mode === 'research_preview'
+                    ? nameFilter === 'cross_source'
+                      ? 'Cross-source name agreement only; identity not verified'
+                      : nameFilter === 'source_named'
+                        ? 'Source names only; not independently confirmed'
+                        : 'All original research including unnamed locations'
+                    : 'Check access and posted restrictions'}
                 </Text>
               )}
             </>
@@ -529,6 +570,39 @@ export default function NcrResearch() {
       {panel === 'filters' ? (
         <ModalSheet title="Parking categories" onClose={() => setPanel(null)}>
           <ScrollView contentContainerStyle={styles.modalContent}>
+            <Text selectable style={styles.warning}>
+              Parking names are source evidence, not verified business
+              identities. Google Maps and Waze are external coordinate
+              references only. Missing-name records remain preserved in private
+              research.
+            </Text>
+            <Action
+              title="Cross-source name matches"
+              selected={nameFilter === 'cross_source'}
+              onPress={() => {
+                setNameFilter('cross_source')
+                setSelectedId(null)
+                setPanel(null)
+              }}
+            />
+            <Action
+              title="Distinctive source names (unconfirmed)"
+              selected={nameFilter === 'source_named'}
+              onPress={() => {
+                setNameFilter('source_named')
+                setSelectedId(null)
+                setPanel(null)
+              }}
+            />
+            <Action
+              title="All research (including unnamed)"
+              selected={nameFilter === 'all'}
+              onPress={() => {
+                setNameFilter('all')
+                setSelectedId(null)
+                setPanel(null)
+              }}
+            />
             {ncrCategories.map((c) => (
               <View key={c.value} style={styles.filterRow}>
                 <View style={styles.flex}>

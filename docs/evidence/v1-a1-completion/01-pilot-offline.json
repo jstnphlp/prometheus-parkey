@@ -1,0 +1,299 @@
+[
+  {
+    "window-title": "",
+    "type": "SYSTEM",
+    "layer": 1,
+    "bounds": "[0,0][720,91]",
+    "content": [
+      {
+        "class": "android.widget.TextView",
+        "resource-id": "com.android.systemui:id/clock",
+        "text": "10:21",
+        "content-desc": "10:21 AM",
+        "bounds": "[47,31][130,60]",
+        "center": "[88,45]"
+      },
+      {
+        "class": "android.widget.ImageView",
+        "content-desc": "Android System notification: Serial console enabled",
+        "bounds": "[130,1][169,91]",
+        "center": "[149,46]"
+      },
+      {
+        "class": "android.widget.ImageView",
+        "resource-id": "com.android.systemui:id/wifi_signal",
+        "content-desc": "Wifi signal full.,No internet",
+        "bounds": "[582,32][608,58]",
+        "center": "[595,45]"
+      },
+      {
+        "class": "android.widget.FrameLayout",
+        "resource-id": "com.android.systemui:id/mobile_combo",
+        "content-desc": "Phone signal full.",
+        "bounds": "[608,26][634,65]",
+        "center": "[621,45]"
+      },
+      {
+        "class": "android.widget.LinearLayout",
+        "resource-id": "com.android.systemui:id/battery",
+        "content-desc": "Battery charging, 100 percent.",
+        "bounds": "[645,34][659,57]",
+        "center": "[652,45]"
+      }
+    ]
+  },
+  {
+    "window-title": "Parkey",
+    "type": "APPLICATION",
+    "active": true,
+    "focused": true,
+    "layer": 0,
+    "bounds": "[0,0][720,1600]",
+    "content": [
+      {
+        "class": "android.widget.FrameLayout",
+        "resource-id": "ncr-map-ready",
+        "content-desc": "Parking discovery map. Parking markers do not guarantee visitor access or availability.",
+        "interactions": ["CLICKABLE", "LONG_CLICKABLE", "FOCUSABLE"],
+        "bounds": "[0,0][720,1600]",
+        "center": "[360,800]",
+        "children": [
+          {
+            "class": "android.widget.ImageView",
+            "content-desc": "Attribution icon. Activate to show attribution dialog.",
+            "interactions": ["CLICKABLE", "FOCUSABLE"],
+            "bounds": "[676,1514][713,1551]",
+            "center": "[694,1532]"
+          }
+        ]
+      },
+      {
+        "class": "android.widget.Button",
+        "resource-id": "pilot-city-Manila",
+        "content-desc": "City of Manila",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "state": ["SELECTED"],
+        "bounds": "[21,109][220,186]",
+        "center": "[120,147]",
+        "children": [
+          {
+            "class": "android.widget.TextView",
+            "text": "City of Manila",
+            "bounds": "[43,128][196,162]",
+            "center": "[119,145]"
+          }
+        ]
+      },
+      {
+        "class": "android.widget.Button",
+        "resource-id": "pilot-city-Mandaluyong",
+        "content-desc": "Mandaluyong City",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "bounds": "[230,109][476,186]",
+        "center": "[353,147]",
+        "children": [
+          {
+            "class": "android.widget.TextView",
+            "text": "Mandaluyong City",
+            "bounds": "[252,128][452,162]",
+            "center": "[352,145]"
+          }
+        ]
+      },
+      {
+        "class": "android.widget.Button",
+        "resource-id": "pilot-mode-public",
+        "content-desc": "Approved parking",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "state": ["SELECTED"],
+        "bounds": "[21,197][261,274]",
+        "center": "[141,235]",
+        "children": [
+          {
+            "class": "android.widget.TextView",
+            "text": "Approved parking",
+            "bounds": "[43,216][237,250]",
+            "center": "[140,233]"
+          }
+        ]
+      },
+      {
+        "class": "android.widget.Button",
+        "resource-id": "pilot-mode-candidate",
+        "content-desc": "Candidate research",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "bounds": "[271,197][532,274]",
+        "center": "[401,235]",
+        "children": [
+          {
+            "class": "android.widget.TextView",
+            "text": "Candidate research",
+            "bounds": "[293,216][508,250]",
+            "center": "[400,233]"
+          }
+        ]
+      },
+      {
+        "class": "android.widget.Button",
+        "resource-id": "pilot-search-open",
+        "content-desc": "Search destinations in this city",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "bounds": "[21,284][699,361]",
+        "center": "[360,322]",
+        "children": [
+          {
+            "class": "android.widget.TextView",
+            "text": "Search destinations in this city",
+            "bounds": "[43,303][677,337]",
+            "center": "[360,320]"
+          }
+        ]
+      },
+      {
+        "class": "android.widget.Button",
+        "resource-id": "pilot-location",
+        "content-desc": "My location",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "bounds": "[21,372][196,449]",
+        "center": "[108,410]",
+        "children": [
+          {
+            "class": "android.widget.TextView",
+            "text": "My location",
+            "bounds": "[43,391][172,425]",
+            "center": "[107,408]"
+          }
+        ]
+      },
+      {
+        "class": "android.widget.Button",
+        "content-desc": "City center",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "bounds": "[206,372][369,449]",
+        "center": "[287,410]",
+        "children": [
+          {
+            "class": "android.widget.TextView",
+            "text": "City center",
+            "bounds": "[228,391][345,425]",
+            "center": "[286,408]"
+          }
+        ]
+      },
+      {
+        "class": "android.widget.Button",
+        "resource-id": "pilot-refresh",
+        "content-desc": "Refresh",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "bounds": "[379,372][510,449]",
+        "center": "[444,410]",
+        "children": [
+          {
+            "class": "android.widget.TextView",
+            "text": "Refresh",
+            "bounds": "[401,391][486,425]",
+            "center": "[443,408]"
+          }
+        ]
+      },
+      {
+        "class": "android.view.View",
+        "text": "Offline. Fresh parking and map tiles may be unavailable. Saved places remain on this device.",
+        "bounds": "[42,982][678,1073]",
+        "center": "[360,1027]"
+      },
+      {
+        "class": "android.widget.TextView",
+        "text": "Configure both public Supabase values.",
+        "interactions": ["FOCUSABLE", "TEXT_SELECTABLE"],
+        "bounds": "[42,1087][678,1125]",
+        "center": "[360,1106]"
+      },
+      {
+        "class": "android.widget.TextView",
+        "resource-id": "pilot-error",
+        "text": "Configure both public Supabase values.",
+        "interactions": ["FOCUSABLE", "TEXT_SELECTABLE"],
+        "bounds": "[42,1139][678,1173]",
+        "center": "[360,1156]"
+      },
+      {
+        "class": "android.widget.Button",
+        "resource-id": "pilot-retry",
+        "content-desc": "Retry parking",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "bounds": "[42,1187][678,1264]",
+        "center": "[360,1225]",
+        "children": [
+          {
+            "class": "android.widget.TextView",
+            "text": "Retry parking",
+            "bounds": "[64,1206][656,1240]",
+            "center": "[360,1223]"
+          }
+        ]
+      },
+      {
+        "class": "android.widget.Button",
+        "resource-id": "pilot-results",
+        "content-desc": "Parking list and filters",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "bounds": "[42,1278][328,1355]",
+        "center": "[185,1316]",
+        "children": [
+          {
+            "class": "android.widget.TextView",
+            "text": "Parking list and filters",
+            "bounds": "[64,1297][304,1331]",
+            "center": "[184,1314]"
+          }
+        ]
+      },
+      {
+        "class": "android.widget.Button",
+        "content-desc": "Sources",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "bounds": "[338,1278][474,1355]",
+        "center": "[406,1316]",
+        "children": [
+          {
+            "class": "android.widget.TextView",
+            "text": "Sources",
+            "bounds": "[360,1297][450,1331]",
+            "center": "[405,1314]"
+          }
+        ]
+      },
+      {
+        "class": "android.view.View",
+        "content-desc": "Map",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "state": ["SELECTED"],
+        "bounds": "[184,1460][355,1544]",
+        "center": "[269,1502]",
+        "children": [
+          {
+            "class": "android.widget.TextView",
+            "text": "Map",
+            "bounds": "[272,1484][324,1520]",
+            "center": "[298,1502]"
+          }
+        ]
+      },
+      {
+        "class": "android.view.View",
+        "content-desc": "Saved",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "bounds": "[362,1460][446,1544]",
+        "center": "[404,1502]"
+      },
+      {
+        "class": "android.view.View",
+        "content-desc": "You",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "bounds": "[453,1460][537,1544]",
+        "center": "[495,1502]"
+      }
+    ]
+  }
+]

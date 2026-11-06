@@ -1,9 +1,15 @@
-# A1 discovery consolidation — in progress
+# A1 discovery consolidation — completed engineering gate
+
+Current acceptance and evidence: [A1 completion report](V1_A1_COMPLETION.md),
+[draft PR #24](https://github.com/jstnphlp/prometheus-parkey/pull/24), implementation
+`1e8f169` and follow-up `c7fdf42`. All locally executable A1 checks passed.
+Production and external merge approval remain separate. The notes below preserve
+the earlier increment's scope/results; they are not the current gate status.
 
 Branch: `codex/v1-a1-discovery-consolidation`, based on the completed A0 audit
 branch `93d33c6` ([draft PR #23](https://github.com/jstnphlp/prometheus-parkey/pull/23)).
-Initial implementation commit: `39feebc`. **A1 is not PASS.** These changes resolve
-observed baseline issues; they do not yet consolidate every discovery flow.
+Initial implementation commit: `39feebc`. At that earlier increment A1 was not
+passed; the later completion report documents the consolidated result.
 
 ## Implemented and verified
 
@@ -36,20 +42,20 @@ native development APK and disabled telemetry configuration are documented in
 the A0 report. No production-build UI, hosted backend, private reviewer access,
 physical device or iOS behavior was verified in this A1 increment.
 
-## Remaining acceptance checklist
+## Acceptance checklist — completed by the final increment
 
-- [ ] Consolidate the consumer map/search/filter/detail/saved/directions navigation
+- [x] Consolidate the consumer map/search/filter/detail/saved/directions navigation
       across both flag states; keep development tools separate from consumer UI.
-- [ ] Preserve real parking types and unknown facts. Never map unclassified source
+- [x] Preserve real parking types and unknown facts. Never map unclassified source
       geometry to an invented facility type or merge private candidates into the
       public snapshot, saved metadata or offline cache.
-- [ ] Verify nearby ranking and distance reference for selected destination,
+- [x] Verify nearby ranking and distance reference for selected destination,
       foreground location and map center, including clear/reset actions.
-- [ ] Verify saved-place behavior in the pilot public projection without persisting
+- [x] Verify saved-place behavior in the pilot public projection without persisting
       private records or treating saved metadata as current entrance approval.
-- [ ] Verify loading, empty, offline/retry, denied-location, city/session changes,
+- [x] Verify loading, empty, offline/retry, denied-location, city/session changes,
       expiry/revocation and late-response behavior after consolidation.
-- [ ] Re-run focused automated checks and capture current native consolidation
+- [x] Re-run focused automated checks and capture current native consolidation
       evidence; create the separate A1 review PR before marking its gate passed.
 
 Native glyph 404s remain an A2 investigation. Physical Android performance and

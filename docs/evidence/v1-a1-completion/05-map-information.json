@@ -1,0 +1,132 @@
+[
+  {
+    "window-title": "",
+    "type": "SYSTEM",
+    "layer": 1,
+    "bounds": "[0,0][720,49]",
+    "content": [
+      {
+        "class": "android.widget.TextView",
+        "resource-id": "com.android.systemui:id/clock",
+        "text": "10:32",
+        "content-desc": "10:32 AM",
+        "bounds": "[47,10][130,39]",
+        "center": "[88,24]"
+      },
+      {
+        "class": "android.widget.ImageView",
+        "content-desc": "Android System notification: Serial console enabled",
+        "bounds": "[130,1][169,49]",
+        "center": "[149,25]"
+      },
+      {
+        "class": "android.widget.ImageView",
+        "resource-id": "com.android.systemui:id/wifi_signal",
+        "content-desc": "Wifi signal full.",
+        "bounds": "[582,11][608,37]",
+        "center": "[595,24]"
+      },
+      {
+        "class": "android.widget.FrameLayout",
+        "resource-id": "com.android.systemui:id/mobile_combo",
+        "content-desc": "Phone signal full.",
+        "bounds": "[608,5][634,44]",
+        "center": "[621,24]"
+      },
+      {
+        "class": "android.widget.LinearLayout",
+        "resource-id": "com.android.systemui:id/battery",
+        "content-desc": "Battery charging, 100 percent.",
+        "bounds": "[645,13][659,36]",
+        "center": "[652,24]"
+      }
+    ]
+  },
+  {
+    "window-title": "",
+    "type": "APPLICATION",
+    "active": true,
+    "focused": true,
+    "layer": 0,
+    "bounds": "[0,0][720,1600]",
+    "content": [
+      {
+        "class": "android.widget.Button",
+        "content-desc": "Close panel",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "bounds": "[0,0][720,1600]",
+        "center": "[360,800]"
+      },
+      {
+        "class": "android.view.View",
+        "text": "Map information",
+        "bounds": "[42,755][573,797]",
+        "center": "[307,776]"
+      },
+      {
+        "class": "android.widget.Button",
+        "content-desc": "Close Map information",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "bounds": "[594,734][678,818]",
+        "center": "[636,776]"
+      },
+      {
+        "class": "android.widget.ScrollView",
+        "interactions": ["SCROLLABLE", "FOCUSABLE"],
+        "bounds": "[0,860][720,1558]",
+        "center": "[360,1209]",
+        "children": [
+          {
+            "class": "android.widget.TextView",
+            "text": "Parkey helps you discover parking. It does not offer bookings or guarantee parking space. Saved places and your parked-car pin stay on this device. Analytics collection is disabled pending privacy and release review.",
+            "bounds": "[28,888][692,1009]",
+            "center": "[360,948]"
+          },
+          {
+            "class": "android.widget.Button",
+            "content-desc": "Original Poblacion map",
+            "interactions": ["CLICKABLE", "FOCUSABLE"],
+            "bounds": "[28,1030][692,1107]",
+            "center": "[360,1068]",
+            "children": [
+              {
+                "class": "android.widget.TextView",
+                "text": "Original Poblacion map",
+                "bounds": "[50,1049][670,1083]",
+                "center": "[360,1066]"
+              }
+            ]
+          },
+          {
+            "class": "android.widget.TextView",
+            "text": "City of Manila and Mandaluyong City are founder-selected pilot areas. This does not establish demand or parking scarcity.",
+            "interactions": ["FOCUSABLE", "TEXT_SELECTABLE"],
+            "bounds": "[28,1128][692,1220]",
+            "center": "[360,1174]"
+          },
+          {
+            "class": "android.widget.TextView",
+            "text": "Approved parking and restricted research use separate server projections. No research record is automatically published.",
+            "interactions": ["FOCUSABLE", "TEXT_SELECTABLE"],
+            "bounds": "[28,1241][692,1333]",
+            "center": "[360,1287]"
+          },
+          {
+            "class": "android.widget.TextView",
+            "text": "Source geometry is a research anchor. It is never a confirmed vehicle entrance. Nearby destination descriptions do not establish parking identity.",
+            "interactions": ["FOCUSABLE", "TEXT_SELECTABLE"],
+            "bounds": "[28,1354][692,1446]",
+            "center": "[360,1400]"
+          },
+          {
+            "class": "android.widget.TextView",
+            "text": "Original records and review decisions remain in their original archives. Unknown facts remain unknown.",
+            "interactions": ["FOCUSABLE", "TEXT_SELECTABLE"],
+            "bounds": "[28,1467][692,1530]",
+            "center": "[360,1498]"
+          }
+        ]
+      }
+    ]
+  }
+]

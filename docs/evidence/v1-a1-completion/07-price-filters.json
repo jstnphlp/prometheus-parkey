@@ -1,0 +1,258 @@
+[
+  {
+    "window-title": "",
+    "type": "SYSTEM",
+    "layer": 1,
+    "bounds": "[0,0][720,49]",
+    "content": [
+      {
+        "class": "android.widget.TextView",
+        "resource-id": "com.android.systemui:id/clock",
+        "text": "10:32",
+        "content-desc": "10:32 AM",
+        "bounds": "[47,10][130,39]",
+        "center": "[88,24]"
+      },
+      {
+        "class": "android.widget.ImageView",
+        "content-desc": "Android System notification: Serial console enabled",
+        "bounds": "[130,1][169,49]",
+        "center": "[149,25]"
+      },
+      {
+        "class": "android.widget.ImageView",
+        "resource-id": "com.android.systemui:id/wifi_signal",
+        "content-desc": "Wifi signal full.",
+        "bounds": "[582,11][608,37]",
+        "center": "[595,24]"
+      },
+      {
+        "class": "android.widget.FrameLayout",
+        "resource-id": "com.android.systemui:id/mobile_combo",
+        "content-desc": "Phone signal full.",
+        "bounds": "[608,5][634,44]",
+        "center": "[621,24]"
+      },
+      {
+        "class": "android.widget.LinearLayout",
+        "resource-id": "com.android.systemui:id/battery",
+        "content-desc": "Battery charging, 100 percent.",
+        "bounds": "[645,13][659,36]",
+        "center": "[652,24]"
+      }
+    ]
+  },
+  {
+    "window-title": "",
+    "type": "APPLICATION",
+    "active": true,
+    "focused": true,
+    "layer": 0,
+    "bounds": "[0,0][720,1600]",
+    "content": [
+      {
+        "class": "android.widget.Button",
+        "content-desc": "Close panel",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "bounds": "[0,0][720,1600]",
+        "center": "[360,800]"
+      },
+      {
+        "class": "android.view.View",
+        "text": "Manila parking in view",
+        "bounds": "[42,699][573,741]",
+        "center": "[307,720]"
+      },
+      {
+        "class": "android.widget.Button",
+        "content-desc": "Close Manila parking in view",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "bounds": "[594,678][678,762]",
+        "center": "[636,720]"
+      },
+      {
+        "class": "android.widget.HorizontalScrollView",
+        "interactions": ["SCROLLABLE", "FOCUSABLE"],
+        "bounds": "[28,832][692,909]",
+        "center": "[360,870]",
+        "children": [
+          {
+            "class": "android.widget.Button",
+            "content-desc": "All loaded",
+            "interactions": ["CLICKABLE", "FOCUSABLE"],
+            "state": ["SELECTED"],
+            "bounds": "[28,832][183,909]",
+            "center": "[105,870]",
+            "children": [
+              {
+                "class": "android.widget.TextView",
+                "text": "All loaded",
+                "bounds": "[50,851][159,885]",
+                "center": "[104,868]"
+              }
+            ]
+          },
+          {
+            "class": "android.widget.Button",
+            "content-desc": "Lots",
+            "interactions": ["CLICKABLE", "FOCUSABLE"],
+            "bounds": "[193,832][287,909]",
+            "center": "[240,870]",
+            "children": [
+              {
+                "class": "android.widget.TextView",
+                "text": "Lots",
+                "bounds": "[215,851][263,885]",
+                "center": "[239,868]"
+              }
+            ]
+          },
+          {
+            "class": "android.widget.Button",
+            "content-desc": "Garages",
+            "interactions": ["CLICKABLE", "FOCUSABLE"],
+            "bounds": "[297,832][436,909]",
+            "center": "[366,870]",
+            "children": [
+              {
+                "class": "android.widget.TextView",
+                "text": "Garages",
+                "bounds": "[319,851][412,885]",
+                "center": "[365,868]"
+              }
+            ]
+          },
+          {
+            "class": "android.widget.Button",
+            "content-desc": "Unclassified",
+            "interactions": ["CLICKABLE", "FOCUSABLE"],
+            "bounds": "[446,832][628,909]",
+            "center": "[537,870]",
+            "children": [
+              {
+                "class": "android.widget.TextView",
+                "text": "Unclassified",
+                "bounds": "[468,851][604,885]",
+                "center": "[536,868]"
+              }
+            ]
+          },
+          {
+            "class": "android.widget.Button",
+            "content-desc": "Street",
+            "interactions": ["CLICKABLE", "FOCUSABLE"],
+            "bounds": "[638,832][692,909]",
+            "center": "[665,870]",
+            "children": [
+              {
+                "class": "android.widget.TextView",
+                "text": "Street",
+                "bounds": "[660,851][692,885]",
+                "center": "[676,868]"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "class": "android.widget.Button",
+        "resource-id": "pilot-fees-all",
+        "content-desc": "All prices",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "state": ["SELECTED"],
+        "bounds": "[28,930][175,1007]",
+        "center": "[101,968]",
+        "children": [
+          {
+            "class": "android.widget.TextView",
+            "text": "All prices",
+            "bounds": "[50,949][151,983]",
+            "center": "[100,966]"
+          }
+        ]
+      },
+      {
+        "class": "android.widget.Button",
+        "resource-id": "pilot-fees-free",
+        "content-desc": "Recorded no fee",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "bounds": "[185,930][410,1007]",
+        "center": "[297,968]",
+        "children": [
+          {
+            "class": "android.widget.TextView",
+            "text": "Recorded no fee",
+            "bounds": "[207,949][386,983]",
+            "center": "[296,966]"
+          }
+        ]
+      },
+      {
+        "class": "android.widget.Button",
+        "resource-id": "pilot-fees-paid",
+        "content-desc": "Fee applies",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "bounds": "[420,930][592,1007]",
+        "center": "[506,968]",
+        "children": [
+          {
+            "class": "android.widget.TextView",
+            "text": "Fee applies",
+            "bounds": "[442,949][568,983]",
+            "center": "[505,966]"
+          }
+        ]
+      },
+      {
+        "class": "android.widget.TextView",
+        "text": "Straight-line distance to map center. This is not a walking route.",
+        "bounds": "[28,1028][692,1091]",
+        "center": "[360,1059]"
+      },
+      {
+        "class": "android.widget.TextView",
+        "text": "Filters apply to loaded parking records. Load more to inspect additional records.",
+        "interactions": ["FOCUSABLE", "TEXT_SELECTABLE"],
+        "bounds": "[28,1112][692,1175]",
+        "center": "[360,1143]"
+      },
+      {
+        "class": "android.widget.ScrollView",
+        "interactions": ["SCROLLABLE", "FOCUSABLE"],
+        "bounds": "[0,1203][720,1558]",
+        "center": "[360,1380]",
+        "children": [
+          {
+            "class": "android.widget.TextView",
+            "text": "Configure both public Supabase values.",
+            "interactions": ["FOCUSABLE", "TEXT_SELECTABLE"],
+            "bounds": "[28,1231][692,1265]",
+            "center": "[360,1248]"
+          },
+          {
+            "class": "android.widget.TextView",
+            "text": "Configure both public Supabase values.",
+            "interactions": ["FOCUSABLE", "TEXT_SELECTABLE"],
+            "bounds": "[84,1342][636,1376]",
+            "center": "[360,1359]"
+          },
+          {
+            "class": "android.widget.Button",
+            "content-desc": "Retry parking results",
+            "interactions": ["CLICKABLE", "FOCUSABLE"],
+            "bounds": "[84,1397][636,1474]",
+            "center": "[360,1435]",
+            "children": [
+              {
+                "class": "android.widget.TextView",
+                "text": "Retry parking results",
+                "bounds": "[106,1416][614,1450]",
+                "center": "[360,1433]"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

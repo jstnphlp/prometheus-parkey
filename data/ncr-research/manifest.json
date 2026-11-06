@@ -1,0 +1,189 @@
+{
+  "schemaVersion": 1,
+  "asOf": "2026-11-05T05:22:13Z",
+  "policy": "Offline research database; source licenses and notices in licenses/ apply. No app display approval, public-access guarantee, physical verification, or vacancy claim. Existing owner decisions remain separate from source observations.",
+  "sourceHashes": {
+    "boundaries": "ea7864d00557f64de39981ccefca370c2d47eb82ceb98c55f554d21601e4ede7",
+    "osm": "5ae2654e12d0ec47c33da193004e009fd628ea9b408b953b37b2fb24fa26335d",
+    "overture": "203a4847b0fa9f8129374442089f4722ddfd49e601bb172c41df02688236cb25",
+    "reviews": "68e702bb733c0134fb505ec5d551c21dd27ac95dbb99a468ea98ae9077511a0b"
+  },
+  "sourceMetadata": {
+    "boundaries": {
+      "sourceUrl": "https://download.geofabrik.de/asia/philippines-261103.osm.pbf",
+      "provider": "Geofabrik / OpenStreetMap",
+      "license": "ODbL-1.0",
+      "attribution": "© OpenStreetMap contributors",
+      "copyrightUrl": "https://www.openstreetmap.org/copyright",
+      "observedAt": "2026-11-05T05:19:49.481340Z",
+      "replicationTimestamp": "2026-11-03T21:24:23Z",
+      "generator": "osmium/1.16.0",
+      "inputSha256": "ba1749901aa7559084dda822f1e2716324208fab8646b8de5309cef6206a5c51",
+      "extentPrefilter": [120.85, 14.3, 121.27, 14.86],
+      "extentPolicy": "Coarse geometry envelope only; actual NCR polygons applied downstream.",
+      "verification": "unverified",
+      "extractionPolicy": "parking amenities, explicit parking buildings and supported highway parking positions; all tags preserved on selected objects",
+      "streetPositionValues": [
+        "yes",
+        "lane",
+        "street_side",
+        "on_kerb",
+        "half_on_kerb",
+        "shoulder",
+        "on_street",
+        "parallel",
+        "diagonal",
+        "perpendicular",
+        "marked"
+      ],
+      "streetPositionKeys": [
+        "parking:left",
+        "parking:right",
+        "parking:both",
+        "parking:lane:left",
+        "parking:lane:right",
+        "parking:lane:both"
+      ],
+      "boundaryYearRepresented": "2026-11-03T21:24:23Z",
+      "boundaryLicense": "ODbL-1.0",
+      "boundarySource": "OpenStreetMap admin_level=6 municipal relations, Geofabrik snapshot",
+      "boundaryCaveat": "Community-mapped boundaries, not legal-authoritative. Disputed borders and current LGU assignments require review.",
+      "complete17LguCoverage": true,
+      "missingOrAmbiguousLgus": []
+    },
+    "osm": {
+      "sourceUrl": "https://download.geofabrik.de/asia/philippines-261103.osm.pbf",
+      "provider": "Geofabrik / OpenStreetMap",
+      "license": "ODbL-1.0",
+      "attribution": "© OpenStreetMap contributors",
+      "copyrightUrl": "https://www.openstreetmap.org/copyright",
+      "observedAt": "2026-11-05T05:19:49.481340Z",
+      "replicationTimestamp": "2026-11-03T21:24:23Z",
+      "generator": "osmium/1.16.0",
+      "inputSha256": "ba1749901aa7559084dda822f1e2716324208fab8646b8de5309cef6206a5c51",
+      "extentPrefilter": [120.85, 14.3, 121.27, 14.86],
+      "extentPolicy": "Coarse geometry envelope only; actual NCR polygons applied downstream.",
+      "verification": "unverified",
+      "extractionPolicy": "parking amenities, explicit parking buildings and supported highway parking positions; all tags preserved on selected objects",
+      "streetPositionValues": [
+        "yes",
+        "lane",
+        "street_side",
+        "on_kerb",
+        "half_on_kerb",
+        "shoulder",
+        "on_street",
+        "parallel",
+        "diagonal",
+        "perpendicular",
+        "marked"
+      ],
+      "streetPositionKeys": [
+        "parking:left",
+        "parking:right",
+        "parking:both",
+        "parking:lane:left",
+        "parking:lane:right",
+        "parking:lane:both"
+      ]
+    },
+    "overture": {
+      "provider": "Overture Maps Foundation",
+      "release": "2026-10-21.0",
+      "sourceUri": "az://release/2026-10-21.0/theme=places/type=place/*.parquet",
+      "azureAccount": "overturemapswestus2",
+      "sourceUrl": "https://overturemapswestus2.blob.core.windows.net/release/2026-10-21.0/theme=places/type=place/",
+      "downloadedAt": "2026-11-05T04:51:40.966018+00:00",
+      "bboxPrefilter": [120.85, 14.3, 121.27, 14.86],
+      "parkingCategoryAllowlist": [
+        "parking",
+        "parking_lot",
+        "parking_garage",
+        "car_park",
+        "carpark",
+        "parkade",
+        "parking_space",
+        "parking_bay",
+        "parking_entrance"
+      ],
+      "featureCount": 389,
+      "providerSourceCounts": {
+        "Foursquare": 7,
+        "Microsoft": 6,
+        "Overture": 389,
+        "meta": 376
+      },
+      "declaredLicenseSourceCounts": {
+        "Apache-2.0": 7,
+        "CDLA-Permissive-2.0": 771
+      },
+      "licenseEvidence": "Record-level sources[].license from the pinned Azure release; provider attribution retained per record.",
+      "licenseReferences": {
+        "CDLA-Permissive-2.0": "https://cdla.dev/permissive-2-0/",
+        "Apache-2.0": "https://www.apache.org/licenses/LICENSE-2.0"
+      },
+      "policy": "Research only; source declarations do not grant publication approval or confirm parking access. Bounding box is not NCR administrative coverage."
+    }
+  },
+  "counts": {
+    "rawParkingCandidates": 12463,
+    "insideNcr": 5427,
+    "byType": {
+      "lot": 1248,
+      "garage": 186,
+      "facility_unspecified": 2325,
+      "space": 165,
+      "street_segment": 515,
+      "entrance": 988
+    },
+    "outsideNcr": 7036,
+    "restricted": 541,
+    "streetRequiresLegalReview": 515,
+    "unknownLicense": 0,
+    "possibleDuplicatePairs": 70,
+    "facilitySourceObservations": 3759,
+    "deduplicatedFacilityCandidates": 3744,
+    "identityDuplicatesCollapsed": 15,
+    "physicallyVerified": 0,
+    "publicationApproved": 0
+  },
+  "priorReviewSummary": {
+    "supplied": 15,
+    "matched": 15,
+    "unmatchedIds": []
+  },
+  "artifacts": [
+    {
+      "role": "research",
+      "filename": "metro-parking-research.json.gz",
+      "bytes": 738259,
+      "sha256": "5e52340d1792f890bde4581cd992233e46329f9203f7c06873c98cd70648ff82",
+      "uncompressedBytes": 14495700,
+      "uncompressedSha256": "5eba9cc4ddcd9d9323ea779e7b73812f693988733e1a9393c20f5f17f124c076"
+    },
+    {
+      "role": "boundaries",
+      "filename": "ncr-lgus-osm.geojson.gz",
+      "bytes": 85430,
+      "sha256": "8a77d36f1650efd5e8d349842ca4a2a8972f588e54da386d92aacadc5cafc597",
+      "uncompressedBytes": 285583,
+      "uncompressedSha256": "ea7864d00557f64de39981ccefca370c2d47eb82ceb98c55f554d21601e4ede7"
+    },
+    {
+      "role": "osm",
+      "filename": "ncr-osm.geojson.gz",
+      "bytes": 585233,
+      "sha256": "70e4c43d9507f620e90495713dbf516ad5867421fa6f5119242dd6cc0c60ac4d",
+      "uncompressedBytes": 4231961,
+      "uncompressedSha256": "5ae2654e12d0ec47c33da193004e009fd628ea9b408b953b37b2fb24fa26335d"
+    },
+    {
+      "role": "overture",
+      "filename": "ncr-overture.geojson.gz",
+      "bytes": 34772,
+      "sha256": "8dd7ffe96bc72fb2a4a5446604e52a9fe510b4e24c5bf0be857e929c944e0a68",
+      "uncompressedBytes": 375958,
+      "uncompressedSha256": "203a4847b0fa9f8129374442089f4722ddfd49e601bb172c41df02688236cb25"
+    }
+  ]
+}

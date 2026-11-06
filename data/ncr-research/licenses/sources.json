@@ -1,0 +1,37 @@
+{
+  "retrievedOn": "2026-11-05",
+  "files": [
+    {
+      "file": "CDLA-Permissive-2.0.txt",
+      "sourceUrl": "https://raw.githubusercontent.com/spdx/license-list-data/main/text/CDLA-Permissive-2.0.txt",
+      "sha256": "4531a67d443284d93ffed0803df5b10634aff21c3d77e381f2d48af01d875868",
+      "bytes": 2354
+    },
+    {
+      "file": "Apache-2.0.txt",
+      "sourceUrl": "https://www.apache.org/licenses/LICENSE-2.0",
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "bytes": 11358
+    },
+    {
+      "file": "CC-BY-3.0-IGO.txt",
+      "sourceUrl": "https://raw.githubusercontent.com/spdx/license-list-data/main/text/CC-BY-3.0-IGO.txt",
+      "sha256": "26d9706f1a4fffe751365b249c23f8bcb0bb2aff2c76f57608bc6bffe002001d",
+      "bytes": 17572
+    },
+    {
+      "file": "ODbL-1.0.txt",
+      "sourceUrl": "https://raw.githubusercontent.com/spdx/license-list-data/main/text/ODbL-1.0.txt",
+      "sha256": "77d2692c3d64efdd4db18dce2407699baf62930e2b50d6e5ed90b48acf16b7c1",
+      "bytes": 25289,
+      "note": "Canonical OpenDataCommons text endpoint returned HTTP 403; SPDX text used."
+    },
+    {
+      "file": "Foursquare-NOTICE.txt",
+      "sourceUrl": "https://opensource.foursquare.com/places-notice-txt/",
+      "sha256": "523fcc927f0a58c1d7c0fcf41ee775e007c7d270b011a43875f54ce786506d23",
+      "bytes": 1810,
+      "note": "Official visible NOTICE text, HTML whitespace only normalized; no substantive wording changes."
+    }
+  ]
+}

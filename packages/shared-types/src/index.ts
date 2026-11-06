@@ -1,4 +1,13 @@
 /** Display metadata shared by the starter applications; not a domain model. */
+export type {
+  NcrFeatureType,
+  NcrGeometry,
+  NcrEvidenceState,
+  NcrDiscoveryItem,
+  NcrDiscoveryCluster,
+  NcrDiscoveryResponse,
+} from './ncr-discovery'
+
 export type AppInfo = {
   name: string
   description: string

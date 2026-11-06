@@ -5,6 +5,13 @@ packages:
 # Keep Android CMake/Ninja paths below Windows' legacy 260-character limit.
 nodeLinker: hoisted
 
+# Advisory fixes used by Expo tooling; keep framework/React versions unchanged.
+overrides:
+  '@expo/cli@58.1.15': 58.1.19
+  node-forge@1.4.0: 1.4.1
+  glob@13.0.6: 14.0.2
+  minimatch@10.2.6: 11.0.1
+
 # Only these packages may run dependency build scripts.
 allowBuilds:
   # Reviewed binary downloader; source-map upload tooling is not used.
@@ -17,3 +24,6 @@ minimumReleaseAgeExclude:
   - expo-dev-client@58.0.16
   - expo-dev-launcher@58.0.16
   - expo-dev-menu@58.0.12
+
+patchedDependencies:
+  deepmerge@4.3.1: patches/deepmerge@4.3.1.patch

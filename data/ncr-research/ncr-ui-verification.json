@@ -1,0 +1,69 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-11-05T10:23:22.802111+00:00",
+  "baseCommit": "24ce9788ee304ef4f49aa9b4f838561bdab4327e",
+  "scope": "Subsequent user-requested full-screen map, modal information and complete-dataset loading. Actual current UI checks; earlier Phase1 execution records remain historical.",
+  "requirementChange": "User explicitly replaced viewport-triggered client loading with a complete NCR load once per private review session; server pages remain bounded and public eligibility remains enforced.",
+  "actual": {
+    "researchRecords": 5427,
+    "pages": 11,
+    "publicRecords": 0,
+    "physicallyVerified": 0,
+    "publicationApproved": 0
+  },
+  "checks": [
+    {
+      "id": "ncr-fullscreen-e2e",
+      "command": "pnpm exec playwright test ncr-layout ncr-research --config output/ncr/preview-check.config.ts --workers 2",
+      "status": "PASS",
+      "executed": true,
+      "result": "6/6 passed, desktop and mobile Chromium; complete 11-page private load, modal facts, local pan/filter, cache mode safety, interrupted load/retry, visible-scrollbar stable full-screen map.",
+      "localLog": "output/ncr/ncr-fullscreen-e2e.log",
+      "logSha256": "15a535231499ca613b1eb4cf3bd01cc1e27af4f65d9654ead597c9015434da8a"
+    },
+    {
+      "id": "ncr-fullscreen-unit",
+      "command": "node --test apps/mobile/src/discovery/ncr-client.test.mjs",
+      "status": "PASS",
+      "executed": true,
+      "result": "9/9 passed: complete loading, progress, cancellation, inconsistent snapshots/cursors/IDs, and public eligibility.",
+      "localLog": "output/ncr/ncr-fullscreen-unit.log",
+      "logSha256": "191a13b950a8f754f336d2856b3589fccf74526701946ac85de2adb1eb86d7ad"
+    },
+    {
+      "id": "ncr-fullscreen-actual",
+      "command": "Actual normal local preview Chromium smoke",
+      "status": "PASS",
+      "executed": true,
+      "result": "1365x900 map at x0,y0; 5427 loaded, no extra area/filter requests, modal closes, 0 public records.",
+      "localLog": "output/ncr/ncr-fullscreen-actual.log",
+      "logSha256": "d3f3afeeb1ddb36570ae4eb9eebe27f454671b25f11294e5c96bec6f619cb758"
+    },
+    {
+      "id": "ncr-fullscreen-format",
+      "command": "pnpm format:check",
+      "status": "PASS",
+      "executed": true,
+      "result": "Whole repository formatting passes.",
+      "localLog": "output/ncr/ncr-fullscreen-format.log",
+      "logSha256": "edd51f31f6317a24afa852f6049672e18bcbdbfa25b0520cd9f7029b52b33094"
+    }
+  ],
+  "staticChecks": {
+    "mobileTypecheck": "PASS",
+    "e2eTypecheck": "PASS",
+    "targetedESLint": "PASS"
+  },
+  "reproduction": {
+    "before": "With normal scrollbars enabled, the old page width alternated 1365/1350px; the new visible-scrollbar regression failed against the old running server.",
+    "after": "Full-screen fixed map retains its DOM node and width across 120 frames and public/private transitions; no scrolling research list is part of the map layout."
+  },
+  "limitations": [
+    "New full-screen native renderers were typechecked; no new native emulator or iOS run is claimed.",
+    "All records remain research-only and unpublished; no physical evidence, demand measurement or legal approval created."
+  ],
+  "ci": {
+    "status": "PENDING",
+    "note": "Follow-up commit triggers the full CI suite; PR #13 checks show newest-head status. Local checks above are actual executed results, not a claim about a future remote run."
+  }
+}

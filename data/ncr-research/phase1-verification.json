@@ -1,0 +1,300 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-11-05T08:42:38.894956+00:00",
+  "baseCommit": "1c4c8824527d6adb771e5ff85ac53cba48d8ce48",
+  "scope": "Current feature working tree, no deployment/production DB writes. Historical verification.json preserved.",
+  "environment": {
+    "os": "Windows",
+    "node": "24.22.2",
+    "pnpm": "11.25.0",
+    "python": "3.12.6",
+    "nativeResearchDependencies": "Pinned scripts/requirements-ncr-research.txt; local output/ncr/osmium-deps"
+  },
+  "distinctTests": {
+    "node": 242,
+    "python": 29,
+    "e2e": 42,
+    "skipped": 0
+  },
+  "checks": [
+    {
+      "id": "dependencies",
+      "command": "pnpm install --frozen-lockfile",
+      "status": "PASS",
+      "executed": true,
+      "exitCode": 0,
+      "note": "Frozen lockfile installed; pnpm peers check reports no issues.",
+      "localLog": "output/ncr/final-install---frozen-lockfile.log",
+      "logSha256": "8bc668c8768c91f24361b3f4ffa511f8e193ea0869f777f45fee9c48f0e0e684",
+      "completedAt": "2026-11-05T08:20:52.402904+00:00"
+    },
+    {
+      "id": "unit-and-python",
+      "command": "pnpm test",
+      "status": "PASS",
+      "executed": true,
+      "exitCode": 0,
+      "note": "147 application + 95 operations Node tests; 29 Python tests, all pass, zero skipped. Native osmium and Shapely installed via pinned research requirements.",
+      "localLog": "output/ncr/phase1-test.log",
+      "logSha256": "e6967fe1a2733bca32d5370c9628be101403f6c8209e85017d0066f8697efc8e",
+      "completedAt": "2026-11-05T08:35:56.271160+00:00"
+    },
+    {
+      "id": "data-tests",
+      "command": "pnpm test:data",
+      "status": "PASS",
+      "executed": true,
+      "exitCode": 0,
+      "note": "84 data Node tests and 29 Python tests pass; subsets of the complete suite, not additional distinct tests.",
+      "localLog": "output/ncr/phase1-test-data.log",
+      "logSha256": "0da78486e3fc1965d0f793338288613b0c5f73a88c0a563708bb84db32037ce4",
+      "completedAt": "2026-11-05T08:36:03.250122+00:00"
+    },
+    {
+      "id": "lint",
+      "command": "pnpm lint",
+      "status": "PASS",
+      "executed": true,
+      "exitCode": 0,
+      "note": "Zero warnings/errors.",
+      "localLog": "output/ncr/phase1-lint.log",
+      "logSha256": "1e2569935ceee27d07787a9f3cc93ada6ee68cd618b2dad809da6deb5471fda2",
+      "completedAt": "2026-11-05T08:38:39.291555+00:00"
+    },
+    {
+      "id": "typecheck",
+      "command": "pnpm typecheck",
+      "status": "PASS",
+      "executed": true,
+      "exitCode": 0,
+      "note": "Mobile, web, shared types, E2E and Edge Function type checks pass.",
+      "localLog": "output/ncr/phase1-typecheck.log",
+      "logSha256": "185c176f7157935a92bdb418c7efee940b0519a646f3cf26aa5ee2489b342318",
+      "completedAt": "2026-11-05T08:39:32.512130+00:00"
+    },
+    {
+      "id": "data-audit",
+      "command": "pnpm audit:data",
+      "status": "PASS",
+      "executed": true,
+      "exitCode": 0,
+      "note": "Existing audit, review queue, snapshot SQL and generated database assertions match.",
+      "localLog": "output/ncr/phase1-audit-data.log",
+      "logSha256": "ca3f80aebd80ee079dae0caf2d299d2dec4887be5dcd04fe49e0e17b8ccac7bd",
+      "completedAt": "2026-11-05T08:39:35.897209+00:00"
+    },
+    {
+      "id": "dependency-audit",
+      "command": "pnpm audit --prod --audit-level moderate",
+      "status": "PASS",
+      "executed": true,
+      "exitCode": 0,
+      "note": "0 moderate/high/critical. One low deepmerge version finding remains; tracked installed-artifact patch and exploit regression address it, no advisory ignored.",
+      "localLog": "output/ncr/phase1-audit-dependencies.log",
+      "logSha256": "443560fa8653e133280c4330fa7e35c838aac9c6528b2333295279c980a4427d",
+      "completedAt": "2026-11-05T08:39:37.335748+00:00"
+    },
+    {
+      "id": "e2e",
+      "command": "pnpm exec playwright test --workers=2 --reporter=line",
+      "status": "PASS",
+      "executed": true,
+      "exitCode": 0,
+      "note": "42/42 browser tests pass, desktop Chromium and Pixel 7 Chromium emulation. Actual research snapshot used for NCR preview; other provider/sensor/form fixtures are explicitly synthetic.",
+      "localLog": "output/ncr/e2e-phase1-complete.log",
+      "logSha256": "f25767c124466816b243d275faed416880bc31abec7e33cff96f1dc0bece01c8",
+      "completedAt": "2026-11-05T08:40:57.283136+00:00"
+    },
+    {
+      "id": "format",
+      "command": "pnpm format:check",
+      "status": "PASS",
+      "executed": true,
+      "exitCode": 0,
+      "note": "Whole repository formatting passed; final report formatting recheck recorded separately.",
+      "localLog": "output/ncr/phase1-final-format.log",
+      "logSha256": "5480ed8134df9fa158d5d44ef1950f3e0604e8181804f705c3274d5ee12ed1b8",
+      "completedAt": "2026-11-05T08:43:14.865051+00:00"
+    },
+    {
+      "id": "web-build",
+      "command": "pnpm build:web",
+      "status": "PASS",
+      "executed": true,
+      "exitCode": 0,
+      "note": "Production web build passes. This is not a deployment or a native mobile build.",
+      "localLog": "output/ncr/phase1-build-web.log",
+      "logSha256": "11e41173aa3cb6cab8770a45f48ecf20516f0fec3317c4a542d92f54b7278dea",
+      "completedAt": "2026-11-05T08:43:19.041050+00:00"
+    },
+    {
+      "id": "package",
+      "command": "node scripts/check-ncr-package.mjs data/ncr-research",
+      "status": "PASS",
+      "executed": true,
+      "exitCode": 0,
+      "note": "4 archives and source hashes, candidate/grids/coverage regeneration agree."
+    },
+    {
+      "id": "quality",
+      "command": "node scripts/ncr-quality-review.mjs data/ncr-research --check",
+      "status": "PASS",
+      "executed": true,
+      "exitCode": 0,
+      "note": "5507 issues, 70 pairs, 10 conflicts; catalog and relationship proposals reproduce."
+    },
+    {
+      "id": "fieldwork",
+      "command": "node scripts/ncr-fieldwork.mjs data/ncr-research --check",
+      "status": "PASS",
+      "executed": true,
+      "exitCode": 0,
+      "note": "5427 tasks, 24 first-wave tasks, 12 routes, 6 legacy owner tasks, 3 owner references reproduce."
+    },
+    {
+      "id": "legacy",
+      "command": "node scripts/parking-reviewed-data.mjs --check",
+      "status": "PASS",
+      "executed": true,
+      "exitCode": 0,
+      "note": "Existing Poblacion decisions and reviewed source bytes remain intact."
+    },
+    {
+      "id": "phase-gates",
+      "command": "node scripts/ncr-phase-gates.mjs data/ncr-research",
+      "status": "PASS",
+      "executed": true,
+      "exitCode": 0,
+      "note": "Validates consistency and missing-evidence blockers; a valid report is not release approval."
+    },
+    {
+      "id": "android-native-smoke",
+      "status": "PASS",
+      "executed": true,
+      "recordedAt": "2026-11-05T09:04:40.518220+00:00",
+      "platform": "Android 17, Pixel 10 Pro AVD, WHPX acceleration",
+      "app": "com.parkey.discovery",
+      "method": "Existing installed development APK, current feature JavaScript from local Metro; local API via adb reverse, inspected with agent-device.",
+      "checks": [
+        "Existing pilot map opens",
+        "NCR app route starts with 0 approved observations",
+        "Explicit private research shows 1797 observations in the native overview viewport",
+        "BGC viewport shows 54 observations",
+        "Actual mapped entrance detail separates unverified, unapproved, unknown facts and disabled driving navigation",
+        "Private-to-public transition clears source details and shows 0 approved observations",
+        "Return to existing Poblacion pilot works",
+        "Native-discovered missing glyph font corrected; reloaded native private map has no glyph error overlay"
+      ],
+      "evidence": [
+        {
+          "localLog": "output/ncr/android-ncr-clusters.txt",
+          "sha256": "95dd7de888661c488f7587ee340df60f6296c6f9b9400993f4edb31f8f7e3bc2"
+        },
+        {
+          "localLog": "output/ncr/android-ncr-details.txt",
+          "sha256": "7a5641f91b09bc08347b3e760e480bded12e314684291fa464fe9eba229ad826"
+        },
+        {
+          "localLog": "output/ncr/android-ncr-public.txt",
+          "sha256": "a9d5c3aa3de01a9238d2feeab377a6a963ba2ba8a417c99dae42acc4a823e15a"
+        },
+        {
+          "localLog": "output/ncr/android-return-pilot.txt",
+          "sha256": "9f4a32fde23d4d1e02ea6cd17b4226b957a59aa8c20c9caa2260e93e0abdd516"
+        }
+      ],
+      "limitations": [
+        "No new native APK was built.",
+        "No iOS simulator/device executed on Windows.",
+        "No actual site visit, live parking measurement or real GPS navigation validation.",
+        "Saved PNG is a captured artifact, not a claim of automated visual-image validation."
+      ]
+    },
+    {
+      "id": "sql-ci",
+      "command": "pnpm exec supabase db start && pnpm exec supabase db reset --local && pnpm exec supabase test db",
+      "executed": true,
+      "status": "PASS",
+      "exitCode": 0,
+      "files": 4,
+      "assertions": 186,
+      "evidenceReference": "https://github.com/jstnphlp/prometheus-parkey/actions/runs/41996957155/job/127142370004",
+      "scope": "Disposable GitHub runner-local PostgreSQL, no hosted database."
+    },
+    {
+      "id": "cluster-font-regression",
+      "command": "pnpm exec playwright test e2e/ncr-research.spec.ts --workers=2 --reporter=line",
+      "executed": true,
+      "status": "PASS",
+      "exitCode": 0,
+      "passed": 2,
+      "failed": 0,
+      "localLog": "output/ncr/e2e-ncr-glyph-regression.log",
+      "logSha256": "530e17ca54b19e740e2133e3ce425e74da591ae68f8b7d017975ad7e2aceb4d4",
+      "note": "Both browser projects verify actual glyph font requests use supported Noto Sans Bold after native-discovered default stack 404. Existing E2E case extended, not extra distinct tests."
+    },
+    {
+      "id": "font-static-checks",
+      "command": "pnpm --filter @parkey/mobile typecheck; pnpm typecheck:e2e; targeted ESLint; pnpm format:check",
+      "executed": true,
+      "status": "PASS",
+      "exitCode": 0,
+      "note": "After font regression correction and evidence/report updates."
+    }
+  ],
+  "remoteCI": {
+    "status": "PASS",
+    "verifiedCommit": "4f7c9444050897f89d238f730e294cefc4a968e9",
+    "runs": [
+      "https://github.com/jstnphlp/prometheus-parkey/actions/runs/41996957155",
+      "https://github.com/jstnphlp/prometheus-parkey/actions/runs/41996950927"
+    ],
+    "jobs": {
+      "validate": "PASS",
+      "e2e": "PASS",
+      "database": "PASS"
+    },
+    "e2e": {
+      "passed": 42,
+      "failed": 0,
+      "flaky": 0
+    },
+    "sql": {
+      "files": 4,
+      "assertions": 186,
+      "result": "PASS"
+    },
+    "note": "Both complete CI runs passed on the first implementation commit. Final native-discovered font correction is additionally tested and the follow-up head reruns CI; check PR #13 for newest head status."
+  },
+  "limitations": [
+    {
+      "id": "field-and-market-evidence",
+      "status": "BLOCKED",
+      "reason": "No actual field visits, occupancy measurements, driver interviews or WTP observations performed."
+    },
+    {
+      "id": "release-authorization",
+      "status": "BLOCKED",
+      "reason": "No legal/distribution/access/display approval; no public deployment/merge authorized."
+    },
+    {
+      "id": "ios-native",
+      "status": "BLOCKED",
+      "reason": "No iOS device/simulator executed; Windows has no local iOS simulator. Android native smoke was executed."
+    }
+  ],
+  "targetedAfterFullSuite": [
+    {
+      "command": "node --test scripts/ncr-phase-gates.test.mjs scripts/ncr-fieldwork.test.mjs",
+      "executed": true,
+      "result": "PASS",
+      "passed": 6,
+      "failed": 0,
+      "note": "Gate metadata/reference checks and field import lock/hash/idempotency regressions; existing test cases, not extra distinct tests."
+    }
+  ],
+  "notes": [
+    "Docker absent locally; SQL integration verified in CI instead.",
+    "Native correction: Noto Sans Bold used for both cluster layers because the default Open Sans/Arial font stack returned 404. Browser regression checks actual glyph font requests."
+  ]
+}

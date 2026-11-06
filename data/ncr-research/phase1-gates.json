@@ -1,0 +1,577 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-11-05T08:42:38.894956+00:00",
+  "overallStatus": "BLOCKED",
+  "scope": "Phase 1A-G research completion; source acquisition and engineering may pass independently. A plan or automated fixture is not physical, commercial or publication evidence.",
+  "actual": {
+    "observations": 5427,
+    "lgus": 17,
+    "facilitySourceObservations": 3759,
+    "provisionalFacilityGroups": 3744,
+    "previousExplicitIdentityCollapses": 15,
+    "additionalAutomaticMerges": 0,
+    "duplicatePairsInvestigated": 70,
+    "unresolvedDuplicatePairs": 70,
+    "conflictingProviderIdentitiesInvestigated": 10,
+    "qualityIssues": 5507,
+    "relationshipProposals": 1668,
+    "confirmedPhysicalRelationships": 0,
+    "routeCandidates": 66,
+    "routes": 12,
+    "firstWaveCandidates": 24,
+    "physicallyVerified": 0,
+    "publicationApproved": 0,
+    "commerciallyRankedHotspots": 0
+  },
+  "sourceHashes": {
+    "boundaries": "ea7864d00557f64de39981ccefca370c2d47eb82ceb98c55f554d21601e4ede7",
+    "osm": "5ae2654e12d0ec47c33da193004e009fd628ea9b408b953b37b2fb24fa26335d",
+    "overture": "203a4847b0fa9f8129374442089f4722ddfd49e601bb172c41df02688236cb25",
+    "reviews": "68e702bb733c0134fb505ec5d551c21dd27ac95dbb99a468ea98ae9077511a0b"
+  },
+  "phases": [
+    {
+      "id": "1A",
+      "name": "NCR geography",
+      "status": "PASS",
+      "requiredDeliverables": [
+        "17 reusable LGU polygons",
+        "Source/version/license evidence and geometry validation"
+      ],
+      "acceptanceCriteria": [
+        {
+          "id": "17-lgus",
+          "description": "All 17 LGUs present with valid actual polygons; coarse bbox only prefilters downloads.",
+          "status": "PASS",
+          "executed": true,
+          "satisfied": true,
+          "evidenceReferences": [
+            "data/ncr-research/manifest.json",
+            "data/ncr-research/ncr-lgus-osm.geojson.gz",
+            "docs/ncr-parking-research.md"
+          ]
+        },
+        {
+          "id": "geography-regressions",
+          "description": "Manila district dissolve, crossing geometry, BGC historical-boundary caveat and current selected-source validation executed.",
+          "status": "PASS",
+          "executed": true,
+          "satisfied": true,
+          "evidenceReferences": [
+            "data/ncr-research/phase1-verification.json#unit-and-python",
+            "data/ncr-research/phase1-verification.json#package"
+          ]
+        }
+      ],
+      "executedTests": [
+        {
+          "checkId": "unit-and-python",
+          "result": "PASS",
+          "evidenceReference": "data/ncr-research/phase1-verification.json#unit-and-python"
+        },
+        {
+          "checkId": "package",
+          "result": "PASS",
+          "evidenceReference": "data/ncr-research/phase1-verification.json#package"
+        }
+      ],
+      "evidenceReferences": [
+        "data/ncr-research/manifest.json",
+        "data/ncr-research/ncr-lgus-osm.geojson.gz",
+        "data/ncr-research/phase1-verification.json#package",
+        "data/ncr-research/phase1-verification.json#unit-and-python",
+        "docs/ncr-parking-research.md"
+      ],
+      "outstandingBlockers": []
+    },
+    {
+      "id": "1B",
+      "name": "Licensed source acquisition",
+      "status": "PASS",
+      "requiredDeliverables": [
+        "Dated Geofabrik OSM and Azure Overture snapshots",
+        "Original source IDs/provider licenses and official notices"
+      ],
+      "acceptanceCriteria": [
+        {
+          "id": "real-sources",
+          "description": "Real source archives reproduce with compressed/uncompressed hashes; no Google place data copied.",
+          "status": "PASS",
+          "executed": true,
+          "satisfied": true,
+          "evidenceReferences": [
+            "data/ncr-research/manifest.json",
+            "data/ncr-research/osm-acquisition.json",
+            "data/ncr-research/manifest.json",
+            "docs/ncr-parking-research.md"
+          ]
+        },
+        {
+          "id": "license-retention",
+          "description": "Record-level licenses, official agreements/NOTICE and source attribution retained; unresolved legal approval explicitly deferred.",
+          "status": "PASS",
+          "executed": true,
+          "satisfied": true,
+          "evidenceReferences": [
+            "data/ncr-research/licenses/sources.json",
+            "data/ncr-research/licenses/Foursquare-NOTICE.txt",
+            "docs/ncr-licensing-publication.md"
+          ]
+        }
+      ],
+      "executedTests": [
+        {
+          "checkId": "unit-and-python",
+          "result": "PASS",
+          "evidenceReference": "data/ncr-research/phase1-verification.json#unit-and-python"
+        },
+        {
+          "checkId": "package",
+          "result": "PASS",
+          "evidenceReference": "data/ncr-research/phase1-verification.json#package"
+        }
+      ],
+      "evidenceReferences": [
+        "data/ncr-research/manifest.json",
+        "data/ncr-research/licenses/Foursquare-NOTICE.txt",
+        "data/ncr-research/licenses/sources.json",
+        "data/ncr-research/manifest.json",
+        "data/ncr-research/osm-acquisition.json",
+        "docs/ncr-licensing-publication.md",
+        "docs/ncr-parking-research.md"
+      ],
+      "outstandingBlockers": []
+    },
+    {
+      "id": "1C",
+      "name": "Normalization and preservation",
+      "status": "PASS",
+      "requiredDeliverables": [
+        "5427 normalized source observations",
+        "Per-city/type/grid statistics",
+        "Retain original Poblacion decisions"
+      ],
+      "acceptanceCriteria": [
+        {
+          "id": "normalized",
+          "description": "All source observations retained with geometry/type/IDs/licensing; children and unspecified structures distinguished.",
+          "status": "PASS",
+          "executed": true,
+          "satisfied": true,
+          "evidenceReferences": [
+            "data/ncr-research/manifest.json",
+            "data/ncr-research/coverage.json",
+            "data/ncr-research/per-city.csv"
+          ]
+        },
+        {
+          "id": "legacy-retained",
+          "description": "Original owner decisions, eight online corroborations, six visit tasks and three owner navigation references survive without status promotion.",
+          "status": "PASS",
+          "executed": true,
+          "satisfied": true,
+          "evidenceReferences": [
+            "data/ncr-research/poblacion-preservation.json",
+            "data/ncr-research/fieldwork-checklist.json",
+            "data/ncr-research/phase1-verification.json#legacy"
+          ]
+        },
+        {
+          "id": "integrity",
+          "description": "Grid conservation and frozen normalizer/coverage outputs reproduced; tests executed.",
+          "status": "PASS",
+          "executed": true,
+          "satisfied": true,
+          "evidenceReferences": [
+            "data/ncr-research/phase1-verification.json#data-tests",
+            "data/ncr-research/phase1-verification.json#package"
+          ]
+        }
+      ],
+      "executedTests": [
+        {
+          "checkId": "data-tests",
+          "result": "PASS",
+          "evidenceReference": "data/ncr-research/phase1-verification.json#data-tests"
+        },
+        {
+          "checkId": "package",
+          "result": "PASS",
+          "evidenceReference": "data/ncr-research/phase1-verification.json#package"
+        },
+        {
+          "checkId": "legacy",
+          "result": "PASS",
+          "evidenceReference": "data/ncr-research/phase1-verification.json#legacy"
+        },
+        {
+          "checkId": "data-audit",
+          "result": "PASS",
+          "evidenceReference": "data/ncr-research/phase1-verification.json#data-audit"
+        }
+      ],
+      "evidenceReferences": [
+        "data/ncr-research/coverage.json",
+        "data/ncr-research/fieldwork-checklist.json",
+        "data/ncr-research/manifest.json",
+        "data/ncr-research/per-city.csv",
+        "data/ncr-research/phase1-verification.json#data-tests",
+        "data/ncr-research/phase1-verification.json#legacy",
+        "data/ncr-research/phase1-verification.json#package",
+        "data/ncr-research/poblacion-preservation.json"
+      ],
+      "outstandingBlockers": []
+    },
+    {
+      "id": "1D",
+      "name": "Quality and evidence gaps",
+      "status": "PASS",
+      "requiredDeliverables": [
+        "All 70 duplicate pairs investigated",
+        "All 10 provider conflicts investigated",
+        "Persistent unresolved issue/relationship ledger"
+      ],
+      "acceptanceCriteria": [
+        {
+          "id": "identity-review",
+          "description": "Every pair/conflict retains source evidence and human queue; no new proximity-only merges.",
+          "status": "PASS",
+          "executed": true,
+          "satisfied": true,
+          "evidenceReferences": [
+            "data/ncr-research/review-ledger.json",
+            "docs/ncr-data-quality.md"
+          ]
+        },
+        {
+          "id": "children-and-safety",
+          "description": "1668 child/street objects analyzed as proposals; coordinates, stale edits, access, category suspicions and missing facts explicitly queued.",
+          "status": "PASS",
+          "executed": true,
+          "satisfied": true,
+          "evidenceReferences": [
+            "data/ncr-research/relationship-review.json",
+            "data/ncr-research/review-ledger.json",
+            "docs/ncr-data-quality.md"
+          ]
+        },
+        {
+          "id": "preservation-and-publication",
+          "description": "Hashed immutable issue definitions/events preserve human decisions; server excludes unresolved/rejected/unapproved records; regressions executed.",
+          "status": "PASS",
+          "executed": true,
+          "satisfied": true,
+          "evidenceReferences": [
+            "scripts/ncr-quality-review.test.mjs",
+            "scripts/ncr-publication.test.mjs",
+            "scripts/ncr-preview-server.test.mjs",
+            "data/ncr-research/phase1-verification.json#unit-and-python"
+          ]
+        }
+      ],
+      "executedTests": [
+        {
+          "checkId": "unit-and-python",
+          "result": "PASS",
+          "evidenceReference": "data/ncr-research/phase1-verification.json#unit-and-python"
+        },
+        {
+          "checkId": "quality",
+          "result": "PASS",
+          "evidenceReference": "data/ncr-research/phase1-verification.json#quality"
+        },
+        {
+          "checkId": "package",
+          "result": "PASS",
+          "evidenceReference": "data/ncr-research/phase1-verification.json#package"
+        }
+      ],
+      "evidenceReferences": [
+        "data/ncr-research/phase1-verification.json#unit-and-python",
+        "data/ncr-research/relationship-review.json",
+        "data/ncr-research/review-ledger.json",
+        "docs/ncr-data-quality.md",
+        "scripts/ncr-preview-server.test.mjs",
+        "scripts/ncr-publication.test.mjs",
+        "scripts/ncr-quality-review.test.mjs"
+      ],
+      "outstandingBlockers": []
+    },
+    {
+      "id": "1E",
+      "name": "Hotspot market evidence",
+      "status": "BLOCKED",
+      "requiredDeliverables": [
+        "11-area evidence-supported comparison",
+        "Defensible ranking only with required evidence",
+        "Current demand/supply/WTP/partner/feasibility evidence"
+      ],
+      "acceptanceCriteria": [
+        {
+          "id": "remote-research",
+          "description": "Additional 51 actual retrieval attempts with 11 useful scoped sources preserved; official operator/context/ordinance evidence assessed.",
+          "status": "PASS",
+          "executed": true,
+          "satisfied": true,
+          "evidenceReferences": [
+            "data/ncr-research/hotspot-additional-sources.json",
+            "data/ncr-research/hotspot-comparison.json",
+            "docs/ncr-hotspot-comparison.md"
+          ]
+        },
+        {
+          "id": "honest-scoring",
+          "description": "Missing metrics remain unranked; research-readiness priorities are not commercial winners.",
+          "status": "PASS",
+          "executed": true,
+          "satisfied": true,
+          "evidenceReferences": [
+            "data/ncr-research/hotspot-score.json",
+            "data/ncr-research/hotspot-comparison.json",
+            "scripts/ncr-hotspot-score.test.mjs"
+          ]
+        },
+        {
+          "id": "market-validation",
+          "description": "Obtain current measured demand, usable supply gaps, WTP and partner interest before a defensible final ranking.",
+          "status": "BLOCKED",
+          "executed": false,
+          "satisfied": false,
+          "evidenceReferences": [
+            "docs/ncr-hotspot-comparison.md",
+            "docs/ncr-fieldwork.md"
+          ],
+          "blocker": "Requires actual samples/interviews and authorized operator conversations; public context/marketing and mapped counts do not supply these measurements."
+        }
+      ],
+      "executedTests": [
+        {
+          "checkId": "data-tests",
+          "result": "PASS",
+          "evidenceReference": "data/ncr-research/phase1-verification.json#data-tests"
+        }
+      ],
+      "evidenceReferences": [
+        "data/ncr-research/hotspot-additional-sources.json",
+        "data/ncr-research/hotspot-comparison.json",
+        "data/ncr-research/hotspot-score.json",
+        "docs/ncr-fieldwork.md",
+        "docs/ncr-hotspot-comparison.md",
+        "scripts/ncr-hotspot-score.test.mjs"
+      ],
+      "outstandingBlockers": [
+        "Requires actual samples/interviews and authorized operator conversations; public context/marketing and mapped counts do not supply these measurements."
+      ]
+    },
+    {
+      "id": "1F",
+      "name": "Metro Manila reviewed discovery",
+      "status": "BLOCKED",
+      "requiredDeliverables": [
+        "Viewport/category/cluster API and Expo development preview",
+        "Server publication controls and attribution",
+        "Reviewed eligible public-display dataset"
+      ],
+      "acceptanceCriteria": [
+        {
+          "id": "development-preview",
+          "description": "User-requested full-screen map with overlay controls and modal facts; complete private snapshot loaded once, local clustering/filtering, no pan-triggered requests; public output remains empty.",
+          "status": "PASS",
+          "executed": true,
+          "satisfied": true,
+          "evidenceReferences": [
+            "docs/ncr-development-preview.md",
+            "e2e/ncr-research.spec.ts",
+            "data/ncr-research/phase1-verification.json#e2e",
+            "data/ncr-research/ncr-ui-verification.json"
+          ]
+        },
+        {
+          "id": "server-safety",
+          "description": "Negative publication/HTTP/client tests execute for unapproved, rejected, restricted, expired, revoked, stale or mismatched records.",
+          "status": "PASS",
+          "executed": true,
+          "satisfied": true,
+          "evidenceReferences": [
+            "scripts/ncr-publication.test.mjs",
+            "scripts/ncr-preview-server.test.mjs",
+            "apps/mobile/src/discovery/ncr-client.test.mjs",
+            "data/ncr-research/phase1-verification.json#unit-and-python"
+          ]
+        },
+        {
+          "id": "display-release",
+          "description": "Approve legal distribution policy, visitor access, review scope and eligible records before public integration/release.",
+          "status": "BLOCKED",
+          "executed": false,
+          "satisfied": false,
+          "evidenceReferences": [
+            "docs/ncr-licensing-publication.md",
+            "data/ncr-research/publication-ledger.json"
+          ],
+          "blocker": "Accountable human legal/access/publication approval is absent; all new NCR candidates remain unpublished. No deployment or merge authorized."
+        }
+      ],
+      "executedTests": [
+        {
+          "checkId": "unit-and-python",
+          "result": "PASS",
+          "evidenceReference": "data/ncr-research/phase1-verification.json#unit-and-python"
+        },
+        {
+          "checkId": "typecheck",
+          "result": "PASS",
+          "evidenceReference": "data/ncr-research/phase1-verification.json#typecheck"
+        },
+        {
+          "checkId": "lint",
+          "result": "PASS",
+          "evidenceReference": "data/ncr-research/phase1-verification.json#lint"
+        },
+        {
+          "checkId": "e2e",
+          "result": "PASS",
+          "evidenceReference": "data/ncr-research/phase1-verification.json#e2e"
+        },
+        {
+          "checkId": "dependency-audit",
+          "result": "PASS",
+          "evidenceReference": "data/ncr-research/phase1-verification.json#dependency-audit"
+        },
+        {
+          "checkId": "android-native-smoke",
+          "result": "PASS",
+          "evidenceReference": "data/ncr-research/phase1-verification.json#android-native-smoke"
+        },
+        {
+          "checkId": "sql-ci",
+          "result": "PASS",
+          "evidenceReference": "data/ncr-research/phase1-verification.json#sql-ci"
+        },
+        {
+          "checkId": "ncr-fullscreen-e2e",
+          "result": "PASS",
+          "evidenceReference": "data/ncr-research/ncr-ui-verification.json#ncr-fullscreen-e2e"
+        },
+        {
+          "checkId": "ncr-fullscreen-unit",
+          "result": "PASS",
+          "evidenceReference": "data/ncr-research/ncr-ui-verification.json#ncr-fullscreen-unit"
+        }
+      ],
+      "evidenceReferences": [
+        "apps/mobile/src/discovery/ncr-client.test.mjs",
+        "data/ncr-research/phase1-verification.json#e2e",
+        "data/ncr-research/phase1-verification.json#unit-and-python",
+        "data/ncr-research/publication-ledger.json",
+        "docs/ncr-development-preview.md",
+        "docs/ncr-licensing-publication.md",
+        "e2e/ncr-research.spec.ts",
+        "scripts/ncr-preview-server.test.mjs",
+        "scripts/ncr-publication.test.mjs",
+        "data/ncr-research/ncr-ui-verification.json"
+      ],
+      "outstandingBlockers": [
+        "Accountable human legal/access/publication approval is absent; all new NCR candidates remain unpublished. No deployment or merge authorized."
+      ]
+    },
+    {
+      "id": "1G",
+      "name": "Physical verification and reconciliation",
+      "status": "BLOCKED",
+      "requiredDeliverables": [
+        "Prioritized candidate-specific routes/maps/questions",
+        "Private form and traceable unreviewed submissions",
+        "Actual physical/operator evidence and final hotspot selection"
+      ],
+      "acceptanceCriteria": [
+        {
+          "id": "visit-package",
+          "description": "Complete 5427-ID queue and 66 planned candidates in 12 routes, including 24 first wave, all owner visits and source-coordinate map links.",
+          "status": "PASS",
+          "executed": true,
+          "satisfied": true,
+          "evidenceReferences": [
+            "data/ncr-research/fieldwork-checklist.json",
+            "data/ncr-research/fieldwork-checklist.csv",
+            "docs/ncr-fieldwork.md"
+          ]
+        },
+        {
+          "id": "field-form",
+          "description": "Local structured form with optional sanitized images; validated atomic/serialized/idempotent importer; no submission automatically verifies or publishes.",
+          "status": "PASS",
+          "executed": true,
+          "satisfied": true,
+          "evidenceReferences": [
+            "docs/ncr-fieldwork-form.html",
+            "scripts/ncr-fieldwork-submit.mjs",
+            "scripts/ncr-fieldwork.test.mjs",
+            "e2e/fieldwork.spec.ts",
+            "data/ncr-research/phase1-verification.json#e2e"
+          ]
+        },
+        {
+          "id": "actual-fieldwork",
+          "description": "Collect actual observations and reconcile identities, lawful visitor access, entrances and operating conditions.",
+          "status": "BLOCKED",
+          "executed": false,
+          "satisfied": false,
+          "evidenceReferences": [
+            "docs/ncr-fieldwork.md",
+            "data/ncr-research/publication-ledger.json"
+          ],
+          "blocker": "Human physical presence and actual field evidence have not been supplied. Operator/owner conversations and final hotspot choice require human participation/authorization."
+        }
+      ],
+      "executedTests": [
+        {
+          "checkId": "unit-and-python",
+          "result": "PASS",
+          "evidenceReference": "data/ncr-research/phase1-verification.json#unit-and-python"
+        },
+        {
+          "checkId": "fieldwork",
+          "result": "PASS",
+          "evidenceReference": "data/ncr-research/phase1-verification.json#fieldwork"
+        },
+        {
+          "checkId": "e2e",
+          "result": "PASS",
+          "evidenceReference": "data/ncr-research/phase1-verification.json#e2e"
+        }
+      ],
+      "evidenceReferences": [
+        "data/ncr-research/fieldwork-checklist.csv",
+        "data/ncr-research/fieldwork-checklist.json",
+        "data/ncr-research/phase1-verification.json#e2e",
+        "data/ncr-research/publication-ledger.json",
+        "docs/ncr-fieldwork-form.html",
+        "docs/ncr-fieldwork.md",
+        "e2e/fieldwork.spec.ts",
+        "scripts/ncr-fieldwork-submit.mjs",
+        "scripts/ncr-fieldwork.test.mjs"
+      ],
+      "outstandingBlockers": [
+        "Human physical presence and actual field evidence have not been supplied. Operator/owner conversations and final hotspot choice require human participation/authorization."
+      ]
+    }
+  ],
+  "crossCutting": {
+    "automatedCheckEvidence": "data/ncr-research/phase1-verification.json",
+    "remoteCI": "PASS on 4f7c9444050897f89d238f730e294cefc4a968e9; validate, 42 browser tests, 186 SQL assertions. Final font correction has native/targeted verification; PR checks execute follow-up head.",
+    "localSQL": "PASS via disposable runner CI: 4 files, 186 assertions. Docker remains absent locally.",
+    "nativeRendering": "Historical initial preview Android smoke passed. New full-screen native renderer typechecked; no new native smoke or iOS result claimed.",
+    "deployment": "NOT_AUTHORIZED",
+    "productionDatabase": "UNMODIFIED",
+    "mergeToMain": "NOT_AUTHORIZED",
+    "uiContinuation": "Full-screen client and complete-once loading supersede the earlier viewport requirement by explicit user request. See ncr-ui-verification.json; public approval gate unchanged."
+  },
+  "nextHumanActions": [
+    "Inspect six preserved Poblacion owner tasks, then other first-wave pockets; submit only actual observations.",
+    "Collect current demand/occupancy/search-time and permitted driver interview/WTP evidence.",
+    "Authorize or conduct operator/owner access and partnership conversations.",
+    "Review legal/distribution, access, display decisions and final hotspot choice.",
+    "Authorize publication/deployment/merge only after mandatory gates are satisfied."
+  ]
+}

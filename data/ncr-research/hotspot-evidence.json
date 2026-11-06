@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "asOf": "2026-11-05T04:51:08.825887+00:00",
+  "policy": "All metrics intentionally absent: contextual first-party leads do not satisfy measured demand, usable supply gap, willingness to pay, partner interest and launch feasibility evidence. Ortigas uses Pasig as a scorer label only; actual research spans Pasig, Mandaluyong and Quezon City and requires reviewed subareas.",
+  "contextEvidence": "data/ncr-research/hotspot-source-evidence.json",
+  "areas": [
+    {
+      "id": "poblacion",
+      "name": "Poblacion",
+      "lgu": "Makati",
+      "metrics": []
+    },
+    {
+      "id": "bgc",
+      "name": "Bonifacio Global City",
+      "lgu": "Taguig",
+      "metrics": []
+    },
+    {
+      "id": "binondo",
+      "name": "Binondo",
+      "lgu": "Manila",
+      "metrics": []
+    },
+    {
+      "id": "makati-cbd",
+      "name": "Makati CBD",
+      "lgu": "Makati",
+      "metrics": []
+    },
+    {
+      "id": "ortigas",
+      "name": "Ortigas",
+      "lgu": "Pasig",
+      "metrics": []
+    },
+    {
+      "id": "moa",
+      "name": "Mall of Asia area",
+      "lgu": "Pasay",
+      "metrics": []
+    },
+    {
+      "id": "cubao",
+      "name": "Cubao / Araneta City",
+      "lgu": "Quezon City",
+      "metrics": []
+    },
+    {
+      "id": "tomas-morato",
+      "name": "Tomas Morato / Timog",
+      "lgu": "Quezon City",
+      "metrics": []
+    },
+    {
+      "id": "north-edsa",
+      "name": "North EDSA",
+      "lgu": "Quezon City",
+      "metrics": []
+    },
+    {
+      "id": "alabang",
+      "name": "Alabang / Filinvest City",
+      "lgu": "Muntinlupa",
+      "metrics": []
+    },
+    {
+      "id": "maginhawa",
+      "name": "Maginhawa",
+      "lgu": "Quezon City",
+      "metrics": []
+    }
+  ]
+}

@@ -30,7 +30,12 @@ test('adding a private parking draft survives reload and updates the profile', a
     'E2E private parking',
   )
   await page.goto('/?panel=you')
-  await expect(page.getByRole('button', { name: /1 Drafts/ })).toBeVisible()
+  await expect(page.getByTestId('private-drafts')).toContainText(
+    'E2E private parking',
+  )
+  await expect(page.getByTestId('private-drafts')).toContainText(
+    'Not submitted',
+  )
 })
 
 test('a correction requires an explanation before saving', async ({ page }) => {

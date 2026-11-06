@@ -105,7 +105,16 @@ export default function ParkingMap(props: ParkingMapProps) {
     props.navigation?.onPan()
     props.onPan?.()
   })
-  const moved = useEffectEvent(() => {
+  const moved = useEffectEvent((event?: unknown) => {
+    // Expanding the results sheet changes camera padding, not the user's search
+    // area. Requerying here made nearby results disappear while opening the list.
+    if (
+      typeof event === 'object' &&
+      event !== null &&
+      'parkeyLayoutOnly' in event &&
+      event.parkeyLayoutOnly === true
+    )
+      return
     const instance = map.current
     const bounds = instance?.getBounds()
     if (instance && bounds)
@@ -438,14 +447,17 @@ export default function ParkingMap(props: ParkingMapProps) {
     const focusTarget = previousTarget.current !== props.target
     previousTarget.current = props.target
     if (focusTarget) focusUntil.current = Date.now() + 1000
-    map.current?.easeTo({
-      ...(focusTarget || props.selectedId || Date.now() < focusUntil.current
-        ? { center: props.target.coordinate }
-        : {}),
-      ...(focusTarget ? { zoom: 16 } : {}),
-      duration: reduced ? 0 : 400,
-      padding: { top, bottom, left: 0, right: 0 },
-    })
+    map.current?.easeTo(
+      {
+        ...(focusTarget || props.selectedId || Date.now() < focusUntil.current
+          ? { center: props.target.coordinate }
+          : {}),
+        ...(focusTarget ? { zoom: 16 } : {}),
+        duration: reduced ? 0 : 400,
+        padding: { top, bottom, left: 0, right: 0 },
+      },
+      { parkeyLayoutOnly: !focusTarget && !props.selectedId },
+    )
   }, [
     props.target,
     props.route,

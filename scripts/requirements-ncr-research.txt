@@ -1,0 +1,3 @@
+# Versions used for the real November 2026 acquisition.
+-r requirements-ncr-osm.txt
+duckdb==2.0.0

@@ -219,6 +219,7 @@ export function ParkingDetails({
               </View>
               <MotionPressable
                 accessibilityRole="button"
+                accessibilityLabel="Suggest a correction"
                 onPress={onAddDetails}
                 style={({ pressed }) => [
                   styles.sourceRow,

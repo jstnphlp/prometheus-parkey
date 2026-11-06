@@ -1,4 +1,5 @@
 import type { ParkingContribution } from '@parkey/shared-types'
+import { Link } from 'expo-router'
 import { useEffect, useState } from 'react'
 import {
   Linking,
@@ -158,6 +159,13 @@ export function MapInformation({
         <View style={ui.divider} />
         {development ? (
           <>
+            <Link
+              href="/ncr-research"
+              accessibilityRole="link"
+              style={[ui.body, ui.link]}
+            >
+              Open private NCR research preview
+            </Link>
             <View style={ui.row}>
               <View style={ui.flex}>
                 <Text style={ui.heading}>Show development samples</Text>

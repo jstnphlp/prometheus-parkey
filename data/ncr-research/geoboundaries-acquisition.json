@@ -1,0 +1,185 @@
+{
+  "schemaVersion": 1,
+  "scope": "Historical municipal research geography; no current legal boundary claims",
+  "sourceMetadata": {
+    "provider": "geoBoundaries gbOpen",
+    "api": "https://www.geoboundaries.org/api/current/gbOpen/PHL/ADM3/",
+    "boundaryID": "PHL-ADM3-30758251",
+    "boundaryYearRepresented": "2020",
+    "boundarySource": "National Mapping and Resource Information Authority (NAMRIA), Philippines Statistics Authority (PSA), OCHA Philippines",
+    "boundaryLicense": "Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)",
+    "boundarySourceURL": "data.humdata.org/dataset/philippines-administrative-levels-0-to-3",
+    "rawGeometry": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/PHL/ADM3/geoBoundaries-PHL-ADM3.geojson",
+    "boundaryCaveat": "Historical research geography; not current legal city boundaries. Review EMBO reassignment and reclamation changes before current-city decisions.",
+    "inputSha256": "0a125b1716b584ac6728ca0249beb49f29636966b6ecb8974bc0c36db01d4624",
+    "downloadedGeometry": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/PHL/ADM3/geoBoundaries-PHL-ADM3.geojson",
+    "observedAt": "2026-11-05T04:51:33.538135Z"
+  },
+  "outputSha256": "7cea22173fccc58f01849b7d79589055a164b1abdc2e8b5dc3405a92f2c88d1e",
+  "outputBytes": 1389794,
+  "localArtifact": "output/ncr/ncr-lgus.geojson",
+  "lguCount": 17,
+  "lgus": [
+    {
+      "lgu": "Caloocan",
+      "sourceName": "Caloocan City",
+      "sourceId": "30758251B52612034306412",
+      "geometryType": "MultiPolygon",
+      "geometryValid": true
+    },
+    {
+      "lgu": "Las Piñas",
+      "sourceName": "City of Las Piñas",
+      "sourceId": "30758251B78130969630418",
+      "geometryType": "MultiPolygon",
+      "geometryValid": true
+    },
+    {
+      "lgu": "Makati",
+      "sourceName": "City of Makati",
+      "sourceId": "30758251B57520905128305",
+      "geometryType": "Polygon",
+      "geometryValid": true
+    },
+    {
+      "lgu": "Malabon",
+      "sourceName": "City of Malabon",
+      "sourceId": "30758251B44622440586331",
+      "geometryType": "Polygon",
+      "geometryValid": true
+    },
+    {
+      "lgu": "Mandaluyong",
+      "sourceName": "City of Mandaluyong",
+      "sourceId": "30758251B74980464983736",
+      "geometryType": "Polygon",
+      "geometryValid": true
+    },
+    {
+      "lgu": "Manila",
+      "sourceName": "Manila (dissolved geoBoundaries ADM3 districts)",
+      "sourceId": null,
+      "sourceIds": [
+        "30758251B44068258109216",
+        "30758251B98174252836465",
+        "30758251B44482047291863",
+        "30758251B54664651587304",
+        "30758251B49724573895846",
+        "30758251B59821537391276",
+        "30758251B68060450724237",
+        "30758251B84669397306109",
+        "30758251B27178292320434",
+        "30758251B91475720845993",
+        "30758251B10759916050792",
+        "30758251B80289193646137",
+        "30758251B50871741269469",
+        "30758251B17137737947399"
+      ],
+      "sourceDistricts": [
+        "Binondo",
+        "Ermita",
+        "Intramuros",
+        "Malate",
+        "Paco",
+        "Pandacan",
+        "Port Area",
+        "Quiapo",
+        "Sampaloc",
+        "San Miguel",
+        "San Nicolas",
+        "Santa Ana",
+        "Santa Cruz",
+        "Tondo I / II"
+      ],
+      "geometryOperation": "shapely.ops.unary_union; no boundary redrawing",
+      "geometryType": "MultiPolygon",
+      "geometryValid": true
+    },
+    {
+      "lgu": "Marikina",
+      "sourceName": "City of Marikina",
+      "sourceId": "30758251B86241834064496",
+      "geometryType": "Polygon",
+      "geometryValid": true
+    },
+    {
+      "lgu": "Muntinlupa",
+      "sourceName": "City of Muntinlupa",
+      "sourceId": "30758251B49263672612013",
+      "geometryType": "Polygon",
+      "geometryValid": true
+    },
+    {
+      "lgu": "Navotas",
+      "sourceName": "City of Navotas",
+      "sourceId": "30758251B65774388040689",
+      "geometryType": "Polygon",
+      "geometryValid": true
+    },
+    {
+      "lgu": "Parañaque",
+      "sourceName": "City of Parañaque",
+      "sourceId": "30758251B15145867760436",
+      "geometryType": "Polygon",
+      "geometryValid": true
+    },
+    {
+      "lgu": "Pasay",
+      "sourceName": "Pasay City",
+      "sourceId": "30758251B21149777703056",
+      "geometryType": "Polygon",
+      "geometryValid": true
+    },
+    {
+      "lgu": "Pasig",
+      "sourceName": "City of Pasig",
+      "sourceId": "30758251B15316626994525",
+      "geometryType": "Polygon",
+      "geometryValid": true
+    },
+    {
+      "lgu": "Pateros",
+      "sourceName": "Pateros",
+      "sourceId": "30758251B83435175026830",
+      "geometryType": "Polygon",
+      "geometryValid": true
+    },
+    {
+      "lgu": "Quezon City",
+      "sourceName": "Quezon City",
+      "sourceId": "30758251B44289263240939",
+      "geometryType": "Polygon",
+      "geometryValid": true
+    },
+    {
+      "lgu": "San Juan",
+      "sourceName": "City of San Juan",
+      "sourceId": "30758251B17425503156128",
+      "geometryType": "Polygon",
+      "geometryValid": true
+    },
+    {
+      "lgu": "Taguig",
+      "sourceName": "Taguig City",
+      "sourceId": "30758251B69828994242652",
+      "geometryType": "Polygon",
+      "geometryValid": true
+    },
+    {
+      "lgu": "Valenzuela",
+      "sourceName": "City of Valenzuela",
+      "sourceId": "30758251B59148711322243",
+      "geometryType": "Polygon",
+      "geometryValid": true
+    }
+  ],
+  "knownLimitations": [
+    "Source represents 2020 and is not current legal or cadastral geography.",
+    "Manila is a dissolved union of all 14 named ADM3 source district polygons; source identities are retained.",
+    "BGC High Street [121.0502,14.5509] and Uptown BGC [121.0542,14.5595] fall in the source Makati polygon; current-city analysis must separately audit this historical assignment.",
+    "EMBO reassignment, disputed city boundaries and coastal reclamation need independent current review."
+  ],
+  "publicationApproved": false,
+  "attribution": "geoBoundaries gbOpen; National Mapping and Resource Information Authority (NAMRIA), Philippines Statistics Authority (PSA), OCHA Philippines; CC BY 3.0 IGO",
+  "licenseUrl": "https://creativecommons.org/licenses/by/3.0/igo/"
+}

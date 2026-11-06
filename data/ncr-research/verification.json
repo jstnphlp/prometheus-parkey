@@ -1,0 +1,79 @@
+{
+  "verifiedAt": "2026-11-05T05:29:45.155527+00:00",
+  "toolchain": {
+    "node": "24.22.2",
+    "pnpm": "11.25.0",
+    "python": "3.12.6",
+    "duckdb": "2.0.0",
+    "osmium": "4.1.1",
+    "shapely": "2.2.0"
+  },
+  "commands": [
+    {
+      "command": "pnpm install --frozen-lockfile",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm test",
+      "exitCode": 0,
+      "nodeTestsPassed": 210,
+      "pythonTestsPassed": 29,
+      "skipped": 0
+    },
+    {
+      "command": "pnpm test:data",
+      "exitCode": 0,
+      "nodeTestsPassed": 56,
+      "pythonTestsPassed": 29,
+      "skipped": 0
+    },
+    {
+      "command": "pnpm lint",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm typecheck",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm format:check",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm build:web",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm audit:data",
+      "exitCode": 0
+    },
+    {
+      "command": "node scripts/parking-reviewed-data.mjs --check",
+      "exitCode": 0
+    },
+    {
+      "command": "node scripts/check-ncr-package.mjs data/ncr-research",
+      "exitCode": 0,
+      "archivesVerified": 4,
+      "normalizedAndCoverageReproduced": true
+    }
+  ],
+  "nativePythonEnvironment": "PYTHONPATH=output/ncr/osmium-deps for final checks; dependencies pinned in scripts/requirements-ncr-research.txt",
+  "independentReview": {
+    "unresolvedCritical": 0,
+    "unresolvedImportant": 0,
+    "unresolvedMinor": 0,
+    "shapelyLguAssignmentMismatches": 0,
+    "csvCountMismatches": 0
+  },
+  "notPerformed": [
+    "browser/E2E",
+    "emulator",
+    "Docker stack",
+    "physical site visit",
+    "operator outreach",
+    "production database operation",
+    "deployment",
+    "merge"
+  ]
+}

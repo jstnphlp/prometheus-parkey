@@ -136,6 +136,41 @@ select throws_like($$select pg_temp.review_decide('approve_publication')$$,'%sup
 select is((select ((p.package_text::jsonb)->>'candidateText')::jsonb->>'type' from parkey_private.discovery_evidence_packages p join reviewer_fixture f using(package_hash)),'facility_unspecified','rejected publication preserves original unspecified source type');
 select is((select count(*)::integer from public.discovery_parking where source_observation_id = 'osm:node/991:Point' and published),0,'unclassified revision never becomes public parking');
 select is(jsonb_array_length(public.export_discovery_publication_ledger('a3100000-0000-4000-8000-000000000001')->'events'),6,'unsupported classification does not append a successful approval');
+update reviewer_fixture set package_text = jsonb_set(package_text::jsonb,'{candidateText}',
+  to_jsonb(parkey_private.canonical_review_json(jsonb_set(jsonb_set((package_text::jsonb->>'candidateText')::jsonb,'{type}','"lot"'::jsonb),'{accessClass}','"members"'::jsonb))))::text;
+update reviewer_fixture set package_text = jsonb_set(package_text::jsonb,'{recordHash}',
+  to_jsonb(encode(digest(package_text::jsonb->>'candidateText','sha256'),'hex')))::text;
+update reviewer_fixture set package_hash=encode(digest(package_text,'sha256'),'hex'),record_hash=package_text::jsonb->>'recordHash';
+select lives_ok($$select public.import_discovery_evidence('a3100000-0000-4000-8000-000000000001',package_text,package_hash) from reviewer_fixture$$,'members-access observation remains valid private evidence');
+select throws_like($$select pg_temp.review_decide('approve_publication')$$,'%Mapped source access is restricted or unsupported%','future A approval cannot publish members access even with public-visitor human fields');
+update reviewer_fixture set package_text = jsonb_set(package_text::jsonb,'{candidateText}',
+  to_jsonb(parkey_private.canonical_review_json(jsonb_set((package_text::jsonb->>'candidateText')::jsonb,'{accessClass}','"unrecognized_access"'::jsonb))))::text;
+update reviewer_fixture set package_text = jsonb_set(package_text::jsonb,'{recordHash}',
+  to_jsonb(encode(digest(package_text::jsonb->>'candidateText','sha256'),'hex')))::text;
+update reviewer_fixture set package_hash=encode(digest(package_text,'sha256'),'hex'),record_hash=package_text::jsonb->>'recordHash';
+select lives_ok($$select public.import_discovery_evidence('a3100000-0000-4000-8000-000000000001',package_text,package_hash) from reviewer_fixture$$,'unsupported explicit source access remains valid private evidence');
+select throws_like($$select pg_temp.review_decide('approve_publication')$$,'%Mapped source access is restricted or unsupported%','future A approval cannot publish an unrecognized explicit source access value');
+select lives_ok($$select pg_temp.review_decide('reject',patch := '{"outcome":"rejected"}')$$,'unsupported source access can still be explicitly rejected');
+select lives_ok($$select pg_temp.review_decide('revoke_publication')$$,'unsupported source access can still be explicitly revoked');
+select is((select count(*)::integer from public.discovery_parking where source_observation_id='osm:node/991:Point' and published),0,'rejected source access never leaves a public row after atomic guard failure');
+update reviewer_fixture set package_text=jsonb_set(package_text::jsonb,'{candidateText}',to_jsonb(parkey_private.canonical_review_json(
+  (package_text::jsonb->>'candidateText')::jsonb || '{"accessClass":"unknown","sourceTags":{"access":"members"}}'::jsonb)))::text;
+update reviewer_fixture set package_text=jsonb_set(package_text::jsonb,'{recordHash}',to_jsonb(encode(digest(package_text::jsonb->>'candidateText','sha256'),'hex')))::text;
+update reviewer_fixture set package_hash=encode(digest(package_text,'sha256'),'hex'),record_hash=package_text::jsonb->>'recordHash';
+select lives_ok($$select public.import_discovery_evidence('a3100000-0000-4000-8000-000000000001',package_text,package_hash) from reviewer_fixture$$,'raw members tag remains preserved as private evidence despite normalized unknown access');
+select throws_like($$select pg_temp.review_decide('approve_publication')$$,'%Mapped source access is restricted or unsupported%','normalized unknown access cannot mask original members tag in future A approval');
+update reviewer_fixture set package_text=jsonb_set(package_text::jsonb,'{candidateText}',to_jsonb(parkey_private.canonical_review_json(
+  (package_text::jsonb->>'candidateText')::jsonb || '{"accessClass":"unknown","sourceTags":{"access":"unrecognized_access"}}'::jsonb)))::text;
+update reviewer_fixture set package_text=jsonb_set(package_text::jsonb,'{recordHash}',to_jsonb(encode(digest(package_text::jsonb->>'candidateText','sha256'),'hex')))::text;
+update reviewer_fixture set package_hash=encode(digest(package_text,'sha256'),'hex'),record_hash=package_text::jsonb->>'recordHash';
+select lives_ok($$select public.import_discovery_evidence('a3100000-0000-4000-8000-000000000001',package_text,package_hash) from reviewer_fixture$$,'unsupported raw access tag remains valid private evidence');
+select throws_like($$select pg_temp.review_decide('approve_publication')$$,'%Mapped source access is restricted or unsupported%','normalized unknown access cannot mask an unrecognized original access tag');
+update reviewer_fixture set package_text=jsonb_set(package_text::jsonb,'{candidateText}',to_jsonb(parkey_private.canonical_review_json(
+  (package_text::jsonb->>'candidateText')::jsonb || '{"accessClass":"unknown","sourceTags":{"access":"yes","parking:access":"members"}}'::jsonb)))::text;
+update reviewer_fixture set package_text=jsonb_set(package_text::jsonb,'{recordHash}',to_jsonb(encode(digest(package_text::jsonb->>'candidateText','sha256'),'hex')))::text;
+update reviewer_fixture set package_hash=encode(digest(package_text,'sha256'),'hex'),record_hash=package_text::jsonb->>'recordHash';
+select lives_ok($$select public.import_discovery_evidence('a3100000-0000-4000-8000-000000000001',package_text,package_hash) from reviewer_fixture$$,'conflicting raw parking access remains preserved as private evidence');
+select throws_like($$select pg_temp.review_decide('approve_publication')$$,'%Mapped source access is restricted or unsupported%','unknown normalized access and raw yes cannot mask parking:access members');
 delete from parkey_private.discovery_reviewers where user_id = 'a3100000-0000-4000-8000-000000000001';
 select throws_like($$select pg_temp.review_decide('approve_publication')$$,'%Reviewer access required%','removed reviewer cannot reuse old access');
 

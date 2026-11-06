@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "planId": "manila-mandaluyong-engineering-v1",
+  "phasePolicy": {
+    "1E": "DEFERRED_TO_PILOT",
+    "1F": "IN_PROGRESS",
+    "1G": "DEFERRED_TO_PILOT"
+  },
+  "stageA": {
+    "status": "PASS",
+    "remainingChecks": []
+  },
+  "stageB": {
+    "status": "PASS",
+    "remainingChecks": []
+  },
+  "engineeringStatus": "1F_ENGINEERING_READY",
+  "pilotReleaseAuthorized": false,
+  "releaseStatuses": {
+    "1F_ENGINEERING_READY": true,
+    "PILOT_RELEASE_AUTHORIZED": false
+  },
+  "historicalPublicDisplayGateModified": false,
+  "historicalPublicDisplayGateStatus": "BLOCKED",
+  "notice": "Engineering evidence grants no parking identity, visitor access, entrance, operator permission or public publication approval."
+}

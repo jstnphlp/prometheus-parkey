@@ -9,11 +9,18 @@
     "userInterfaceStyle": "light",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.parkey.discovery"
+      "bundleIdentifier": "com.parkey.discovery",
+      "buildNumber": "2"
     },
     "android": {
       "predictiveBackGestureEnabled": true,
-      "package": "com.parkey.discovery"
+      "package": "com.parkey.discovery",
+      "versionCode": 2,
+      "blockedPermissions": [
+        "android.permission.ACCESS_BACKGROUND_LOCATION",
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "output": "static",

@@ -12,6 +12,7 @@ if (webPort === ncrPort) throw new Error('E2E web and NCR ports must differ.')
 
 export default defineConfig({
   testDir: './e2e',
+  testIgnore: '**/pilot/**',
   fullyParallel: true,
   // Cold Expo route compilation plus repeated navigations can exceed 30 s.
   // Keep every assertion; give sensor-backed flows their real 15 s deadline.

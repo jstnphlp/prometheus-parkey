@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-11-06T00:28:42.725Z",
+  "testedCommit": "da05ae2c98f7b3fd7ad0cd6c280f8a6fa5cc628d",
+  "runs": [
+    {
+      "id": 42135667381,
+      "event": "push",
+      "url": "https://github.com/jstnphlp/prometheus-parkey/actions/runs/42135667381",
+      "conclusion": "success",
+      "jobs": {
+        "validate": "success",
+        "database": "success",
+        "e2e": "success"
+      }
+    },
+    {
+      "id": 42135674131,
+      "event": "pull_request",
+      "url": "https://github.com/jstnphlp/prometheus-parkey/actions/runs/42135674131",
+      "conclusion": "success",
+      "jobs": {
+        "validate": "success",
+        "database": "success",
+        "e2e": "success"
+      }
+    }
+  ],
+  "commandsPassed": [
+    "pnpm install --frozen-lockfile",
+    "pnpm lint",
+    "pnpm typecheck",
+    "pnpm format:check",
+    "pnpm test",
+    "pnpm audit:data",
+    "pnpm build:web",
+    "pnpm test:e2e",
+    "supabase db reset --local (disposable CI only)",
+    "supabase test db",
+    "actual reviewer JS/SQL/mobile contract round trip"
+  ],
+  "browser": {
+    "legacyPassed": 52,
+    "pilotPassed": 20,
+    "totalPassed": 72,
+    "legacyDuration": "7.6m",
+    "pilotDuration": "1.6m",
+    "logReference": "https://github.com/jstnphlp/prometheus-parkey/actions/runs/42135667381/job/127623033772"
+  },
+  "local": {
+    "javascriptPassed": 344,
+    "pythonPassed": 38,
+    "unitSkipped": 0,
+    "sqlAssertionsPassed": 343,
+    "sqlFiles": 6
+  },
+  "notice": "CI and local QA establish engineering behavior only. No hosted write, actual parking publication approval, physical verification, merge or release authorization."
+}

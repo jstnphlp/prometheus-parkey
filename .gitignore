@@ -25,6 +25,7 @@ apps/mobile/public/maplibre/
 *.p12
 *.jks
 *.mobileprovision
+apps/mobile/credentials.json
 
 # Local tooling
 .DS_Store

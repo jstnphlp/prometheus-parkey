@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "sourceCommit": "da05ae2c98f7b3fd7ad0cd6c280f8a6fa5cc628d",
+  "apkSha256": "d44de93e814045e42232de704d317d7556902031213ae68fe7c371dcd1149d47",
+  "screenshots": [
+    {
+      "file": "01-main-public.png",
+      "original": "output/ncr/pilot-stage-b/01-main-public.png",
+      "bytes": 500972,
+      "sha256": "d8fcc5b338762f1e1d614307be0797b001fb172c6d55d7f47bcea5d0e70fd509"
+    },
+    {
+      "file": "07-manila-detail-top.png",
+      "original": "output/ncr/pilot-stage-b/07-manila-detail-top.png",
+      "bytes": 157750,
+      "sha256": "ce49559238d1b756e651a719d4ce3de894e1adbd9beed5472c17ea8a318e1e82"
+    },
+    {
+      "file": "07-manila-detail-bottom.png",
+      "original": "output/ncr/pilot-stage-b/07-manila-detail-bottom.png",
+      "bytes": 159331,
+      "sha256": "c1448192e2f7bd4145b98f46ab1d27f449fa03c088644e0ca1ce6aa7cf946953"
+    },
+    {
+      "file": "08-manila-museum-map-focus.png",
+      "original": "output/ncr/pilot-stage-b/08-manila-museum-map-focus.png",
+      "bytes": 302392,
+      "sha256": "779ac531fa79663d0955a85069dd9f6ea12fa7668dd25969a623784231d36e1b"
+    },
+    {
+      "file": "11-mandaluyong-detail-top.png",
+      "original": "output/ncr/pilot-stage-b/11-mandaluyong-detail-top.png",
+      "bytes": 156966,
+      "sha256": "8f45ad96a42256381a668470862706614b99dc54b5857ac46fcd00b9fdd1547f"
+    },
+    {
+      "file": "11-mandaluyong-detail-bottom.png",
+      "original": "output/ncr/pilot-stage-b/11-mandaluyong-detail-bottom.png",
+      "bytes": 159575,
+      "sha256": "cd7e8ecc0acd8bef75ebf9b1cd805c1cb88bc19be94435d6467b321505183aab"
+    },
+    {
+      "file": "17-live-revocation-cleared-private.png",
+      "original": "output/ncr/pilot-stage-b/17-live-revocation-cleared-private.png",
+      "bytes": 490671,
+      "sha256": "734faee0fc8c87d2bf13e2f5e88eb6458c7faccb5af91b14571820d236703489"
+    }
+  ],
+  "attribution": "MapLibre rendering; OpenFreeMap/OpenMapTiles basemap; ? OpenStreetMap contributors, ODbL-1.0. Screenshots are engineering evidence of private unverified research, not parking publication approval."
+}

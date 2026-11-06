@@ -42,6 +42,8 @@
     "ios": "expo run:ios",
     "web": "node scripts/prepare-map-worker.mjs && expo start --web",
     "typecheck": "tsc --noEmit",
+    "check:release": "node ../../scripts/check-mobile-release.mjs",
+    "eas-build-post-install": "node ../../scripts/check-mobile-build.mjs",
     "test": "node --test src/discovery/*.test.mjs",
     "export:web": "node scripts/prepare-map-worker.mjs && expo export --platform web"
   },

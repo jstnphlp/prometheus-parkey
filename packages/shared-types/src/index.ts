@@ -1,5 +1,15 @@
 /** Display metadata shared by the starter applications; not a domain model. */
 export type {
+  PilotCity,
+  PilotMode,
+  PilotBounds,
+  PilotSource,
+  PilotDestinationContext,
+  PilotParking,
+  PilotDestination,
+  PilotPage,
+} from './pilot-discovery'
+export type {
   NcrFeatureType,
   NcrGeometry,
   NcrEvidenceState,

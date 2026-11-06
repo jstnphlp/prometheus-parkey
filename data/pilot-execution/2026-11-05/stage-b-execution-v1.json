@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 1,
+  "executionId": "stage-b-execution-v1",
+  "recordedAt": "2026-11-05T15:29:52.967Z",
+  "stageAPassedCommit": "f54f2b5",
+  "checks": [
+    {
+      "id": "server-pilot-geography",
+      "status": "IN_PROGRESS",
+      "executed": false,
+      "satisfied": false,
+      "evidenceReferences": [],
+      "blocker": "Implement and execute server-pilot-geography verification before recording a pass"
+    },
+    {
+      "id": "mobile-pilot-integration",
+      "status": "IN_PROGRESS",
+      "executed": false,
+      "satisfied": false,
+      "evidenceReferences": [],
+      "blocker": "Implement and execute mobile-pilot-integration verification before recording a pass"
+    },
+    {
+      "id": "public-research-separation",
+      "status": "IN_PROGRESS",
+      "executed": false,
+      "satisfied": false,
+      "evidenceReferences": [],
+      "blocker": "Implement and execute public-research-separation verification before recording a pass"
+    },
+    {
+      "id": "approval-expiry-revocation",
+      "status": "IN_PROGRESS",
+      "executed": false,
+      "satisfied": false,
+      "evidenceReferences": [],
+      "blocker": "Implement and execute approval-expiry-revocation verification before recording a pass"
+    },
+    {
+      "id": "bounded-cancelled-queries",
+      "status": "IN_PROGRESS",
+      "executed": false,
+      "satisfied": false,
+      "evidenceReferences": [],
+      "blocker": "Implement and execute bounded-cancelled-queries verification before recording a pass"
+    },
+    {
+      "id": "release-configuration",
+      "status": "IN_PROGRESS",
+      "executed": false,
+      "satisfied": false,
+      "evidenceReferences": [],
+      "blocker": "Implement and execute release-configuration verification before recording a pass"
+    },
+    {
+      "id": "pilot-flow-tests",
+      "status": "IN_PROGRESS",
+      "executed": false,
+      "satisfied": false,
+      "evidenceReferences": [],
+      "blocker": "Implement and execute pilot-flow-tests verification before recording a pass"
+    },
+    {
+      "id": "native-pilot-smoke",
+      "status": "IN_PROGRESS",
+      "executed": false,
+      "satisfied": false,
+      "evidenceReferences": [],
+      "blocker": "Implement and execute native-pilot-smoke verification before recording a pass"
+    }
+  ],
+  "notice": "Stage B implementation started only after Stage A passed; not engineering ready and no release authorization."
+}

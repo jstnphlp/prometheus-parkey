@@ -1,0 +1,49 @@
+{
+  "executedAt": "2026-11-06T00:49:04.605Z",
+  "backend": "actual local Supabase PostgREST/PostGIS",
+  "mobileParser": true,
+  "observations": [
+    {
+      "city": "Manila",
+      "publicRecords": 0,
+      "anonymousCandidateDenied": true,
+      "privateIds": ["osm:node/11729826407:Point"],
+      "destinationIds": ["osm:node/11729816009"],
+      "context": [
+        [
+          {
+            "label": "Parking near Museum of the Chinese in Philippine Life",
+            "category": "tourism:museum",
+            "distance": 58.6
+          }
+        ]
+      ],
+      "actualPublicParkingApprovals": 0
+    },
+    {
+      "city": "Mandaluyong",
+      "publicRecords": 0,
+      "anonymousCandidateDenied": true,
+      "privateIds": ["osm:way/1306648012:MultiPolygon"],
+      "destinationIds": ["osm:node/746487765"],
+      "context": [
+        [
+          {
+            "label": "Parking near Crossings Department Store",
+            "category": "shop:department_store",
+            "distance": 60.5
+          }
+        ]
+      ],
+      "actualPublicParkingApprovals": 0
+    }
+  ],
+  "sourceCommit": "da05ae2c98f7b3fd7ad0cd6c280f8a6fa5cc628d",
+  "environment": "local development database only",
+  "sourceRecordsImportedPrivately": 4,
+  "hostedWrites": 0,
+  "actualPhysicalVerifications": 0,
+  "actualOperatorApprovals": 0,
+  "actualPublicationApprovals": 0,
+  "notice": "Final committed-source HTTP recheck before temporary QA access revocation. Source observations stay private and unverified."
+}

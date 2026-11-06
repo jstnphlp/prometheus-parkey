@@ -1,0 +1,200 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-06",
+  "branch": "codex/v1-a0-discovery-baseline",
+  "source_commit": "e7a6201cba6a20bb212605f6821044d475d82bc1",
+  "mobile_tree": "35e2860f492c79c91b27bcb66ad66f4abfa496b3",
+  "native_apk": {
+    "reused": true,
+    "sha256": "d44de93e814045e42232de704d317d7556902031213ae68fe7c371dcd1149d47",
+    "version": "0.1.0",
+    "version_code": 2,
+    "note": "Existing development APK installed successfully; native dependencies and app.json unchanged since da05ae2. Current source served by isolated Metro, not a newly compiled or signed release."
+  },
+  "emulator": {
+    "avd": "Parkey_A0_API35",
+    "profile": "pixel_7",
+    "android": "15",
+    "api": 35,
+    "abi": "x86_64",
+    "image": "system-images/android-35/google_apis/x86_64 revision 9",
+    "emulator_version": "37.2.12.0",
+    "serial": "emulator-5556",
+    "gpu": "swiftshader",
+    "accelerator": "Windows Hypervisor Platform",
+    "memory_argument_mb": 2048,
+    "cores": 2,
+    "snapshots": false,
+    "display_initial": "1080x2400 at 420 dpi",
+    "display_final": "720x1600 at 280 dpi",
+    "animations_final": 0,
+    "host_gpu_comparison": "Booted but produced blank app UI; not used as passing proof."
+  },
+  "configuration": {
+    "dotenv_loading": false,
+    "analytics_endpoint": "unset",
+    "analytics_domain": "unset",
+    "sentry_dsn": "unset",
+    "supabase_configuration": "unset; no backend credentials or private sessions used",
+    "metro": "127.0.0.1:8096, final max-workers=1",
+    "pilot_flags_tested": [false, true],
+    "location": "foreground permission denial followed by explicit emulator grants; simulated Poblacion fix only"
+  },
+  "tests": [
+    {
+      "case": "Basemap and actual bundled records",
+      "result": "observed",
+      "evidence": ["03-garage-filter.png", "04-details.png"],
+      "limitation": "Initial tiles delayed; native Open Sans glyph 404 diagnostics occurred. No performance pass."
+    },
+    {
+      "case": "Real Photon search and selection",
+      "result": "passed",
+      "evidence": ["02-search.png"]
+    },
+    {
+      "case": "Garage filter empty state and Show all spots recovery",
+      "result": "passed",
+      "evidence": ["03-garage-filter.png"]
+    },
+    {
+      "case": "Unknown facts, restricted access and disabled unapproved-entrance directions",
+      "result": "passed",
+      "evidence": ["04-details.png"],
+      "limitation": "No authorized parking entrance available; successful parking routing not demonstrated."
+    },
+    {
+      "case": "Foreground permission prompt and denial",
+      "result": "passed",
+      "evidence": ["05-permission-prompt.png"],
+      "limitation": "Denied while details open; explicit denied-state messaging still needs focused regression."
+    },
+    {
+      "case": "Saved favorite survives restart",
+      "result": "passed",
+      "evidence": ["08-saved-after-restart.png"]
+    },
+    {
+      "case": "Parked spot from simulated GPS and walking handoff",
+      "result": "passed",
+      "evidence": ["11-saved-parked.png", "12-walking-handoff.png"],
+      "limitation": "Google Maps opened its onboarding activity; no physical walking/route success claim."
+    },
+    {
+      "case": "Real offline search failure and reconnect retry",
+      "result": "passed",
+      "evidence": ["09-offline-search.png", "10-search-recovery.png"]
+    },
+    {
+      "case": "Pilot missing backend/city switching/filter controls",
+      "result": "defect-recorded",
+      "evidence": ["13-pilot-unconfigured.png"],
+      "limitation": "No Supabase backend configured; pilot displays honest config error but remains loading."
+    },
+    {
+      "case": "Empty reviewer session rejected",
+      "result": "passed",
+      "evidence": ["15-candidate-guard.png"],
+      "limitation": "No authenticated candidate access or deployed authorization tested."
+    }
+  ],
+  "physical_device": "not run; separate A2/A4/release gate",
+  "ios": "not run; no Apple host",
+  "files": [
+    {
+      "file": "02-search.png",
+      "bytes": 341876,
+      "sha256": "3a425e1783774e6b7cbdab5f9cd2ac42462a50c0ed2a97590ffcffb3887cd266"
+    },
+    {
+      "file": "02-search.json",
+      "bytes": 8770,
+      "sha256": "8830406ddb8e0e1bb80e08a13f05084d91ec5f7337c5a87533ce931fe99c90d9"
+    },
+    {
+      "file": "03-garage-filter.png",
+      "bytes": 456054,
+      "sha256": "4acf452288feecd479f0cf8ff327af8989f7bb575f49a999dc403d6b13f7d365"
+    },
+    {
+      "file": "03-garage-filter.json",
+      "bytes": 7804,
+      "sha256": "42698abfaddc044684d5dfab091a9d48a3935f39bd467dcfab6d4398589d5390"
+    },
+    {
+      "file": "04-details.png",
+      "bytes": 567698,
+      "sha256": "be5f7dd5b284eac1554d2112aae5a9ef4dcb71da6249375b06ea9c62e58a0354"
+    },
+    {
+      "file": "04-details.json",
+      "bytes": 6603,
+      "sha256": "579b60a9cdc568b7c15cd438a22bb1ab047074a492d986e40158a36dfb4dab90"
+    },
+    {
+      "file": "05-permission-prompt.png",
+      "bytes": 361906,
+      "sha256": "51de8176ea3bfee07d9effeacf09bb6b008954d317691eeae7301515768c2f6e"
+    },
+    {
+      "file": "08-saved-after-restart.png",
+      "bytes": 107934,
+      "sha256": "8e6acb0983250bf51e248556dd601b3bef82f0fd2bb69170187907872c7712b7"
+    },
+    {
+      "file": "08-saved-after-restart.json",
+      "bytes": 8411,
+      "sha256": "ce3a3e94bb1ae97fe1a462b29e2a68be1f0433c11f5cb2a090da7a2dbd813255"
+    },
+    {
+      "file": "09-offline-search.png",
+      "bytes": 142853,
+      "sha256": "601b927ee0557afe291e950eb3931df42d7b19ab80bc17e30064a9c2a5b6c34f"
+    },
+    {
+      "file": "09-offline-search.json",
+      "bytes": 5535,
+      "sha256": "e74722ba4a8b909c3e29c9131a3530cffdfc9f07d754fadc5cebd340a77a893c"
+    },
+    {
+      "file": "10-search-recovery.png",
+      "bytes": 226135,
+      "sha256": "c8d0d58f7ef0de8e127c3c52b5349cc73762b5af964f1b0022dfb78e8644482e"
+    },
+    {
+      "file": "10-search-recovery.json",
+      "bytes": 10074,
+      "sha256": "aa51e8d4b6d7d5c13290b391b66008f8ca8ae8a625d658f416a1b9dceea0eafd"
+    },
+    {
+      "file": "11-saved-parked.png",
+      "bytes": 118600,
+      "sha256": "22a2d865ce8bddb482da55881d1468076bb0324fabfdc38a9a5331a529c6e993"
+    },
+    {
+      "file": "12-walking-handoff.png",
+      "bytes": 73335,
+      "sha256": "ffa390dff58c798afceb0ea637c4ed4701fb3e5531e94727b4b01ac3f7c01e7b"
+    },
+    {
+      "file": "12-walking-handoff.json",
+      "bytes": 2567,
+      "sha256": "ef558956efa619c0c416c93c09cd247e2bf2fbf279bf67d9d66f0a236d7ae895"
+    },
+    {
+      "file": "13-pilot-unconfigured.png",
+      "bytes": 664013,
+      "sha256": "b547003c3fe6224e1f31363d55bd15dfaa2262f205112c899054b1646ee0a547"
+    },
+    {
+      "file": "15-candidate-guard.png",
+      "bytes": 387204,
+      "sha256": "9266ca5b08cd11428d31231bf781d24d33f4c65d683e638bbe49950ebfdca72d"
+    },
+    {
+      "file": "15-candidate-guard.json",
+      "bytes": 4686,
+      "sha256": "76e3ace3f8fcce1ae8646fe6bb846f2d790d448d11d1f3e5d2e8c53dfd9fdff7"
+    }
+  ]
+}

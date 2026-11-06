@@ -1,0 +1,199 @@
+[
+  {
+    "window-title": "",
+    "type": "SYSTEM",
+    "layer": 1,
+    "bounds": "[0,0][1080,136]",
+    "content": [
+      {
+        "class": "android.widget.TextView",
+        "resource-id": "com.android.systemui:id/clock",
+        "text": "4:54",
+        "content-desc": "4:54 AM",
+        "bounds": "[47,47][151,90]",
+        "center": "[99,68]"
+      },
+      {
+        "class": "android.widget.ImageView",
+        "content-desc": "Android System notification: ",
+        "bounds": "[151,1][209,136]",
+        "center": "[180,68]"
+      },
+      {
+        "class": "android.widget.ImageView",
+        "resource-id": "com.android.systemui:id/wifi_signal",
+        "content-desc": "Wifi signal full.",
+        "bounds": "[891,48][930,87]",
+        "center": "[910,67]"
+      },
+      {
+        "class": "android.widget.FrameLayout",
+        "resource-id": "com.android.systemui:id/mobile_combo",
+        "content-desc": "Phone three bars.",
+        "bounds": "[930,39][969,97]",
+        "center": "[949,68]"
+      },
+      {
+        "class": "android.widget.LinearLayout",
+        "resource-id": "com.android.systemui:id/battery",
+        "content-desc": "Battery charging, 100 percent.",
+        "bounds": "[985,51][1005,85]",
+        "center": "[995,68]"
+      }
+    ]
+  },
+  {
+    "window-title": "Parkey",
+    "type": "APPLICATION",
+    "active": true,
+    "focused": true,
+    "layer": 0,
+    "bounds": "[0,0][1080,2400]",
+    "content": [
+      {
+        "class": "android.widget.FrameLayout",
+        "content-desc": "Showing a Map created with MapLibre. Scroll by dragging two fingers. Zoom by pinching two fingers.",
+        "interactions": ["CLICKABLE", "LONG_CLICKABLE", "FOCUSABLE"],
+        "bounds": "[0,0][1080,2400]",
+        "center": "[540,1200]"
+      },
+      {
+        "class": "android.widget.Button",
+        "content-desc": "Map data sources and attribution",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "bounds": "[42,1097][158,1213]",
+        "center": "[100,1155]"
+      },
+      {
+        "class": "android.widget.Button",
+        "content-desc": "Center on my location",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "bounds": "[891,1066][1038,1213]",
+        "center": "[964,1139]"
+      },
+      {
+        "class": "android.widget.Button",
+        "resource-id": "parking-sheet-handle",
+        "content-desc": "Parking sheet: half. Swipe down to dismiss. Activate to expand",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "bounds": "[383,1244][698,1328]",
+        "center": "[540,1286]"
+      },
+      {
+        "class": "android.widget.ScrollView",
+        "resource-id": "parking-preview",
+        "interactions": ["SCROLLABLE", "FOCUSABLE"],
+        "bounds": "[0,1328][1080,2337]",
+        "center": "[540,1832]",
+        "children": [
+          {
+            "class": "android.view.View",
+            "resource-id": "parking-detail-title",
+            "text": "Parking lot",
+            "bounds": "[42,1328][877,1391]",
+            "center": "[459,1359]"
+          },
+          {
+            "class": "android.widget.TextView",
+            "text": "Paid",
+            "bounds": "[908,1328][1038,1398]",
+            "center": "[973,1363]"
+          },
+          {
+            "class": "android.widget.TextView",
+            "resource-id": "parking-verification",
+            "text": "Not field verified. No live availability",
+            "bounds": "[42,1434][1038,1482]",
+            "center": "[540,1458]"
+          },
+          {
+            "class": "android.widget.TextView",
+            "text": "Entrance not mapped. Navigation requires reviewed entrance and visitor access.",
+            "bounds": "[42,1519][1038,1615]",
+            "center": "[540,1567]"
+          },
+          {
+            "class": "android.view.View",
+            "text": "Customers only",
+            "bounds": "[42,1651][1038,1762]",
+            "center": "[540,1706]"
+          },
+          {
+            "class": "android.widget.HorizontalScrollView",
+            "interactions": ["SCROLLABLE", "FOCUSABLE"],
+            "bounds": "[0,1800][1080,2052]",
+            "center": "[540,1926]",
+            "children": [
+              {
+                "class": "android.widget.TextView",
+                "text": "Hours",
+                "bounds": "[157,1843][249,1883]",
+                "center": "[203,1863]"
+              },
+              {
+                "class": "android.widget.TextView",
+                "text": "Not recorded",
+                "bounds": "[78,1905][351,2021]",
+                "center": "[214,1963]"
+              },
+              {
+                "class": "android.widget.TextView",
+                "text": "Fee",
+                "bounds": "[530,1843][583,1883]",
+                "center": "[556,1863]"
+              },
+              {
+                "class": "android.widget.TextView",
+                "text": "Paid",
+                "bounds": "[451,1905][724,1963]",
+                "center": "[587,1934]"
+              },
+              {
+                "class": "android.widget.TextView",
+                "text": "Spaces",
+                "bounds": "[903,1843][1010,1883]",
+                "center": "[956,1863]"
+              },
+              {
+                "class": "android.widget.TextView",
+                "text": "Not recorded",
+                "bounds": "[824,1905][1080,2021]",
+                "center": "[952,1963]"
+              }
+            ]
+          },
+          {
+            "class": "android.widget.Button",
+            "resource-id": "parking-get-directions",
+            "content-desc": "Go",
+            "interactions": ["CLICKABLE", "FOCUSABLE"],
+            "bounds": "[42,2089][860,2236]",
+            "center": "[451,2162]",
+            "children": [
+              {
+                "class": "android.widget.TextView",
+                "text": "Go",
+                "bounds": "[381,2131][441,2194]",
+                "center": "[411,2162]"
+              }
+            ]
+          },
+          {
+            "class": "android.widget.TextView",
+            "resource-id": "parking-navigation-warning",
+            "text": "Navigation requires a confirmed entrance, visitor access and operator authorization.",
+            "bounds": "[42,2236][860,2332]",
+            "center": "[451,2284]"
+          },
+          {
+            "class": "android.widget.Button",
+            "content-desc": "Save parking",
+            "interactions": ["CLICKABLE", "FOCUSABLE"],
+            "bounds": "[891,2137][1038,2284]",
+            "center": "[964,2210]"
+          }
+        ]
+      }
+    ]
+  }
+]

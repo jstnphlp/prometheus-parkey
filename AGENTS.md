@@ -69,3 +69,7 @@
   browser flow, or integration was verified without running it.
 - Final responses state what changed, touched files, verification, and any
   remaining issue. Do not fix unrelated issues opportunistically.
+
+## Active V1 Tracks A/C/D: mandatory phase-gate instructions
+
+Read [docs/V1_EXECUTION_PLAN.md](docs/V1_EXECUTION_PLAN.md) and [docs/V1_ANALYTICS_CONTRACT.md](docs/V1_ANALYTICS_CONTRACT.md) before implementing V1 tasks. The plan is the sole canonical scope/phase truth. Codex owns Tracks A and C only; Track D admin analytics UI, read API and ingestion are owned by ChatGPT in the separate jstnphlp/parkey-research-console repo. Only add mobile instrumentation after backend D2 is deployed. No real booking, public vacancy claim, payment integration or private record publication without explicit founder release approval. Do not advance a gate without its stated tests and evidence. Update the plan only when an acceptance gate has truly passed, and cite branch/PR, tests, and device results.

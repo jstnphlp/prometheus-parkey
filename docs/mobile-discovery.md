@@ -436,6 +436,11 @@ are involved. Device backup behavior is controlled by the operating system.
 
 ### Optional analytics and crash diagnostics
 
+**V1 collection is locked off in `config.ts`, even when provider environment
+values are supplied.** The adapter descriptions below are historical integration
+references, not authorization to collect. Enabling either provider requires the
+canonical privacy and release gates. No Track D adapter is implemented here.
+
 Plausible Events API is configured with EXPO_PUBLIC_ANALYTICS_ENDPOINT (an HTTPS
 ingestion endpoint) and EXPO_PUBLIC_ANALYTICS_DOMAIN (the registered hostname).
 Both are required; unset/invalid configuration makes no requests. Register custom

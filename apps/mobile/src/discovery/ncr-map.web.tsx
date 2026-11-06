@@ -244,7 +244,11 @@ export default function NcrMap(props: NcrMapProps) {
     <div
       ref={container}
       data-testid={loaded ? 'ncr-map-ready' : 'ncr-map-loading'}
-      aria-label="Private NCR research map. Points are research anchors, not driving entrances."
+      aria-label={
+        props.data?.mode === 'research_preview'
+          ? 'Private research map. Source points are not driving entrances.'
+          : 'Parking discovery map. Parking markers do not guarantee visitor access or availability.'
+      }
       style={{
         position: 'absolute',
         inset: 0,

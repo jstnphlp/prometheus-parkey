@@ -26,7 +26,7 @@ export function BottomNavigation({
   bottom: number
   onHeightChange?: (height: number) => void
   onSelect: (tab: DiscoveryTab) => void
-  onAdd: () => void
+  onAdd?: () => void
 }) {
   const reduced = useReducedMotion()
   const [layouts, setLayouts] = useState<
@@ -102,14 +102,16 @@ export function BottomNavigation({
           </MotionPressable>
         ))}
       </View>
-      <MotionPressable
-        accessibilityRole="button"
-        accessibilityLabel="Add a spot"
-        onPress={onAdd}
-        style={styles.add}
-      >
-        <FigmaAsset name="add-spot" size={24} />
-      </MotionPressable>
+      {onAdd ? (
+        <MotionPressable
+          accessibilityRole="button"
+          accessibilityLabel="Add a spot"
+          onPress={onAdd}
+          style={styles.add}
+        >
+          <FigmaAsset name="add-spot" size={24} />
+        </MotionPressable>
+      ) : null}
     </View>
   )
 }

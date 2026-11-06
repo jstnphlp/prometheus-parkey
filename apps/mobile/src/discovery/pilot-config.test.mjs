@@ -14,6 +14,29 @@ import {
 
 const publicKey = 'sb_publishable_synthetic_fixture_public_only'
 
+test('configuration alone cannot enable telemetry before privacy and release review', () => {
+  const moduleUrl = new URL('./config.ts', import.meta.url).href
+  const output = execFileSync(
+    process.execPath,
+    [
+      '--input-type=module',
+      '-e',
+      `import {config} from ${JSON.stringify(moduleUrl)};process.stdout.write(JSON.stringify([config.analyticsEndpoint,config.analyticsDomain,config.sentryDsn]))`,
+    ],
+    {
+      env: {
+        ...process.env,
+        EXPO_PUBLIC_ANALYTICS_ENDPOINT:
+          'https://synthetic-analytics.example/events',
+        EXPO_PUBLIC_ANALYTICS_DOMAIN: 'synthetic.example',
+        EXPO_PUBLIC_SENTRY_DSN: 'https://synthetic@errors.example/1',
+      },
+      encoding: 'utf8',
+    },
+  )
+  assert.deepEqual(JSON.parse(output), ['', '', ''])
+})
+
 test('candidate controls require development and are disabled in release builds', () => {
   const moduleUrl = new URL('./pilot-config.ts', import.meta.url).href
   for (const [environment, release, expected] of [

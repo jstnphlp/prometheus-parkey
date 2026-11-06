@@ -19,3 +19,6 @@ data/ncr-destinations/**/*.json text eol=lf
 data/ncr-destinations/**/*.gz -text
 data/ncr-destinations/**/*.rq text eol=lf
 data/pilot-execution/**/*.json text eol=lf
+
+# Native UI receipts hash these JSON bytes on Windows and Linux.
+docs/evidence/v1-*/**/*.json text eol=lf

@@ -1,0 +1,208 @@
+Scope: all 4 workspace projects
+✓ Lockfile passes supply-chain policies (verified 4d ago)
+Lockfile is up to date, resolution step is skipped
+Progress: resolved 0, reused 1, downloaded 0, added 0
+Packages: -84
+--------------------------------------------------------------------------------
+Progress: resolved 0, reused 84, downloaded 0, added 0, done
+
+Done in 1.9s using pnpm v11.25.0
+[WebServer] (node:6908) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+[WebServer] $ node scripts/prepare-map-worker.mjs && expo start --web "--host" "localhost" "--port" "8388" "--max-workers" "2"
+
+[WebServer] (node:20444) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+[WebServer] (node:20444) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/JAC/Documents/projects/prometheus-parkey/apps/mobile/src/discovery/pilot-config.ts is not specified and it doesn't parse as CommonJS.
+[WebServer] Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+[WebServer] To eliminate this warning, add "type": "module" to \\?\C:\Users\JAC\Documents\projects\prometheus-parkey\apps\mobile\package.json.
+
+
+Running 30 tests using 2 workers
+
+(node:27276) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+(node:14656) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/30] [desktop-chromium] › e2e\navigation-races.spec.ts:81:1 › Back cancels a delayed external entrance refresh even when the same parking stays selected
+[2/30] [desktop-chromium] › e2e\navigation-races.spec.ts:145:1 › late GPS after Back cannot start or rearm navigation, and a new explicit request still works
+[WebServer] Detected multiple renderers concurrently rendering the same context provider. This is currently unsupported.
+
+[WebServer] Detected multiple renderers concurrently rendering the same context provider. This is currently unsupported.
+
+[WebServer] Detected multiple renderers concurrently rendering the same context provider. This is currently unsupported.
+
+  1) [desktop-chromium] › e2e\navigation-races.spec.ts:81:1 › Back cancels a delayed external entrance refresh even when the same parking stays selected 
+
+    Test timeout of 60000ms exceeded.
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByTestId('discovery-map-ready')
+    Expected: visible
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByTestId('discovery-map-ready') with timeout 30000ms
+      - waiting for getByTestId('discovery-map-ready')
+      - Test timeout of 60000ms exceeded.
+
+
+       at fixtures.ts:175
+
+      173 |   await page.goto(path)
+      174 |   // Expo serves a compilation shell before the map module is ready on cold CI.
+    > 175 |   await expect(page.getByTestId('discovery-map-ready')).toBeVisible({
+          |                                                         ^
+      176 |     timeout: 30_000,
+      177 |   })
+      178 | }
+        at openMap (C:\Users\JAC\Documents\projects\prometheus-parkey\e2e\fixtures.ts:175:57)
+        at selectParkingFromMap (C:\Users\JAC\Documents\projects\prometheus-parkey\e2e\navigation-races.spec.ts:45:3)
+        at C:\Users\JAC\Documents\projects\prometheus-parkey\e2e\navigation-races.spec.ts:93:3
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    output\playwright\test-results\navigation-races-Back-canc-269a8-same-parking-stays-selected-desktop-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: output\playwright\test-results\navigation-races-Back-canc-269a8-same-parking-stays-selected-desktop-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    output\playwright\test-results\navigation-races-Back-canc-269a8-same-parking-stays-selected-desktop-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace output\playwright\test-results\navigation-races-Back-canc-269a8-same-parking-stays-selected-desktop-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  2) [desktop-chromium] › e2e\navigation-races.spec.ts:145:1 › late GPS after Back cannot start or rearm navigation, and a new explicit request still works 
+
+    Test timeout of 60000ms exceeded.
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByTestId('discovery-map-ready')
+    Expected: visible
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByTestId('discovery-map-ready') with timeout 30000ms
+      - waiting for getByTestId('discovery-map-ready')
+      - Test timeout of 60000ms exceeded.
+
+
+       at fixtures.ts:175
+
+      173 |   await page.goto(path)
+      174 |   // Expo serves a compilation shell before the map module is ready on cold CI.
+    > 175 |   await expect(page.getByTestId('discovery-map-ready')).toBeVisible({
+          |                                                         ^
+      176 |     timeout: 30_000,
+      177 |   })
+      178 | }
+        at openMap (C:\Users\JAC\Documents\projects\prometheus-parkey\e2e\fixtures.ts:175:57)
+        at selectParkingFromMap (C:\Users\JAC\Documents\projects\prometheus-parkey\e2e\navigation-races.spec.ts:45:3)
+        at C:\Users\JAC\Documents\projects\prometheus-parkey\e2e\navigation-races.spec.ts:150:3
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    output\playwright\test-results\navigation-races-late-GPS--3132e-xplicit-request-still-works-desktop-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: output\playwright\test-results\navigation-races-late-GPS--3132e-xplicit-request-still-works-desktop-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    output\playwright\test-results\navigation-races-late-GPS--3132e-xplicit-request-still-works-desktop-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace output\playwright\test-results\navigation-races-late-GPS--3132e-xplicit-request-still-works-desktop-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:3712) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[3/30] [desktop-chromium] › e2e\navigation-races.spec.ts:214:1 › closing a selected spot while persisted consent is pending cannot authorize a fresh route
+(node:16100) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[4/30] [desktop-chromium] › e2e\navigation-races.spec.ts:281:1 › external Maps uses the newly approved entrance instead of the earlier route destination
+[5/30] [desktop-chromium] › e2e\navigation-races.spec.ts:325:1 › Back during a pending consent save prevents the completed write from starting directions
+(node:19360) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[6/30] [desktop-chromium] › e2e\navigation-races.spec.ts:81:1 › Back cancels a delayed external entrance refresh even when the same parking stays selected
+[7/30] [desktop-chromium] › e2e\navigation-races.spec.ts:214:1 › closing a selected spot while persisted consent is pending cannot authorize a fresh route
+(node:9772) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[8/30] [desktop-chromium] › e2e\navigation-races.spec.ts:145:1 › late GPS after Back cannot start or rearm navigation, and a new explicit request still works
+[9/30] [desktop-chromium] › e2e\navigation-races.spec.ts:281:1 › external Maps uses the newly approved entrance instead of the earlier route destination
+[10/30] [desktop-chromium] › e2e\navigation-races.spec.ts:325:1 › Back during a pending consent save prevents the completed write from starting directions
+(node:25364) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+(node:22352) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[11/30] [desktop-chromium] › e2e\navigation-races.spec.ts:81:1 › Back cancels a delayed external entrance refresh even when the same parking stays selected
+[12/30] [desktop-chromium] › e2e\navigation-races.spec.ts:145:1 › late GPS after Back cannot start or rearm navigation, and a new explicit request still works
+[13/30] [desktop-chromium] › e2e\navigation-races.spec.ts:214:1 › closing a selected spot while persisted consent is pending cannot authorize a fresh route
+[14/30] [desktop-chromium] › e2e\navigation-races.spec.ts:281:1 › external Maps uses the newly approved entrance instead of the earlier route destination
+[15/30] [desktop-chromium] › e2e\navigation-races.spec.ts:325:1 › Back during a pending consent save prevents the completed write from starting directions
+(node:24776) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[16/30] [mobile-chromium] › e2e\navigation-races.spec.ts:81:1 › Back cancels a delayed external entrance refresh even when the same parking stays selected
+[17/30] [mobile-chromium] › e2e\navigation-races.spec.ts:145:1 › late GPS after Back cannot start or rearm navigation, and a new explicit request still works
+(node:24868) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[18/30] [mobile-chromium] › e2e\navigation-races.spec.ts:214:1 › closing a selected spot while persisted consent is pending cannot authorize a fresh route
+[19/30] [mobile-chromium] › e2e\navigation-races.spec.ts:281:1 › external Maps uses the newly approved entrance instead of the earlier route destination
+[20/30] [mobile-chromium] › e2e\navigation-races.spec.ts:325:1 › Back during a pending consent save prevents the completed write from starting directions
+(node:1508) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+(node:10716) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[21/30] [mobile-chromium] › e2e\navigation-races.spec.ts:81:1 › Back cancels a delayed external entrance refresh even when the same parking stays selected
+[22/30] [mobile-chromium] › e2e\navigation-races.spec.ts:145:1 › late GPS after Back cannot start or rearm navigation, and a new explicit request still works
+[23/30] [mobile-chromium] › e2e\navigation-races.spec.ts:214:1 › closing a selected spot while persisted consent is pending cannot authorize a fresh route
+[24/30] [mobile-chromium] › e2e\navigation-races.spec.ts:281:1 › external Maps uses the newly approved entrance instead of the earlier route destination
+[25/30] [mobile-chromium] › e2e\navigation-races.spec.ts:325:1 › Back during a pending consent save prevents the completed write from starting directions
+(node:12920) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[26/30] [mobile-chromium] › e2e\navigation-races.spec.ts:81:1 › Back cancels a delayed external entrance refresh even when the same parking stays selected
+(node:17512) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[27/30] [mobile-chromium] › e2e\navigation-races.spec.ts:214:1 › closing a selected spot while persisted consent is pending cannot authorize a fresh route
+[28/30] [mobile-chromium] › e2e\navigation-races.spec.ts:145:1 › late GPS after Back cannot start or rearm navigation, and a new explicit request still works
+[29/30] [mobile-chromium] › e2e\navigation-races.spec.ts:281:1 › external Maps uses the newly approved entrance instead of the earlier route destination
+[30/30] [mobile-chromium] › e2e\navigation-races.spec.ts:325:1 › Back during a pending consent save prevents the completed write from starting directions
+  2 failed
+    [desktop-chromium] › e2e\navigation-races.spec.ts:81:1 › Back cancels a delayed external entrance refresh even when the same parking stays selected 
+    [desktop-chromium] › e2e\navigation-races.spec.ts:145:1 › late GPS after Back cannot start or rearm navigation, and a new explicit request still works 
+  28 passed (4.7m)

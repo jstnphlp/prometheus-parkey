@@ -1,0 +1,30 @@
+{
+  "source_commit": "c38f1302210498625f0f7fc2b7ff1da13578085a",
+  "apk_sha256": "ec9f3f374d90465973fdca148580c9b527ab23bb95b1bb16652cc33639c0d08f",
+  "apk_bytes": 49662002,
+  "local_test_signing": true,
+  "native_build_variant": "release",
+  "debuggable": false,
+  "allow_backup": "false",
+  "predictive_back_callback": "false",
+  "permissions": [
+    "android.permission.ACCESS_COARSE_LOCATION",
+    "android.permission.ACCESS_FINE_LOCATION",
+    "android.permission.INTERNET",
+    "android.permission.READ_EXTERNAL_STORAGE",
+    "android.permission.VIBRATE",
+    "android.permission.ACCESS_NETWORK_STATE",
+    "android.permission.ACCESS_WIFI_STATE",
+    "com.parkey.discovery.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+  ],
+  "sentry_auto_init": ["false"],
+  "js_asset": "assets/index.android.bundle",
+  "js_sha256": "280c389a6ed004ccaab8771b4088abac3b9a3c5c38d3d5faee1d465ee521a78f",
+  "isolated_qa_entry_absent": true,
+  "synthetic_image_absent": true,
+  "private_research_package_absent": true,
+  "service_role_marker_absent": true,
+  "not_production_signed": true,
+  "unavailable_search_message_present": true,
+  "old_photon_transmission_claim_absent": true
+}

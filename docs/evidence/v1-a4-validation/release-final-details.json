@@ -1,0 +1,262 @@
+[
+  {
+    "window-title": "",
+    "type": "SYSTEM",
+    "layer": 1,
+    "bounds": "[0,0][720,49]",
+    "content": [
+      {
+        "class": "android.widget.TextView",
+        "resource-id": "com.android.systemui:id/clock",
+        "text": "1:25",
+        "content-desc": "1:25 PM",
+        "bounds": "[47,10][116,39]",
+        "center": "[81,24]"
+      },
+      {
+        "class": "android.widget.ImageView",
+        "content-desc": "Security \u0026 privacy notification: Set a screen lock",
+        "bounds": "[116,1][155,49]",
+        "center": "[135,25]"
+      },
+      {
+        "class": "android.widget.ImageView",
+        "content-desc": "Android System notification: Serial console enabled",
+        "bounds": "[155,1][194,49]",
+        "center": "[174,25]"
+      },
+      {
+        "class": "android.widget.ImageView",
+        "resource-id": "com.android.systemui:id/wifi_signal",
+        "content-desc": "Wifi signal full.",
+        "bounds": "[582,11][608,37]",
+        "center": "[595,24]"
+      },
+      {
+        "class": "android.widget.FrameLayout",
+        "resource-id": "com.android.systemui:id/mobile_combo",
+        "content-desc": "Phone signal full.",
+        "bounds": "[608,5][634,44]",
+        "center": "[621,24]"
+      },
+      {
+        "class": "android.widget.LinearLayout",
+        "resource-id": "com.android.systemui:id/battery",
+        "content-desc": "Battery charging, 100 percent.",
+        "bounds": "[645,13][659,36]",
+        "center": "[652,24]"
+      }
+    ]
+  },
+  {
+    "window-title": "Parkey",
+    "type": "APPLICATION",
+    "active": true,
+    "focused": true,
+    "layer": 0,
+    "bounds": "[0,0][720,1600]",
+    "content": [
+      {
+        "class": "android.widget.FrameLayout",
+        "content-desc": "Showing a Map created with MapLibre. Scroll by dragging two fingers. Zoom by pinching two fingers.",
+        "interactions": ["CLICKABLE", "LONG_CLICKABLE", "FOCUSABLE"],
+        "bounds": "[0,0][720,1600]",
+        "center": "[360,800]"
+      },
+      {
+        "class": "android.widget.Button",
+        "content-desc": "Map data sources and attribution",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "bounds": "[28,261][105,338]",
+        "center": "[66,299]"
+      },
+      {
+        "class": "android.widget.Button",
+        "resource-id": "parking-sheet-handle",
+        "content-desc": "Parking sheet: full. Swipe down to dismiss. Activate to collapse",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "bounds": "[255,359][465,415]",
+        "center": "[360,387]"
+      },
+      {
+        "class": "android.widget.ScrollView",
+        "resource-id": "parking-details-expanded",
+        "interactions": ["SCROLLABLE", "FOCUSABLE"],
+        "bounds": "[0,415][720,1558]",
+        "center": "[360,986]",
+        "children": [
+          {
+            "class": "android.view.View",
+            "resource-id": "parking-detail-title",
+            "text": "Parking lot",
+            "bounds": "[28,415][496,457]",
+            "center": "[262,436]"
+          },
+          {
+            "class": "android.widget.TextView",
+            "text": "140 m",
+            "bounds": "[28,457][496,489]",
+            "center": "[262,473]"
+          },
+          {
+            "class": "android.widget.TextView",
+            "text": "Fee unknown",
+            "bounds": "[517,415][692,462]",
+            "center": "[604,438]"
+          },
+          {
+            "class": "android.widget.TextView",
+            "resource-id": "parking-verification",
+            "text": "Not field verified. No live availability",
+            "bounds": "[28,513][692,545]",
+            "center": "[360,529]"
+          },
+          {
+            "class": "android.widget.TextView",
+            "text": "Entrance not mapped. Navigation requires reviewed entrance and visitor access.",
+            "bounds": "[28,570][692,634]",
+            "center": "[360,602]"
+          },
+          {
+            "class": "android.view.View",
+            "text": "Customers only",
+            "bounds": "[28,658][692,732]",
+            "center": "[360,695]"
+          },
+          {
+            "class": "android.widget.Button",
+            "resource-id": "parking-get-directions",
+            "content-desc": "Go",
+            "interactions": ["CLICKABLE", "FOCUSABLE"],
+            "bounds": "[28,757][573,855]",
+            "center": "[300,806]",
+            "children": [
+              {
+                "class": "android.widget.TextView",
+                "text": "Go",
+                "bounds": "[254,785][294,827]",
+                "center": "[274,806]"
+              }
+            ]
+          },
+          {
+            "class": "android.widget.TextView",
+            "resource-id": "parking-navigation-warning",
+            "text": "Navigation requires a confirmed entrance, visitor access and operator authorization.",
+            "bounds": "[28,855][573,919]",
+            "center": "[300,887]"
+          },
+          {
+            "class": "android.widget.Button",
+            "content-desc": "Remove from favorites",
+            "interactions": ["CLICKABLE", "FOCUSABLE"],
+            "state": ["SELECTED"],
+            "bounds": "[594,789][692,887]",
+            "center": "[643,838]"
+          },
+          {
+            "class": "android.widget.HorizontalScrollView",
+            "interactions": ["SCROLLABLE", "FOCUSABLE"],
+            "bounds": "[0,944][720,1113]",
+            "center": "[360,1028]",
+            "children": [
+              {
+                "class": "android.widget.TextView",
+                "text": "Hours",
+                "bounds": "[105,972][166,999]",
+                "center": "[135,985]"
+              },
+              {
+                "class": "android.widget.TextView",
+                "text": "Not recorded",
+                "bounds": "[52,1014][234,1092]",
+                "center": "[143,1053]"
+              },
+              {
+                "class": "android.widget.TextView",
+                "text": "Fee",
+                "bounds": "[354,972][389,999]",
+                "center": "[371,985]"
+              },
+              {
+                "class": "android.widget.TextView",
+                "text": "Fee unknown",
+                "bounds": "[301,1014][483,1092]",
+                "center": "[392,1053]"
+              },
+              {
+                "class": "android.widget.TextView",
+                "text": "Access",
+                "bounds": "[602,972][670,999]",
+                "center": "[636,985]"
+              },
+              {
+                "class": "android.widget.TextView",
+                "text": "customers",
+                "bounds": "[549,1014][720,1053]",
+                "center": "[634,1033]"
+              }
+            ]
+          },
+          {
+            "class": "android.widget.TextView",
+            "text": "No photos yet",
+            "bounds": "[165,1165][526,1204]",
+            "center": "[345,1184]"
+          },
+          {
+            "class": "android.widget.TextView",
+            "text": "Save a photo in a private device draft",
+            "bounds": "[165,1204][526,1268]",
+            "center": "[345,1236]"
+          },
+          {
+            "class": "android.widget.Button",
+            "content-desc": "Add a parking photo",
+            "interactions": ["CLICKABLE", "FOCUSABLE"],
+            "bounds": "[550,1178][664,1255]",
+            "center": "[607,1216]",
+            "children": [
+              {
+                "class": "android.widget.TextView",
+                "text": "Add",
+                "bounds": "[578,1197][636,1236]",
+                "center": "[607,1216]"
+              }
+            ]
+          },
+          {
+            "class": "android.widget.TextView",
+            "text": "Source",
+            "bounds": "[119,1346][664,1385]",
+            "center": "[391,1365]"
+          },
+          {
+            "class": "android.widget.TextView",
+            "text": "© OpenStreetMap contributors · pilot snapshot · Not field verified",
+            "bounds": "[119,1385][664,1449]",
+            "center": "[391,1417]"
+          },
+          {
+            "class": "android.widget.TextView",
+            "text": "Snapshot imported Nov 2, 2026",
+            "bounds": "[119,1449][664,1481]",
+            "center": "[391,1465]"
+          },
+          {
+            "class": "android.widget.TextView",
+            "text": "Source dates do not confirm current fees, hours or access.",
+            "bounds": "[119,1481][664,1545]",
+            "center": "[391,1513]"
+          },
+          {
+            "class": "android.widget.TextView",
+            "text": "OSM record last edited over a year ago. Current conditions are unconfirmed.",
+            "bounds": "[119,1545][664,1558]",
+            "center": "[391,1551]"
+          }
+        ]
+      }
+    ]
+  }
+]

@@ -1,37 +1,127 @@
-﻿# A4 release-quality validation
+# A4 release-quality validation
 
-**IN PROGRESS: no A4 acceptance or production approval yet.** Branch `codex/v1-a4-release-validation`, based on A3 `e93656a` / implementation `4388ada`. Depends on unmerged draft PRs #23-#26. The canonical tracker remains authoritative.
+**Engineering verification complete; final CI follow-up in progress.** Branch
+`codex/v1-a4-release-validation`, [draft PR #27](https://github.com/jstnphlp/prometheus-parkey/pull/27).
+Application source `c38f130`, native compatibility configuration `be2366d`.
+Depends on unmerged A0-A3 PRs #23-#26. No production approval is granted.
 
-## Verified so far
+## Implemented during validation
 
-| Check                                | Actual result                                                                                        |
-| ------------------------------------ | ---------------------------------------------------------------------------------------------------- |
-| Workspace TypeScript                 | Passed: shared types, mobile, web, browser tests and Edge Functions                                  |
-| Workspace ESLint                     | Passed, zero warnings                                                                                |
-| Workspace Prettier                   | Passed after normalizing seven A3 layout JSON files and rebinding their evidence hashes in `e93656a` |
-| Main JS test group                   | 246 passed: 242 mobile plus four web tests                                                           |
-| Operations/Edge/web moderation group | 169 passed, one explicitly conditional local-DB test skipped                                         |
-| Python groups                        | 23 passed, 15 optional environment-dependent tests skipped                                           |
-| Production web build                 | Passed                                                                                               |
-| Full legacy browser E2E              | 62 passed, desktop and mobile Chromium                                                               |
-| Full pilot browser E2E               | 36 passed on the same application source in A3; see A3 evidence                                      |
-| Android production JS/assets export  | Passed with dotenv disabled and release guards enabled; not a signed/native/store release            |
-| Native emulator release variant      | Building locally; not yet verified                                                                   |
+- Reproduced Android Back exiting selected details in a standalone API35 release
+  APK. RN0.88's predictive dispatcher workaround requires runtime/target API36+;
+  API35 skipped it. Disabled predictive Back through Expo configuration, rebuilt
+  and verified details return to discovery. No framework upgrade or native patch.
+- Disabled Android backup for device-local drafts/saved state and removed unused
+  overlay/external-write permissions. Background location, camera and audio
+  recording remain blocked. Foreground location and image-picker read access remain.
+- Missing release search configuration now shows an honest unavailable state with
+  Back to map. It cannot send queries/coordinates or claim transmission to Photon.
+  Configured-provider error/retry and search history remain verified.
+- Integrated the independently reviewed A3 cancellation fixes. Late consent,
+  approval and GPS results cannot restart canceled directions; refreshed entrances
+  update the navigation target. No research-only release controls were enabled.
 
-Actual logs are in [the evidence directory](evidence/v1-a4-validation). Local Docker is unavailable; the disposable GitHub database job on the unchanged A3 database tree passed, including reviewed SQL/event compatibility. No hosted database was touched. Final PR-head CI results will be recorded before acceptance.
+## Executed verification
 
-## Release configuration and scope
+| Check                                    | Actual result                                                                                                                                                                                             |
+| ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Workspace TypeScript                     | Passed: shared types, mobile, web, E2E and Edge Functions                                                                                                                                                 |
+| ESLint / Prettier / production web build | Passed                                                                                                                                                                                                    |
+| Final main JS tests                      | 247 passed: 243 mobile plus four web                                                                                                                                                                      |
+| Operations/Edge/moderation tests         | 169 passed; one conditional local-DB test skipped locally                                                                                                                                                 |
+| Python tests                             | 23 passed; 15 existing conditional tests skipped, not counted as passed                                                                                                                                   |
+| Browser integration                      | 72 legacy and36 pilot cases completed successfully in source CI; initial legacy run included two retries, investigated below                                                                              |
+| Final configured-search regression       | Four passed, desktop/mobile                                                                                                                                                                               |
+| Navigation fixture stability             | 20 passed with two workers, repeat2 and retries0 after setup correction                                                                                                                                   |
+| Supabase SQL                             | Disposable CI PostgreSQL tests passed; no production database touched                                                                                                                                     |
+| Android local release builds             | Passed, x86_64; original21m50s, Back fix7m37s, final search repack1m14s. These are build times, not startup metrics                                                                                       |
+| Native API35 acceptance                  | Back, details/restrictions, missing photos, filters, saved/car persistence, permission denial/recovery, offline/reconnection, external Maps, TalkBack, larger text and controlled-crash recovery verified |
 
-The Android Hermes export excludes the isolated native QA entry and its synthetic image URL. It contains no `service_role` string. This is a bounded artifact inspection, not proof that every conceivable secret is absent. Git tracks only four `.env.example` templates and no actual `.env`, credential JSON, PEM or JKS files. No private source-data package was added to app imports. RLS/publication boundaries retain their unit/browser/SQL checks.
+Implementation `c38f130` passed validate/database/E2E in both
+[push run42624495305](https://github.com/jstnphlp/prometheus-parkey/actions/runs/42624495305)
+and [PR run42624501796](https://github.com/jstnphlp/prometheus-parkey/actions/runs/42624501796).
+Local Docker is unavailable; actual SQL execution is CI evidence, not a local claim.
+The later test-fixture follow-up keeps every safety assertion and receives new CI.
 
-The local benchmark marker remains in bytecode, but production defaults and explicit release guards prevent clock reads/log output; automated tests exercise this. No claim of bytecode-string removal is made. Analytics, Plausible and Sentry configuration remain locked off. Track D backend/instrumentation remains blocked on its canonical D2 gate.
+## Native artifact and evidence
 
-The export uses the default offline-safe release configuration without provider-approval overrides. Configured production search/routing, real parking approvals, licensed photo content, provider/privacy approval, signing/store setup and external PR review remain production requirements. No reservation, payment, QR, inventory, vacancy guarantee or admin-console change belongs to this work.
+Windows11; `Parkey_A0_API35`, Android15/API35/google APIs x86_64, emulator-5556,
+host NVIDIA RTX2050 GPU/WHPX, two cores/2048MiB. Physical display1080x2400 is
+intentionally overridden to720x1600/280dpi. No physical Android or iOS was tested.
 
-## Native work still pending
+Final version0.1.0/code2 APK is a **non-debuggable release variant signed with the
+local development key**, not a production-signed/store build. Archived and pulled
+installed APKs match SHA256
+`ec9f3f374d90465973fdca148580c9b527ab23bb95b1bb16652cc33639c0d08f`.
+Local artifact: `output/ncr/v1-a4/app-release-final.apk` (excluded from Git).
+No deployment or hosted-resource change occurred.
 
-Initial real-source testing confirmed readable map labels, customers-only restrictions, unverified entrance/unknown facts, photo absence and a favorite save. While returning to the app, a native fatal error occurred in React Native development-inspector `CxxInspectorPackagerConnection.didReceiveMessage`; the actual stack is retained. Android Back also appeared to exit from a detail screen and requires reproduction without development tooling before it can pass. No code change is justified by that observation alone.
+The evidence directory contains before/after Back screenshots, final native
+layouts/screenshots, APK/manifest audits, installed identity and test logs.
+Native source is `c38f130`; the OS permission prompt, GPS-settings decline,
+source-credit view and initial filter/accessibility diagnostics were first
+verified on `be2366d`, whose affected components are unchanged in the final APK.
+Final Back, search, denied permission, offline/reconnection, saved state, Maps
+handoff, TalkBack and crash recovery were checked again on the final APK.
 
-A local x86_64 release variant is being built with one Gradle worker, default guards, dotenv disabled and the generated local debug signing key. The emulator was stopped to bound RAM use. This will not establish production signing or a store-ready artifact. Native offline/reconnection, permission denial, saved-state restart, Back handling, TalkBack focus, larger fonts and crash/recovery results will be added after execution.
+The real archive remains unverified and its parking Go controls remain blocked.
+Positive reviewed parking-navigation cases use explicit browser/native-component
+QA fixtures; no real operator/entrance approval or photograph was invented.
+The approved photo catalog remains empty. The native positive external handoff
+used the explicitly saved simulated car point and launched Google Maps.
 
-Physical Android performance/smoke, iOS, field/operator review, actual approved photos and production approvals remain separate release blockers. Emulator measurements do not represent physical devices. A4 stays unaccepted until its executable gates pass.
+Both emulator radios were disabled for offline testing, then restored; cached map
+and saved/car reminders remained usable and the offline banner cleared. Android's
+actual location prompt was denied; the GPS-enable prompt was declined separately.
+The app retained manual browsing and used map-center distance labels until a fix
+was available. Saved/car data survived APK replacement, force-stop and an explicit
+`am crash` shell-induced crash. Its expected fatal stack is retained separately;
+the post-recovery AndroidRuntime error stream is empty.
+
+TalkBack was actually bound with spoken feedback and touch exploration enabled.
+Emulator kernel mouse input moved focus to controls/cards and activated Saved at
+1.3x font scale. Ordinary ADB pointer injection bypassed touch exploration; it was
+not counted as a screen-reader pass. Hardware coordinates account for the1.5x
+physical/override scale. TalkBack's own notification prompt was dismissed before
+validating Parkey. Audible output quality, exhaustive human usability and VoiceOver
+remain unverified. Font scale1.0, TalkBack off, granted location and online radios
+were restored afterward.
+
+## Failures investigated, not hidden
+
+Initial CI completed with70 direct legacy passes plus two retry recoveries.
+Both were new race-test setup issues: a late CDP response-body read after a request
+was canceled, and assuming one Back from a hydrated deep link always removed
+selection. Fixtures now serve an explicit validated synthetic record and select
+parking through the actual map UI, preserving all route/handoff/privacy assertions.
+The final warm-compiler run passed20 executions with two workers and zero retries.
+The retained initial standalone stress run had28 passes and two cold development
+compiler timeouts at the Bundling shell, before map/race assertions. No app timeout
+or assertion was increased. This is a Windows development-tool startup limitation,
+not a production cold-start benchmark or an ignored consumer failure.
+
+A development-client resume/manifest-switch experiment also hit RN's native
+inspector WebSocket exception. Force-stop before changing manifests avoids that
+setup failure. The standalone release acceptance has no development inspector;
+this does not claim the upstream development-client defect is fixed.
+
+## Publication, privacy and production blockers
+
+The actual release manifest has backup/predictive callbacks disabled and excludes
+background location, camera, recording, overlay and external-write permissions.
+Sentry auto-init is false. The embedded JS excludes the isolated QA entry, its
+synthetic image URL, private research-package paths and service-role markers.
+These are bounded artifact checks, not an exhaustive secret-audit claim. Git tracks
+only four environment templates, no actual environment or signing credential files.
+The benchmark string remains in bytecode but release guards prevent emission and
+are tested. Analytics, Plausible and Sentry collection remain locked off; D3 remains
+blocked on the canonical D2 gate. No admin-repository work was performed.
+
+**Production release remains blocked:** physical Android performance/smoke and
+human accessibility review, iOS/VoiceOver verification, external PR review,
+approved production provider/privacy configuration, production signing/store
+validation and required field/operator publication evidence. This test APK uses
+known default configuration with no production search/backend credentials supplied;
+search's unavailable state is intentional. Emulator results establish no physical
+performance or parking availability guarantee. OSM/Overture attribution and
+RLS/publication protections remain intact. V1 remains discovery-only.

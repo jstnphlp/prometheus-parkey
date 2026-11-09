@@ -1,0 +1,38 @@
+
+pnpm.cmd : [WebServer] (node:15256) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+At line:2 char:89
++ ... final.log'; pnpm.cmd exec playwright test e2e/search.spec.ts --worker ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ([WebServer] (no... env being set.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+[WebServer] $ node scripts/prepare-map-worker.mjs && expo start --web "--host" "localhost" "--port" "8388" 
+"--max-workers" "2"
+[WebServer] (node:20288) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+[WebServer] (node:20288) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of 
+file:///C:/Users/JAC/Documents/projects/prometheus-parkey/apps/mobile/src/discovery/pilot-config.ts is not specified 
+and it doesn't parse as CommonJS.
+[WebServer] Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+[WebServer] To eliminate this warning, add "type": "module" to 
+\\?\C:\Users\JAC\Documents\projects\prometheus-parkey\apps\mobile\package.json.
+
+
+Running 4 tests using 1 worker
+
+
+
+(node:25160) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1/4] [desktop-chromium] › e2e\search.spec.ts:3:1 › search selects a destination, persists recents, and supports clear and undo
+[2/4] [desktop-chromium] › e2e\search.spec.ts:49:1 › search reports no matches and recovers from a provider error
+
+
+(node:13460) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[3/4] [mobile-chromium] › e2e\search.spec.ts:3:1 › search selects a destination, persists recents, and supports clear and undo
+[4/4] [mobile-chromium] › e2e\search.spec.ts:49:1 › search reports no matches and recovers from a provider error
+  4 passed (50.2s)

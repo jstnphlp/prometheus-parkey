@@ -1,0 +1,164 @@
+[
+  {
+    "window-title": "",
+    "type": "SYSTEM",
+    "layer": 1,
+    "bounds": "[0,0][720,49]",
+    "content": [
+      {
+        "class": "android.widget.TextView",
+        "resource-id": "com.android.systemui:id/clock",
+        "text": "1:02",
+        "content-desc": "1:02 PM",
+        "bounds": "[47,10][116,39]",
+        "center": "[81,24]"
+      },
+      {
+        "class": "android.widget.ImageView",
+        "content-desc": "Security \u0026 privacy notification: Set a screen lock",
+        "bounds": "[116,1][155,49]",
+        "center": "[135,25]"
+      },
+      {
+        "class": "android.widget.ImageView",
+        "content-desc": "Android System notification: Serial console enabled",
+        "bounds": "[155,1][194,49]",
+        "center": "[174,25]"
+      },
+      {
+        "class": "android.widget.ImageView",
+        "resource-id": "com.android.systemui:id/wifi_signal",
+        "content-desc": "Wifi signal full.",
+        "bounds": "[582,11][608,37]",
+        "center": "[595,24]"
+      },
+      {
+        "class": "android.widget.FrameLayout",
+        "resource-id": "com.android.systemui:id/mobile_combo",
+        "content-desc": "Phone signal full.",
+        "bounds": "[608,5][634,44]",
+        "center": "[621,24]"
+      },
+      {
+        "class": "android.widget.LinearLayout",
+        "resource-id": "com.android.systemui:id/battery",
+        "content-desc": "Battery charging, 100 percent.",
+        "bounds": "[645,13][659,36]",
+        "center": "[652,24]"
+      }
+    ]
+  },
+  {
+    "window-title": "",
+    "type": "APPLICATION",
+    "active": true,
+    "focused": true,
+    "layer": 0,
+    "bounds": "[0,0][720,1600]",
+    "content": [
+      {
+        "class": "android.widget.Button",
+        "content-desc": "Close panel",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "bounds": "[0,0][720,1600]",
+        "center": "[360,800]"
+      },
+      {
+        "class": "android.view.View",
+        "text": "Map information",
+        "bounds": "[42,237][573,279]",
+        "center": "[307,258]"
+      },
+      {
+        "class": "android.widget.Button",
+        "content-desc": "Close Map information",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "bounds": "[594,216][678,300]",
+        "center": "[636,258]"
+      },
+      {
+        "class": "android.widget.ScrollView",
+        "interactions": ["SCROLLABLE", "FOCUSABLE"],
+        "bounds": "[0,342][720,1558]",
+        "center": "[360,950]",
+        "children": [
+          {
+            "class": "android.widget.TextView",
+            "text": "Parking information",
+            "bounds": "[42,342][678,397]",
+            "center": "[360,369]"
+          },
+          {
+            "class": "android.widget.TextView",
+            "text": "Parkey maps parking facilities and street segments. We don’t track vacancies or guarantee parking is permitted.",
+            "bounds": "[42,425][678,548]",
+            "center": "[360,486]"
+          },
+          {
+            "class": "android.widget.TextView",
+            "text": "Lot or garage",
+            "bounds": "[112,585][277,626]",
+            "center": "[194,605]"
+          },
+          {
+            "class": "android.widget.TextView",
+            "text": "Street",
+            "bounds": "[361,585][437,626]",
+            "center": "[399,605]"
+          },
+          {
+            "class": "android.widget.TextView",
+            "text": "Parking data",
+            "bounds": "[42,663][678,702]",
+            "center": "[360,682]"
+          },
+          {
+            "class": "android.widget.TextView",
+            "text": "Coverage varies by area. Source import and OSM edit dates are not field verification dates. Check posted signs and current access when you arrive.",
+            "bounds": "[42,730][678,847]",
+            "center": "[360,788]"
+          },
+          {
+            "class": "android.widget.TextView",
+            "text": "Street parking appears only where a source identifies it. Many streets have no recorded information. Left/right is relative to the line’s drawing direction, not your travel direction.",
+            "bounds": "[42,875][678,1003]",
+            "center": "[360,939]"
+          },
+          {
+            "class": "android.widget.TextView",
+            "text": "Map \u0026 search credits",
+            "bounds": "[42,1060][678,1099]",
+            "center": "[360,1079]"
+          },
+          {
+            "class": "android.widget.TextView",
+            "text": "Basemap: OpenFreeMap / OpenMapTiles. Map, parking, and search data: © OpenStreetMap contributors (ODbL). Renderer: MapLibre. Destination search: Photon. Routing: an OSRM-compatible service.",
+            "bounds": "[42,1127][678,1283]",
+            "center": "[360,1205]"
+          },
+          {
+            "class": "android.widget.TextView",
+            "text": "Requesting directions shares your start and destination with the routing provider. Travel estimates exclude live traffic. Recalculate manually when your starting point changes.",
+            "bounds": "[42,1311][678,1467]",
+            "center": "[360,1389]"
+          },
+          {
+            "class": "android.view.View",
+            "content-desc": "OpenStreetMap copyright \u0026 ODbL ↗",
+            "interactions": ["CLICKABLE", "FOCUSABLE"],
+            "bounds": "[42,1496][678,1558]",
+            "center": "[360,1527]",
+            "children": [
+              {
+                "class": "android.widget.TextView",
+                "text": "OpenStreetMap copyright \u0026 ODbL ↗",
+                "bounds": "[42,1514][678,1555]",
+                "center": "[360,1534]"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

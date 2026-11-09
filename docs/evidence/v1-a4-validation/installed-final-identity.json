@@ -1,0 +1,11 @@
+{
+  "recorded_utc": "2026-11-09T13:27:32.764104+00:00",
+  "source_commit": "c38f1302210498625f0f7fc2b7ff1da13578085a",
+  "package": "com.parkey.discovery",
+  "installed_apk_sha256": "ec9f3f374d90465973fdca148580c9b527ab23bb95b1bb16652cc33639c0d08f",
+  "archive_apk_sha256": "ec9f3f374d90465973fdca148580c9b527ab23bb95b1bb16652cc33639c0d08f",
+  "equal": true,
+  "api": "35",
+  "abi": "x86_64",
+  "avd": "Parkey_A0_API35"
+}

@@ -1,0 +1,6 @@
+Application source c38f130; run42624495305 completed successfully with retry recovery.
+e2e	Run pnpm test:e2e	2026-11-09T13:27:20.6941256Z   2 flaky
+e2e	Run pnpm test:e2e	2026-11-09T13:27:20.6942406Z     [desktop-chromium] › e2e/navigation-races.spec.ts:172:1 › closing a selected spot while persisted consent is pending cannot authorize a fresh route 
+e2e	Run pnpm test:e2e	2026-11-09T13:27:20.6943779Z     [desktop-chromium] › e2e/navigation-races.spec.ts:239:1 › external Maps uses the newly approved entrance instead of the earlier route destination 
+e2e	Run pnpm test:e2e	2026-11-09T13:27:20.6944302Z   70 passed (6.9m)
+e2e	Run pnpm test:e2e	2026-11-09T13:29:17.2419755Z   36 passed (1.9m)

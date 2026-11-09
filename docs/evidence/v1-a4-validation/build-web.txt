@@ -1,7 +1,7 @@
 pnpm.cmd : $ pnpm --filter @parkey/web build
 At line:2 char:1
-+ pnpm.cmd build:web *> output/ncr/a4-build-web.log; $checkExit=$LASTEX ...
-+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++ pnpm.cmd build:web *> output/ncr/a4-final-build-web.log; $checkExit=$ ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     + CategoryInfo          : NotSpecified: ($ pnpm --filter @parkey/web build:String) [], RemoteException
     + FullyQualifiedErrorId : NativeCommandError
  
@@ -20,7 +20,7 @@ dist/client/assets/about-6p8a85ni.js                   1.33 kB │ gzip:   0.68 
 dist/client/assets/routes-D6AoA7uq.js                  9.06 kB │ gzip:   2.92 kB
 dist/client/assets/index-m1oo32AQ.js                 341.21 kB │ gzip: 110.24 kB
 
-✓ built in 516ms
+✓ built in 467ms
 vite v8.3.5 building ssr environment for production...
 transforming...
 ✓ 57 modules transformed.
@@ -34,4 +34,4 @@ dist/server/assets/router-CBjKmJHF.js                       2.44 kB │ gzip:  1
 dist/server/assets/routes-DA8hgEmx.js                      16.34 kB │ gzip:  4.05 kB
 dist/server/server.js                                      92.52 kB │ gzip: 23.43 kB
 
-✓ built in 249ms
+✓ built in 355ms

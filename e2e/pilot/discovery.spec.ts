@@ -83,11 +83,17 @@ test('destination ranking and price filters preserve unknown fees and original t
   const near = {
     ...parking('Manila', 'public'),
     id: 'near-free',
+    sourceObservationId: 'distinct-near-source',
     fees: 'No fee',
   }
   const paid = {
     ...parking('Manila', 'public'),
     id: 'far-paid',
+    sourceObservationId: 'distinct-paid-source',
+    source: {
+      ...parking('Manila', 'public').source,
+      url: 'https://www.openstreetmap.org/node/3',
+    },
     fees: 'PHP 40/hr',
     representativePoint: [120.9765, 14.591] as [number, number],
     geometry: {
@@ -98,6 +104,11 @@ test('destination ranking and price filters preserve unknown fees and original t
   const unknown = {
     ...parking('Manila', 'public'),
     id: 'unknown-fee',
+    sourceObservationId: 'distinct-unknown-source',
+    source: {
+      ...parking('Manila', 'public').source,
+      url: 'https://www.openstreetmap.org/node/4',
+    },
     featureType: 'facility_unspecified' as const,
     representativePoint: [120.9795, 14.591] as [number, number],
     geometry: {
@@ -203,6 +214,125 @@ test('damaged parked-car storage offers recovery without losing public favorites
       { exact: true },
     ),
   ).toBeVisible()
+})
+
+test('public viewport cache survives a failed refresh without retaining navigation authority', async ({
+  page,
+}) => {
+  const approved = {
+    ...parking('Manila', 'public'),
+    navigationApproval: {
+      entrance: [120.9755, 14.591] as [number, number],
+      entranceConfirmed: true,
+      visitorAccessConfirmed: true,
+      operatorAuthorized: true,
+      expiresAt: new Date(Date.now() + 3600000).toISOString(),
+    },
+  }
+  await page.route('**/rest/v1/rpc/discover_pilot_parking', (route) =>
+    route.fulfill({
+      json: envelope('pilot_discovery', 'Manila', 'public', [approved]),
+    }),
+  )
+  await openPilot(page)
+  await openResults(page)
+  await expect(page.getByTestId('pilot-record-qa-Manila')).toBeVisible()
+  await page
+    .getByRole('button', { name: 'Close Manila parking in view', exact: true })
+    .click()
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () =>
+          Object.keys(localStorage).filter((key) =>
+            key.startsWith('parkey.discovery.public-pilot-cache.v1:'),
+          ).length,
+      ),
+    )
+    .toBeGreaterThan(0)
+  const stored = await page.evaluate(() =>
+    Object.entries(localStorage)
+      .filter(([key]) =>
+        key.startsWith('parkey.discovery.public-pilot-cache.v1:'),
+      )
+      .map(([, value]) => value)
+      .join(''),
+  )
+  expect(stored).not.toContain('entranceConfirmed')
+  expect(stored).not.toContain('operatorAuthorized')
+  await page.route('**/rest/v1/rpc/discover_pilot_parking', (route) =>
+    route.abort('failed'),
+  )
+  await page.getByTestId('pilot-refresh').click()
+  await expect(page.getByTestId('pilot-cache-notice')).toContainText(
+    'saved public copy',
+  )
+  await openResults(page)
+  await page.getByTestId('pilot-record-qa-Manila').click()
+  await expect(page.getByTestId('pilot-directions')).toBeDisabled()
+  await expect(
+    page.getByText(/Saved public copies never authorize navigation/),
+  ).toBeVisible()
+})
+
+test('public authorization refusal invalidates cached copies instead of reviving them', async ({
+  page,
+}) => {
+  await openPilot(page)
+  await openResults(page)
+  await expect(page.getByTestId('pilot-record-qa-Manila')).toBeVisible()
+  await page
+    .getByRole('button', { name: 'Close Manila parking in view', exact: true })
+    .click()
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () =>
+          Object.keys(localStorage).filter((key) =>
+            key.startsWith('parkey.discovery.public-pilot-cache.v1:'),
+          ).length,
+      ),
+    )
+    .toBeGreaterThan(0)
+  await page.route('**/rest/v1/rpc/discover_pilot_parking', (route) =>
+    route.fulfill({
+      status: 403,
+      json: { message: 'Synthetic public access revoked' },
+    }),
+  )
+  await page.getByTestId('pilot-refresh').click()
+  await expect(page.getByTestId('pilot-error')).toContainText(
+    /refused|expired/i,
+  )
+  await expect(page.getByTestId('pilot-cache-notice')).toHaveCount(0)
+  await openResults(page)
+  await expect(page.getByTestId('pilot-record-qa-Manila')).toHaveCount(0)
+})
+
+test('going offline closes private research and never writes candidate bodies to public cache', async ({
+  page,
+  context,
+}) => {
+  await openPilot(page)
+  await page.getByTestId('pilot-mode-candidate').click()
+  await page.getByTestId('pilot-reviewer-token').fill(reviewerToken)
+  await page.getByTestId('pilot-reviewer-connect').click()
+  await openResults(page)
+  await expect(
+    page.getByTestId('pilot-record-qa-candidate-Manila'),
+  ).toBeVisible()
+  await context.setOffline(true)
+  await expect(page.getByTestId('pilot-candidate-warning')).toHaveCount(0)
+  await expect(
+    page.getByTestId('pilot-record-qa-candidate-Manila'),
+  ).toHaveCount(0)
+  await expect(
+    page.getByText(/research session was closed while offline/),
+  ).toBeVisible()
+  const stored = await page.evaluate(() => Object.values(localStorage).join(''))
+  expect(stored).not.toContain('qa-candidate-Manila')
+  expect(stored).not.toContain(reviewerToken)
+  await context.setOffline(false)
 })
 
 test('candidate session is explicit, memory only and cleared before public results', async ({

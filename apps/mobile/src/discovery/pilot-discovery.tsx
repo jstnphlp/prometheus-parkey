@@ -37,6 +37,9 @@ import { pilotSavedKey } from './pilot-saved'
 import { usePilotSaved } from './use-pilot-saved'
 import { useLocalState } from './use-local-state'
 import { useConnectivity } from './use-connectivity'
+import { publicPilotCache } from './pilot-cache-storage'
+import { PUBLIC_PILOT_CACHE_TTL_MS } from './pilot-cache'
+import { samePilotRecords, uniquePilotRecords } from './pilot-performance'
 import NcrMap from './ncr-map'
 import { colors } from './palette'
 import {
@@ -133,6 +136,7 @@ export default function PilotDiscovery({
   const [selection, setSelection] = useState<{
     key: string
     record: PilotParking
+    cachedAt?: number | null
   } | null>(null)
   const [destination, setDestination] = useState<PilotDestination | null>(null)
   const [query, setQuery] = useState('')
@@ -140,6 +144,7 @@ export default function PilotDiscovery({
   const [clock, setClock] = useState(Date.now())
   const [mapFailed, setMapFailed] = useState(false)
   const [navBusy, setNavBusy] = useState(false)
+  const [cachedAt, setCachedAt] = useState<number | null>(null)
   const request = useMemo<PilotRequest>(
     () => ({
       city,
@@ -185,6 +190,22 @@ export default function PilotDiscovery({
   const saved = usePilotSaved()
   const connectivity = useConnectivity()
   const [savedError, setSavedError] = useState('')
+
+  useEffect(() => {
+    if (mode !== 'candidate_research' || !connectivity.offline) return
+    parkingGate.current.cancel()
+    searchGate.current.cancel()
+    navigationGate.current.cancel()
+    setToken(null)
+    setDraftToken('')
+    setMode('public')
+    setSelection(null)
+    setDestination(null)
+    setSheet(null)
+    setAuthMessage(
+      'The research session was closed while offline. Browse public parking or reconnect with an authorized session.',
+    )
+  }, [mode, connectivity.offline])
 
   useEffect(() => {
     if (Platform.OS === 'web') return
@@ -235,6 +256,9 @@ export default function PilotDiscovery({
     navigationGate.current.cancel()
     setNavBusy(false)
     const attempt = requests.begin()
+    let networkSucceeded = false
+    let cacheAllowed = request.mode === 'public'
+    setCachedAt(null)
     cursors.current = new Set()
     setParking({
       key,
@@ -248,6 +272,23 @@ export default function PilotDiscovery({
           'Parking information is unavailable.',
     })
     if (!pilotConfig.ready) return () => requests.cancel()
+    if (cacheAllowed)
+      void publicPilotCache.get(request).then((entry) => {
+        if (
+          !entry ||
+          networkSucceeded ||
+          !cacheAllowed ||
+          !attempt.current() ||
+          currentKey.current !== key
+        )
+          return
+        setCachedAt(entry.fetchedAt)
+        setParking((previous) =>
+          previous.key === key
+            ? { ...previous, records: entry.records }
+            : previous,
+        )
+      })
     const timer = setTimeout(() => {
       void fetchPilotPage(
         pilotConfig,
@@ -256,27 +297,43 @@ export default function PilotDiscovery({
         attempt.signal,
       )
         .then((page) => {
-          if (attempt.current() && currentKey.current === key)
+          if (attempt.current() && currentKey.current === key) {
+            networkSucceeded = true
+            const records =
+              request.mode === 'public'
+                ? uniquePilotRecords(page.records)
+                : page.records
+            setCachedAt(null)
             setParking({
               key,
-              records: page.records,
+              records,
               next: page.nextCursor,
               notice: page.notice,
               status: 'ready',
               error: '',
             })
+            if (request.mode === 'public')
+              void publicPilotCache.put(request, records)
+          }
         })
         .catch((error) => {
           if (!attempt.current() || currentKey.current !== key) return
+          if (error instanceof PilotAccessError) {
+            cacheAllowed = false
+            setCachedAt(null)
+            if (request.mode === 'public')
+              void publicPilotCache.invalidate(request)
+          }
           accessFailed(error)
-          setParking({
+          setParking((previous) => ({
             key,
-            records: [],
+            records:
+              cacheAllowed && previous.key === key ? previous.records : [],
             next: null,
             notice: '',
             status: 'error',
             error: message(error),
-          })
+          }))
         })
     }, 250)
     return () => {
@@ -339,29 +396,60 @@ export default function PilotDiscovery({
       requests.cancel()
     }
   }, [searchKey, sheet, refresh, request, city, query, accessFailed])
-  const records =
-    parking.key === key
+  const cacheNow = Date.now()
+  const cacheCurrent =
+    cachedAt === null ||
+    (cacheNow >= cachedAt && cacheNow - cachedAt < PUBLIC_PILOT_CACHE_TTL_MS)
+  const eligible =
+    parking.key === key &&
+    cacheCurrent &&
+    !(mode === 'candidate_research' && connectivity.offline)
       ? parking.records.filter((record) =>
           pilotRecordCanDisplay(record, mode, clock),
         )
       : []
-  const partition = partitionPilotParking(records, category, feeFilter)
+  // React's guarded derived-state pattern preserves object identity between
+  // expiry ticks, but immediately observes changed/revoked source objects.
+  const [stableRecords, setStableRecords] = useState<PilotParking[]>([])
+  let records = stableRecords
+  if (!samePilotRecords(stableRecords, eligible)) {
+    records = eligible
+    setStableRecords(eligible)
+  }
+  const partition = useMemo(
+    () => partitionPilotParking(records, category, feeFilter),
+    [records, category, feeFilter],
+  )
   const visible = partition.matched
   const currentLocation = location.status === 'idle' ? location.point : null
-  const reference =
-    destination?.coordinate ??
-    currentLocation ??
-    ([
-      (bounds.west + bounds.east) / 2,
-      (bounds.south + bounds.north) / 2,
-    ] satisfies Coordinate)
+  const reference = useMemo(
+    () =>
+      destination?.coordinate ??
+      currentLocation ??
+      ([
+        (bounds.west + bounds.east) / 2,
+        (bounds.south + bounds.north) / 2,
+      ] satisfies Coordinate),
+    [destination, currentLocation, bounds],
+  )
   const referenceLabel = destination
     ? destination.name
     : currentLocation
       ? 'your location'
       : 'map center'
-  const ranked = rankPilotParking(visible, reference)
-  const selected = pilotSelectedRecord(selection, request, clock)
+  const ranked = useMemo(
+    () => rankPilotParking(visible, reference),
+    [visible, reference],
+  )
+  const selectedCacheCurrent =
+    selection?.cachedAt == null ||
+    (cacheNow >= selection.cachedAt &&
+      cacheNow - selection.cachedAt < PUBLIC_PILOT_CACHE_TTL_MS)
+  const selected =
+    selectedCacheCurrent &&
+    !(mode === 'candidate_research' && connectivity.offline)
+      ? pilotSelectedRecord(selection, request, clock)
+      : null
   const mapData = useMemo(
     () => ({
       mode:
@@ -385,6 +473,11 @@ export default function PilotDiscovery({
       JSON.stringify(previous) === JSON.stringify(next) ? previous : next,
     )
   }, [])
+  const clusterTarget = useCallback(
+    (coordinate: Coordinate) => setTarget({ coordinate, zoom: 16 }),
+    [],
+  )
+  const mapError = useCallback(() => setMapFailed(true), [])
   function chooseCity(next: PilotCity) {
     parkingGate.current.cancel()
     searchGate.current.cancel()
@@ -471,12 +564,14 @@ export default function PilotDiscovery({
         cursor,
       )
       if (!attempt.current() || currentKey.current !== key) return
-      const merged = mergePilotPage(
+      const pages = mergePilotPage(
         parking.records,
         page.records,
         cursor,
         cursors.current,
       )
+      const merged =
+        request.mode === 'public' ? uniquePilotRecords(pages) : pages
       setParking({
         key,
         records: merged,
@@ -485,6 +580,7 @@ export default function PilotDiscovery({
         status: 'ready',
         error: '',
       })
+      if (request.mode === 'public') void publicPilotCache.put(request, merged)
     } catch (error) {
       if (attempt.current()) {
         accessFailed(error)
@@ -539,14 +635,23 @@ export default function PilotDiscovery({
       }
     }
   }
-  function chooseRecord(id: string) {
-    const record = visible.find((item) => item.id === id)
-    if (!record) return
-    setSelection({ key: pilotSelectionKey(request), record })
-    setSheet('detail')
-  }
+  const chooseRecord = useCallback(
+    (id: string) => {
+      const record = visible.find((item) => item.id === id)
+      if (!record || !pilotRecordCanDisplay(record, request.mode)) return
+      setSelection({ key: pilotSelectionKey(request), record, cachedAt })
+      setSheet('detail')
+    },
+    [visible, request, cachedAt],
+  )
   async function directions(record: PilotParking) {
-    if (!pilotNavigationEntrance(record, mode) || navBusy) return
+    if (
+      !pilotNavigationEntrance(record, mode) ||
+      navBusy ||
+      connectivity.offline ||
+      cachedAt !== null
+    )
+      return
     const attempt = navigationGate.current.begin(),
       captured = key
     setNavBusy(true)
@@ -594,8 +699,8 @@ export default function PilotDiscovery({
           target={target}
           onViewport={updateViewport}
           onSelect={chooseRecord}
-          onCluster={(coordinate) => setTarget({ coordinate, zoom: 16 })}
-          onError={() => setMapFailed(true)}
+          onCluster={clusterTarget}
+          onError={mapError}
         />
       </View>
       <View style={[styles.top, { top: insets.top + 10 }]}>
@@ -673,6 +778,13 @@ export default function PilotDiscovery({
         ) : null}
       </View>
       <View style={[styles.bottom, { bottom: insets.bottom + 104 }]}>
+        {cachedAt !== null ? (
+          <Text testID="pilot-cache-notice" style={styles.warning}>
+            {cacheCurrent
+              ? `Showing a saved public copy from ${new Date(cachedAt).toLocaleTimeString()}. Facts may have changed; directions require current approval.`
+              : 'Saved public information expired. Connect and retry to refresh this area.'}
+          </Text>
+        ) : null}
         {connectivity.offline ? (
           <Text accessibilityRole="alert" style={styles.warning}>
             Offline. Fresh parking and map tiles may be unavailable. Saved
@@ -1143,7 +1255,10 @@ export default function PilotDiscovery({
             <Action
               testID="pilot-directions"
               disabled={
-                !pilotNavigationEntrance(selected, mode, clock) || navBusy
+                !pilotNavigationEntrance(selected, mode, clock) ||
+                navBusy ||
+                connectivity.offline ||
+                cachedAt !== null
               }
               onPress={() => {
                 void directions(selected)
@@ -1158,6 +1273,26 @@ export default function PilotDiscovery({
                 Navigation unavailable: a current reviewed entrance, visitor
                 access and operator navigation permission are required.
               </Text>
+            ) : null}
+            {selection?.cachedAt != null ||
+            cachedAt !== null ||
+            connectivity.offline ? (
+              <View style={styles.content}>
+                <Text>
+                  Connect and refresh current parking facts before requesting
+                  entrance directions. Saved public copies never authorize
+                  navigation.
+                </Text>
+                <Action
+                  onPress={() => {
+                    setSelection(null)
+                    setSheet('results')
+                    setRefresh((n) => n + 1)
+                  }}
+                >
+                  Refresh current parking details
+                </Action>
+              </View>
             ) : null}
             {parking.error ? (
               <Text selectable style={styles.error}>

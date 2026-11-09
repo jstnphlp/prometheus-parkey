@@ -4,15 +4,18 @@ import {
   Layer,
   Map,
 } from '@maplibre/maplibre-react-native'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { memo, useEffect, useMemo, useRef, useState } from 'react'
 import type { CameraRef } from '@maplibre/maplibre-react-native'
 import { StyleSheet } from 'react-native'
 
 import { config } from './config'
+import { createLocalMapBenchmark } from './local-map-benchmark'
+import { mapTextFont } from './map-font'
 import { ncrMapSources } from './ncr-map-data'
 import type { NcrMapProps } from './ncr-map-data'
 
-export default function NcrMap(props: NcrMapProps) {
+function NcrMap(props: NcrMapProps) {
+  const [markMapReady] = useState(() => createLocalMapBenchmark())
   const camera = useRef<CameraRef>(null)
   const [loaded, setLoaded] = useState(false)
   const visibility = props.data?.items.length ? 'visible' : 'none'
@@ -33,6 +36,7 @@ export default function NcrMap(props: NcrMapProps) {
       }
       testID={loaded ? 'ncr-map-ready' : 'ncr-map-loading'}
       onDidFinishLoadingMap={() => setLoaded(true)}
+      onDidFinishRenderingMapFully={markMapReady}
       mapStyle={config.mapStyle}
       onDidFailLoadingMap={props.onError}
       onRegionDidChange={(event) => {
@@ -145,7 +149,7 @@ export default function NcrMap(props: NcrMapProps) {
           layout={{
             visibility,
             'text-field': ['get', 'label'],
-            'text-font': ['Noto Sans Bold'],
+            'text-font': mapTextFont,
             'text-size': 12,
             'text-anchor': 'top',
             'text-offset': [0, 1],
@@ -171,7 +175,7 @@ export default function NcrMap(props: NcrMapProps) {
           layout={{
             visibility,
             'text-field': ['get', 'point_count_abbreviated'],
-            'text-font': ['Noto Sans Bold'],
+            'text-font': mapTextFont,
             'text-size': 12,
           }}
           paint={{ 'text-color': '#FFFFFF' }}
@@ -181,3 +185,7 @@ export default function NcrMap(props: NcrMapProps) {
   )
 }
 const styles = StyleSheet.create({ map: { flex: 1, minHeight: 0 } })
+
+const MemoizedNcrMap = memo(NcrMap)
+MemoizedNcrMap.displayName = 'NcrMap'
+export default MemoizedNcrMap

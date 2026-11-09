@@ -1,5 +1,7 @@
 import type { SymbolLayerSpecification } from 'maplibre-gl'
 
+import { mapTextFont } from './map-font.ts'
+
 /** Native images use physical pixels; web registers the same 3× files at pixelRatio 3. */
 export function parkingMarkerLayout(scale: number) {
   return {
@@ -18,7 +20,7 @@ export function parkingMarkerLayout(scale: number) {
     'icon-allow-overlap': true,
     'icon-ignore-placement': true,
     'text-field': ['case', ['get', 'featured'], '', ['get', 'label']],
-    'text-font': ['Noto Sans Bold'],
+    'text-font': mapTextFont,
     'text-size': 17,
     'text-offset': [0, -1.7],
     'text-allow-overlap': true,
@@ -37,7 +39,7 @@ export function parkingLabelLayout(scale: number) {
     'icon-text-fit-padding': [4, 10, 4, 10],
     'icon-allow-overlap': true,
     'text-field': ['get', 'name'],
-    'text-font': ['Noto Sans Bold'],
+    'text-font': mapTextFont,
     'text-size': 12,
     'text-offset': [0, -7.5],
     'text-max-width': 16,

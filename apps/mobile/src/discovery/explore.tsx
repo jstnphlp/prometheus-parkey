@@ -97,6 +97,17 @@ import { useParking } from './use-parking'
 import { useRoute } from './use-route'
 
 const EMPTY_POINTS: Coordinate[] = []
+function sameNavigationContext(
+  before: ReturnType<typeof useNavigation>['state'],
+  after: ReturnType<typeof useNavigation>['state'],
+) {
+  return (
+    before.selectedId === after.selectedId &&
+    before.panel === after.panel &&
+    before.searching === after.searching &&
+    before.route === after.route
+  )
+}
 
 export default function Explore() {
   const insets = useSafeAreaInsets()
@@ -105,7 +116,11 @@ export default function Explore() {
   const { height: screenHeight } = useWindowDimensions()
   const [viewport, setViewport] = useState(PILOT_VIEWPORT)
   const navigation = useNavigation(routeExited)
-  const { update: updateNavigation, close: closeNavigation } = navigation
+  const {
+    update: updateNavigation,
+    close: closeNavigation,
+    getState: getNavigationState,
+  } = navigation
   const nav = navigation.state
   const panned = useRef(false)
   const searchedCenter = useRef(nav.center)
@@ -176,6 +191,7 @@ export default function Explore() {
     nav.consent,
     () => updateNavigation({ consent: true }),
     () => {
+      navigationActionGeneration.current++
       entranceRequest.current?.abort()
       setEntranceCheck(false)
       closeNavigation({ consent: false })
@@ -256,10 +272,18 @@ export default function Explore() {
     null,
   )
   const entranceRequest = useRef<AbortController | null>(null)
+  const navigationActionGeneration = useRef(0)
   const [entranceCheck, setEntranceCheck] = useState(false)
   const [entranceError, setEntranceError] = useState<string | null>(null)
-  useEffect(() => () => entranceRequest.current?.abort(), [])
+  useEffect(
+    () => () => {
+      navigationActionGeneration.current++
+      entranceRequest.current?.abort()
+    },
+    [],
+  )
   useEffect(() => {
+    navigationActionGeneration.current++
     entranceRequest.current?.abort()
     setEntranceCheck(false)
   }, [nav.selectedId, nav.panel, nav.searching])
@@ -268,6 +292,7 @@ export default function Explore() {
       entranceRequest.current?.abort()
       const request = new AbortController()
       entranceRequest.current = request
+      const context = getNavigationState()
       try {
         const fresh = routeTarget?.parking
           ? await refreshReviewedParking(
@@ -276,7 +301,20 @@ export default function Explore() {
               request.signal,
             )
           : null
-        if (request.signal.aborted) return null
+        if (
+          request.signal.aborted ||
+          !sameNavigationContext(context, getNavigationState())
+        )
+          return null
+        if (fresh) {
+          const coordinate = parkingDestination(fresh, from)
+          if (!coordinate) throw new Error('Entrance approval expired.')
+          setRouteTarget({
+            name: parkingTitle(fresh),
+            coordinate,
+            parking: fresh,
+          })
+        }
         return loadRoute(
           fresh
             ? () => {
@@ -290,7 +328,10 @@ export default function Explore() {
           heading,
         )
       } catch (error) {
-        if (!request.signal.aborted) {
+        if (
+          !request.signal.aborted &&
+          sameNavigationContext(context, getNavigationState())
+        ) {
           clearRoute()
           setEntranceError(
             error instanceof Error
@@ -301,7 +342,7 @@ export default function Explore() {
         return null
       }
     },
-    [loadRoute, clearRoute, routeTarget],
+    [loadRoute, clearRoute, routeTarget, getNavigationState],
   )
   const drive = useDriveNavigation({
     route: routeState.route,
@@ -333,6 +374,9 @@ export default function Explore() {
     [navigating, drive.following, drive.progress?.along, drive.pan],
   )
   function routeExited() {
+    navigationActionGeneration.current++
+    entranceRequest.current?.abort()
+    setEntranceCheck(false)
     directNavigation.cancel()
     setResumeTarget(routeTarget)
     drive.stop(drive.phase === 'navigating')
@@ -605,18 +649,28 @@ export default function Explore() {
   }
   function startDirections(record: DiscoveryParking) {
     if (!parkingDestination(record, currentLocation)) return
-    void consent.request((confirmed) => beginDirections(record, confirmed))
+    const generation = ++navigationActionGeneration.current
+    const context = getNavigationState()
+    const isCurrent = () =>
+      generation === navigationActionGeneration.current &&
+      sameNavigationContext(context, getNavigationState())
+    void consent.request((confirmed) => {
+      if (!isCurrent() || (confirmed && !getNavigationState().consent)) return
+      void beginDirections(record, confirmed)
+    }, isCurrent)
   }
   async function beginDirections(
     candidate: DiscoveryParking,
     confirmed: boolean,
   ) {
+    navigationActionGeneration.current++
     drive.stop(false)
     clearRoute()
     directNavigation.cancel()
     entranceRequest.current?.abort()
     const request = new AbortController()
     entranceRequest.current = request
+    const context = getNavigationState()
     setEntranceCheck(true)
     setEntranceError(null)
     let record: DiscoveryParking
@@ -626,9 +680,16 @@ export default function Explore() {
         { url: config.supabaseUrl, publicKey: config.supabaseKey },
         request.signal,
       )
-      if (request.signal.aborted) return
+      if (
+        request.signal.aborted ||
+        !sameNavigationContext(context, getNavigationState())
+      )
+        return
     } catch (error) {
-      if (!request.signal.aborted) {
+      if (
+        !request.signal.aborted &&
+        sameNavigationContext(context, getNavigationState())
+      ) {
         const message =
           error instanceof Error
             ? error.message
@@ -682,9 +743,9 @@ export default function Explore() {
         })
         return coordinate
       },
-      async () => {
+      async (signal) => {
         const origin = await location.locate()
-        directNavigation.request(origin !== null)
+        if (!signal.aborted) directNavigation.request(origin !== null)
         return origin
       },
     )
@@ -694,6 +755,7 @@ export default function Explore() {
     entranceRequest.current?.abort()
     const request = new AbortController()
     entranceRequest.current = request
+    const context = getNavigationState()
     setEntranceCheck(true)
     setEntranceError(null)
     try {
@@ -704,7 +766,11 @@ export default function Explore() {
             request.signal,
           )
         : null
-      if (request.signal.aborted) return
+      if (
+        request.signal.aborted ||
+        !sameNavigationContext(context, getNavigationState())
+      )
+        return
       const coordinate = current
         ? parkingDestination(current, null)
         : routeTarget.coordinate
@@ -714,7 +780,10 @@ export default function Explore() {
         )
       await Linking.openURL(directionsUrl(coordinate, provider))
     } catch (error) {
-      if (!request.signal.aborted)
+      if (
+        !request.signal.aborted &&
+        sameNavigationContext(context, getNavigationState())
+      )
         setEntranceError(
           error instanceof Error
             ? error.message

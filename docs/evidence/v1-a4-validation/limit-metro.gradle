@@ -1,0 +1,5 @@
+allprojects { p ->
+    p.plugins.withId('com.facebook.react') {
+        p.extensions.getByName('react').extraPackagerArgs.addAll(['--max-workers', '1'])
+    }
+}

@@ -1,6 +1,6 @@
 # A4 release-quality validation
 
-**Engineering verification complete; final CI follow-up in progress.** Branch
+**PASS for locally executable engineering checks. Production release is blocked.** Branch
 `codex/v1-a4-release-validation`, [draft PR #27](https://github.com/jstnphlp/prometheus-parkey/pull/27).
 Application source `c38f130`, native compatibility configuration `be2366d`.
 Depends on unmerged A0-A3 PRs #23-#26. No production approval is granted.
@@ -30,7 +30,7 @@ Depends on unmerged A0-A3 PRs #23-#26. No production approval is granted.
 | Final main JS tests                      | 247 passed: 243 mobile plus four web                                                                                                                                                                      |
 | Operations/Edge/moderation tests         | 169 passed; one conditional local-DB test skipped locally                                                                                                                                                 |
 | Python tests                             | 23 passed; 15 existing conditional tests skipped, not counted as passed                                                                                                                                   |
-| Browser integration                      | 72 legacy and36 pilot cases completed successfully in source CI; initial legacy run included two retries, investigated below                                                                              |
+| Browser integration                      | 72 legacy and36 pilot cases passed without retries in follow-up CI; initial retry history is retained below                                                                                               |
 | Final configured-search regression       | Four passed, desktop/mobile                                                                                                                                                                               |
 | Navigation fixture stability             | 20 passed with two workers, repeat2 and retries0 after setup correction                                                                                                                                   |
 | Supabase SQL                             | Disposable CI PostgreSQL tests passed; no production database touched                                                                                                                                     |
@@ -41,7 +41,7 @@ Implementation `c38f130` passed validate/database/E2E in both
 [push run42624495305](https://github.com/jstnphlp/prometheus-parkey/actions/runs/42624495305)
 and [PR run42624501796](https://github.com/jstnphlp/prometheus-parkey/actions/runs/42624501796).
 Local Docker is unavailable; actual SQL execution is CI evidence, not a local claim.
-The later test-fixture follow-up keeps every safety assertion and receives new CI.
+The test-fixture follow-up keeps every safety assertion. [CI run42629625893](https://github.com/jstnphlp/prometheus-parkey/actions/runs/42629625893), source `5852a27` (application `c38f130`, tests `8ccdc62`), passed validate/database/E2E with72 legacy and36 pilot cases and zero retries. The matching push run42629616800 also passed.
 
 ## Native artifact and evidence
 
@@ -56,7 +56,7 @@ installed APKs match SHA256
 Local artifact: `output/ncr/v1-a4/app-release-final.apk` (excluded from Git).
 No deployment or hosted-resource change occurred.
 
-The evidence directory contains before/after Back screenshots, final native
+The [receipt](evidence/v1-a4-validation/receipt.json) binds canonical Git artifact bytes and source. The evidence directory contains before/after Back screenshots, final native
 layouts/screenshots, APK/manifest audits, installed identity and test logs.
 Native source is `c38f130`; the OS permission prompt, GPS-settings decline,
 source-credit view and initial filter/accessibility diagnostics were first
@@ -125,3 +125,22 @@ known default configuration with no production search/backend credentials suppli
 search's unavailable state is intentional. Emulator results establish no physical
 performance or parking availability guarantee. OSM/Overture attribution and
 RLS/publication protections remain intact. V1 remains discovery-only.
+
+## Reproduce locally
+
+Use the pinned Node24/pnpm11.25.0 dependencies, Android Studio SDK and the existing API35 AVD. The build used Android Studio JBR25 and the generated local development signing key. Native Android code is generated; Expo prebuild regenerates that directory. No production configuration, service-role key or provider-review override is needed for this offline-safe test variant.
+
+```powershell
+$env:EXPO_NO_DOTENV = '1'
+$env:NODE_ENV = 'production'
+$env:PARKEY_RELEASE_BUILD = 'true'
+$env:EXPO_PUBLIC_PILOT_DISCOVERY_ENABLED = 'false'
+# From apps/mobile:
+pnpm exec expo prebuild --platform android --no-install
+# From apps/mobile/android, with JAVA_HOME set to Android Studio's jbr:
+./gradlew.bat :app:assembleRelease -PreactNativeArchitectures=x86_64 --max-workers=1 --console=plain -I ../../../docs/evidence/v1-a4-validation/limit-metro.gradle
+```
+
+The actual rebuild also used `--offline` after dependencies had been cached and `CMAKE_BUILD_PARALLEL_LEVEL=1`. Install the resulting APK with `adb -s emulator-5556 install -r`, then launch `com.parkey.discovery/.MainActivity`; Metro is not required. Verify the merged manifest and installed APK identity rather than assuming a successful build means the expected artifact is running.
+
+For TalkBack, enable the emulator's installed service and touch exploration, select1.3x text, dismiss the service's own notification prompt, and use emulator kernel input (`adb emu event mouse`) for exploration/double-tap. Ordinary `adb shell input swipe` bypassed touch exploration. Physical emulator coordinates scale1.5x from the720x1600 override. Restore original settings afterward. These are emulator checks; they do not establish audible quality or physical-device usability.

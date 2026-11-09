@@ -1,1 +1,401 @@
-[{"window-title":"","type":"SYSTEM","layer":1,"bounds":"[0,0][720,49]","content":[{"class":"android.widget.TextView","resource-id":"com.android.systemui:id/clock","text":"11:58","content-desc":"11:58 AM","bounds":"[47,10][130,39]","center":"[88,24]"},{"class":"android.widget.ImageView","content-desc":"Security \u0026 privacy notification: Set a screen lock","bounds":"[130,1][169,49]","center":"[149,25]"},{"class":"android.widget.ImageView","content-desc":"Android System notification: Serial console enabled","bounds":"[169,1][208,49]","center":"[188,25]"},{"class":"android.widget.ImageView","resource-id":"com.android.systemui:id/wifi_signal","content-desc":"Wifi signal full.","bounds":"[582,11][608,37]","center":"[595,24]"},{"class":"android.widget.FrameLayout","resource-id":"com.android.systemui:id/mobile_combo","content-desc":"Phone signal full.","bounds":"[608,5][634,44]","center":"[621,24]"},{"class":"android.widget.LinearLayout","resource-id":"com.android.systemui:id/battery","content-desc":"Battery charging, 100 percent.","bounds":"[645,13][659,36]","center":"[652,24]"}]},{"window-title":"Parkey","type":"APPLICATION","active":true,"focused":true,"layer":0,"bounds":"[0,0][720,1600]","content":[{"class":"android.view.View","text":"SIMULATED NATIVE QA ONLY — expired","bounds":"[0,70][720,104]","center":"[360,87]"},{"class":"android.widget.TextView","text":"QA handler calls: 0","bounds":"[0,104][720,138]","center":"[360,121]"},{"class":"android.widget.Button","content-desc":"QA known","interactions":["CLICKABLE","FOCUSABLE"],"bounds":"[0,138][116,214]","center":"[58,176]","children":[{"class":"android.widget.TextView","text":"known","bounds":"[21,159][95,193]","center":"[58,176]"}]},{"class":"android.widget.Button","content-desc":"QA missing","interactions":["CLICKABLE","FOCUSABLE"],"bounds":"[116,138][246,214]","center":"[181,176]","children":[{"class":"android.widget.TextView","text":"missing","bounds":"[137,159][225,193]","center":"[181,176]"}]},{"class":"android.widget.Button","content-desc":"QA contradictory","interactions":["CLICKABLE","FOCUSABLE"],"bounds":"[246,138][434,214]","center":"[340,176]","children":[{"class":"android.widget.TextView","text":"contradictory","bounds":"[267,159][413,193]","center":"[340,176]"}]},{"class":"android.widget.Button","content-desc":"QA restricted","interactions":["CLICKABLE","FOCUSABLE"],"bounds":"[434,138][580,214]","center":"[507,176]","children":[{"class":"android.widget.TextView","text":"restricted","bounds":"[455,159][559,193]","center":"[507,176]"}]},{"class":"android.widget.Button","content-desc":"QA expired","interactions":["CLICKABLE","FOCUSABLE"],"bounds":"[580,138][702,214]","center":"[641,176]","children":[{"class":"android.widget.TextView","text":"expired","bounds":"[601,159][681,193]","center":"[641,176]"}]},{"class":"android.widget.Button","content-desc":"QA revoked","interactions":["CLICKABLE","FOCUSABLE"],"bounds":"[0,214][129,290]","center":"[64,252]","children":[{"class":"android.widget.TextView","text":"revoked","bounds":"[21,235][108,269]","center":"[64,252]"}]},{"class":"android.widget.Button","content-desc":"QA image failure","interactions":["CLICKABLE","FOCUSABLE"],"bounds":"[129,214][316,290]","center":"[222,252]","children":[{"class":"android.widget.TextView","text":"image failure","bounds":"[150,235][295,269]","center":"[222,252]"}]},{"class":"android.widget.ScrollView","resource-id":"parking-details-expanded","interactions":["SCROLLABLE","FOCUSABLE"],"bounds":"[0,290][720,1558]","center":"[360,924]","children":[{"class":"android.view.View","resource-id":"parking-detail-title","text":"Synthetic QA garage","bounds":"[28,290][525,332]","center":"[276,311]"},{"class":"android.widget.TextView","text":"Garage","bounds":"[28,332][525,364]","center":"[276,348]"},{"class":"android.widget.TextView","text":"PHP 40/hr","bounds":"[546,290][692,337]","center":"[619,313]"},{"class":"android.widget.TextView","resource-id":"parking-verification","text":"Not field verified. No live availability","bounds":"[28,388][692,420]","center":"[360,404]"},{"class":"android.widget.TextView","text":"Mapped entrance. Vehicle access is unverified; navigation is unavailable.","bounds":"[28,445][692,509]","center":"[360,477]"},{"class":"android.widget.Button","resource-id":"parking-get-directions","content-desc":"Go","interactions":["CLICKABLE","FOCUSABLE"],"bounds":"[28,534][573,632]","center":"[300,583]","children":[{"class":"android.widget.TextView","text":"Go","bounds":"[254,562][294,604]","center":"[274,583]"}]},{"class":"android.widget.TextView","resource-id":"parking-navigation-warning","text":"Navigation requires a confirmed entrance, visitor access and operator authorization.","bounds":"[28,632][573,696]","center":"[300,664]"},{"class":"android.widget.Button","content-desc":"Save parking","interactions":["CLICKABLE","FOCUSABLE"],"bounds":"[594,566][692,664]","center":"[643,615]"},{"class":"android.widget.HorizontalScrollView","interactions":["SCROLLABLE","FOCUSABLE"],"bounds":"[0,720][720,850]","center":"[360,785]","children":[{"class":"android.widget.TextView","text":"Hours","bounds":"[105,748][166,775]","center":"[135,761]"},{"class":"android.widget.TextView","text":"Open 24h","bounds":"[52,790][234,829]","center":"[143,809]"},{"class":"android.widget.TextView","text":"Fee","bounds":"[354,748][389,775]","center":"[371,761]"},{"class":"android.widget.TextView","text":"PHP 40/hr","bounds":"[301,790][483,829]","center":"[392,809]"},{"class":"android.widget.TextView","text":"Access","bounds":"[602,748][670,775]","center":"[636,761]"},{"class":"android.widget.TextView","text":"public","bounds":"[549,790][720,829]","center":"[634,809]"}]},{"class":"android.widget.TextView","text":"No photos yet","bounds":"[165,903][526,942]","center":"[345,922]"},{"class":"android.widget.TextView","text":"Save a photo in a private device draft","bounds":"[165,942][526,1006]","center":"[345,974]"},{"class":"android.widget.Button","content-desc":"Add a parking photo","interactions":["CLICKABLE","FOCUSABLE"],"bounds":"[550,916][664,993]","center":"[607,954]","children":[{"class":"android.widget.TextView","text":"Add","bounds":"[578,935][636,974]","center":"[607,954]"}]},{"class":"android.widget.TextView","text":"Source","bounds":"[119,1083][664,1122]","center":"[391,1102]"},{"class":"android.widget.TextView","text":"Synthetic test evidence; not published parking · Not field verified","bounds":"[119,1122][664,1186]","center":"[391,1154]"},{"class":"android.widget.TextView","text":"Source date unknown","bounds":"[119,1186][664,1218]","center":"[391,1202]"},{"class":"android.widget.TextView","text":"Source dates do not confirm current fees, hours or access.","bounds":"[119,1218][664,1282]","center":"[391,1250]"},{"class":"android.view.View","content-desc":"View source record","interactions":["CLICKABLE","FOCUSABLE"],"bounds":"[119,1282][664,1359]","center":"[391,1320]","children":[{"class":"android.widget.TextView","text":"View source record","bounds":"[119,1304][664,1336]","center":"[391,1320]"}]},{"class":"android.widget.Button","content-desc":"Suggest a correction","interactions":["CLICKABLE","FOCUSABLE"],"bounds":"[28,1383][692,1505]","center":"[360,1444]","children":[{"class":"android.widget.TextView","text":"Suggest a correction","bounds":"[119,1409][664,1448]","center":"[391,1428]"},{"class":"android.widget.TextView","text":"Saved on this device only; not sent for review","bounds":"[119,1448][664,1480]","center":"[391,1464]"}]},{"class":"android.view.ViewGroup","content-desc":"Recorded opening hours: 24/7","interactions":["CLICKABLE","FOCUSABLE"],"bounds":"[28,1529][692,1558]","center":"[360,1543]","children":[{"class":"android.widget.TextView","text":"Recorded opening hours","bounds":"[28,1529][270,1556]","center":"[149,1542]"},{"class":"android.widget.TextView","text":"24/7","bounds":"[291,1529][348,1558]","center":"[319,1543]"}]}]}]}]
+[
+  {
+    "window-title": "",
+    "type": "SYSTEM",
+    "layer": 1,
+    "bounds": "[0,0][720,49]",
+    "content": [
+      {
+        "class": "android.widget.TextView",
+        "resource-id": "com.android.systemui:id/clock",
+        "text": "11:58",
+        "content-desc": "11:58 AM",
+        "bounds": "[47,10][130,39]",
+        "center": "[88,24]"
+      },
+      {
+        "class": "android.widget.ImageView",
+        "content-desc": "Security \u0026 privacy notification: Set a screen lock",
+        "bounds": "[130,1][169,49]",
+        "center": "[149,25]"
+      },
+      {
+        "class": "android.widget.ImageView",
+        "content-desc": "Android System notification: Serial console enabled",
+        "bounds": "[169,1][208,49]",
+        "center": "[188,25]"
+      },
+      {
+        "class": "android.widget.ImageView",
+        "resource-id": "com.android.systemui:id/wifi_signal",
+        "content-desc": "Wifi signal full.",
+        "bounds": "[582,11][608,37]",
+        "center": "[595,24]"
+      },
+      {
+        "class": "android.widget.FrameLayout",
+        "resource-id": "com.android.systemui:id/mobile_combo",
+        "content-desc": "Phone signal full.",
+        "bounds": "[608,5][634,44]",
+        "center": "[621,24]"
+      },
+      {
+        "class": "android.widget.LinearLayout",
+        "resource-id": "com.android.systemui:id/battery",
+        "content-desc": "Battery charging, 100 percent.",
+        "bounds": "[645,13][659,36]",
+        "center": "[652,24]"
+      }
+    ]
+  },
+  {
+    "window-title": "Parkey",
+    "type": "APPLICATION",
+    "active": true,
+    "focused": true,
+    "layer": 0,
+    "bounds": "[0,0][720,1600]",
+    "content": [
+      {
+        "class": "android.view.View",
+        "text": "SIMULATED NATIVE QA ONLY — expired",
+        "bounds": "[0,70][720,104]",
+        "center": "[360,87]"
+      },
+      {
+        "class": "android.widget.TextView",
+        "text": "QA handler calls: 0",
+        "bounds": "[0,104][720,138]",
+        "center": "[360,121]"
+      },
+      {
+        "class": "android.widget.Button",
+        "content-desc": "QA known",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "bounds": "[0,138][116,214]",
+        "center": "[58,176]",
+        "children": [
+          {
+            "class": "android.widget.TextView",
+            "text": "known",
+            "bounds": "[21,159][95,193]",
+            "center": "[58,176]"
+          }
+        ]
+      },
+      {
+        "class": "android.widget.Button",
+        "content-desc": "QA missing",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "bounds": "[116,138][246,214]",
+        "center": "[181,176]",
+        "children": [
+          {
+            "class": "android.widget.TextView",
+            "text": "missing",
+            "bounds": "[137,159][225,193]",
+            "center": "[181,176]"
+          }
+        ]
+      },
+      {
+        "class": "android.widget.Button",
+        "content-desc": "QA contradictory",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "bounds": "[246,138][434,214]",
+        "center": "[340,176]",
+        "children": [
+          {
+            "class": "android.widget.TextView",
+            "text": "contradictory",
+            "bounds": "[267,159][413,193]",
+            "center": "[340,176]"
+          }
+        ]
+      },
+      {
+        "class": "android.widget.Button",
+        "content-desc": "QA restricted",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "bounds": "[434,138][580,214]",
+        "center": "[507,176]",
+        "children": [
+          {
+            "class": "android.widget.TextView",
+            "text": "restricted",
+            "bounds": "[455,159][559,193]",
+            "center": "[507,176]"
+          }
+        ]
+      },
+      {
+        "class": "android.widget.Button",
+        "content-desc": "QA expired",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "bounds": "[580,138][702,214]",
+        "center": "[641,176]",
+        "children": [
+          {
+            "class": "android.widget.TextView",
+            "text": "expired",
+            "bounds": "[601,159][681,193]",
+            "center": "[641,176]"
+          }
+        ]
+      },
+      {
+        "class": "android.widget.Button",
+        "content-desc": "QA revoked",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "bounds": "[0,214][129,290]",
+        "center": "[64,252]",
+        "children": [
+          {
+            "class": "android.widget.TextView",
+            "text": "revoked",
+            "bounds": "[21,235][108,269]",
+            "center": "[64,252]"
+          }
+        ]
+      },
+      {
+        "class": "android.widget.Button",
+        "content-desc": "QA image failure",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "bounds": "[129,214][316,290]",
+        "center": "[222,252]",
+        "children": [
+          {
+            "class": "android.widget.TextView",
+            "text": "image failure",
+            "bounds": "[150,235][295,269]",
+            "center": "[222,252]"
+          }
+        ]
+      },
+      {
+        "class": "android.widget.ScrollView",
+        "resource-id": "parking-details-expanded",
+        "interactions": ["SCROLLABLE", "FOCUSABLE"],
+        "bounds": "[0,290][720,1558]",
+        "center": "[360,924]",
+        "children": [
+          {
+            "class": "android.view.View",
+            "resource-id": "parking-detail-title",
+            "text": "Synthetic QA garage",
+            "bounds": "[28,290][525,332]",
+            "center": "[276,311]"
+          },
+          {
+            "class": "android.widget.TextView",
+            "text": "Garage",
+            "bounds": "[28,332][525,364]",
+            "center": "[276,348]"
+          },
+          {
+            "class": "android.widget.TextView",
+            "text": "PHP 40/hr",
+            "bounds": "[546,290][692,337]",
+            "center": "[619,313]"
+          },
+          {
+            "class": "android.widget.TextView",
+            "resource-id": "parking-verification",
+            "text": "Not field verified. No live availability",
+            "bounds": "[28,388][692,420]",
+            "center": "[360,404]"
+          },
+          {
+            "class": "android.widget.TextView",
+            "text": "Mapped entrance. Vehicle access is unverified; navigation is unavailable.",
+            "bounds": "[28,445][692,509]",
+            "center": "[360,477]"
+          },
+          {
+            "class": "android.widget.Button",
+            "resource-id": "parking-get-directions",
+            "content-desc": "Go",
+            "interactions": ["CLICKABLE", "FOCUSABLE"],
+            "bounds": "[28,534][573,632]",
+            "center": "[300,583]",
+            "children": [
+              {
+                "class": "android.widget.TextView",
+                "text": "Go",
+                "bounds": "[254,562][294,604]",
+                "center": "[274,583]"
+              }
+            ]
+          },
+          {
+            "class": "android.widget.TextView",
+            "resource-id": "parking-navigation-warning",
+            "text": "Navigation requires a confirmed entrance, visitor access and operator authorization.",
+            "bounds": "[28,632][573,696]",
+            "center": "[300,664]"
+          },
+          {
+            "class": "android.widget.Button",
+            "content-desc": "Save parking",
+            "interactions": ["CLICKABLE", "FOCUSABLE"],
+            "bounds": "[594,566][692,664]",
+            "center": "[643,615]"
+          },
+          {
+            "class": "android.widget.HorizontalScrollView",
+            "interactions": ["SCROLLABLE", "FOCUSABLE"],
+            "bounds": "[0,720][720,850]",
+            "center": "[360,785]",
+            "children": [
+              {
+                "class": "android.widget.TextView",
+                "text": "Hours",
+                "bounds": "[105,748][166,775]",
+                "center": "[135,761]"
+              },
+              {
+                "class": "android.widget.TextView",
+                "text": "Open 24h",
+                "bounds": "[52,790][234,829]",
+                "center": "[143,809]"
+              },
+              {
+                "class": "android.widget.TextView",
+                "text": "Fee",
+                "bounds": "[354,748][389,775]",
+                "center": "[371,761]"
+              },
+              {
+                "class": "android.widget.TextView",
+                "text": "PHP 40/hr",
+                "bounds": "[301,790][483,829]",
+                "center": "[392,809]"
+              },
+              {
+                "class": "android.widget.TextView",
+                "text": "Access",
+                "bounds": "[602,748][670,775]",
+                "center": "[636,761]"
+              },
+              {
+                "class": "android.widget.TextView",
+                "text": "public",
+                "bounds": "[549,790][720,829]",
+                "center": "[634,809]"
+              }
+            ]
+          },
+          {
+            "class": "android.widget.TextView",
+            "text": "No photos yet",
+            "bounds": "[165,903][526,942]",
+            "center": "[345,922]"
+          },
+          {
+            "class": "android.widget.TextView",
+            "text": "Save a photo in a private device draft",
+            "bounds": "[165,942][526,1006]",
+            "center": "[345,974]"
+          },
+          {
+            "class": "android.widget.Button",
+            "content-desc": "Add a parking photo",
+            "interactions": ["CLICKABLE", "FOCUSABLE"],
+            "bounds": "[550,916][664,993]",
+            "center": "[607,954]",
+            "children": [
+              {
+                "class": "android.widget.TextView",
+                "text": "Add",
+                "bounds": "[578,935][636,974]",
+                "center": "[607,954]"
+              }
+            ]
+          },
+          {
+            "class": "android.widget.TextView",
+            "text": "Source",
+            "bounds": "[119,1083][664,1122]",
+            "center": "[391,1102]"
+          },
+          {
+            "class": "android.widget.TextView",
+            "text": "Synthetic test evidence; not published parking · Not field verified",
+            "bounds": "[119,1122][664,1186]",
+            "center": "[391,1154]"
+          },
+          {
+            "class": "android.widget.TextView",
+            "text": "Source date unknown",
+            "bounds": "[119,1186][664,1218]",
+            "center": "[391,1202]"
+          },
+          {
+            "class": "android.widget.TextView",
+            "text": "Source dates do not confirm current fees, hours or access.",
+            "bounds": "[119,1218][664,1282]",
+            "center": "[391,1250]"
+          },
+          {
+            "class": "android.view.View",
+            "content-desc": "View source record",
+            "interactions": ["CLICKABLE", "FOCUSABLE"],
+            "bounds": "[119,1282][664,1359]",
+            "center": "[391,1320]",
+            "children": [
+              {
+                "class": "android.widget.TextView",
+                "text": "View source record",
+                "bounds": "[119,1304][664,1336]",
+                "center": "[391,1320]"
+              }
+            ]
+          },
+          {
+            "class": "android.widget.Button",
+            "content-desc": "Suggest a correction",
+            "interactions": ["CLICKABLE", "FOCUSABLE"],
+            "bounds": "[28,1383][692,1505]",
+            "center": "[360,1444]",
+            "children": [
+              {
+                "class": "android.widget.TextView",
+                "text": "Suggest a correction",
+                "bounds": "[119,1409][664,1448]",
+                "center": "[391,1428]"
+              },
+              {
+                "class": "android.widget.TextView",
+                "text": "Saved on this device only; not sent for review",
+                "bounds": "[119,1448][664,1480]",
+                "center": "[391,1464]"
+              }
+            ]
+          },
+          {
+            "class": "android.view.ViewGroup",
+            "content-desc": "Recorded opening hours: 24/7",
+            "interactions": ["CLICKABLE", "FOCUSABLE"],
+            "bounds": "[28,1529][692,1558]",
+            "center": "[360,1543]",
+            "children": [
+              {
+                "class": "android.widget.TextView",
+                "text": "Recorded opening hours",
+                "bounds": "[28,1529][270,1556]",
+                "center": "[149,1542]"
+              },
+              {
+                "class": "android.widget.TextView",
+                "text": "24/7",
+                "bounds": "[291,1529][348,1558]",
+                "center": "[319,1543]"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

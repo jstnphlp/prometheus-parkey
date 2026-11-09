@@ -340,7 +340,7 @@ test('authorization refusal on a later page clears prior public records and cach
 }) => {
   await page.route('**/rest/v1/rpc/discover_pilot_parking', async (route) => {
     const body = route.request().postDataJSON()
-      if (body.p_after)
+    if (body.p_after)
       await route.fulfill({
         status: 403,
         json: { message: 'Synthetic paginated access revoked' },

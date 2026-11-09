@@ -1,0 +1,414 @@
+(node:10436) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/JAC/Documents/projects/prometheus-parkey/apps/mobile/src/discovery/discovery-state.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\JAC\Documents\projects\prometheus-parkey\apps\mobile\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ zoom recovery takes priority and cached records cannot show a nearby list at low zoom (1.7921ms)
+✔ denied location keeps map records available while offering settings recovery (0.4608ms)
+✔ refreshing preserves existing nearby results instead of replacing them with skeletons (0.4347ms)
+✔ filter-hidden and unmapped areas have distinct recovery states (0.2803ms)
+✔ night styling applies only during navigation and follows local time or dark appearance (6.696ms)
+(node:27544) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/JAC/Documents/projects/prometheus-parkey/apps/mobile/src/discovery/data.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\JAC\Documents\projects\prometheus-parkey\apps\mobile\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ geographic validation rejects malformed, non-finite, and degenerate geometry (2.83ms)
+✔ viewport queries are bounded; crossing street lines are retained (0.8106ms)
+✔ map filters and rendering preserve street line geometry and selection (3.4272ms)
+✔ parking ranking follows destination, location, then the actual map center (1.3456ms)
+✔ equal-distance ordering is deterministic and preserves records and geometry (0.6383ms)
+✔ pilot recovery is based on coverage intersection rather than GPS or destination (0.3582ms)
+✔ bundled OSM records have valid provenance and no fabricated verification (110.4773ms)
+✔ distance and navigation links use the proper coordinate order (0.9152ms)
+✔ contributions reject invalid descriptions, geometry, corrections, and oversized fields (4.608ms)
+✔ local preview throttling, deduplication, and storage cap protect the local flow (1.3993ms)
+✔ geocoder parsing tolerates incomplete features but rejects invalid envelopes (1.3413ms)
+✔ parking API validates real responses and surfaces service errors (53.675ms)
+✔ destination search encodes the query, geographic bias, and abort signal (1.1713ms)
+(node:26928) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/JAC/Documents/projects/prometheus-parkey/apps/mobile/src/discovery/drive-math.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\JAC\Documents\projects\prometheus-parkey\apps\mobile\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ projection measures distance to segments and progress along the route (3.5426ms)
+✔ passing a maneuver advances the next instruction and decreases estimates (1.4013ms)
+✔ a turn remains active before and through the junction (0.4558ms)
+✔ history prevents skipping ahead at a crossing even when the later road is closer (0.4332ms)
+✔ travel direction distinguishes closely spaced opposing carriageways (0.4425ms)
+✔ remaining time uses each road step duration rather than a route-wide average speed (0.7772ms)
+✔ maneuver geometry controls turn progress even when provider distances differ (0.5814ms)
+✔ the gray and remaining route join exactly at the traveled distance (0.9703ms)
+✔ next nearest excludes rejected, current, fictional, and other parking types (0.7378ms)
+✔ roundabout instructions omit onto for unnamed streets and preserve full names (1.3485ms)
+✔ navigation marker bearing follows the upcoming route and tolerates duplicate points (0.6676ms)
+(node:13108) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/JAC/Documents/projects/prometheus-parkey/apps/mobile/src/discovery/drive-tracking.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\JAC\Documents\projects\prometheus-parkey\apps\mobile\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ invalid, stale, future, duplicate, out-of-order and teleported fixes cannot change navigation (3.6561ms)
+✔ uncertain fixes display their raw position and cannot advance guidance or confirm arrival (3.6914ms)
+✔ starting beside a destination does not finish a route that loops back to it (1.2345ms)
+✔ arrival requires multiple accurate fixes at the end of the route (0.7932ms)
+✔ passing the endpoint at driving speed and gaps in GPS do not confirm arrival (0.6322ms)
+✔ rerouting needs sustained fresh off-route samples, rather than elapsed time after one fix (1.8125ms)
+✔ persistent wrong-way travel triggers rerouting without advancing maneuvers (3.7504ms)
+✔ unreliable stationary compass headings cannot cause wrong-way reroutes (1.095ms)
+✔ a replacement route resets progress and arrival evidence (0.669ms)
+✔ zero-length routes and duplicate geometry points still allow accurate arrival (0.6397ms)
+(node:15684) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/JAC/Documents/projects/prometheus-parkey/apps/mobile/src/discovery/filters.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\JAC\Documents\projects\prometheus-parkey\apps\mobile\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ type filters reflect the real snapshot and do not conflate lots with garages (53.0534ms)
+✔ actual fee text has two matches and 41 unknowns, with no inferred free or paid values (11.7489ms)
+✔ kind mismatch is explicit while unrecognized fee text stays in the unknown partition (23.241ms)
+✔ free filter requires explicit source evidence and keeps unknown fees separate (0.4575ms)
+✔ contradictory fees never match free or paid filters (0.4614ms)
+(node:14132) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/JAC/Documents/projects/prometheus-parkey/apps/mobile/src/discovery/hours.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\JAC\Documents\projects\prometheus-parkey\apps\mobile\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ real snapshot hours remain unknown without altering the source (25.4898ms)
+✔ synthetic daily hours use Manila time with inclusive opening and exclusive closing (2.5649ms)
+✔ synthetic weekly schedules, split ranges and explicit closures stay bounded (0.831ms)
+✔ synthetic overnight ranges carry into the following day and week only until closing (1.1722ms)
+✔ synthetic 24/7 is explicit and does not bless unsupported exceptions (0.7075ms)
+✔ synthetic malformed and richer OSM expressions are wholly unknown, never guessed (1.0115ms)
+(node:15252) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/JAC/Documents/projects/prometheus-parkey/apps/mobile/src/discovery/local-map-benchmark.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\JAC\Documents\projects\prometheus-parkey\apps\mobile\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ measurement requires explicit development opt-in and remains silent in release (3.4542ms)
+✔ fully rendered callback writes only elapsed milliseconds once per mount (24.5786ms)
+✔ invalid clocks and failing output cannot break map rendering or invent a duration (1.0526ms)
+(node:26212) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/JAC/Documents/projects/prometheus-parkey/apps/mobile/src/discovery/local-state.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\JAC\Documents\projects\prometheus-parkey\apps\mobile\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ stable source identity survives server ID changes and fallback IDs cannot collide with it (4.3603ms)
+✔ favorites toggle by source identity, retain other local state and never mutate inputs (0.4852ms)
+✔ recents keep the last ten distinct viewed sources in newest-first order (0.7397ms)
+✔ parked location validates longitude/latitude and timestamp, copies coordinates, and clears (6.3129ms)
+✔ versioned persistence round-trips only the supported metadata and rejects damaged formats (22.8587ms)
+✔ AsyncStorage adapter round-trips restarts and clearing without any network access (1.0517ms)
+✔ storage failures reject to the caller without poisoning subsequent operations (1.2202ms)
+✔ concurrent writes and reads are ordered, writes snapshot inputs, and clear cannot be overtaken (1.4269ms)
+✔ damaged stored JSON is surfaced and retained until explicitly cleared (0.7158ms)
+(node:24352) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/JAC/Documents/projects/prometheus-parkey/apps/mobile/src/discovery/map-data.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\JAC\Documents\projects\prometheus-parkey\apps\mobile\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ cluster sources include one anchor per parking record while retaining street geometry (25.2207ms)
+✔ a selected pin renders independently above clusters without being counted twice (1.9659ms)
+✔ southern pins have higher draw priority and source ordering is stable across input order (2.8543ms)
+✔ selected street keeps its line and gains a mascot anchor at its midpoint (0.4429ms)
+✔ map fee bubbles use recorded values and mark missing fees without a free claim (0.8849ms)
+(node:26264) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/JAC/Documents/projects/prometheus-parkey/apps/mobile/src/discovery/map-font.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\JAC\Documents\projects\prometheus-parkey\apps\mobile\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ the font stack is a valid native expression that evaluates to actual font names (25.3472ms)
+✔ normal and selected parking labels use the supported explicit font expression (0.6428ms)
+(node:9604) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/JAC/Documents/projects/prometheus-parkey/apps/mobile/src/discovery/navigation-state.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\JAC\Documents\projects\prometheus-parkey\apps\mobile\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ URL round trip preserves a selected spot, query, filter, sheet, layer and map center (18.2624ms)
+✔ invalid links and preferences cannot create unsupported filters, layers or coordinates (1.5838ms)
+✔ sheet gestures advance exactly one level and stop at the endpoints (0.3955ms)
+✔ an optional-name draft is valid and its preview preserves actual geometry and provenance (1.0434ms)
+✔ a shared full-height selected link has one-level Back entries (0.6553ms)
+✔ refresh keeps the chosen search location distinct from the map focus on nearby parking (0.5292ms)
+✔ Your parking restores through links and Back returns to the map (0.412ms)
+✔ free parking filter survives URL and saved preference round trips (0.4096ms)
+(node:3076) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/JAC/Documents/projects/prometheus-parkey/apps/mobile/src/discovery/ncr-client.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\JAC\Documents\projects\prometheus-parkey\apps\mobile\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ private destination labels are type-checked and rejected in public mode (3.8979ms)
+✔ ambiguous alternatives remain private and reject invalid geographic evidence (0.8187ms)
+✔ private enrichment preserves source labels and rejects malformed evidence, approval claims or public leakage (0.924ms)
+✔ private preview requires development and loopback app/server origins (0.3744ms)
+✔ source geometry and distinct feature roles survive; anchors do not become entrances (0.861ms)
+✔ viewport requests cancel, retain unknown facts and reject public leakage or wrong modes (193.0952ms)
+✔ mode transitions and approval expiry fail closed even if a stale request resolves (28.4092ms)
+✔ complete NCR loader fetches every bounded detail page once and preserves source facts (92.3573ms)
+✔ complete NCR loader rejects changed snapshot, coverage, licensing or approval metadata (89.9132ms)
+✔ complete NCR loader refuses repeated IDs/cursors, stalled pages, clusters and incomplete totals (4.3626ms)
+✔ complete NCR loader aborts before requests and between pages without returning partial records (1.7442ms)
+✔ complete public snapshot stays empty unless every returned record passes publication checks (1.2483ms)
+(node:22704) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/JAC/Documents/projects/prometheus-parkey/apps/mobile/src/discovery/parking-detail-data.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\JAC\Documents\projects\prometheus-parkey\apps\mobile\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ all recorded access sources remain visible and restrictions override public tags (14.0353ms)
+✔ a verified label with an absent or invalid date remains explicit about missing evidence (0.9071ms)
+✔ sparse records omit repeated type, remote distance, and empty facts (2.796ms)
+✔ distance boundaries follow driver-focused units (40.7826ms)
+✔ discovery details preserve fees and access without exposing total inventory (2.125ms)
+✔ invalid hours disappear; OSM parser evaluates in the spot timezone (158.0636ms)
+✔ mapped entrances and facility centers cannot authorize driving directions (0.64ms)
+✔ import geometry warnings do not expand a sparse spot; import date is not edit date (0.6525ms)
+✔ snapshot import, source edit and field verification dates remain distinct (3.6909ms)
+✔ a mapped point, a mapped entrance and a street extent make different directions claims (0.8478ms)
+✔ unnamed records fall back to their actual parking class without using street addresses as lot names (0.7055ms)
+✔ conflicting fees and raw hours retain evidence without computed Free or Open claims (1.0112ms)
+✔ known, missing and invalid source hours remain separate from schedule claims (20.5193ms)
+✔ hours-fact helper suppresses contradictory schedules for every consumer (0.4138ms)
+✔ amenities use recorded values only and malformed counts cannot manufacture amenities (0.6321ms)
+(node:25060) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/JAC/Documents/projects/prometheus-parkey/apps/mobile/src/discovery/parking-fee.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\JAC\Documents\projects\prometheus-parkey\apps\mobile\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ only explicit consistent fee facts establish a fee assertion (10.9871ms)
+✔ contradictory free and charge facts stay unknown while retaining each source fact (41.1768ms)
+✔ equivalent currency and hourly-unit spelling does not manufacture a source conflict (4.4055ms)
+(node:9756) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/JAC/Documents/projects/prometheus-parkey/apps/mobile/src/discovery/parking-navigation-refresh.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\JAC\Documents\projects\prometheus-parkey\apps\mobile\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ fresh lookup uses current authorized facts even when the backend identity changes (22.3401ms)
+✔ missing, revoked, restricted, expired or ambiguous current facts never authorize a route (25.5999ms)
+✔ network errors, absent backend and cancellation cannot fall back to cached authorization (1.4372ms)
+✔ generic shared website citations cannot link a different record to an old approval (1.2294ms)
+(node:12996) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/JAC/Documents/projects/prometheus-parkey/apps/mobile/src/discovery/data.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\JAC\Documents\projects\prometheus-parkey\apps\mobile\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ only the authorized entrance is used, even if a different mapped entrance is closer (2.5852ms)
+✔ missing, expired, revoked or mismatched authorization never falls back to mapped geometry (3.7514ms)
+✔ wire validation rejects malformed approval metadata while preserving legacy browsing records (0.3414ms)
+✔ contradictory access tags, normalized restrictions and unsupported access fail closed (0.7911ms)
+✔ the preserved unverified Poblacion archive has no authorized navigation targets (3.1327ms)
+(node:4112) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/JAC/Documents/projects/prometheus-parkey/apps/mobile/src/discovery/model.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\JAC\Documents\projects\prometheus-parkey\apps\mobile\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ refreshes retain previous results until a successful replacement, including empty results (3.234ms)
+✔ retained records stay viewport-limited and source-aware without merging unknown sources (0.9397ms)
+✔ refresh debounces requests, then publishes success or a recoverable failure (64.8085ms)
+✔ cancelled refreshes do not start or publish stale results after a newer request (3.2967ms)
+✔ timeout retains results and ignores a late response even if the provider ignores abort (37.1551ms)
+(node:7828) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/JAC/Documents/projects/prometheus-parkey/apps/mobile/src/discovery/photo-load-state.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\JAC\Documents\projects\prometheus-parkey\apps\mobile\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ successful and failed image events settle once and clear loading deadlines (43.0098ms)
+✔ a hanging image becomes unavailable and a late load cannot restore it (7.3024ms)
+✔ changing record/photo disposes the old attempt and isolates stale callbacks (0.5785ms)
+✔ invalid timeouts use a finite deadline and unmount clears all work (0.9771ms)
+(node:25424) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/JAC/Documents/projects/prometheus-parkey/apps/mobile/src/discovery/photos.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\JAC\Documents\projects\prometheus-parkey\apps\mobile\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ curated photos match the same source identity across local and server IDs (5.1153ms)
+✔ missing photos and unknown sources yield an empty gallery, never local contribution evidence (0.4179ms)
+✔ invalid URLs and incomplete photo attribution are rejected without hiding valid photos (2.4604ms)
+✔ the catalog explicitly matches location identity and deduplicates valid photo IDs (0.9129ms)
+✔ raw source image tags and local contribution photos never authorize consumer imagery (0.3182ms)
+✔ gallery paging handles swipe offsets, overscroll, single images, and empty galleries (0.3271ms)
+(node:27312) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/JAC/Documents/projects/prometheus-parkey/apps/mobile/src/discovery/pilot-cache.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\JAC\Documents\projects\prometheus-parkey\apps\mobile\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ cache persists a deep public whitelist and never retains navigation capability (7.9921ms)
+✔ exact geometry, classification and normalized viewport identity survive hydration (5.1575ms)
+✔ TTL and review expiry are strict and are never extended by reads (1.5503ms)
+✔ candidate, context-bearing, unapproved, restricted and unsupported facts never enter cache (2.9243ms)
+✔ backend origins isolate storage and unsafe namespaces cannot perform I/O (3.107ms)
+✔ six-entry LRU honors reads and survives a new cache instance (2.9606ms)
+✔ aggregate record count is bounded without silently truncating an authoritative entry (163.3419ms)
+✔ serialized UTF-8 storage never exceeds one MiB, including multibyte source text (125.0613ms)
+✔ authoritative empty results overwrite older records and reject late older writes (7.0894ms)
+✔ corrupt, capability-bearing and oversized storage hydrate as misses (24.1339ms)
+✔ storage failures are misses and failed invalidation cannot resurrect stale cache (1.4699ms)
+✔ concurrent operations serialize and invalidation fences pending writes and reads (15.0977ms)
+(node:10232) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/JAC/Documents/projects/prometheus-parkey/apps/mobile/src/discovery/pilot-client.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\JAC\Documents\projects\prometheus-parkey\apps\mobile\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ focusing a selected map record retains its detail while city, mode, session and expiry invalidate it (4.1462ms)
+✔ public display rejects research context, restricted access, missing approvals and expired cache entries (1.0596ms)
+✔ only an explicit current reviewed entrance authorizes public navigation, never source geometry or candidate mode (1.8991ms)
+✔ scope replacement aborts prior work and refuses completion even when transport ignores cancellation (0.7023ms)
+✔ bounded page requests bind city/mode/viewport and never send reviewer credentials on public calls (7.9251ms)
+✔ server scope mismatches, unsupported responses and private leakage fail closed (12.991ms)
+✔ candidate access requires a memory token and server authorization, public pages never upgrade the session (3.9837ms)
+✔ pagination rejects duplicate identities and repeated cursors instead of accumulating a misleading map (0.8855ms)
+✔ navigation revalidation uses the targeted server lookup and handles revoked records without a fallback (16.1926ms)
+✔ identical concurrent public viewport reads share one fetch and one parsed body (1.4917ms)
+✔ viewport pooling isolates origins, public keys, cities and exact bounds (1.6706ms)
+✔ a canceled public caller cannot cancel another subscriber (1.2727ms)
+✔ all public subscribers cancel transport and later callers start fresh work (1.3844ms)
+✔ failed public requests are removed from the pool before retry (4.366ms)
+✔ candidate, session-bearing, paginated, search and fresh navigation reads never coalesce (5.7595ms)
+✔ pooled public reads retain the leaf fifteen-second timeout (3.4746ms)
+✔ destination search remains separate from parking identity and sends a bounded city query (1.6569ms)
+(node:22764) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/JAC/Documents/projects/prometheus-parkey/apps/mobile/src/discovery/pilot-config.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\JAC\Documents\projects\prometheus-parkey\apps\mobile\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:14016) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/JAC/Documents/projects/prometheus-parkey/apps/mobile/src/discovery/config.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\JAC\Documents\projects\prometheus-parkey\apps\mobile\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:9088) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/JAC/Documents/projects/prometheus-parkey/apps/mobile/src/discovery/pilot-config.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\JAC\Documents\projects\prometheus-parkey\apps\mobile\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:12968) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/JAC/Documents/projects/prometheus-parkey/apps/mobile/src/discovery/pilot-config.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\JAC\Documents\projects\prometheus-parkey\apps\mobile\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:26136) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/JAC/Documents/projects/prometheus-parkey/apps/mobile/src/discovery/pilot-config.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\JAC\Documents\projects\prometheus-parkey\apps\mobile\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:17296) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/JAC/Documents/projects/prometheus-parkey/apps/mobile/src/discovery/pilot-config.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\JAC\Documents\projects\prometheus-parkey\apps\mobile\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:25636) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/JAC/Documents/projects/prometheus-parkey/apps/mobile/src/discovery/pilot-config.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\JAC\Documents\projects\prometheus-parkey\apps\mobile\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ configuration alone cannot enable telemetry before privacy and release review (293.9083ms)
+✔ candidate controls require development and are disabled in release builds (695.4561ms)
+✔ pilot city allowlist contains only Manila and Mandaluyong (0.1676ms)
+✔ only publishable keys and legacy anon-role JWTs pass client key screening (0.5982ms)
+✔ local stack addresses are development-only and Supabase must use a base origin (0.5948ms)
+✔ release endpoint checks reject private and alternative IP forms and embedded credentials (0.356ms)
+✔ incomplete and secret-bearing Supabase configuration fails without echoing keys (0.1433ms)
+(node:15556) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/JAC/Documents/projects/prometheus-parkey/apps/mobile/src/discovery/pilot-performance.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\JAC\Documents\projects\prometheus-parkey\apps\mobile\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ clock-only filtering reuses exact record references without hiding changed facts (1.6612ms)
+✔ repeated canonical observations prefer the newest complete record (2.0044ms)
+✔ nearby records, generic citation URLs and different source kinds never merge (0.5246ms)
+(node:23900) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/JAC/Documents/projects/prometheus-parkey/apps/mobile/src/discovery/pilot-presentation.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\JAC\Documents\projects\prometheus-parkey\apps\mobile\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ only explicit unconditional source fees establish free or paid parking (2.5979ms)
+✔ type labels retain unknown facilities, spaces and entrances without inventing lots (0.4186ms)
+✔ price filters separate unknowns and known opposite prices without changing records (3.9803ms)
+✔ nearby ranking uses the supplied destination/location/map reference and stable id ties (0.928ms)
+✔ invalid coordinates never produce a fictional finite distance (0.6188ms)
+(node:27208) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/JAC/Documents/projects/prometheus-parkey/apps/mobile/src/discovery/pilot-saved.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\JAC\Documents\projects\prometheus-parkey\apps\mobile\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ public pilot saving preserves exact metadata and drops record bodies and permissions (13.0957ms)
+✔ source identity survives server IDs, remains city-scoped and never guesses classification (2.3271ms)
+✔ explicit public visitor access still requires current publication approval (1.6888ms)
+✔ candidate, expired, restricted, contradictory and malformed inputs never reach storage (3ms)
+✔ corrupt or oversized hydration requires explicit recovery and never silently resets storage (2.5997ms)
+✔ concurrent saves serialize, retain newest-first ordering and bound storage to fifty (22.1174ms)
+✔ failed writes do not advance local truth or poison subsequent operations (0.9349ms)
+✔ storage reads, writes and clearing never overlap (7.7894ms)
+(node:16132) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/JAC/Documents/projects/prometheus-parkey/apps/mobile/src/discovery/presentation.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\JAC\Documents\projects\prometheus-parkey\apps\mobile\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ development samples require an explicit request and a development build (6.8268ms)
+✔ source display removes only the exact historical qualifier and preserves attribution (0.3624ms)
+✔ minute refresh timing reaches the next boundary including midnight without a zero delay (0.3408ms)
+✔ invalid clock values use a bounded fallback delay (0.2213ms)
+✔ unnamed titles use the record type without displaying its source (0.6335ms)
+✔ row distances always identify the reference, with the straight-line note reserved for the header (1.2624ms)
+✔ row facts consolidate missing values and retain only recorded facts (2.2592ms)
+✔ verification labels preserve sample and unverified boundaries (0.3311ms)
+(node:26204) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/JAC/Documents/projects/prometheus-parkey/apps/mobile/src/discovery/public-request-pool.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\JAC\Documents\projects\prometheus-parkey\apps\mobile\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ concurrent callers share a parsed value and settled entries are removed (6.9077ms)
+✔ different ephemeral keys never share work (0.7521ms)
+✔ canceling one subscriber leaves shared transport and other subscribers alive (8.7929ms)
+✔ all cancellations abort transport and late completion cannot delete a replacement (2.3771ms)
+✔ shared failures and synchronous loader throws clean up before retry (1.0817ms)
+✔ already canceled callers never start or subscribe to work (0.6336ms)
+(node:25900) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/JAC/Documents/projects/prometheus-parkey/apps/mobile/src/discovery/research-console-target.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\JAC\Documents\projects\prometheus-parkey\apps\mobile\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ external console handoff requires an explicit safe target (2.2795ms)
+✔ local HTTP console is development-only and cannot become a release target (0.6129ms)
+(node:24880) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/JAC/Documents/projects/prometheus-parkey/apps/mobile/src/discovery/routing-consent.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\JAC\Documents\projects\prometheus-parkey\apps\mobile\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ routing consent requires explicit acceptance and survives a new session (2.7895ms)
+✔ unrecognized consent is not treated as permission (0.5859ms)
+✔ a failed persistence operation is surfaced instead of claiming consent was saved (1.3897ms)
+(node:15232) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/JAC/Documents/projects/prometheus-parkey/apps/mobile/src/discovery/routing.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\JAC\Documents\projects\prometheus-parkey\apps\mobile\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ OSRM routes preserve longitude/latitude, route estimates, and maneuver distances (3.7047ms)
+✔ roundabout exits and unfamiliar maneuvers do not invent turns (0.5638ms)
+✔ missing routes and invalid geometry, steps, or estimates are rejected (1.4264ms)
+✔ route requests preserve endpoint prefixes and request car geometry and written steps (6.3386ms)
+✔ reroute requests use a trusted departure heading without constraining the parking approach (4.9933ms)
+✔ per-step geometry lengths and durations are retained for accurate guidance (0.8704ms)
+✔ routes snapped to a distant road are rejected even if the provider ignores radiuses (2.1066ms)
+✔ unconfigured routing and invalid coordinates do not make network calls (0.6931ms)
+✔ routing service failures are surfaced without displaying raw response bodies (4.1969ms)
+✔ closing directions aborts the provider request (1.4502ms)
+✔ slow routing requests time out and release their fetch (1.8698ms)
+(node:17256) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/JAC/Documents/projects/prometheus-parkey/apps/mobile/src/discovery/saved-address-data.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\JAC\Documents\projects\prometheus-parkey\apps\mobile\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ home and work addresses survive a storage round trip without provider metadata (5.6751ms)
+✔ malformed or unsupported saved addresses fail without silently resetting user data (0.7942ms)
+(node:12236) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/JAC/Documents/projects/prometheus-parkey/apps/mobile/src/discovery/search-history.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\JAC\Documents\projects\prometheus-parkey\apps\mobile\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ recents retain five destinations and move a reused place to the front (3.0693ms)
+✔ invalid stored destinations and unsupported versions are rejected (1.1841ms)
+(node:25516) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/JAC/Documents/projects/prometheus-parkey/apps/mobile/src/discovery/sheet-state.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\JAC\Documents\projects\prometheus-parkey\apps\mobile\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ drag-generated clicks cannot undo a sheet snap, while taps and keyboard activation still work (2.4115ms)
+✔ selecting parking opens a preview and dismissal restores the browsing position (1.5607ms)
+✔ selected parking cannot collapse into an empty summary or lose its browsing position (0.2966ms)
+✔ snap heights fit safe areas on small screens, portrait, and landscape (2.0396ms)
+✔ drag snapping follows distance and swipe direction, retaining selected preview bounds (0.378ms)
+✔ the collapsed sheet fits search and large text without reserving a results card (0.1969ms)
+✔ camera padding uses the measured top overlay for initial, recentered and resized views (0.2129ms)
+✔ camera padding always retains a viewport on short screens and rejects negative measurements (0.1853ms)
+✔ browse sheets use the full screen above the safe area without a tab bar (0.2343ms)
+✔ browsing sheets keep floating map controls clear in landscape (0.2754ms)
+✔ search sheet snaps stay ordered in the space above a phone keyboard (0.1527ms)
+(node:27196) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/JAC/Documents/projects/prometheus-parkey/apps/mobile/src/discovery/sheet-wheel.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\JAC\Documents\projects\prometheus-parkey\apps\mobile\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ small trackpad deltas accumulate into one snap, ignoring the momentum tail (2.8061ms)
+✔ reaching a scroll boundary during momentum does not resize or dismiss the sheet (0.2333ms)
+✔ reversing small deltas starts a new distance threshold (0.1774ms)
+✔ mouse line and page deltas use the same pixel threshold as trackpads (0.1906ms)
+(node:26736) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/JAC/Documents/projects/prometheus-parkey/apps/mobile/src/discovery/telemetry-core.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\JAC\Documents\projects\prometheus-parkey\apps\mobile\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ all seven event names serialize only the approved schema to a constant app URL (4.0291ms)
+✔ runtime allowlisting discards coordinates, search text, user IDs, URLs, and unknown properties (1.1417ms)
+✔ missing or malformed provider configuration is completely disabled without inferred defaults (0.4425ms)
+✔ unknown events, invalid enums and missing required fields fail closed (0.3372ms)
+✔ network rejection and HTTP failure do not reject or retry actions (0.5233ms)
+✔ timeout settles after five seconds even if fetch ignores cancellation (1.2949ms)
+✔ Sentry DSNs accept only public HTTPS ingestion configuration (0.4445ms)
+✔ crash reconstruction retains safe bundle positions and removes sensitive contexts and free text (0.7701ms)
+✔ malformed crash input cannot introduce messages, IDs, unsafe numbers or arbitrary filenames (0.3324ms)
+✔ privacy status reflects the same valid configuration used to send events (0.3235ms)
+ℹ tests 242
+ℹ suites 0
+ℹ pass 242
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2973.7045

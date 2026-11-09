@@ -1,0 +1,49 @@
+pnpm.cmd : [WebServer] (node:20360) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+At line:2 char:288
++ ... ORT='8388'; pnpm.cmd exec playwright test e2e/parking-trust.spec.ts e ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ([WebServer] (no... env being set.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] $ node scripts/prepare-map-worker.mjs && expo start --web "--host" "localhost" "--port" "8388" 
+"--max-workers" "2"
+[WebServer] (node:8284) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:8284) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of 
+file:///C:/Users/JAC/Documents/projects/prometheus-parkey/apps/mobile/src/discovery/pilot-config.ts is not specified 
+and it doesn't parse as CommonJS.
+[WebServer] Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+[WebServer] To eliminate this warning, add "type": "module" to 
+\\?\C:\Users\JAC\Documents\projects\prometheus-parkey\apps\mobile\package.json.
+
+Running 22 tests using 1 worker
+
+(node:23152) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  1 [desktop-chromium] › e2e\directions.spec.ts:13:1 › directions require consent, start navigation, and return to the map (25.6s)
+  ok  2 [desktop-chromium] › e2e\directions.spec.ts:61:1 › routing failure offers external maps and retry recovers (7.6s)
+  ok  3 [desktop-chromium] › e2e\directions.spec.ts:89:1 › arriving allows parking confirmation and saves the car location (23.2s)
+  ok  4 [desktop-chromium] › e2e\parking-navigation.spec.ts:3:1 › unverified source parking cannot request directions or open an external driving route (4.4s)
+  ok  5 [desktop-chromium] › e2e\parking-trust.spec.ts:63:1 › known garage facts and unnamed classification retain source trust without invented photos (7.2s)
+  ok  6 [desktop-chromium] › e2e\parking-trust.spec.ts:87:1 › missing facts remain unknown and cannot authorize directions or substitute photos (6.9s)
+  ok  7 [desktop-chromium] › e2e\parking-trust.spec.ts:118:1 › contradictory fee and opening schedules retain raw sources without Free or computed Open claims (5.1s)
+  ok  8 [desktop-chromium] › e2e\parking-trust.spec.ts:147:3 › restricted parking authorization cannot enable a route (5.7s)
+  ok  9 [desktop-chromium] › e2e\parking-trust.spec.ts:147:3 › expired parking authorization cannot enable a route (5.2s)
+  ok 10 [desktop-chromium] › e2e\parking-trust.spec.ts:175:3 › fresh revoked approval after selection and consent prevents all navigation (4.2s)
+  ok 11 [desktop-chromium] › e2e\parking-trust.spec.ts:175:3 › fresh expired approval after selection and consent prevents all navigation (4.5s)
+(node:16408) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 12 [mobile-chromium] › e2e\directions.spec.ts:13:1 › directions require consent, start navigation, and return to the map (15.5s)
+  ok 13 [mobile-chromium] › e2e\directions.spec.ts:61:1 › routing failure offers external maps and retry recovers (5.7s)
+  ok 14 [mobile-chromium] › e2e\directions.spec.ts:89:1 › arriving allows parking confirmation and saves the car location (19.4s)
+  ok 15 [mobile-chromium] › e2e\parking-navigation.spec.ts:3:1 › unverified source parking cannot request directions or open an external driving route (3.1s)
+  ok 16 [mobile-chromium] › e2e\parking-trust.spec.ts:63:1 › known garage facts and unnamed classification retain source trust without invented photos (4.0s)
+  ok 17 [mobile-chromium] › e2e\parking-trust.spec.ts:87:1 › missing facts remain unknown and cannot authorize directions or substitute photos (4.2s)
+  ok 18 [mobile-chromium] › e2e\parking-trust.spec.ts:118:1 › contradictory fee and opening schedules retain raw sources without Free or computed Open claims (4.1s)
+  ok 19 [mobile-chromium] › e2e\parking-trust.spec.ts:147:3 › restricted parking authorization cannot enable a route (4.3s)
+  ok 20 [mobile-chromium] › e2e\parking-trust.spec.ts:147:3 › expired parking authorization cannot enable a route (4.2s)
+  ok 21 [mobile-chromium] › e2e\parking-trust.spec.ts:175:3 › fresh revoked approval after selection and consent prevents all navigation (4.7s)
+  ok 22 [mobile-chromium] › e2e\parking-trust.spec.ts:175:3 › fresh expired approval after selection and consent prevents all navigation (4.7s)
+
+  22 passed (3.0m)

@@ -1,0 +1,55 @@
+{
+  "source_commit": "0763bc9dbc599240f985f7e9287b70de7a41e1e3",
+  "recorded_utc": "2026-11-09T11:59:29.382220+00:00",
+  "environment": {
+    "host": "Windows 11",
+    "avd": "Parkey_A0_API35",
+    "serial": "emulator-5556",
+    "api": 35,
+    "android": "15",
+    "abi": "x86_64",
+    "gpu": "host NVIDIA RTX 2050",
+    "memory_mib": 2048,
+    "cores": 2,
+    "display": "720x1600,280dpi"
+  },
+  "build": {
+    "package": "com.parkey.discovery",
+    "version": "0.1.0",
+    "version_code": 2,
+    "apk_sha256": "d44de93e814045e42232de704d317d7556902031213ae68fe7c371dcd1149d47",
+    "kind": "existing development client with current Metro JS"
+  },
+  "tests": {
+    "mobile_units_passed": 242,
+    "trust_browser_passed": 22,
+    "pilot_browser_passed": 36,
+    "native_matrix_passed": 7,
+    "native_crash_errors_in_matrix_run": 0
+  },
+  "synthetic_native_components": true,
+  "verified_real_parking_or_photos": false,
+  "physical_android_tested": false,
+  "ios_tested": false,
+  "analytics_enabled": false,
+  "artifacts": {
+    "contradictory.json": "d7990a3cde9f6fe5ede009463e3e8a2007665482667d689474d1478e0afb4b1c",
+    "contradictory.png": "34b8ba2a8017bee875a9eebb004c3153fa09905ac1d870e19e6cf92a084aabb6",
+    "expired.json": "d730318375bc8a9f5b67d37b7d20f17f6db77bca92f2cd7ae42602d3f9612e39",
+    "expired.png": "7bc6c78236c648b34307794f0235238408a4b8af9d1672da819cb8689ff3cebb",
+    "image-failure.json": "89326a3ae257d3e17849a31ed2ae7a0508f1eff3390307e5de7c9968f2176ff6",
+    "image-failure.png": "2ed1f7d65778c2a2e83b74ca1dbf2bf3c74e3115a0447f19f14c47fb1ec953d8",
+    "known.json": "ea9740da93721cc4cbf28e1c92c4763c9a190c227780b1944a245d32eb2dc174",
+    "known.png": "15e9ffdee42d4e4b570886d9474625d65e9bf6f9fd7615ea9bcce3181fcf85e4",
+    "matrix-results.json": "d9cb4675b85c61583a5b0d2adbd38a982c8376fd1d03c01fe37afccbc780b020",
+    "missing.json": "65c6e06b43d2098d6d516a8f2b4927420a0e03f17e5c6c3b86e94e6e3e607eb7",
+    "missing.png": "ef9a561b54067612877b1fe5db81f1667d984d915617e0e048876e19540b9c60",
+    "mobile-tests.txt": "de0db2b661b6fde1c17dd64d336d926e4a8b4500fd448d7551ab141f3a8c7629",
+    "pilot-e2e.txt": "d69ee7298de402619212af2f8d4830c0efdc6f1f86d02b6a187fa99afe460290",
+    "restricted.json": "9c0b3ebd270def5e17e9488e5031947763614d2c5174eb6cf2e29c40e651431a",
+    "restricted.png": "c6b7276ca778c4529065f494ab69255e4fec2b02181f867a7ebe676856092d32",
+    "revoked.json": "4e24f1271d35afba8cd74acef85cdbcb8b633c3ddf94c6c6ab9e23dd449cad4b",
+    "revoked.png": "9fe959b90d084344788bb7d98f9d76d5a7e6943d4be32248609095d6a3f99273",
+    "trust-e2e.txt": "038087a81d85b8e4ab0d7f52b1d804aaa487a2c679736e33e4ed66b9b49930eb"
+  }
+}

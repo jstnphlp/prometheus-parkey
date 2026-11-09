@@ -1,0 +1,63 @@
+pnpm.cmd : [WebServer] (node:16752) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+At line:2 char:40
++ ... ORT='8398'; pnpm.cmd exec playwright test --config playwright.pilot.c ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ([WebServer] (no... env being set.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] $ node scripts/prepare-map-worker.mjs && expo start --web "--host" "localhost" "--port" "8298" 
+"--max-workers" "2"
+[WebServer] (node:23608) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:23608) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of 
+file:///C:/Users/JAC/Documents/projects/prometheus-parkey/apps/mobile/src/discovery/pilot-config.ts is not specified 
+and it doesn't parse as CommonJS.
+[WebServer] Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+[WebServer] To eliminate this warning, add "type": "module" to 
+\\?\C:\Users\JAC\Documents\projects\prometheus-parkey\apps\mobile\package.json.
+
+Running 36 tests using 1 worker
+
+(node:24024) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  1 [pilot-desktop] › e2e\pilot\discovery.spec.ts:12:1 › main pilot map scopes results and clears details when changing city (5.1s)
+  ok  2 [pilot-desktop] › e2e\pilot\discovery.spec.ts:32:1 › destination search focuses the active city without granting parking navigation (3.3s)
+  ok  3 [pilot-desktop] › e2e\pilot\discovery.spec.ts:46:1 › Map Saved and You share discovery navigation and public favorites survive reload (5.7s)
+  ok  4 [pilot-desktop] › e2e\pilot\discovery.spec.ts:80:1 › destination ranking and price filters preserve unknown fees and original types (4.3s)
+  ok  5 [pilot-desktop] › e2e\pilot\discovery.spec.ts:165:1 › destination failures retry inside the search panel without changing city or query (3.4s)
+  ok  6 [pilot-desktop] › e2e\pilot\discovery.spec.ts:188:1 › damaged parked-car storage offers recovery without losing public favorites (2.6s)
+  ok  7 [pilot-desktop] › e2e\pilot\discovery.spec.ts:219:1 › public viewport cache survives a failed refresh without retaining navigation authority (3.1s)
+  ok  8 [pilot-desktop] › e2e\pilot\discovery.spec.ts:278:1 › public authorization refusal invalidates cached copies instead of reviving them (3.7s)
+  ok  9 [pilot-desktop] › e2e\pilot\discovery.spec.ts:312:1 › going offline closes private research and never writes candidate bodies to public cache (4.0s)
+  ok 10 [pilot-desktop] › e2e\pilot\discovery.spec.ts:338:1 › authorization refusal on a later page clears prior public records and cache (3.2s)
+  ok 11 [pilot-desktop] › e2e\pilot\discovery.spec.ts:368:1 › candidate session is explicit, memory only and cleared before public results (5.4s)
+  ok 12 [pilot-desktop] › e2e\pilot\discovery.spec.ts:402:1 › server rejection cannot expose candidate records (3.2s)
+  ok 13 [pilot-desktop] › e2e\pilot\discovery.spec.ts:416:1 › empty public results offer recovery without substituting private observations (2.7s)
+  ok 14 [pilot-desktop] › e2e\pilot\discovery.spec.ts:433:1 › network failure presents retry and recovery (3.3s)
+  ok 15 [pilot-desktop] › e2e\pilot\discovery.spec.ts:447:1 › expired publication data fails closed at the mobile API boundary (3.4s)
+  ok 16 [pilot-desktop] › e2e\pilot\discovery.spec.ts:462:1 › a late response from the previous city cannot replace the active scope (3.4s)
+  ok 17 [pilot-desktop] › e2e\pilot\discovery.spec.ts:495:1 › navigation rechecks approval and uses the reviewed entrance coordinate (3.3s)
+  ok 18 [pilot-desktop] › e2e\pilot\discovery.spec.ts:532:1 › revoked entrance permission prevents external navigation (2.9s)
+(node:24372) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 19 [pilot-mobile] › e2e\pilot\discovery.spec.ts:12:1 › main pilot map scopes results and clears details when changing city (3.5s)
+  ok 20 [pilot-mobile] › e2e\pilot\discovery.spec.ts:32:1 › destination search focuses the active city without granting parking navigation (4.0s)
+  ok 21 [pilot-mobile] › e2e\pilot\discovery.spec.ts:46:1 › Map Saved and You share discovery navigation and public favorites survive reload (6.7s)
+  ok 22 [pilot-mobile] › e2e\pilot\discovery.spec.ts:80:1 › destination ranking and price filters preserve unknown fees and original types (4.2s)
+  ok 23 [pilot-mobile] › e2e\pilot\discovery.spec.ts:165:1 › destination failures retry inside the search panel without changing city or query (3.8s)
+  ok 24 [pilot-mobile] › e2e\pilot\discovery.spec.ts:188:1 › damaged parked-car storage offers recovery without losing public favorites (2.7s)
+  ok 25 [pilot-mobile] › e2e\pilot\discovery.spec.ts:219:1 › public viewport cache survives a failed refresh without retaining navigation authority (3.1s)
+  ok 26 [pilot-mobile] › e2e\pilot\discovery.spec.ts:278:1 › public authorization refusal invalidates cached copies instead of reviving them (3.3s)
+  ok 27 [pilot-mobile] › e2e\pilot\discovery.spec.ts:312:1 › going offline closes private research and never writes candidate bodies to public cache (3.4s)
+  ok 28 [pilot-mobile] › e2e\pilot\discovery.spec.ts:338:1 › authorization refusal on a later page clears prior public records and cache (2.8s)
+  ok 29 [pilot-mobile] › e2e\pilot\discovery.spec.ts:368:1 › candidate session is explicit, memory only and cleared before public results (4.9s)
+  ok 30 [pilot-mobile] › e2e\pilot\discovery.spec.ts:402:1 › server rejection cannot expose candidate records (3.0s)
+  ok 31 [pilot-mobile] › e2e\pilot\discovery.spec.ts:416:1 › empty public results offer recovery without substituting private observations (2.6s)
+  ok 32 [pilot-mobile] › e2e\pilot\discovery.spec.ts:433:1 › network failure presents retry and recovery (2.9s)
+  ok 33 [pilot-mobile] › e2e\pilot\discovery.spec.ts:447:1 › expired publication data fails closed at the mobile API boundary (2.6s)
+  ok 34 [pilot-mobile] › e2e\pilot\discovery.spec.ts:462:1 › a late response from the previous city cannot replace the active scope (2.9s)
+  ok 35 [pilot-mobile] › e2e\pilot\discovery.spec.ts:495:1 › navigation rechecks approval and uses the reviewed entrance coordinate (3.2s)
+  ok 36 [pilot-mobile] › e2e\pilot\discovery.spec.ts:532:1 › revoked entrance permission prevents external navigation (2.9s)
+
+  36 passed (2.2m)

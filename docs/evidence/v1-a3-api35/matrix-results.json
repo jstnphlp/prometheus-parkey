@@ -1,0 +1,42 @@
+{
+  "source_commit": "0763bc9dbc599240f985f7e9287b70de7a41e1e3",
+  "synthetic": true,
+  "actual_parking_verification": false,
+  "results": [
+    {
+      "state": "known",
+      "passed": true,
+      "screenshot": "known.png"
+    },
+    {
+      "state": "missing",
+      "passed": true,
+      "screenshot": "missing.png"
+    },
+    {
+      "state": "contradictory",
+      "passed": true,
+      "screenshot": "contradictory.png"
+    },
+    {
+      "state": "restricted",
+      "passed": true,
+      "screenshot": "restricted.png"
+    },
+    {
+      "state": "expired",
+      "passed": true,
+      "screenshot": "expired.png"
+    },
+    {
+      "state": "revoked",
+      "passed": true,
+      "screenshot": "revoked.png"
+    },
+    {
+      "state": "image failure",
+      "passed": true,
+      "screenshot": "image-failure.png"
+    }
+  ]
+}

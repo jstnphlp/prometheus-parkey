@@ -54,8 +54,8 @@
   "files": [
     {
       "file": "apk-identity.json",
-      "bytes": 308,
-      "sha256": "62eceae4fbd8c41faf3541c9f899a01232e9b151b9a78b958edd74ef781549da"
+      "bytes": 302,
+      "sha256": "32a9855064d035a8325f3166da9418badb2616c8706a39bc9a0f67e0acb51afd"
     },
     {
       "file": "benchmark.json",

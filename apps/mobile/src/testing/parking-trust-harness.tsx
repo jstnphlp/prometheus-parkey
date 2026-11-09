@@ -96,6 +96,7 @@ const unavailableImage: ParkingPhoto = {
 
 function Harness() {
   const [state, setState] = useState<State>('known')
+  const [calls, setCalls] = useState(0)
   const [loaded, error] = useFonts(fontSources)
   if (!loaded && !error) return null
   return (
@@ -108,13 +109,17 @@ function Harness() {
       }}
     >
       <Text accessibilityRole="header">SIMULATED NATIVE QA ONLY — {state}</Text>
+      <Text>QA handler calls: {calls}</Text>
       <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
         {states.map((value) => (
           <Pressable
             key={value}
             accessibilityRole="button"
             accessibilityLabel={`QA ${value}`}
-            onPress={() => setState(value)}
+            onPress={() => {
+              setCalls(0)
+              setState(value)
+            }}
             style={{ padding: 12 }}
           >
             <Text>{value}</Text>
@@ -133,7 +138,7 @@ function Harness() {
           now={new Date()}
           location={null}
           expanded
-          onDirections={() => {}}
+          onDirections={() => setCalls((current) => current + 1)}
           onAddDetails={() => {}}
           favorite={false}
           onFavorite={() => {}}

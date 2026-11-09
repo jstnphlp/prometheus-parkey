@@ -50,7 +50,15 @@
     "restricted.png": "c6b7276ca778c4529065f494ab69255e4fec2b02181f867a7ebe676856092d32",
     "revoked.json": "1a1b306e5cb279bdc7111e4a0caa3ff2ff3544e9a74f9d362cd8b1723c55ca89",
     "revoked.png": "9fe959b90d084344788bb7d98f9d76d5a7e6943d4be32248609095d6a3f99273",
-    "trust-e2e.txt": "038087a81d85b8e4ab0d7f52b1d804aaa487a2c679736e33e4ed66b9b49930eb"
+    "trust-e2e.txt": "038087a81d85b8e4ab0d7f52b1d804aaa487a2c679736e33e4ed66b9b49930eb",
+    "navigation-races.txt": "21d177dd41d49c470710297f365aeea7b9b0745684b506213adc227c13fcf1da"
   },
-  "layout_formatting": "Prettier whitespace normalization after capture; no layout fields changed."
+  "layout_formatting": "Prettier whitespace normalization after capture; no layout fields changed.",
+  "navigation_followup": {
+    "source_commit": "613ab2755c137eac24d861b39ca780664a43f6fd",
+    "browser_cases_passed": 10,
+    "mobile_units_passed": 242,
+    "artifact": "navigation-races.txt",
+    "native_component_matrix_changed": false
+  }
 }

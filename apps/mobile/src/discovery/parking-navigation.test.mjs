@@ -8,6 +8,7 @@ import { parkingDestination } from './parking-detail-data.ts'
 import {
   isParkingNavigationApproval,
   reviewedParkingEntrance,
+  publicParkingAccess,
 } from './parking-navigation.ts'
 import { sampleParking } from './sample-data.ts'
 
@@ -99,6 +100,57 @@ test('wire validation rejects malformed approval metadata while preserving legac
     assert.equal(isParking({ ...record, navigationApproval: approval }), false)
   }
   assert.equal(isParking({ ...record, navigationApproval: null }), true)
+})
+
+test('contradictory access tags, normalized restrictions and unsupported access fail closed', () => {
+  for (const restriction of [
+    'private',
+    ' customers ',
+    'MEMBERS',
+    'yes;private',
+    'residents',
+    'delivery',
+    'permit',
+    'unsupported',
+  ]) {
+    assert.equal(publicParkingAccess(restriction), false)
+    for (const tag of ['access', 'parking:access'])
+      assert.equal(
+        reviewedParkingEntrance(
+          { ...approved(), osmTags: { access: 'public', [tag]: restriction } },
+          now,
+        ),
+        null,
+      )
+    assert.equal(
+      reviewedParkingEntrance(
+        {
+          ...approved(),
+          regulations: [
+            {
+              description: `Access recorded by OpenStreetMap: ${restriction}`,
+              sourceLabel: 'Actual source',
+              sourceUrl: null,
+              observedAt: null,
+            },
+          ],
+        },
+        now,
+      ),
+      null,
+    )
+  }
+  for (const value of [
+    undefined,
+    null,
+    '',
+    'unknown',
+    'yes',
+    'public',
+    'permissive',
+    ' public_visitors ',
+  ])
+    assert.equal(publicParkingAccess(value), true)
 })
 
 test('the preserved unverified Poblacion archive has no authorized navigation targets', () => {

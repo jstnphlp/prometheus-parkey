@@ -44,9 +44,12 @@ import { recordKey } from './local-state'
 import { SavedPlaces } from './saved-places'
 import { useLocalState } from './use-local-state'
 import { track } from './telemetry'
+import { config } from './config'
+import { refreshReviewedParking } from './parking-navigation-refresh'
 import {
   anchor,
   distanceMeters,
+  directionsUrl,
   inViewport,
   isCoordinate,
   kindLabels,
@@ -172,7 +175,11 @@ export default function Explore() {
   const consent = useDirectionsConsent(
     nav.consent,
     () => updateNavigation({ consent: true }),
-    () => closeNavigation({ consent: false }),
+    () => {
+      entranceRequest.current?.abort()
+      setEntranceCheck(false)
+      closeNavigation({ consent: false })
+    },
   )
   const [sheetHeight, setSheetHeight] = useState(116 + insets.bottom)
   const [menuOpen, setMenuOpen] = useState(false)
@@ -248,10 +255,53 @@ export default function Explore() {
   const [navigationMessage, setNavigationMessage] = useState<string | null>(
     null,
   )
+  const entranceRequest = useRef<AbortController | null>(null)
+  const [entranceCheck, setEntranceCheck] = useState(false)
+  const [entranceError, setEntranceError] = useState<string | null>(null)
+  useEffect(() => () => entranceRequest.current?.abort(), [])
+  useEffect(() => {
+    entranceRequest.current?.abort()
+    setEntranceCheck(false)
+  }, [nav.selectedId, nav.panel, nav.searching])
   const reroute = useCallback(
-    (from: Coordinate, to: Coordinate, heading?: number) =>
-      loadRoute(to, async () => from, true, heading),
-    [loadRoute],
+    async (from: Coordinate, to: Coordinate, heading?: number) => {
+      entranceRequest.current?.abort()
+      const request = new AbortController()
+      entranceRequest.current = request
+      try {
+        const fresh = routeTarget?.parking
+          ? await refreshReviewedParking(
+              routeTarget.parking,
+              { url: config.supabaseUrl, publicKey: config.supabaseKey },
+              request.signal,
+            )
+          : null
+        if (request.signal.aborted) return null
+        return loadRoute(
+          fresh
+            ? () => {
+                const entrance = parkingDestination(fresh, from)
+                if (!entrance) throw new Error('Entrance approval expired.')
+                return entrance
+              }
+            : to,
+          async () => from,
+          true,
+          heading,
+        )
+      } catch (error) {
+        if (!request.signal.aborted) {
+          clearRoute()
+          setEntranceError(
+            error instanceof Error
+              ? error.message
+              : 'Current entrance approval could not be confirmed.',
+          )
+        }
+        return null
+      }
+    },
+    [loadRoute, clearRoute, routeTarget],
   )
   const drive = useDriveNavigation({
     route: routeState.route,
@@ -259,6 +309,13 @@ export default function Explore() {
     reroute,
     cancel: cancelRoute,
   })
+  const stopDrive = drive.stop
+  useEffect(() => {
+    if (entranceError && routeTarget?.parking && nav.route) {
+      stopDrive(false)
+      clearRoute()
+    }
+  }, [entranceError, routeTarget?.parking, nav.route, stopDrive, clearRoute])
   const directNavigation = useDirectDirections(
     nav.route && routeState.status === 'ready' && routeState.route !== null,
     drive.start,
@@ -282,6 +339,8 @@ export default function Explore() {
     clearRoute()
   }
   function endNavigation() {
+    entranceRequest.current?.abort()
+    setEntranceCheck(false)
     routeExited()
     updateNavigation({ route: false, selectedId: null }, 'replace')
   }
@@ -548,7 +607,40 @@ export default function Explore() {
     if (!parkingDestination(record, currentLocation)) return
     void consent.request((confirmed) => beginDirections(record, confirmed))
   }
-  function beginDirections(record: DiscoveryParking, confirmed: boolean) {
+  async function beginDirections(
+    candidate: DiscoveryParking,
+    confirmed: boolean,
+  ) {
+    drive.stop(false)
+    clearRoute()
+    directNavigation.cancel()
+    entranceRequest.current?.abort()
+    const request = new AbortController()
+    entranceRequest.current = request
+    setEntranceCheck(true)
+    setEntranceError(null)
+    let record: DiscoveryParking
+    try {
+      record = await refreshReviewedParking(
+        candidate,
+        { url: config.supabaseUrl, publicKey: config.supabaseKey },
+        request.signal,
+      )
+      if (request.signal.aborted) return
+    } catch (error) {
+      if (!request.signal.aborted) {
+        const message =
+          error instanceof Error
+            ? error.message
+            : 'Current entrance approval could not be checked. No route was started.'
+        setEntranceError(message)
+        setNavigationMessage(message)
+        updateNavigation({ consent: false }, 'replace')
+      }
+      return
+    } finally {
+      if (entranceRequest.current === request) setEntranceCheck(false)
+    }
     const approvedEntrance = parkingDestination(record, currentLocation)
     if (!approvedEntrance) return
     track({
@@ -596,6 +688,41 @@ export default function Explore() {
         return origin
       },
     )
+  }
+  async function externalRoute(provider: 'google' | 'apple' | 'waze') {
+    if (!routeTarget) return
+    entranceRequest.current?.abort()
+    const request = new AbortController()
+    entranceRequest.current = request
+    setEntranceCheck(true)
+    setEntranceError(null)
+    try {
+      const current = routeTarget.parking
+        ? await refreshReviewedParking(
+            routeTarget.parking,
+            { url: config.supabaseUrl, publicKey: config.supabaseKey },
+            request.signal,
+          )
+        : null
+      if (request.signal.aborted) return
+      const coordinate = current
+        ? parkingDestination(current, null)
+        : routeTarget.coordinate
+      if (!coordinate)
+        throw new Error(
+          'Current entrance approval is unavailable. No Maps handoff was made.',
+        )
+      await Linking.openURL(directionsUrl(coordinate, provider))
+    } catch (error) {
+      if (!request.signal.aborted)
+        setEntranceError(
+          error instanceof Error
+            ? error.message
+            : 'Maps could not be opened. Try again.',
+        )
+    } finally {
+      if (entranceRequest.current === request) setEntranceCheck(false)
+    }
   }
   function viewed(record: DiscoveryParking) {
     void local.viewed(record)
@@ -975,6 +1102,34 @@ export default function Explore() {
       style={styles.screen}
     >
       <StatusBar style="dark" />
+      {entranceCheck || entranceError ? (
+        <View
+          accessibilityLiveRegion="polite"
+          style={{
+            position: 'absolute',
+            top: insets.top + 8,
+            left: 12,
+            right: 12,
+            zIndex: 30,
+            padding: 12,
+            borderRadius: 12,
+            backgroundColor: colors.surface,
+          }}
+        >
+          <Text
+            accessibilityRole={entranceError ? 'alert' : 'text'}
+            testID="parking-entrance-check"
+            style={ui.body}
+          >
+            {entranceError || 'Checking current entrance and visitor access…'}
+          </Text>
+          {entranceError ? (
+            <Button secondary onPress={() => setEntranceError(null)}>
+              Dismiss entrance notice
+            </Button>
+          ) : null}
+        </View>
+      ) : null}
       <View
         ref={mapInterface}
         testID="map-interface"
@@ -1157,16 +1312,21 @@ export default function Explore() {
                   <Button
                     secondary
                     onPress={() => {
+                      if (resumeTarget.parking) {
+                        void beginDirections(resumeTarget.parking, false)
+                        return
+                      }
                       setRouteTarget(resumeTarget)
                       updateNavigation({
                         route: true,
-                        selectedId: resumeTarget.parking?.id ?? null,
+                        selectedId: null,
                       })
                       void loadRoute(
                         resumeTarget.coordinate,
-                        async () => location.point ?? target.coordinate,
-                      )
-                      drive.start()
+                        location.locate,
+                      ).then((route) => {
+                        if (route) drive.start()
+                      })
                     }}
                   >
                     Resume
@@ -1338,7 +1498,10 @@ export default function Explore() {
           <RouteDetails
             key={routeTarget.parking?.id ?? 'car'}
             destinationName={routeTarget.name}
-            destination={routeTarget.coordinate}
+            onExternal={(provider) => {
+              void externalRoute(provider)
+            }}
+            checkingEntrance={entranceCheck}
             state={routeState}
             phase={drive.phase}
             starting={drive.starting}
@@ -1367,7 +1530,9 @@ export default function Explore() {
             onStart={() => {
               setNavigationMessage(null)
               navigationViewportPrivate.current = true
-              drive.start()
+              if (routeTarget.parking)
+                void beginDirections(routeTarget.parking, false)
+              else drive.start()
             }}
             onPark={() => {
               if (saving.current || parkedHere) return
@@ -1428,34 +1593,17 @@ export default function Explore() {
                       )
                       return
                     }
-                    const from = drive.position ?? routeTarget.coordinate
                     drive.stop(false)
-                    const coordinate = anchor(next.geometry)
-                    setRouteTarget({
-                      name: parkingTitle(next),
-                      coordinate,
-                      parking: next,
-                    })
-                    updateNavigation(
-                      { selectedId: next.id, route: true },
-                      'replace',
-                    )
-                    setNavigationMessage(null)
-                    void loadRoute(coordinate, async () => from).then(
-                      (route) => {
-                        if (route) drive.start()
-                      },
-                    )
+                    void beginDirections(next, false)
                   }
                 : null
             }
             onHeightChange={setRouteHeight}
             onClose={endNavigation}
             onRetry={() =>
-              void loadRoute(
-                routeTarget.coordinate,
-                async () => location.point ?? target.coordinate,
-              )
+              routeTarget.parking
+                ? void beginDirections(routeTarget.parking, false)
+                : void loadRoute(routeTarget.coordinate, location.locate)
             }
           />
         ) : null}

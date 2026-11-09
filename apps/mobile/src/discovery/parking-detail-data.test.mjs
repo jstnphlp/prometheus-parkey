@@ -5,6 +5,7 @@ import {
   detailDistance,
   parkingDetailData,
   parkingDestination,
+  parkingHoursFacts,
 } from './parking-detail-data.ts'
 import { spotHours } from './spot-hours.ts'
 import { sampleParking } from './sample-data.ts'
@@ -17,6 +18,41 @@ const minimal = {
   hours: null,
   regulations: [],
 }
+
+test('all recorded access sources remain visible and restrictions override public tags', () => {
+  const details = parkingDetailData(
+    {
+      ...minimal,
+      osmTags: { access: 'public', 'parking:access': 'private' },
+      regulations: [
+        {
+          id: 'restriction',
+          description: 'Access: permit',
+          sourceLabel: 'QA source',
+        },
+      ],
+    },
+    null,
+  )
+  assert.equal(details.access, 'public / private / permit')
+  assert.match(details.warning, /Private parking/)
+  assert.ok(
+    details.rows.some(
+      (row) =>
+        row.label === 'Access' && row.value === 'public / private / permit',
+    ),
+  )
+})
+
+test('a verified label with an absent or invalid date remains explicit about missing evidence', () => {
+  for (const verifiedAt of [null, 'invalid']) {
+    const details = parkingDetailData(
+      { ...minimal, sourceKind: 'osm', verification: 'verified', verifiedAt },
+      null,
+    )
+    assert.equal(details.verification, 'Verification date unknown')
+  }
+})
 test('sparse records omit repeated type, remote distance, and empty facts', () => {
   const details = parkingDetailData(minimal, [0, 0])
   assert.equal(details.title, 'Parking lot')
@@ -166,4 +202,157 @@ test('a mapped point, a mapped entrance and a street extent make different direc
   const street = parkingDetailData({ ...sampleParking[2], entrances: [] }, null)
   assert.match(street.geometryNote, /^Mapped street extent/)
   assert.match(street.geometryNote, /check signs and parking restrictions/)
+})
+
+test('unnamed records fall back to their actual parking class without using street addresses as lot names', () => {
+  for (const [kind, title] of [
+    ['lot', 'Parking lot'],
+    ['garage', 'Garage'],
+    ['street', 'Street parking'],
+  ])
+    assert.equal(
+      parkingDetailData(
+        { ...minimal, kind, name: 'Unnamed parking', osmTags: {} },
+        null,
+      ).title,
+      title,
+    )
+  assert.equal(
+    parkingDetailData(
+      {
+        ...minimal,
+        kind: 'garage',
+        osmTags: { 'addr:street': 'Fixture Avenue' },
+      },
+      null,
+    ).title,
+    'Garage',
+  )
+})
+
+test('conflicting fees and raw hours retain evidence without computed Free or Open claims', () => {
+  const input = {
+    ...minimal,
+    fees: 'Paid',
+    hours: 'Mo-Su off',
+    osmTags: {
+      fee: 'no',
+      charge: 'PHP 40/hr',
+      opening_hours: '24/7',
+      access: 'customers',
+    },
+  }
+  const original = JSON.stringify(input)
+  const details = parkingDetailData(
+    input,
+    null,
+    new Date('2026-11-06T02:00:00Z'),
+  )
+  assert.deepEqual(details.chips, [])
+  assert.equal(details.fee, undefined)
+  assert.equal(details.week, undefined)
+  assert.match(details.warning, /Customers only/)
+  assert.match(details.warning, /Fee sources conflict/)
+  assert.match(details.warning, /Hours sources conflict/)
+  for (const [label, value] of [
+    ['OSM fee', 'no'],
+    ['OSM charge', 'PHP 40/hr'],
+    ['Recorded fee', 'Paid'],
+    ['OSM opening hours', '24/7'],
+    ['Recorded opening hours', 'Mo-Su off'],
+  ])
+    assert.ok(
+      details.rows.some((row) => row.label === label && row.value === value),
+      label,
+    )
+  assert.ok(!details.rows.some((row) => row.label === 'Fee'))
+  assert.equal(JSON.stringify(input), original)
+})
+
+test('known, missing and invalid source hours remain separate from schedule claims', () => {
+  const now = new Date('2026-11-06T02:00:00Z')
+  const known = parkingDetailData(
+    { ...minimal, hours: '24/7', osmTags: { opening_hours: ' 24/7 ' } },
+    null,
+    now,
+  )
+  assert.ok(known.chips.includes('Open 24 hours'))
+  assert.equal(known.warning, undefined)
+  assert.ok(
+    known.rows.some(
+      (row) => row.label === 'OSM opening hours' && row.value === '24/7',
+    ),
+  )
+  const invalid = parkingDetailData(
+    { ...minimal, hours: 'not a schedule' },
+    null,
+    now,
+  )
+  assert.deepEqual(invalid.chips, [])
+  assert.equal(invalid.week, undefined)
+  assert.ok(
+    invalid.rows.some(
+      (row) =>
+        row.label === 'Recorded opening hours' &&
+        row.value === 'not a schedule',
+    ),
+  )
+  const missing = parkingDetailData(
+    { ...minimal, hours: null, osmTags: {} },
+    null,
+    now,
+  )
+  assert.equal(missing.week, undefined)
+  assert.deepEqual(missing.rows, [])
+})
+
+test('hours-fact helper suppresses contradictory schedules for every consumer', () => {
+  const record = {
+    ...minimal,
+    hours: 'Mo-Su off',
+    osmTags: { opening_hours: '24/7' },
+  }
+  const result = parkingHoursFacts(record, new Date('2026-11-06T02:00:00Z'))
+  assert.equal(result.conflict, true)
+  assert.deepEqual(result.parsed, {})
+  assert.deepEqual(result.sources, [
+    { label: 'OSM opening hours', value: '24/7' },
+    { label: 'Recorded opening hours', value: 'Mo-Su off' },
+  ])
+})
+
+test('amenities use recorded values only and malformed counts cannot manufacture amenities', () => {
+  const empty = parkingDetailData({ ...minimal, osmTags: {} }, null)
+  for (const key of [
+    'covered',
+    'lit',
+    'supervised',
+    'wheelchair',
+    'accessibleSpaces',
+    'chargingSpaces',
+  ])
+    assert.equal(empty[key], undefined, key)
+  const details = parkingDetailData(
+    {
+      ...minimal,
+      osmTags: {
+        covered: 'yes',
+        lit: 'no',
+        supervised: 'unknown',
+        wheelchair: 'limited',
+        'capacity:disabled': 'two',
+        'capacity:charging': '9'.repeat(400),
+        capacity: '120',
+      },
+    },
+    null,
+  )
+  assert.equal(details.covered, 'yes')
+  assert.equal(details.lit, 'no')
+  assert.equal(details.wheelchair, 'limited')
+  assert.equal(details.supervised, undefined)
+  assert.equal(details.accessibleSpaces, undefined)
+  assert.equal(details.chargingSpaces, undefined)
+  assert.equal(Object.hasOwn(details, 'capacity'), false)
+  assert.ok(!details.rows.some((row) => row.label === 'Spaces'))
 })

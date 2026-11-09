@@ -9,7 +9,10 @@ import type {
 } from '@parkey/shared-types'
 
 import { isCoordinate, isObject } from './model.ts'
-import { isParkingNavigationApproval } from './parking-navigation.ts'
+import {
+  isParkingNavigationApproval,
+  publicParkingAccess,
+} from './parking-navigation.ts'
 import { createPublicRequestPool } from './public-request-pool.ts'
 
 export const pilotAreas: Record<
@@ -174,6 +177,7 @@ export function pilotRecordCanDisplay(
         record.navigationApproval === null
     : record.evidence.publicationApproved &&
         !record.restrictedAccess &&
+        publicParkingAccess(record.accessClass) &&
         record.destinationContext.length === 0 &&
         (record.officialName !== null || record.descriptiveLabel !== null) &&
         typeof record.reviewDueAt === 'string' &&
@@ -191,9 +195,7 @@ export function pilotNavigationEntrance(
     !isParkingNavigationApproval(approval) ||
     Date.parse(approval.expiresAt) <= now ||
     Date.parse(approval.expiresAt) > Date.parse(record.reviewDueAt || '') ||
-    /^(private|no|permit|residents|members|military|emergency|delivery|destination|customers|psv|designated)$/i.test(
-      record.accessClass,
-    )
+    !publicParkingAccess(record.accessClass)
   )
     return null
   return approval.entrance

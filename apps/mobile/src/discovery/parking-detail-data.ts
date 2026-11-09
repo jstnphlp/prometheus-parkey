@@ -2,9 +2,12 @@ import type { Coordinate, DiscoveryParking } from '@parkey/shared-types'
 
 import { anchor, distanceMeters, kindLabels } from './model.ts'
 import { spotHours } from './spot-hours.ts'
-import { parkingFee } from './parking-fee.ts'
+import { parkingFeeFacts } from './parking-fee.ts'
 import type { WeekDay } from './spot-hours.ts'
-import { reviewedParkingEntrance } from './parking-navigation.ts'
+import {
+  publicParkingAccess,
+  reviewedParkingEntrance,
+} from './parking-navigation.ts'
 
 export type ParkingDetailRow = {
   icon: 'clock' | 'fees' | 'access' | 'list'
@@ -71,6 +74,37 @@ export function parkingDestination(
 ): Coordinate | null {
   return reviewedParkingEntrance(parking, now)
 }
+
+/** Keep raw schedules visible, but never resolve inconsistent sources by guessing. */
+export function parkingHoursFacts(parking: DiscoveryParking, now = new Date()) {
+  const sourceHours = text(parking.osmTags?.opening_hours)
+  const recordedHours = text(parking.hours)
+  const normalize = (value: string) =>
+    value.replaceAll(/\s+/g, ' ').trim().toLowerCase()
+  const conflict =
+    !!sourceHours &&
+    !!recordedHours &&
+    normalize(sourceHours) !== normalize(recordedHours)
+  const sources = [
+    ...(sourceHours
+      ? [{ label: 'OSM opening hours', value: sourceHours }]
+      : []),
+    ...(recordedHours &&
+    (!sourceHours || normalize(sourceHours) !== normalize(recordedHours))
+      ? [{ label: 'Recorded opening hours', value: recordedHours }]
+      : []),
+  ]
+  return {
+    conflict,
+    sources,
+    parsed: spotHours(
+      conflict ? undefined : (sourceHours ?? recordedHours),
+      anchor(parking.geometry),
+      now,
+    ),
+  }
+}
+
 export function parkingDetailData(
   parking: DiscoveryParking,
   location: Coordinate | null,
@@ -83,38 +117,60 @@ export function parkingDetailData(
   const street =
     get('addr:street') ?? (parking.kind === 'street' ? realName : undefined)
   const title =
-    realName ?? (street ? `Street parking on ${street}` : 'Parking lot')
+    realName ??
+    (parking.kind === 'street' && street
+      ? `Street parking on ${street}`
+      : kindLabels[parking.kind])
   const fees = text(parking.fees)
   const charge = get('charge')
-  const fee = parkingFee(parking)
-  const hours = spotHours(
-    get('opening_hours') ?? text(parking.hours),
-    anchor(parking.geometry),
-    now,
-  )
+  const feeFacts = parkingFeeFacts(parking)
+  const fee = feeFacts.value
+  const hoursFacts = parkingHoursFacts(parking, now)
+  const hours = hoursFacts.parsed
   const count = (key: string) => {
     const value = get(key)
-    return value && /^\d+$/.test(value) ? Number(value) : undefined
+    const number = value && /^\d+$/.test(value) ? Number(value) : NaN
+    return Number.isSafeInteger(number) && number >= 0 ? number : undefined
   }
-  const access =
-    get('access') ??
-    parking.regulations
-      .find((r) =>
-        /^Access (?:recorded by OpenStreetMap:|:)\s*/i.test(r.description),
-      )
-      ?.description.replace(/^Access (?:recorded by OpenStreetMap:|:)\s*/i, '')
-  const warning =
-    access &&
-    /^(customers|private|permit|no|destination|delivery)$/i.test(access)
-      ? {
-          customers: 'Customers only',
-          private: 'Private parking',
-          permit: 'Permit required',
-          no: 'No public access',
-          destination: 'Destination access only',
-          delivery: 'Deliveries only',
-        }[access.toLowerCase()]
-      : undefined
+  const accessValues = [
+    ...new Set(
+      [
+        get('access'),
+        get('parking:access'),
+        ...parking.regulations.map((rule) =>
+          text(
+            /^Access(?: recorded by OpenStreetMap)?\s*:\s*(.*)$/i.exec(
+              rule.description,
+            )?.[1],
+          ),
+        ),
+      ].filter((value): value is string => value !== undefined),
+    ),
+  ]
+  const access = accessValues.length ? accessValues.join(' / ') : undefined
+  const restricted = accessValues.find((value) => !publicParkingAccess(value))
+  const accessWarning = restricted
+    ? ({
+        customers: 'Customers only',
+        private: 'Private parking',
+        permit: 'Permit required',
+        no: 'No public access',
+        destination: 'Destination access only',
+        delivery: 'Deliveries only',
+      }[restricted.toLowerCase()] ??
+      `Restricted or unconfirmed access: ${restricted}`)
+    : undefined
+  const warning = [
+    accessWarning,
+    feeFacts.conflict
+      ? 'Fee sources conflict. Check current posted signs.'
+      : undefined,
+    hoursFacts.conflict
+      ? 'Hours sources conflict. Current opening times are unknown.'
+      : undefined,
+  ]
+    .filter(Boolean)
+    .join(' ')
   const rows: ParkingDetailRow[] = []
   const add = (
     label: string,
@@ -124,6 +180,9 @@ export function parkingDetailData(
   ) => {
     if (value) rows.push({ label, value, icon, ...(url ? { url } : {}) })
   }
+  for (const fact of hoursFacts.sources) add(fact.label, fact.value, 'clock')
+  if (feeFacts.conflict)
+    for (const fact of feeFacts.sources) add(fact.label, fact.value, 'fees')
   for (const day of hours.week ?? [])
     rows.push({
       label: day.day,
@@ -131,13 +190,14 @@ export function parkingDetailData(
       icon: 'clock',
       today: day.today,
     })
-  add(
-    'Fee',
-    fee === 'Free'
-      ? 'Source records no fee; check posted signs'
-      : (charge ?? fees ?? fee),
-    'fees',
-  )
+  if (!feeFacts.conflict)
+    add(
+      'Fee',
+      fee === 'Free'
+        ? 'Source records no fee; check posted signs'
+        : (charge ?? fees ?? fee),
+      'fees',
+    )
   const payments = Object.entries(tags)
     .filter(([key, value]) => key.startsWith('payment:') && value === 'yes')
     .map(([key]) => key.slice(8).replaceAll('_', ' '))
@@ -231,7 +291,9 @@ export function parkingDetailData(
     parking.sourceKind === 'sample'
       ? 'Development sample'
       : parking.verification === 'verified'
-        ? `Verified ${new Date(parking.verifiedAt ?? '').toLocaleDateString('en-PH', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'Asia/Manila' })}`
+        ? Number.isFinite(Date.parse(parking.verifiedAt ?? ''))
+          ? `Verified ${new Date(parking.verifiedAt ?? '').toLocaleDateString('en-PH', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'Asia/Manila' })}`
+          : 'Verification date unknown'
         : 'Not field verified'
   const geometryNote = reviewedParkingEntrance(parking, now.getTime())
     ? 'Reviewed vehicle entrance. Confirm current access on arrival.'

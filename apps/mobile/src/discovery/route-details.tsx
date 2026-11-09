@@ -1,7 +1,6 @@
 import { useMemo, useState } from 'react'
 import {
   ActivityIndicator,
-  Linking,
   PanResponder,
   Pressable,
   ScrollView,
@@ -10,13 +9,11 @@ import {
   useWindowDimensions,
   View,
 } from 'react-native'
-import type { Coordinate } from '@parkey/shared-types'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Svg, { Path } from 'react-native-svg'
 
 import { FigmaAsset } from './figma-assets'
 import { arrivalTime } from './drive-math'
-import { directionsUrl } from './model'
 import { routeDistance, routeDuration } from './routing'
 import type { DrivingStep } from './routing'
 import { createSheetDragGuard } from './sheet-state'
@@ -100,7 +97,8 @@ export function NavigationBanner({
 
 export function RouteDetails({
   destinationName,
-  destination,
+  onExternal,
+  checkingEntrance,
   state,
   phase,
   starting,
@@ -120,7 +118,8 @@ export function RouteDetails({
   night = false,
 }: {
   destinationName: string
-  destination: Coordinate
+  onExternal: (provider: 'google' | 'apple' | 'waze') => void
+  checkingEntrance: boolean
   state: RouteState
   phase: DrivePhase
   starting: boolean
@@ -377,9 +376,8 @@ export function RouteDetails({
                   <Button
                     key={provider}
                     secondary
-                    onPress={() => {
-                      void Linking.openURL(directionsUrl(destination, provider))
-                    }}
+                    disabled={checkingEntrance}
+                    onPress={() => onExternal(provider)}
                   >
                     Open in{' '}
                     {provider === 'google'

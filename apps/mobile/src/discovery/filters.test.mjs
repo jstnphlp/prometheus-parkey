@@ -97,3 +97,32 @@ test('free filter requires explicit source evidence and keeps unknown fees separ
     ['unknown', 'conditional'],
   )
 })
+
+test('contradictory fees never match free or paid filters', () => {
+  const inputs = [
+    {
+      ...records[0],
+      id: 'free-with-charge',
+      osmTags: { fee: 'no', charge: 'PHP 40/hr' },
+      fees: null,
+    },
+    {
+      ...records[0],
+      id: 'paid-with-free',
+      osmTags: { fee: 'yes' },
+      fees: 'Free',
+    },
+    {
+      ...records[0],
+      id: 'conditional',
+      osmTags: { fee: 'no' },
+      fees: 'Free for customers',
+    },
+  ]
+  for (const filter of ['free', 'applies']) {
+    const result = partitionParking(inputs, 'all', filter)
+    assert.deepEqual(result.matched, [])
+    assert.deepEqual(result.unknown, inputs)
+  }
+  assert.deepEqual(partitionParking(inputs, 'all').matched, inputs)
+})

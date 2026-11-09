@@ -42,6 +42,7 @@ export function useNavigation(onRouteExit?: () => void) {
   const current = useRef(state)
   const pendingClose = useRef<Partial<NavigationState> | null>(null)
   const touched = useRef(false)
+  const getState = useCallback(() => current.current, [])
   const update = useCallback(
     (patch: Partial<NavigationState>, mode: 'push' | 'replace' = 'push') => {
       const next = { ...current.current, ...patch }
@@ -131,7 +132,7 @@ export function useNavigation(onRouteExit?: () => void) {
     ).catch(() => undefined)
   }, [state.filter, state.position, state.fees])
   return useMemo(
-    () => ({ state, update, close, cameraRevision }),
-    [state, update, close, cameraRevision],
+    () => ({ state, update, close, cameraRevision, getState }),
+    [state, update, close, cameraRevision, getState],
   )
 }

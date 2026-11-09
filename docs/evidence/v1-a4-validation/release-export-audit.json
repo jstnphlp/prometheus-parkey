@@ -1,0 +1,20 @@
+{
+  "artifact": "entry-0fd6717bc033864308177b152f58bb9f.hbc",
+  "sha256": "b143e7156c1cde03531096bc515fdbe1a8ee9d85977054eea5554143a3ab000f",
+  "bytes": 6242056,
+  "checks": {
+    "isolated_QA_entry_absent": true,
+    "native_fixture_asset_absent": true,
+    "no_service_role_jwt_marker": true,
+    "local_benchmark_marker_present": true
+  },
+  "kind": "local Android production JS/assets export, not a signed native release",
+  "dotenv_disabled": true,
+  "release_flag": true,
+  "pilot_flag": false,
+  "supabase_configured": false,
+  "search_configured": false,
+  "routing_configured": false,
+  "provider_approval_flags_set": false,
+  "release_benchmark_emission": "Disabled by production default and tested release guards; retained bytecode string is not evidence of execution."
+}

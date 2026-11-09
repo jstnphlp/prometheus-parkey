@@ -1,0 +1,37 @@
+pnpm.cmd : $ pnpm --filter @parkey/web build
+At line:2 char:1
++ pnpm.cmd build:web *> output/ncr/a4-build-web.log; $checkExit=$LASTEX ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ($ pnpm --filter @parkey/web build:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+$ vite build
+vite v8.3.5 building client environment for production...
+transforming...
+✓ 136 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/client/assets/Nunito_900Black-BiQx_EfX.ttf      132.02 kB
+dist/client/assets/Nunito_800ExtraBold-De0aZuyy.ttf  132.06 kB
+dist/client/assets/Inter-Regular-C_F0_eS_.ttf        342.40 kB
+dist/client/assets/Inter-SemiBold-CoRPLEbp.ttf       343.63 kB
+dist/client/assets/styles-DpMBcdca.css                30.10 kB │ gzip:   7.84 kB
+dist/client/assets/about-6p8a85ni.js                   1.33 kB │ gzip:   0.68 kB
+dist/client/assets/routes-D6AoA7uq.js                  9.06 kB │ gzip:   2.92 kB
+dist/client/assets/index-m1oo32AQ.js                 341.21 kB │ gzip: 110.24 kB
+
+✓ built in 516ms
+vite v8.3.5 building ssr environment for production...
+transforming...
+✓ 57 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/server/assets/start-DCuTSEuX.js                        0.13 kB │ gzip:  0.12 kB
+dist/server/assets/empty-plugin-adapters-Butv5p6u.js        0.21 kB │ gzip:  0.15 kB
+dist/server/assets/_tanstack-start-manifest_v-DaocEsSq.js   0.73 kB │ gzip:  0.33 kB
+dist/server/assets/about-DDYLW3-6.js                        1.67 kB │ gzip:  0.77 kB
+dist/server/assets/router-CBjKmJHF.js                       2.44 kB │ gzip:  1.00 kB
+dist/server/assets/routes-DA8hgEmx.js                      16.34 kB │ gzip:  4.05 kB
+dist/server/server.js                                      92.52 kB │ gzip: 23.43 kB
+
+✓ built in 249ms

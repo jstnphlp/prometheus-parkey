@@ -13,11 +13,14 @@
       "buildNumber": "2"
     },
     "android": {
-      "predictiveBackGestureEnabled": true,
+      "predictiveBackGestureEnabled": false,
+      "allowBackup": false,
       "package": "com.parkey.discovery",
       "versionCode": 2,
       "blockedPermissions": [
         "android.permission.ACCESS_BACKGROUND_LOCATION",
+        "android.permission.SYSTEM_ALERT_WINDOW",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
         "android.permission.CAMERA",
         "android.permission.RECORD_AUDIO"
       ]

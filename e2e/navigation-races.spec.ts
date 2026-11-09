@@ -1,4 +1,5 @@
 import type { Page } from '@playwright/test'
+import { readFileSync } from 'node:fs'
 
 import { isParking } from '../apps/mobile/src/discovery/data'
 
@@ -6,12 +7,48 @@ import {
   test,
   expect,
   installNavigationSensor,
-  openSpot,
+  expandResults,
+  openMap,
   spot,
 } from './fixtures'
 
 test.use({ reviewedNavigation: true })
 const parkingRpc = 'https://e2e.parkey.test/rest/v1/rpc/discover_parking'
+
+function reviewedParkingFixture() {
+  const archive: unknown = JSON.parse(
+    readFileSync(
+      new URL('../apps/mobile/src/discovery/osm-pilot.json', import.meta.url),
+      'utf8',
+    ),
+  )
+  if (!Array.isArray(archive) || !archive.every(isParking))
+    throw new Error('Invalid bundled parking fixture')
+  const original = archive.find((record) => record.id === spot.id)
+  if (!original) throw new Error('Expected source fixture record')
+  return {
+    ...original,
+    entrances: [[spot.longitude, spot.latitude]],
+    navigationApproval: {
+      entrance: [spot.longitude, spot.latitude],
+      entranceConfirmed: true,
+      visitorAccessConfirmed: true,
+      operatorAuthorized: true,
+      expiresAt: new Date(Date.now() + 86400000).toISOString(),
+    },
+  }
+}
+
+async function selectParkingFromMap(page: Page) {
+  // Exercise the actual UI history entry for selection. A deep link also asks
+  // Expo Router to initialize history, which can race the app's layer hydration.
+  await openMap(page)
+  await expandResults(page)
+  await page
+    .getByRole('button', { name: /^1210\..*Open parking details$/ })
+    .click()
+  await expect(page.getByTestId('parking-detail-title')).toHaveText(spot.name)
+}
 
 function routingRequests(page: Page) {
   const requests: string[] = []
@@ -46,9 +83,14 @@ test('Back cancels a delayed external entrance refresh even when the same parkin
 }) => {
   const requests = routingRequests(page)
   await installNavigationSensor(page)
-  const originalResponse = page.waitForResponse(parkingRpc)
-  await openSpot(page)
-  const currentParking: unknown = await (await originalResponse).json()
+  const currentParking = {
+    records: [reviewedParkingFixture()],
+    truncated: false,
+  }
+  await page.route(parkingRpc, (route) =>
+    route.fulfill({ json: currentParking }),
+  )
+  await selectParkingFromMap(page)
   // External Maps is an explicit recovery action when the routing provider
   // fails; it is intentionally not offered over an active driving banner.
   await page.route('https://e2e.parkey.test/route/v1/driving/**', (route) =>
@@ -105,7 +147,7 @@ test('late GPS after Back cannot start or rearm navigation, and a new explicit r
 }) => {
   const requests = routingRequests(page)
   await installNavigationSensor(page)
-  await openSpot(page)
+  await selectParkingFromMap(page)
   await page.evaluate(() => {
     const original = navigator.geolocation.getCurrentPosition.bind(
       navigator.geolocation,
@@ -173,7 +215,7 @@ test('closing a selected spot while persisted consent is pending cannot authoriz
   page,
 }) => {
   const requests = routingRequests(page)
-  await openSpot(page)
+  await selectParkingFromMap(page)
   await page.evaluate(() => {
     const original = Storage.prototype.getItem
     // A deferred storage result models native AsyncStorage latency. The web
@@ -240,19 +282,11 @@ test('external Maps uses the newly approved entrance instead of the earlier rout
   page,
 }) => {
   await installNavigationSensor(page)
-  const originalResponse = page.waitForResponse(parkingRpc)
-  await openSpot(page)
-  const payload: unknown = await (await originalResponse).json()
-  if (
-    !payload ||
-    typeof payload !== 'object' ||
-    !('records' in payload) ||
-    !Array.isArray(payload.records)
+  const record = reviewedParkingFixture()
+  await page.route(parkingRpc, (route) =>
+    route.fulfill({ json: { records: [record], truncated: false } }),
   )
-    throw new Error('Expected the reviewed synthetic parking response')
-  const record = payload.records.find(isParking)
-  if (!record || !record.navigationApproval)
-    throw new Error('Expected an authorized synthetic entrance')
+  await selectParkingFromMap(page)
   await page.route('https://e2e.parkey.test/route/v1/driving/**', (route) =>
     route.fulfill({ status: 503, body: 'Synthetic routing outage' }),
   )
@@ -292,7 +326,7 @@ test('Back during a pending consent save prevents the completed write from start
   page,
 }) => {
   const requests = routingRequests(page)
-  await openSpot(page)
+  await selectParkingFromMap(page)
   let entranceReads = 0
   page.on('request', (request) => {
     if (request.url() !== parkingRpc) return

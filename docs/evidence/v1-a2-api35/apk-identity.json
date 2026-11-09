@@ -1,0 +1,6 @@
+{
+  "installed_sha256": "d44de93e814045e42232de704d317d7556902031213ae68fe7c371dcd1149d47",
+  "archived_sha256": "d44de93e814045e42232de704d317d7556902031213ae68fe7c371dcd1149d47",
+  "equal": true,
+  "note": "Current JS via Metro; installed native shell equality does not establish release signing."
+}

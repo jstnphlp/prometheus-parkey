@@ -160,6 +160,7 @@ export default function PilotDiscovery({
   const parkingGate = useRef(createPilotRequestGate())
   const searchGate = useRef(createPilotRequestGate())
   const navigationGate = useRef(createPilotRequestGate())
+  const cacheEpoch = useRef(0)
   const cursors = useRef(new Set<string>())
   const searchCursors = useRef(new Set<string>())
   const [parking, setParking] = useState<{
@@ -220,6 +221,20 @@ export default function PilotDiscovery({
 
   const accessFailed = useCallback(
     (error: unknown) => {
+      if (error instanceof PilotAccessError && mode === 'public') {
+        cacheEpoch.current++
+        setSelection(null)
+        setCachedAt(null)
+        setParking((previous) => ({
+          ...previous,
+          records: [],
+          next: null,
+          status: 'error',
+          error: error.message,
+        }))
+        void publicPilotCache.invalidate(request)
+        return
+      }
       if (!(error instanceof PilotAccessError) || mode !== 'candidate_research')
         return
       setToken(null)
@@ -229,7 +244,7 @@ export default function PilotDiscovery({
       setDestination(null)
       setAuthMessage(error.message)
     },
-    [mode],
+    [mode, request],
   )
   useEffect(() => {
     const parkingRequests = parkingGate.current,
@@ -256,6 +271,7 @@ export default function PilotDiscovery({
     navigationGate.current.cancel()
     setNavBusy(false)
     const attempt = requests.begin()
+    const capturedCacheEpoch = cacheEpoch.current
     let networkSucceeded = false
     let cacheAllowed = request.mode === 'public'
     setCachedAt(null)
@@ -278,6 +294,7 @@ export default function PilotDiscovery({
           !entry ||
           networkSucceeded ||
           !cacheAllowed ||
+          capturedCacheEpoch !== cacheEpoch.current ||
           !attempt.current() ||
           currentKey.current !== key
         )
@@ -675,8 +692,10 @@ export default function PilotDiscovery({
         `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(entrance[1] + ',' + entrance[0])}&travelmode=driving`,
       )
     } catch (error) {
-      if (attempt.current())
+      if (attempt.current()) {
+        accessFailed(error)
         setParking((previous) => ({ ...previous, error: message(error) }))
+      }
     } finally {
       if (attempt.current()) setNavBusy(false)
     }

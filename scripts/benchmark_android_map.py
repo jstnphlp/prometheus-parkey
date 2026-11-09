@@ -164,7 +164,8 @@ def main():
     after = pss() if cold else None
     memory_ok = (
         before is not None and after is not None
-        and max([before, after] + [sample["pss_kb"] or 0 for sample in cold]) <= 512 * 1024
+        and all(sample["pss_kb"] is not None for sample in cold)
+        and max([before, after] + [sample["pss_kb"] for sample in cold]) <= 512 * 1024
         and after - before <= 64 * 1024
     )
     report = {
@@ -174,6 +175,7 @@ def main():
         "protocol": "Cold process with app data/assets/tile caches preserved; single-worker Metro debug JS. Warm timing is activity-command completion, NOT map GPU readiness. Cold readiness observed through bounded ADB polling includes bridge/poll overhead.",
         "local_flag_required": "EXPO_PUBLIC_LOCAL_MAP_BENCHMARK=true in development Metro",
         "samples_requested": args.samples, "cold": cold, "warm": warm, "failures": failures,
+        "readiness_scope": "First fully rendered basemap; may precede remote records/markers. Dataset label is operator supplied, not loaded-record evidence.",
         "cold_launch_to_observed_map_ms": summarize([s["launch_to_observed_fully_rendered_ms"] for s in cold]),
         "cold_map_phase_ms": summarize([s["map_mount_to_fully_rendered_ms"] for s in cold]),
         "warm_activity_command_ms": summarize([s["activity_command_wall_ms"] for s in warm]),

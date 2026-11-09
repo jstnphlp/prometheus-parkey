@@ -335,6 +335,36 @@ test('going offline closes private research and never writes candidate bodies to
   await context.setOffline(false)
 })
 
+test('authorization refusal on a later page clears prior public records and cache', async ({
+  page,
+}) => {
+  await page.route('**/rest/v1/rpc/discover_pilot_parking', async (route) => {
+    const body = route.request().postDataJSON()
+      if (body.p_after)
+      await route.fulfill({
+        status: 403,
+        json: { message: 'Synthetic paginated access revoked' },
+      })
+    else
+      await route.fulfill({
+        json: {
+          ...envelope('pilot_discovery', 'Manila', 'public', [
+            parking('Manila', 'public'),
+          ]),
+          nextCursor: 'synthetic-next-cursor',
+        },
+      })
+  })
+  await openPilot(page)
+  await openResults(page)
+  await expect(page.getByTestId('pilot-record-qa-Manila')).toBeVisible()
+  await page.getByTestId('pilot-load-more').click()
+  await expect(page.getByTestId('pilot-record-qa-Manila')).toHaveCount(0)
+  await expect(
+    page.getByText(/Reviewer access was refused or expired/).first(),
+  ).toBeVisible()
+})
+
 test('candidate session is explicit, memory only and cleared before public results', async ({
   page,
 }) => {

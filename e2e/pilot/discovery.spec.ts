@@ -43,6 +43,168 @@ test('destination search focuses the active city without granting parking naviga
   await expect(page.getByTestId('pilot-details')).toContainText('ODbL-1.0')
 })
 
+test('Map Saved and You share discovery navigation and public favorites survive reload', async ({
+  page,
+}) => {
+  await openPilot(page)
+  await openResults(page)
+  await page.getByTestId('pilot-record-qa-Manila').click()
+  await page.getByTestId('pilot-favorite').click()
+  await expect(page.getByTestId('pilot-favorite')).toHaveText(
+    'Remove saved parking',
+  )
+  await closeDetails(page)
+  await page.getByRole('tab', { name: 'Saved', exact: true }).click()
+  const savedArea = page.getByRole('button', {
+    name: 'Parking near Manila Test Museum · Manila · Show saved area',
+    exact: true,
+  })
+  await expect(savedArea).toBeVisible()
+  await expect(
+    page.getByText(/Saved parking labels are reminders/),
+  ).toBeVisible()
+  await page.reload()
+  await page.getByRole('tab', { name: 'Saved', exact: true }).click()
+  await expect(savedArea).toBeVisible()
+  await savedArea.click()
+  await expect(page.getByTestId('pilot-details')).toHaveCount(0)
+  await openResults(page)
+  await page.getByTestId('pilot-record-qa-Manila').click()
+  await expect(page.getByTestId('pilot-directions')).toBeDisabled()
+  await closeDetails(page)
+  await page.getByRole('tab', { name: 'You', exact: true }).click()
+  await expect(page.getByText('Map information', { exact: true })).toBeVisible()
+  await expect(page.getByText(/Analytics collection is disabled/)).toBeVisible()
+})
+
+test('destination ranking and price filters preserve unknown fees and original types', async ({
+  page,
+}) => {
+  const near = {
+    ...parking('Manila', 'public'),
+    id: 'near-free',
+    fees: 'No fee',
+  }
+  const paid = {
+    ...parking('Manila', 'public'),
+    id: 'far-paid',
+    fees: 'PHP 40/hr',
+    representativePoint: [120.9765, 14.591] as [number, number],
+    geometry: {
+      type: 'Point' as const,
+      coordinates: [120.9765, 14.591] as [number, number],
+    },
+  }
+  const unknown = {
+    ...parking('Manila', 'public'),
+    id: 'unknown-fee',
+    featureType: 'facility_unspecified' as const,
+    representativePoint: [120.9795, 14.591] as [number, number],
+    geometry: {
+      type: 'Point' as const,
+      coordinates: [120.9795, 14.591] as [number, number],
+    },
+  }
+  await page.route('**/rest/v1/rpc/discover_pilot_parking', (route) =>
+    route.fulfill({
+      json: envelope('pilot_discovery', 'Manila', 'public', [
+        unknown,
+        paid,
+        near,
+      ]),
+    }),
+  )
+  await openPilot(page)
+  await page.getByTestId('pilot-search-open').click()
+  await page.getByTestId('pilot-destination-search').fill('Museum')
+  await page.getByTestId('pilot-destination-destination-Manila').click()
+  await openResults(page)
+  const rows = page.locator('[data-testid^="pilot-record-"]')
+  await expect(rows).toHaveCount(3)
+  await expect(rows.first()).toHaveAttribute(
+    'data-testid',
+    'pilot-record-near-free',
+  )
+  await expect(
+    page.getByText(
+      'Straight-line distance to Manila Test Museum. This is not a walking route.',
+      { exact: true },
+    ),
+  ).toBeVisible()
+  await page.getByTestId('pilot-fees-paid').click()
+  await expect(rows).toHaveCount(1)
+  await expect(page.getByTestId('pilot-record-far-paid')).toBeVisible()
+  await expect(
+    page.getByText(
+      '1 loaded records have unknown fees and are excluded by this filter.',
+      { exact: true },
+    ),
+  ).toBeVisible()
+  await page.getByTestId('pilot-fees-free').click()
+  await expect(rows).toHaveCount(1)
+  await expect(page.getByTestId('pilot-record-near-free')).toBeVisible()
+  await page.getByTestId('pilot-fees-all').click()
+  await page.getByRole('button', { name: 'Unclassified', exact: true }).click()
+  await expect(rows).toHaveCount(1)
+  await expect(page.getByTestId('pilot-record-unknown-fee')).toContainText(
+    'Unclassified parking',
+  )
+})
+
+test('destination failures retry inside the search panel without changing city or query', async ({
+  page,
+}) => {
+  let attempts = 0
+  await page.route(
+    '**/rest/v1/rpc/discover_pilot_destinations',
+    async (route) => {
+      attempts++
+      if (attempts === 1) await route.abort('failed')
+      else await route.fallback()
+    },
+  )
+  await openPilot(page)
+  await page.getByTestId('pilot-search-open').click()
+  await expect(page.getByTestId('pilot-search-retry')).toBeVisible()
+  await page.getByTestId('pilot-search-retry').click()
+  await expect(
+    page.getByTestId('pilot-destination-destination-Manila'),
+  ).toBeVisible()
+  await expect(page.getByTestId('pilot-destination-search')).toHaveValue('')
+  expect(attempts).toBeGreaterThanOrEqual(2)
+})
+
+test('damaged parked-car storage offers recovery without losing public favorites', async ({
+  page,
+}) => {
+  await page.addInitScript(() =>
+    localStorage.setItem('parkey.discovery.saved-parking.v1', 'not-json'),
+  )
+  await openPilot(page)
+  await page.getByRole('tab', { name: 'Saved', exact: true }).click()
+  await expect(
+    page.getByRole('button', { name: 'Retry parked location', exact: true }),
+  ).toBeVisible()
+  await expect(
+    page.getByRole('button', { name: 'Save where I parked', exact: true }),
+  ).toBeDisabled()
+  await page
+    .getByRole('button', {
+      name: 'Clear saved car and previous saved places',
+      exact: true,
+    })
+    .click()
+  await expect(
+    page.getByRole('button', { name: 'Save where I parked', exact: true }),
+  ).toBeEnabled()
+  await expect(
+    page.getByText(
+      'No saved parking yet. Save an approved parking record from its details.',
+      { exact: true },
+    ),
+  ).toBeVisible()
+})
+
 test('candidate session is explicit, memory only and cleared before public results', async ({
   page,
 }) => {
@@ -58,10 +220,12 @@ test('candidate session is explicit, memory only and cleared before public resul
   ).toBeVisible()
   await page.getByTestId('pilot-record-qa-candidate-Manila').click()
   await expect(page.getByTestId('pilot-directions')).toBeDisabled()
+  await expect(page.getByTestId('pilot-favorite')).toHaveCount(0)
   const stored = await page.evaluate(() =>
     Object.values(localStorage).join(' '),
   )
   expect(stored).not.toContain(reviewerToken)
+  expect(stored).not.toContain('qa-candidate-Manila')
   await closeDetails(page)
   await page.getByTestId('pilot-mode-public').click()
   await expect(page.getByTestId('pilot-candidate-warning')).toHaveCount(0)

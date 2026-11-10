@@ -2,11 +2,13 @@ import { Link, Stack } from 'expo-router'
 import { Linking, Pressable, StyleSheet, Text, View } from 'react-native'
 import { useState } from 'react'
 
+import { researchConsoleTarget } from '../discovery/research-console-target'
+
 const configuredUrl = process.env.EXPO_PUBLIC_RESEARCH_CONSOLE_URL || ''
-const allowed =
-  /^https:\/\/[^ /?#]+\.[^ /?#]+(?:\/[^?#]*)?$/.test(configuredUrl) ||
-  (process.env.NODE_ENV === 'development' &&
-    /^http:\/\/(?:localhost|127\.0\.0\.1):\d+\/?$/.test(configuredUrl))
+const target = researchConsoleTarget(
+  configuredUrl,
+  process.env.NODE_ENV === 'development',
+)
 
 /** NCR source research now runs solely in a separate authenticated web app. */
 export default function ResearchMoved() {
@@ -27,13 +29,13 @@ export default function ResearchMoved() {
           Research observations are unverified and are not available parking,
           legal visitor access, or navigation entrances.
         </Text>
-        {allowed ? (
+        {target ? (
           <Pressable
             accessibilityRole="link"
             style={styles.button}
             onPress={() => {
               setFailed(false)
-              void Linking.openURL(configuredUrl).catch(() => setFailed(true))
+              void Linking.openURL(target).catch(() => setFailed(true))
             }}
           >
             <Text style={styles.buttonText}>

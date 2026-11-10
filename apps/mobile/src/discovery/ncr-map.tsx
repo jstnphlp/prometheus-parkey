@@ -26,6 +26,11 @@ export default function NcrMap(props: NcrMapProps) {
   return (
     <Map
       style={styles.map}
+      accessibilityLabel={
+        props.data?.mode === 'research_preview'
+          ? 'Private research map. Source points are not driving entrances.'
+          : 'Parking discovery map. Parking markers do not guarantee visitor access or availability.'
+      }
       testID={loaded ? 'ncr-map-ready' : 'ncr-map-loading'}
       onDidFinishLoadingMap={() => setLoaded(true)}
       mapStyle={config.mapStyle}

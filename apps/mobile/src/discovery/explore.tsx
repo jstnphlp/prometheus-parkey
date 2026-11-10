@@ -1574,7 +1574,7 @@ export default function Explore() {
                   renderItem={({ item: record }) => (
                     <NearbyCard
                       parking={record}
-                      location={currentLocation}
+                      reference={reference}
                       now={now}
                       onPress={() => select(record.id)}
                       onGo={() => startDirections(record)}

@@ -6,6 +6,11 @@ export type PilotCity = (typeof pilotCities)[number]
 export const pilotDiscoveryEnabled =
   process.env.EXPO_PUBLIC_PILOT_DISCOVERY_ENABLED === 'true'
 
+// This only limits developer UI. Server authorization remains mandatory.
+export const candidateResearchEnabled =
+  process.env.NODE_ENV === 'development' &&
+  process.env.PARKEY_RELEASE_BUILD !== 'true'
+
 function localAddress(hostname: string) {
   if (
     ['localhost', '127.0.0.1', '[::1]', '::1', '10.0.2.2'].includes(hostname) ||

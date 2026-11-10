@@ -11,8 +11,10 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   ActivityIndicator,
   AppState,
+  BackHandler,
   FlatList,
   Linking,
+  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -23,6 +25,18 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import type { Viewport } from './model'
+import { BottomNavigation } from './bottom-navigation'
+import { detailDistance } from './parking-detail-data'
+import {
+  partitionPilotParking,
+  rankPilotParking,
+  pilotTypeLabel,
+} from './pilot-presentation'
+import type { PilotFeeFilter } from './pilot-presentation'
+import { pilotSavedKey } from './pilot-saved'
+import { usePilotSaved } from './use-pilot-saved'
+import { useLocalState } from './use-local-state'
+import { useConnectivity } from './use-connectivity'
 import NcrMap from './ncr-map'
 import { colors } from './palette'
 import {
@@ -39,7 +53,11 @@ import {
   pilotSelectedRecord,
 } from './pilot-client'
 import type { PilotRequest } from './pilot-client'
-import { pilotConfig, pilotCities } from './pilot-config'
+import {
+  candidateResearchEnabled,
+  pilotConfig,
+  pilotCities,
+} from './pilot-config'
 import { ModalSheet } from './sheets'
 import { useLocation } from './use-location'
 
@@ -80,7 +98,7 @@ const filters: { value: 'all' | NcrFeatureType; label: string }[] = [
   { value: 'lot', label: 'Lots' },
   { value: 'garage', label: 'Garages' },
   { value: 'facility_unspecified', label: 'Unclassified' },
-  { value: 'street_segment', label: 'Street research' },
+  { value: 'street_segment', label: 'Street' },
   { value: 'entrance', label: 'Entrances' },
   { value: 'space', label: 'Bays' },
 ]
@@ -108,8 +126,9 @@ export default function PilotDiscovery({
     zoom: number
   }>({ coordinate: pilotAreas.Manila.coordinate, zoom: 13 })
   const [category, setCategory] = useState<'all' | NcrFeatureType>('all')
+  const [feeFilter, setFeeFilter] = useState<PilotFeeFilter>('all')
   const [sheet, setSheet] = useState<
-    'results' | 'search' | 'access' | 'detail' | 'sources' | null
+    'results' | 'search' | 'access' | 'detail' | 'sources' | 'saved' | null
   >(null)
   const [selection, setSelection] = useState<{
     key: string
@@ -162,6 +181,21 @@ export default function PilotDiscovery({
     error: string
   }>({ key: '', records: [], next: null, status: 'loading', error: '' })
   const location = useLocation()
+  const local = useLocalState()
+  const saved = usePilotSaved()
+  const connectivity = useConnectivity()
+  const [savedError, setSavedError] = useState('')
+
+  useEffect(() => {
+    if (Platform.OS === 'web') return
+    const listener = BackHandler.addEventListener('hardwareBackPress', () => {
+      if (!sheet) return false
+      setSheet(null)
+      setDraftToken('')
+      return true
+    })
+    return () => listener.remove()
+  }, [sheet])
 
   const accessFailed = useCallback(
     (error: unknown) => {
@@ -207,8 +241,11 @@ export default function PilotDiscovery({
       records: [],
       next: null,
       notice: '',
-      status: 'loading',
-      error: '',
+      status: pilotConfig.ready ? 'loading' : 'error',
+      error: pilotConfig.ready
+        ? ''
+        : pilotConfig.configurationError ||
+          'Parking information is unavailable.',
     })
     if (!pilotConfig.ready) return () => requests.cancel()
     const timer = setTimeout(() => {
@@ -255,8 +292,15 @@ export default function PilotDiscovery({
       key: searchKey,
       records: [],
       next: null,
-      status: 'loading',
-      error: '',
+      status: !pilotConfig.ready
+        ? 'error'
+        : sheet === 'search'
+          ? 'loading'
+          : 'ready',
+      error: pilotConfig.ready
+        ? ''
+        : pilotConfig.configurationError ||
+          'Destination search is unavailable.',
     })
     if (sheet !== 'search' || !pilotConfig.ready) return () => requests.cancel()
     const timer = setTimeout(() => {
@@ -301,9 +345,22 @@ export default function PilotDiscovery({
           pilotRecordCanDisplay(record, mode, clock),
         )
       : []
-  const visible = records.filter(
-    (record) => category === 'all' || record.featureType === category,
-  )
+  const partition = partitionPilotParking(records, category, feeFilter)
+  const visible = partition.matched
+  const currentLocation = location.status === 'idle' ? location.point : null
+  const reference =
+    destination?.coordinate ??
+    currentLocation ??
+    ([
+      (bounds.west + bounds.east) / 2,
+      (bounds.south + bounds.north) / 2,
+    ] satisfies Coordinate)
+  const referenceLabel = destination
+    ? destination.name
+    : currentLocation
+      ? 'your location'
+      : 'map center'
+  const ranked = rankPilotParking(visible, reference)
   const selected = pilotSelectedRecord(selection, request, clock)
   const mapData = useMemo(
     () => ({
@@ -339,6 +396,7 @@ export default function PilotDiscovery({
     setDestination(null)
     setQuery('')
     setCategory('all')
+    setFeeFilter('all')
     setSheet(null)
   }
   function publicMode() {
@@ -354,6 +412,10 @@ export default function PilotDiscovery({
     setSheet(null)
   }
   function connect() {
+    if (!candidateResearchEnabled) {
+      publicMode()
+      return
+    }
     const value = draftToken.trim()
     if (value.length > 16000 || !/^[\w-]+\.[\w-]+\.[\w-]+$/.test(value)) {
       setAuthMessage(
@@ -370,6 +432,29 @@ export default function PilotDiscovery({
     setDestination(null)
     setAuthMessage('')
     setSheet(null)
+  }
+  async function saveParked() {
+    setSavedError('')
+    const point = await location.locate()
+    if (!point) {
+      setSavedError(
+        'Could not get your current location. Nothing was saved. You can still browse or search.',
+      )
+      return
+    }
+    if (!(await local.park(point)))
+      setSavedError('Your parked location could not be saved. Try again.')
+  }
+  function showSavedArea(place: { city: PilotCity; coordinate: Coordinate }) {
+    publicMode()
+    chooseCity(place.city)
+    setTarget({ coordinate: place.coordinate, zoom: 16 })
+    setBounds({
+      west: place.coordinate[0] - 0.01,
+      east: place.coordinate[0] + 0.01,
+      south: place.coordinate[1] - 0.01,
+      north: place.coordinate[1] + 0.01,
+    })
   }
   async function loadMore() {
     if (!parking.next || parking.status !== 'ready' || parking.key !== key)
@@ -500,7 +585,7 @@ export default function PilotDiscovery({
   return (
     <View testID="pilot-screen" style={styles.screen}>
       <Stack.Screen
-        options={{ headerShown: false, title: 'Parkey pilot discovery' }}
+        options={{ headerShown: false, title: 'Parkey discovery' }}
       />
       <View testID="pilot-map" style={StyleSheet.absoluteFill}>
         <NcrMap
@@ -526,22 +611,24 @@ export default function PilotDiscovery({
             </Action>
           ))}
         </View>
-        <View style={styles.row}>
-          <Action
-            selected={mode === 'public'}
-            onPress={publicMode}
-            testID="pilot-mode-public"
-          >
-            Approved parking
-          </Action>
-          <Action
-            selected={mode === 'candidate_research'}
-            onPress={() => setSheet('access')}
-            testID="pilot-mode-candidate"
-          >
-            Candidate research
-          </Action>
-        </View>
+        {candidateResearchEnabled ? (
+          <View style={styles.row}>
+            <Action
+              selected={mode === 'public'}
+              onPress={publicMode}
+              testID="pilot-mode-public"
+            >
+              Approved parking
+            </Action>
+            <Action
+              selected={mode === 'candidate_research'}
+              onPress={() => setSheet('access')}
+              testID="pilot-mode-candidate"
+            >
+              Candidate research
+            </Action>
+          </View>
+        ) : null}
         <Action onPress={() => setSheet('search')} testID="pilot-search-open">
           {destination
             ? `Near ${destination.name}`
@@ -585,7 +672,13 @@ export default function PilotDiscovery({
           </Text>
         ) : null}
       </View>
-      <View style={[styles.bottom, { bottom: insets.bottom + 10 }]}>
+      <View style={[styles.bottom, { bottom: insets.bottom + 104 }]}>
+        {connectivity.offline ? (
+          <Text accessibilityRole="alert" style={styles.warning}>
+            Offline. Fresh parking and map tiles may be unavailable. Saved
+            places remain on this device.
+          </Text>
+        ) : null}
         <Text selectable style={styles.status}>
           {status}
         </Text>
@@ -596,6 +689,11 @@ export default function PilotDiscovery({
           <Text testID="pilot-error" selectable style={styles.error}>
             {parking.error || pilotConfig.configurationError}
           </Text>
+        ) : null}
+        {parking.status === 'error' ? (
+          <Action testID="pilot-retry" onPress={() => setRefresh((n) => n + 1)}>
+            Retry parking
+          </Action>
         ) : null}
         {mapFailed ? (
           <Text selectable style={styles.warning}>
@@ -622,20 +720,17 @@ export default function PilotDiscovery({
           </Action>
           <Action onPress={() => setSheet('sources')}>Sources</Action>
         </View>
-        {allowLegacy ? (
-          <Action
-            onPress={() => {
-              if (allowLegacy) {
-                publicMode()
-                onOpenLegacy()
-              }
-            }}
-          >
-            Original Poblacion map
-          </Action>
-        ) : null}
       </View>
-      {sheet === 'access' ? (
+      <BottomNavigation
+        bottom={insets.bottom}
+        selected={
+          sheet === 'saved' ? 'saved' : sheet === 'sources' ? 'you' : 'map'
+        }
+        onSelect={(tab) =>
+          setSheet(tab === 'saved' ? 'saved' : tab === 'you' ? 'sources' : null)
+        }
+      />
+      {sheet === 'access' && candidateResearchEnabled ? (
         <ModalSheet
           title="Restricted candidate research"
           onClose={() => {
@@ -698,17 +793,56 @@ export default function PilotDiscovery({
                 </Action>
               ))}
             </ScrollView>
+            <View style={styles.row}>
+              {(['all', 'free', 'paid'] as const).map((value) => (
+                <Action
+                  key={value}
+                  testID={`pilot-fees-${value}`}
+                  selected={feeFilter === value}
+                  onPress={() => {
+                    setFeeFilter(value)
+                    setSelection(null)
+                  }}
+                >
+                  {value === 'all'
+                    ? 'All prices'
+                    : value === 'free'
+                      ? 'Recorded no fee'
+                      : 'Fee applies'}
+                </Action>
+              ))}
+            </View>
+            <Text>
+              Straight-line distance to {referenceLabel}. This is not a walking
+              route.
+            </Text>
+            {feeFilter !== 'all' && partition.unknown.length > 0 ? (
+              <Text>
+                {partition.unknown.length} loaded records have unknown fees and
+                are excluded by this filter.
+              </Text>
+            ) : null}
+            {destination ? (
+              <Action
+                onPress={() => {
+                  setDestination(null)
+                  setQuery('')
+                }}
+              >
+                Clear destination
+              </Action>
+            ) : null}
             <Text selectable>
-              Filters apply to loaded observations. Load more to inspect
+              Filters apply to loaded parking records. Load more to inspect
               additional records.
             </Text>
           </View>
           <FlatList
-            data={visible}
-            keyExtractor={(record) => record.id}
+            data={ranked}
+            keyExtractor={({ record }) => record.id}
             contentContainerStyle={styles.content}
             keyboardShouldPersistTaps="handled"
-            renderItem={({ item }) => (
+            renderItem={({ item: { record: item, straightLineMeters } }) => (
               <Pressable
                 testID={`pilot-record-${item.id}`}
                 accessibilityRole="button"
@@ -722,8 +856,14 @@ export default function PilotDiscovery({
                   {item.officialName || item.descriptiveLabel || item.name}
                 </Text>
                 <Text>
-                  {item.featureType.replaceAll('_', ' ')} ·{' '}
+                  {pilotTypeLabel(item.featureType, mode)} ·{' '}
                   {item.accessClass || 'Access unknown'}
+                </Text>
+                <Text>
+                  {straightLineMeters === null
+                    ? 'Distance unknown'
+                    : `${detailDistance(straightLineMeters) ?? 'Distance unknown'} straight-line to ${referenceLabel}`}{' '}
+                  · Fees: {item.fees || 'Unknown'}
                 </Text>
                 {item.descriptiveLabel && !item.officialName ? (
                   <Text>Descriptive label; official name unknown.</Text>
@@ -734,7 +874,9 @@ export default function PilotDiscovery({
               <Text selectable>
                 {parking.status === 'loading'
                   ? 'Loading records…'
-                  : 'No loaded records match this filter.'}
+                  : parking.status === 'error'
+                    ? parking.error
+                    : 'No loaded records match this filter.'}
               </Text>
             }
             ListFooterComponent={
@@ -751,9 +893,24 @@ export default function PilotDiscovery({
                   </Action>
                 ) : null}
                 {parking.error ? (
-                  <Text selectable style={styles.error}>
-                    {parking.error}
-                  </Text>
+                  <View style={styles.content}>
+                    <Text selectable style={styles.error}>
+                      {parking.error}
+                    </Text>
+                    <Action onPress={() => setRefresh((n) => n + 1)}>
+                      Retry parking results
+                    </Action>
+                  </View>
+                ) : null}
+                {category !== 'all' || feeFilter !== 'all' ? (
+                  <Action
+                    onPress={() => {
+                      setCategory('all')
+                      setFeeFilter('all')
+                    }}
+                  >
+                    Clear filters
+                  </Action>
                 ) : null}
               </View>
             }
@@ -832,22 +989,35 @@ export default function PilotDiscovery({
               </Text>
             }
             ListFooterComponent={
-              destinations.next ? (
-                <Action
-                  onPress={() => {
-                    void loadMoreDestinations()
-                  }}
-                  disabled={destinations.status === 'loading'}
-                >
-                  More destinations
-                </Action>
-              ) : undefined
+              <View style={styles.content}>
+                {destinations.next ? (
+                  <Action
+                    onPress={() => {
+                      void loadMoreDestinations()
+                    }}
+                    disabled={destinations.status === 'loading'}
+                  >
+                    More destinations
+                  </Action>
+                ) : null}
+                {destinations.status === 'error' ? (
+                  <Action
+                    testID="pilot-search-retry"
+                    onPress={() => setRefresh((n) => n + 1)}
+                  >
+                    Retry search
+                  </Action>
+                ) : null}
+              </View>
             }
           />
         </ModalSheet>
       ) : null}
       {sheet === 'detail' && selected ? (
-        <ModalSheet title="Parking observation" onClose={() => setSheet(null)}>
+        <ModalSheet
+          title={mode === 'public' ? 'Parking details' : 'Parking observation'}
+          onClose={() => setSheet(null)}
+        >
           <ScrollView
             testID="pilot-details"
             contentContainerStyle={styles.content}
@@ -872,7 +1042,31 @@ export default function PilotDiscovery({
               Fees: {selected.fees || 'Unknown'} · Hours:{' '}
               {selected.hours || 'Unknown'}
             </Text>
-            <Text selectable>Capacity and live availability: unknown.</Text>
+            <Text selectable>No live availability information.</Text>
+            <Text>
+              No approved parking photos. Missing imagery does not establish the
+              condition of this location.
+            </Text>
+            {mode === 'public' ? (
+              <Action
+                testID="pilot-favorite"
+                disabled={saved.status !== 'ready' || saved.busy}
+                onPress={() => {
+                  void saved.toggle(selected, city, mode, clock)
+                }}
+              >
+                {saved.items.some(
+                  (item) => item.key === pilotSavedKey(selected, city),
+                )
+                  ? 'Remove saved parking'
+                  : 'Save parking'}
+              </Action>
+            ) : null}
+            {saved.error ? (
+              <Text accessibilityRole="alert" style={styles.error}>
+                {saved.error}
+              </Text>
+            ) : null}
             <Text selectable>
               Research: {selected.evidence.researchStatus} · Operator confirmed:{' '}
               {selected.evidence.operatorConfirmed ? 'Yes' : 'No'} · Physically
@@ -974,11 +1168,24 @@ export default function PilotDiscovery({
         </ModalSheet>
       ) : null}
       {sheet === 'sources' ? (
-        <ModalSheet
-          title="Pilot scope and sources"
-          onClose={() => setSheet(null)}
-        >
+        <ModalSheet title="Map information" onClose={() => setSheet(null)}>
           <ScrollView contentContainerStyle={styles.content}>
+            <Text>
+              Parkey helps you discover parking. It does not offer bookings or
+              guarantee parking space. Saved places and your parked-car pin stay
+              on this device. Analytics collection is disabled pending privacy
+              and release review.
+            </Text>
+            {allowLegacy ? (
+              <Action
+                onPress={() => {
+                  publicMode()
+                  onOpenLegacy()
+                }}
+              >
+                Original Poblacion map
+              </Action>
+            ) : null}
             <Text selectable>
               City of Manila and Mandaluyong City are founder-selected pilot
               areas. This does not establish demand or parking scarcity.
@@ -1009,6 +1216,158 @@ export default function PilotDiscovery({
               archives. Unknown facts remain unknown.
             </Text>
           </ScrollView>
+        </ModalSheet>
+      ) : null}
+      {sheet === 'saved' ? (
+        <ModalSheet title="Saved places" onClose={() => setSheet(null)}>
+          <FlatList
+            data={saved.items}
+            keyExtractor={(item) => item.key}
+            contentContainerStyle={styles.content}
+            ListHeaderComponent={
+              <View style={styles.content}>
+                <Text>
+                  Kept on this device only. Saved parking labels are reminders,
+                  not current access or entrance approval. Open the saved area
+                  to load current public details.
+                </Text>
+                <Action
+                  disabled={
+                    local.status !== 'ready' ||
+                    local.busy ||
+                    location.status === 'locating'
+                  }
+                  onPress={() => {
+                    void saveParked()
+                  }}
+                >
+                  {location.status === 'locating'
+                    ? 'Finding your location…'
+                    : 'Save where I parked'}
+                </Action>
+                {local.state.parked ? (
+                  <View style={styles.content}>
+                    <Text>
+                      Your car · Saved{' '}
+                      {new Date(local.state.parked.savedAt).toLocaleString()}
+                    </Text>
+                    <Action
+                      onPress={() => {
+                        const point = local.state.parked?.coordinate
+                        if (point) {
+                          setTarget({ coordinate: point, zoom: 17 })
+                          setSheet(null)
+                        }
+                      }}
+                    >
+                      Show parked location
+                    </Action>
+                    <Action
+                      onPress={() => {
+                        const point = local.state.parked?.coordinate
+                        if (point)
+                          void Linking.openURL(
+                            `https://www.google.com/maps/dir/?api=1&destination=${point[1]},${point[0]}&travelmode=walking`,
+                          ).catch(() =>
+                            setSavedError(
+                              'Maps could not be opened. Try again.',
+                            ),
+                          )
+                      }}
+                    >
+                      Walk back in Maps
+                    </Action>
+                    <Action
+                      disabled={local.busy}
+                      onPress={() => {
+                        void local.park(null)
+                      }}
+                    >
+                      Clear parked location
+                    </Action>
+                  </View>
+                ) : null}
+                {saved.status === 'loading' ? (
+                  <ActivityIndicator accessibilityLabel="Loading saved places" />
+                ) : null}
+                {saved.error || savedError || local.error ? (
+                  <Text accessibilityRole="alert" style={styles.error}>
+                    {saved.error || savedError || local.error}
+                  </Text>
+                ) : null}
+                {saved.status === 'error' ? (
+                  <View style={styles.row}>
+                    <Action
+                      onPress={() => {
+                        void saved.retry()
+                      }}
+                    >
+                      Retry saved places
+                    </Action>
+                    <Action
+                      onPress={() => {
+                        void saved.clear()
+                      }}
+                    >
+                      Clear damaged saved places
+                    </Action>
+                  </View>
+                ) : null}
+                {local.status === 'error' ? (
+                  <View style={styles.content}>
+                    <Text>
+                      Retry loading your saved car location. Clearing damaged
+                      data also removes previous favorites and recent places;
+                      city parking favorites remain saved separately.
+                    </Text>
+                    <Action
+                      disabled={local.busy}
+                      onPress={() => {
+                        void local.retry()
+                      }}
+                    >
+                      Retry parked location
+                    </Action>
+                    <Action
+                      disabled={local.busy}
+                      onPress={() => {
+                        void local.clear()
+                      }}
+                    >
+                      Clear saved car and previous saved places
+                    </Action>
+                  </View>
+                ) : null}
+              </View>
+            }
+            ListEmptyComponent={
+              saved.status === 'ready' ? (
+                <Text>
+                  No saved parking yet. Save an approved parking record from its
+                  details.
+                </Text>
+              ) : undefined
+            }
+            renderItem={({ item }) => (
+              <View style={styles.record}>
+                <Action
+                  onPress={() => showSavedArea(item)}
+                >{`${item.name} · ${item.city} · Show saved area`}</Action>
+                <Text>
+                  {pilotTypeLabel(item.featureType)} · Last saved label; current
+                  details must be loaded.
+                </Text>
+                <Action
+                  disabled={saved.busy}
+                  onPress={() => {
+                    void saved.remove(item.key)
+                  }}
+                >
+                  Remove saved place
+                </Action>
+              </View>
+            )}
+          />
         </ModalSheet>
       ) : null}
     </View>

@@ -13,6 +13,13 @@ test('search selects a destination, persists recents, and supports clear and und
   await expect(query).toHaveValue('Poblacion Test Cafe')
   await expect(page).toHaveURL(/searchLng=121.0308/)
   await expect(page).not.toHaveURL(/search=1/)
+  await expect(
+    page
+      .getByRole('button', {
+        name: /destination.*straight-line.*Open parking details/,
+      })
+      .first(),
+  ).toBeVisible()
   await page.reload()
   await expect(query).toHaveValue('Poblacion Test Cafe')
   await page

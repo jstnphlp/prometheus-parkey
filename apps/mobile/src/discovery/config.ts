@@ -3,9 +3,11 @@ const releaseBuild =
   process.env.PARKEY_RELEASE_BUILD === 'true'
 
 export const config = {
-  analyticsEndpoint: process.env.EXPO_PUBLIC_ANALYTICS_ENDPOINT || '',
-  analyticsDomain: process.env.EXPO_PUBLIC_ANALYTICS_DOMAIN || '',
-  sentryDsn: process.env.EXPO_PUBLIC_SENTRY_DSN || '',
+  // Collection is locked off until the canonical privacy/release gates pass.
+  // Keep the existing adapters separate; configuration alone is not consent.
+  analyticsEndpoint: '',
+  analyticsDomain: '',
+  sentryDsn: '',
   mapStyle:
     process.env.EXPO_PUBLIC_MAP_STYLE_URL ||
     'https://tiles.openfreemap.org/styles/positron',

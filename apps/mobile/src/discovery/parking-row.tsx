@@ -4,6 +4,7 @@ import { StyleSheet, Text, View } from 'react-native'
 import type { ParkingReference } from './model'
 import { parkingDetailData } from './parking-detail-data'
 import { reviewedParkingEntrance } from './parking-navigation'
+import { parkingRowText } from './presentation'
 import { FigmaAsset } from './figma-assets'
 import { MotionPressable } from './motion'
 import { colors, IconButton, ui } from './ui'
@@ -12,6 +13,7 @@ export const PARKING_ROW_HEIGHT = 96
 export function ParkingRow({
   parking,
   reference,
+  now = new Date(),
   onPress,
   onDirections,
   selected = false,
@@ -29,15 +31,16 @@ export function ParkingRow({
   compact?: boolean
   testID?: string | undefined
 }) {
-  const text = parkingDetailData(
-    parking,
-    reference.label === 'your location' ? reference.coordinate : null,
-  )
+  const text = parkingDetailData(parking, null, now)
+  const row = parkingRowText(parking, reference, now)
+  const summary = [text.meta, `${row.distance} · straight-line`]
+    .filter(Boolean)
+    .join(' · ')
   return (
     <View testID={testID} style={[styles.row, selected && styles.selected]}>
       <MotionPressable
         accessibilityRole="button"
-        accessibilityLabel={`${text.title}. ${text.meta}. Open parking details`}
+        accessibilityLabel={`${text.title}. ${summary}. Open parking details`}
         onPress={onPress}
         style={({ pressed }) => [styles.content, pressed && ui.pressed]}
       >
@@ -49,7 +52,7 @@ export function ParkingRow({
             {text.title}
           </Text>
           <Text style={ui.small} numberOfLines={1}>
-            {text.meta}
+            {summary}
           </Text>
         </View>
       </MotionPressable>

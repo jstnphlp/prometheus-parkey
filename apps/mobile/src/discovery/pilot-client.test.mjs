@@ -332,6 +332,318 @@ test('navigation revalidation uses the targeted server lookup and handles revoke
   )
 })
 
+test('identical concurrent public viewport reads share one fetch and one parsed body', async (t) => {
+  let complete,
+    calls = 0
+  const response = new Response(JSON.stringify(page()))
+  const readBody = t.mock.method(response, 'text')
+  t.mock.method(globalThis, 'fetch', () => {
+    calls++
+    return new Promise((resolve) => {
+      complete = () => resolve(response)
+    })
+  })
+  const first = fetchPilotPage(
+    connection,
+    request(),
+    'pilot_discovery',
+    new AbortController().signal,
+  )
+  const second = fetchPilotPage(
+    connection,
+    request(),
+    'pilot_discovery',
+    new AbortController().signal,
+  )
+  assert.equal(calls, 1)
+  complete()
+  const [a, b] = await Promise.all([first, second])
+  assert.equal(a, b)
+  assert.equal(a.records[0].id, 'original:1')
+  assert.equal(readBody.mock.callCount(), 1)
+})
+
+test('viewport pooling isolates origins, public keys, cities and exact bounds', async (t) => {
+  let release,
+    calls = 0
+  const gate = new Promise((resolve) => {
+    release = resolve
+  })
+  t.mock.method(globalThis, 'fetch', async (_url, options) => {
+    calls++
+    const body = JSON.parse(options.body)
+    await gate
+    return new Response(JSON.stringify(page([], { city: body.p_city })))
+  })
+  const changed = {
+    ...request(),
+    bounds: { ...request().bounds, west: 120.941 },
+  }
+  const reads = [
+    fetchPilotPage(
+      connection,
+      request(),
+      'pilot_discovery',
+      new AbortController().signal,
+    ),
+    fetchPilotPage(
+      { ...connection, supabaseUrl: 'https://other-fixture.invalid' },
+      request(),
+      'pilot_discovery',
+      new AbortController().signal,
+    ),
+    fetchPilotPage(
+      { ...connection, publicKey: 'sb_publishable_other_fixture' },
+      request(),
+      'pilot_discovery',
+      new AbortController().signal,
+    ),
+    fetchPilotPage(
+      connection,
+      { ...request(), city: 'Mandaluyong' },
+      'pilot_discovery',
+      new AbortController().signal,
+    ),
+    fetchPilotPage(
+      connection,
+      changed,
+      'pilot_discovery',
+      new AbortController().signal,
+    ),
+  ]
+  assert.equal(calls, 5)
+  release()
+  await Promise.all(reads)
+})
+
+test('a canceled public caller cannot cancel another subscriber', async (t) => {
+  let complete, transport
+  t.mock.method(globalThis, 'fetch', (_url, options) => {
+    transport = options.signal
+    return new Promise((resolve) => {
+      complete = () => resolve(new Response(JSON.stringify(page())))
+    })
+  })
+  const a = new AbortController(),
+    b = new AbortController()
+  const first = fetchPilotPage(
+    connection,
+    request(),
+    'pilot_discovery',
+    a.signal,
+  )
+  const second = fetchPilotPage(
+    connection,
+    request(),
+    'pilot_discovery',
+    b.signal,
+  )
+  const canceled = assert.rejects(first, { name: 'AbortError' })
+  a.abort()
+  await canceled
+  assert.equal(transport.aborted, false)
+  complete()
+  assert.equal((await second).records.length, 1)
+})
+
+test('all public subscribers cancel transport and later callers start fresh work', async (t) => {
+  let calls = 0,
+    transport
+  t.mock.method(globalThis, 'fetch', (_url, options) => {
+    calls++
+    if (calls > 1) return Promise.resolve(new Response(JSON.stringify(page())))
+    transport = options.signal
+    return new Promise((_resolve, reject) =>
+      options.signal.addEventListener(
+        'abort',
+        () => reject(options.signal.reason),
+        { once: true },
+      ),
+    )
+  })
+  const a = new AbortController(),
+    b = new AbortController()
+  const first = fetchPilotPage(
+    connection,
+    request(),
+    'pilot_discovery',
+    a.signal,
+  )
+  const second = fetchPilotPage(
+    connection,
+    request(),
+    'pilot_discovery',
+    b.signal,
+  )
+  const canceled = Promise.all([
+    assert.rejects(first, { name: 'AbortError' }),
+    assert.rejects(second, { name: 'AbortError' }),
+  ])
+  a.abort()
+  b.abort()
+  await canceled
+  assert.equal(transport.aborted, true)
+  await fetchPilotPage(
+    connection,
+    request(),
+    'pilot_discovery',
+    new AbortController().signal,
+  )
+  assert.equal(calls, 2)
+})
+
+test('failed public requests are removed from the pool before retry', async (t) => {
+  let calls = 0
+  t.mock.method(globalThis, 'fetch', async () => {
+    calls++
+    return calls === 1
+      ? new Response('{}', { status: 503 })
+      : new Response(JSON.stringify(page()))
+  })
+  const first = fetchPilotPage(
+    connection,
+    request(),
+    'pilot_discovery',
+    new AbortController().signal,
+  )
+  const second = fetchPilotPage(
+    connection,
+    request(),
+    'pilot_discovery',
+    new AbortController().signal,
+  )
+  await Promise.all([
+    assert.rejects(first, /unavailable/),
+    assert.rejects(second, /unavailable/),
+  ])
+  assert.equal(calls, 1)
+  await fetchPilotPage(
+    connection,
+    request(),
+    'pilot_discovery',
+    new AbortController().signal,
+  )
+  assert.equal(calls, 2)
+})
+
+test('candidate, session-bearing, paginated, search and fresh navigation reads never coalesce', async (t) => {
+  const calls = []
+  t.mock.method(globalThis, 'fetch', async (url, options) => {
+    calls.push(url)
+    const body = JSON.parse(options.body)
+    return new Response(
+      JSON.stringify(
+        page([], {
+          mode: body.p_mode,
+          kind: url.endsWith('discover_pilot_destinations')
+            ? 'pilot_destinations'
+            : 'pilot_discovery',
+        }),
+      ),
+    )
+  })
+  const reads = []
+  for (let i = 0; i < 2; i++) {
+    reads.push(
+      fetchPilotPage(
+        connection,
+        request('candidate_research'),
+        'pilot_discovery',
+        new AbortController().signal,
+      ),
+    )
+    reads.push(
+      fetchPilotPage(
+        connection,
+        { ...request(), token: 'synthetic-unused-session' },
+        'pilot_discovery',
+        new AbortController().signal,
+      ),
+    )
+    reads.push(
+      fetchPilotPage(
+        connection,
+        request(),
+        'pilot_discovery',
+        new AbortController().signal,
+        'next-fixture-cursor',
+      ),
+    )
+    reads.push(
+      fetchPilotPage(
+        connection,
+        request(),
+        'pilot_destinations',
+        new AbortController().signal,
+        null,
+        'Museum',
+      ),
+    )
+    reads.push(
+      fetchPilotParkingRecord(
+        connection,
+        request(),
+        'original:1',
+        new AbortController().signal,
+      ),
+    )
+    reads.push(
+      fetchPilotPage(
+        connection,
+        request(),
+        'pilot_discovery',
+        new AbortController().signal,
+        null,
+        ' ',
+      ),
+    )
+  }
+  assert.equal(calls.length, 12)
+  await Promise.all(reads)
+  assert.equal(
+    calls.filter((url) => url.endsWith('get_pilot_parking')).length,
+    2,
+  )
+})
+
+test('pooled public reads retain the leaf fifteen-second timeout', async (t) => {
+  t.mock.timers.enable({ apis: ['setTimeout'] })
+  let transport
+  t.mock.method(globalThis, 'fetch', (_url, options) => {
+    transport = options.signal
+    return new Promise((_resolve, reject) =>
+      options.signal.addEventListener(
+        'abort',
+        () => reject(new Error('Synthetic transport abort')),
+        { once: true },
+      ),
+    )
+  })
+  const a = new AbortController(),
+    b = new AbortController()
+  const first = fetchPilotPage(
+    connection,
+    request(),
+    'pilot_discovery',
+    a.signal,
+  )
+  const second = fetchPilotPage(
+    connection,
+    request(),
+    'pilot_discovery',
+    b.signal,
+  )
+  const failed = Promise.all([
+    assert.rejects(first, /timed out/),
+    assert.rejects(second, /timed out/),
+  ])
+  t.mock.timers.tick(15000)
+  await failed
+  assert.equal(transport.aborted, true)
+  assert.equal(a.signal.aborted, false)
+  assert.equal(b.signal.aborted, false)
+})
+
 test('destination search remains separate from parking identity and sends a bounded city query', async (t) => {
   const destination = {
     id: 'destination:1',

@@ -10,6 +10,7 @@ import type {
 
 import { isCoordinate, isObject } from './model.ts'
 import { isParkingNavigationApproval } from './parking-navigation.ts'
+import { createPublicRequestPool } from './public-request-pool.ts'
 
 export const pilotAreas: Record<
   PilotCity,
@@ -241,6 +242,38 @@ export function validPilotBounds(bounds: PilotBounds) {
   )
 }
 export class PilotAccessError extends Error {}
+const publicParkingRequests =
+  createPublicRequestPool<PilotPage<PilotParking | PilotDestination>>()
+
+function publicParkingRequestKey(
+  connection: PilotConnection,
+  request: PilotRequest,
+) {
+  try {
+    const url = new URL(connection.supabaseUrl)
+    if (
+      !['https:', 'http:'].includes(url.protocol) ||
+      url.username ||
+      url.password ||
+      url.search ||
+      url.hash ||
+      url.pathname !== '/'
+    )
+      return null
+    return JSON.stringify([
+      url.origin,
+      connection.publicKey,
+      request.city,
+      request.bounds.west,
+      request.bounds.south,
+      request.bounds.east,
+      request.bounds.north,
+    ])
+  } catch {
+    return null
+  }
+}
+
 export function fetchPilotPage(
   connection: PilotConnection,
   request: PilotRequest,
@@ -266,6 +299,50 @@ export async function fetchPilotPage(
   cursor: string | null = null,
   query = '',
   recordId: string | null = null,
+): Promise<PilotPage<PilotParking | PilotDestination>> {
+  signal.throwIfAborted()
+  const initialPublicViewport =
+    request.mode === 'public' &&
+    request.token === null &&
+    kind === 'pilot_discovery' &&
+    cursor === null &&
+    query === '' &&
+    recordId === null &&
+    validPilotBounds(request.bounds)
+  const key = initialPublicViewport
+    ? publicParkingRequestKey(connection, request)
+    : null
+  return key
+    ? publicParkingRequests.run(key, signal, (sharedSignal) =>
+        fetchPilotPageUnshared(
+          connection,
+          request,
+          kind,
+          sharedSignal,
+          cursor,
+          query,
+          recordId,
+        ),
+      )
+    : fetchPilotPageUnshared(
+        connection,
+        request,
+        kind,
+        signal,
+        cursor,
+        query,
+        recordId,
+      )
+}
+
+async function fetchPilotPageUnshared(
+  connection: PilotConnection,
+  request: PilotRequest,
+  kind: 'pilot_discovery' | 'pilot_destinations',
+  signal: AbortSignal,
+  cursor: string | null,
+  query: string,
+  recordId: string | null,
 ): Promise<PilotPage<PilotParking | PilotDestination>> {
   signal.throwIfAborted()
   if (!validPilotBounds(request.bounds))

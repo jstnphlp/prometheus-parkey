@@ -12,6 +12,7 @@ import mapLabel from '../../assets/figma/playful/map-label.png'
 import navUp from '../../assets/figma/playful/nav-up.png'
 
 import { config } from './config'
+import { mapTextFont } from './map-font'
 import { routeBearing, splitRoute } from './drive-math'
 import { draftGeoJSON, parkingMapSources } from './map-data'
 import type { ParkingMapProps } from './map-types'
@@ -272,7 +273,7 @@ export default function ParkingMap(props: ParkingMapProps) {
         filter: ['has', 'point_count'],
         layout: {
           'text-field': ['get', 'point_count_abbreviated'],
-          'text-font': ['Noto Sans Bold'],
+          'text-font': mapTextFont,
           'text-size': 14,
           'text-allow-overlap': true,
           'text-ignore-placement': true,
@@ -383,6 +384,7 @@ export default function ParkingMap(props: ParkingMapProps) {
         type: 'symbol',
         source: 'parked',
         layout: {
+          'text-font': mapTextFont,
           'text-field': 'Your car',
           'text-size': 12,
           'text-offset': [0, 1.8],

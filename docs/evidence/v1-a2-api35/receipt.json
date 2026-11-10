@@ -1,0 +1,105 @@
+{
+  "phase": "A2",
+  "source_commit": "c0d0ab1",
+  "date": "2026-11-09",
+  "branch": "codex/v1-a2-discovery-performance",
+  "engineering_gate": "local A2 checks passed",
+  "automated": {
+    "mobile_units": {
+      "passed": 220,
+      "failed": 0
+    },
+    "benchmark_statistics": {
+      "passed": 3,
+      "failed": 0
+    },
+    "pilot_e2e": {
+      "passed": 36,
+      "failed": 0,
+      "duration": "3.4m"
+    },
+    "checks": [
+      "mobile typecheck",
+      "E2E typecheck",
+      "scoped ESLint",
+      "scoped Prettier"
+    ]
+  },
+  "emulator": {
+    "avd": "Parkey_A0_API35",
+    "android": 15,
+    "api": 35,
+    "abi": "x86_64",
+    "image": "Google APIs revision9",
+    "emulator_binary": "37.2.12.0",
+    "renderer": "host",
+    "gpu": "NVIDIA GeForce RTX2050, OpenGL ES translator, driver581.08",
+    "accelerator": "WHPX",
+    "ram_argument_mb": 2048,
+    "cpu_cores": 2,
+    "display": "720x1600/280dpi",
+    "snapshot": false
+  },
+  "diagnostics": {
+    "default_font404": "Fixed by explicit supported native literal font stack and explicit parked-label font.",
+    "blank_glyphs": "Persisted on SwiftShader and swangle despite observer confirming HTTP200 valid Noto glyph bytes. HostGPU comparison rendered road, fee and parked text. Software renderer limitation remains documented.",
+    "probe": "Temporary local observer/style used only for diagnosis; final measurements use unmodified real OpenFreeMap style/provider."
+  },
+  "limits": [
+    "Basemap first fully rendered time is not remote parking readiness or interaction TTI.",
+    "Cold process preserves app/assets/tile cache; not a first-install benchmark.",
+    "Warm time measures activity resume command and process continuity, not GPU frame latency.",
+    "No physical Android/iOS/release performance claims."
+  ],
+  "files": [
+    {
+      "file": "apk-identity.json",
+      "bytes": 302,
+      "sha256": "32a9855064d035a8325f3166da9418badb2616c8706a39bc9a0f67e0acb51afd"
+    },
+    {
+      "file": "benchmark.json",
+      "bytes": 11062,
+      "sha256": "9b6ba2b01ae6d36bf112cbea8235867aad21b1f3b15c5e1b350f7103104b2c62"
+    },
+    {
+      "file": "host-glyphs.png",
+      "bytes": 385796,
+      "sha256": "23b646e556ef476fef92b851a725d36369e439957ce4290aa88f71dc43881e10"
+    },
+    {
+      "file": "software-glyph-limitation.png",
+      "bytes": 268948,
+      "sha256": "dd9fb242c5ff47f2f1e0cc314f3bdb19c0637137fda216417e6b932d863d2591"
+    }
+  ],
+  "pr": "https://github.com/jstnphlp/prometheus-parkey/pull/25",
+  "metrics": {
+    "cold_basemap_ms": {
+      "count": 20,
+      "p50": 7110.0,
+      "p95": 17234.0,
+      "method": "nearest rank; no failed samples discarded"
+    },
+    "map_phase_ms": {
+      "count": 20,
+      "p50": 1331,
+      "p95": 3211,
+      "method": "nearest rank; no failed samples discarded"
+    },
+    "warm_activity_command_ms": {
+      "count": 20,
+      "p50": 328.0,
+      "p95": 406.0,
+      "method": "nearest rank; no failed samples discarded"
+    },
+    "memory": {
+      "before_warm_pss_kb": 434386,
+      "after_warm_pss_kb": 454152,
+      "limit_pss_kb": 524288,
+      "limit_growth_kb": 65536,
+      "passed": true
+    },
+    "peak_cold_pss_kb": 458831
+  }
+}

@@ -1,13 +1,21 @@
 import { Map, setWorkerUrl } from 'maplibre-gl'
 import type { GeoJSONSource } from 'maplibre-gl'
-import { useEffect, useEffectEvent, useMemo, useRef, useState } from 'react'
+import {
+  memo,
+  useEffect,
+  useEffectEvent,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import 'maplibre-gl/dist/maplibre-gl.css'
 
 import { config } from './config'
+import { mapTextFont } from './map-font'
 import { ncrMapSources } from './ncr-map-data'
 import type { NcrMapProps } from './ncr-map-data'
 
-export default function NcrMap(props: NcrMapProps) {
+function NcrMap(props: NcrMapProps) {
   const container = useRef<HTMLDivElement>(null)
   const map = useRef<Map | null>(null)
   const [loaded, setLoaded] = useState(false)
@@ -127,7 +135,7 @@ export default function NcrMap(props: NcrMapProps) {
         ],
         layout: {
           'text-field': ['get', 'label'],
-          'text-font': ['Noto Sans Bold'],
+          'text-font': mapTextFont,
           'text-size': 12,
           'text-anchor': 'top',
           'text-offset': [0, 1],
@@ -158,7 +166,7 @@ export default function NcrMap(props: NcrMapProps) {
         layout: {
           // Every anchor is one source observation, never a capacity claim.
           'text-field': ['get', 'point_count_abbreviated'],
-          'text-font': ['Noto Sans Bold'],
+          'text-font': mapTextFont,
           'text-size': 12,
         },
         paint: { 'text-color': '#FFFFFF' },
@@ -259,3 +267,7 @@ export default function NcrMap(props: NcrMapProps) {
     />
   )
 }
+
+const MemoizedNcrMap = memo(NcrMap)
+MemoizedNcrMap.displayName = 'NcrMap'
+export default MemoizedNcrMap

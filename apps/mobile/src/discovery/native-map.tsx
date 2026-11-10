@@ -21,6 +21,8 @@ import navUp from '../../assets/figma/playful/nav-up.png'
 import selectedParkingPinImage from '../../assets/figma/playful/mascot.png'
 
 import { config } from './config'
+import { createLocalMapBenchmark } from './local-map-benchmark'
+import { mapTextFont } from './map-font'
 import { routeBearing, splitRoute } from './drive-math'
 import { draftGeoJSON, parkingMapSources } from './map-data'
 import type { ParkingMapProps } from './map-types'
@@ -40,6 +42,7 @@ const parkingImages = {
 }
 
 export default function NativeMap(props: ParkingMapProps) {
+  const [markMapReady] = useState(() => createLocalMapBenchmark())
   const camera = useRef<CameraRef>(null)
   const facilities = useRef<GeoJSONSourceRef>(null)
   const previousTarget = useRef(props.target)
@@ -142,6 +145,7 @@ export default function NativeMap(props: ParkingMapProps) {
         props.onStatus('ready')
       }}
       onDidFailLoadingMap={() => props.onStatus('error')}
+      onDidFinishRenderingMapFully={markMapReady}
       onRegionWillChange={(event) => {
         if (event.nativeEvent.userInteraction) {
           props.navigation?.onPan()
@@ -331,7 +335,7 @@ export default function NativeMap(props: ParkingMapProps) {
           filter={['has', 'point_count']}
           layout={{
             'text-field': ['get', 'point_count_abbreviated'],
-            'text-font': ['Noto Sans Bold'],
+            'text-font': mapTextFont,
             'text-size': 14,
             'text-allow-overlap': true,
             'text-ignore-placement': true,
@@ -451,6 +455,7 @@ export default function NativeMap(props: ParkingMapProps) {
             id="parked-label"
             type="symbol"
             layout={{
+              'text-font': mapTextFont,
               'text-field': 'Your car',
               'text-size': 10,
               'text-allow-overlap': true,

@@ -1,0 +1,465 @@
+{
+  "schema_version": 1,
+  "source_commit": "c0d0ab1a86b2e3e6a5233fb01577c16042e4d7bf",
+  "dirty_mobile_source": false,
+  "apk_sha256": "d44de93e814045e42232de704d317d7556902031213ae68fe7c371dcd1149d47",
+  "platform": "Android 15/API 35 x86_64 emulator",
+  "serial": "emulator-5556",
+  "dataset": "Bundled OSM Poblacion discovery; GPS denied; no remote backend; preserved parked pin; warm asset/tile caches; host GPU",
+  "protocol": "Cold process with app data/assets/tile caches preserved; single-worker Metro debug JS. Warm timing is activity-command completion, NOT map GPU readiness. Cold readiness observed through bounded ADB polling includes bridge/poll overhead.",
+  "local_flag_required": "EXPO_PUBLIC_LOCAL_MAP_BENCHMARK=true in development Metro",
+  "samples_requested": 20,
+  "cold": [
+    {
+      "index": 0,
+      "launch_to_observed_fully_rendered_ms": 17719.0,
+      "map_mount_to_fully_rendered_ms": 3112,
+      "activity": {
+        "TotalTime": 3802,
+        "WaitTime": 3810,
+        "ThisTime": null
+      },
+      "pss_kb": 431327,
+      "renderer_error": false
+    },
+    {
+      "index": 1,
+      "launch_to_observed_fully_rendered_ms": 16594.0,
+      "map_mount_to_fully_rendered_ms": 3400,
+      "activity": {
+        "TotalTime": 2443,
+        "WaitTime": 2445,
+        "ThisTime": null
+      },
+      "pss_kb": 431738,
+      "renderer_error": false
+    },
+    {
+      "index": 2,
+      "launch_to_observed_fully_rendered_ms": 16297.0,
+      "map_mount_to_fully_rendered_ms": 3061,
+      "activity": {
+        "TotalTime": 3431,
+        "WaitTime": 3435,
+        "ThisTime": null
+      },
+      "pss_kb": 433061,
+      "renderer_error": false
+    },
+    {
+      "index": 3,
+      "launch_to_observed_fully_rendered_ms": 17234.0,
+      "map_mount_to_fully_rendered_ms": 3211,
+      "activity": {
+        "TotalTime": 2853,
+        "WaitTime": 2927,
+        "ThisTime": null
+      },
+      "pss_kb": 456507,
+      "renderer_error": false
+    },
+    {
+      "index": 4,
+      "launch_to_observed_fully_rendered_ms": 16547.0,
+      "map_mount_to_fully_rendered_ms": 2975,
+      "activity": {
+        "TotalTime": 2535,
+        "WaitTime": 2562,
+        "ThisTime": null
+      },
+      "pss_kb": 428750,
+      "renderer_error": false
+    },
+    {
+      "index": 5,
+      "launch_to_observed_fully_rendered_ms": 16281.0,
+      "map_mount_to_fully_rendered_ms": 3166,
+      "activity": {
+        "TotalTime": 2675,
+        "WaitTime": 2676,
+        "ThisTime": null
+      },
+      "pss_kb": 434334,
+      "renderer_error": false
+    },
+    {
+      "index": 6,
+      "launch_to_observed_fully_rendered_ms": 8172.0,
+      "map_mount_to_fully_rendered_ms": 1177,
+      "activity": {
+        "TotalTime": 2452,
+        "WaitTime": 2466,
+        "ThisTime": null
+      },
+      "pss_kb": 431595,
+      "renderer_error": false
+    },
+    {
+      "index": 7,
+      "launch_to_observed_fully_rendered_ms": 6766.0,
+      "map_mount_to_fully_rendered_ms": 1345,
+      "activity": {
+        "TotalTime": 1157,
+        "WaitTime": 1158,
+        "ThisTime": null
+      },
+      "pss_kb": 440540,
+      "renderer_error": false
+    },
+    {
+      "index": 8,
+      "launch_to_observed_fully_rendered_ms": 7110.0,
+      "map_mount_to_fully_rendered_ms": 1262,
+      "activity": {
+        "TotalTime": 1073,
+        "WaitTime": 1096,
+        "ThisTime": null
+      },
+      "pss_kb": 447438,
+      "renderer_error": false
+    },
+    {
+      "index": 9,
+      "launch_to_observed_fully_rendered_ms": 6672.0,
+      "map_mount_to_fully_rendered_ms": 1235,
+      "activity": {
+        "TotalTime": 1033,
+        "WaitTime": 1035,
+        "ThisTime": null
+      },
+      "pss_kb": 445537,
+      "renderer_error": false
+    },
+    {
+      "index": 10,
+      "launch_to_observed_fully_rendered_ms": 7219.0,
+      "map_mount_to_fully_rendered_ms": 1331,
+      "activity": {
+        "TotalTime": 1068,
+        "WaitTime": 1070,
+        "ThisTime": null
+      },
+      "pss_kb": 458831,
+      "renderer_error": false
+    },
+    {
+      "index": 11,
+      "launch_to_observed_fully_rendered_ms": 6656.0,
+      "map_mount_to_fully_rendered_ms": 1270,
+      "activity": {
+        "TotalTime": 1057,
+        "WaitTime": 1063,
+        "ThisTime": null
+      },
+      "pss_kb": 440544,
+      "renderer_error": false
+    },
+    {
+      "index": 12,
+      "launch_to_observed_fully_rendered_ms": 6375.0,
+      "map_mount_to_fully_rendered_ms": 1299,
+      "activity": {
+        "TotalTime": 1077,
+        "WaitTime": 1086,
+        "ThisTime": null
+      },
+      "pss_kb": 452366,
+      "renderer_error": false
+    },
+    {
+      "index": 13,
+      "launch_to_observed_fully_rendered_ms": 6500.0,
+      "map_mount_to_fully_rendered_ms": 1292,
+      "activity": {
+        "TotalTime": 1117,
+        "WaitTime": 1118,
+        "ThisTime": null
+      },
+      "pss_kb": 443570,
+      "renderer_error": false
+    },
+    {
+      "index": 14,
+      "launch_to_observed_fully_rendered_ms": 6406.0,
+      "map_mount_to_fully_rendered_ms": 1274,
+      "activity": {
+        "TotalTime": 1076,
+        "WaitTime": 1079,
+        "ThisTime": null
+      },
+      "pss_kb": 456477,
+      "renderer_error": false
+    },
+    {
+      "index": 15,
+      "launch_to_observed_fully_rendered_ms": 14140.0,
+      "map_mount_to_fully_rendered_ms": 2828,
+      "activity": {
+        "TotalTime": 1183,
+        "WaitTime": 1187,
+        "ThisTime": null
+      },
+      "pss_kb": 440204,
+      "renderer_error": false
+    },
+    {
+      "index": 16,
+      "launch_to_observed_fully_rendered_ms": 9656.0,
+      "map_mount_to_fully_rendered_ms": 1219,
+      "activity": {
+        "TotalTime": 2246,
+        "WaitTime": 2271,
+        "ThisTime": null
+      },
+      "pss_kb": 450290,
+      "renderer_error": false
+    },
+    {
+      "index": 17,
+      "launch_to_observed_fully_rendered_ms": 6656.0,
+      "map_mount_to_fully_rendered_ms": 1346,
+      "activity": {
+        "TotalTime": 1024,
+        "WaitTime": 1034,
+        "ThisTime": null
+      },
+      "pss_kb": 445510,
+      "renderer_error": false
+    },
+    {
+      "index": 18,
+      "launch_to_observed_fully_rendered_ms": 6641.0,
+      "map_mount_to_fully_rendered_ms": 1371,
+      "activity": {
+        "TotalTime": 1037,
+        "WaitTime": 1039,
+        "ThisTime": null
+      },
+      "pss_kb": 437485,
+      "renderer_error": false
+    },
+    {
+      "index": 19,
+      "launch_to_observed_fully_rendered_ms": 7109.0,
+      "map_mount_to_fully_rendered_ms": 1299,
+      "activity": {
+        "TotalTime": 1390,
+        "WaitTime": 1394,
+        "ThisTime": null
+      },
+      "pss_kb": 434575,
+      "renderer_error": false
+    }
+  ],
+  "warm": [
+    {
+      "index": 0,
+      "activity_command_wall_ms": 329.0,
+      "activity": {
+        "TotalTime": 179,
+        "WaitTime": 187,
+        "ThisTime": null
+      }
+    },
+    {
+      "index": 1,
+      "activity_command_wall_ms": 344.0,
+      "activity": {
+        "TotalTime": 271,
+        "WaitTime": 273,
+        "ThisTime": null
+      }
+    },
+    {
+      "index": 2,
+      "activity_command_wall_ms": 297.0,
+      "activity": {
+        "TotalTime": 200,
+        "WaitTime": 202,
+        "ThisTime": null
+      }
+    },
+    {
+      "index": 3,
+      "activity_command_wall_ms": 312.0,
+      "activity": {
+        "TotalTime": 221,
+        "WaitTime": 223,
+        "ThisTime": null
+      }
+    },
+    {
+      "index": 4,
+      "activity_command_wall_ms": 297.0,
+      "activity": {
+        "TotalTime": 211,
+        "WaitTime": 213,
+        "ThisTime": null
+      }
+    },
+    {
+      "index": 5,
+      "activity_command_wall_ms": 406.0,
+      "activity": {
+        "TotalTime": 298,
+        "WaitTime": 302,
+        "ThisTime": null
+      }
+    },
+    {
+      "index": 6,
+      "activity_command_wall_ms": 343.0,
+      "activity": {
+        "TotalTime": 216,
+        "WaitTime": 219,
+        "ThisTime": null
+      }
+    },
+    {
+      "index": 7,
+      "activity_command_wall_ms": 328.0,
+      "activity": {
+        "TotalTime": 241,
+        "WaitTime": 246,
+        "ThisTime": null
+      }
+    },
+    {
+      "index": 8,
+      "activity_command_wall_ms": 375.0,
+      "activity": {
+        "TotalTime": 275,
+        "WaitTime": 301,
+        "ThisTime": null
+      }
+    },
+    {
+      "index": 9,
+      "activity_command_wall_ms": 297.0,
+      "activity": {
+        "TotalTime": 181,
+        "WaitTime": 209,
+        "ThisTime": null
+      }
+    },
+    {
+      "index": 10,
+      "activity_command_wall_ms": 313.0,
+      "activity": {
+        "TotalTime": 228,
+        "WaitTime": 231,
+        "ThisTime": null
+      }
+    },
+    {
+      "index": 11,
+      "activity_command_wall_ms": 406.0,
+      "activity": {
+        "TotalTime": 316,
+        "WaitTime": 331,
+        "ThisTime": null
+      }
+    },
+    {
+      "index": 12,
+      "activity_command_wall_ms": 328.0,
+      "activity": {
+        "TotalTime": 244,
+        "WaitTime": 246,
+        "ThisTime": null
+      }
+    },
+    {
+      "index": 13,
+      "activity_command_wall_ms": 297.0,
+      "activity": {
+        "TotalTime": 206,
+        "WaitTime": 208,
+        "ThisTime": null
+      }
+    },
+    {
+      "index": 14,
+      "activity_command_wall_ms": 328.0,
+      "activity": {
+        "TotalTime": 217,
+        "WaitTime": 220,
+        "ThisTime": null
+      }
+    },
+    {
+      "index": 15,
+      "activity_command_wall_ms": 328.0,
+      "activity": {
+        "TotalTime": 263,
+        "WaitTime": 265,
+        "ThisTime": null
+      }
+    },
+    {
+      "index": 16,
+      "activity_command_wall_ms": 329.0,
+      "activity": {
+        "TotalTime": 233,
+        "WaitTime": 238,
+        "ThisTime": null
+      }
+    },
+    {
+      "index": 17,
+      "activity_command_wall_ms": 297.0,
+      "activity": {
+        "TotalTime": 219,
+        "WaitTime": 223,
+        "ThisTime": null
+      }
+    },
+    {
+      "index": 18,
+      "activity_command_wall_ms": 359.0,
+      "activity": {
+        "TotalTime": 275,
+        "WaitTime": 276,
+        "ThisTime": null
+      }
+    },
+    {
+      "index": 19,
+      "activity_command_wall_ms": 359.0,
+      "activity": {
+        "TotalTime": 261,
+        "WaitTime": 268,
+        "ThisTime": null
+      }
+    }
+  ],
+  "failures": [],
+  "readiness_scope": "First fully rendered basemap; may precede remote records/markers. Dataset label is operator supplied, not loaded-record evidence.",
+  "cold_launch_to_observed_map_ms": {
+    "count": 20,
+    "p50": 7110.0,
+    "p95": 17234.0,
+    "method": "nearest rank; no failed samples discarded"
+  },
+  "cold_map_phase_ms": {
+    "count": 20,
+    "p50": 1331,
+    "p95": 3211,
+    "method": "nearest rank; no failed samples discarded"
+  },
+  "warm_activity_command_ms": {
+    "count": 20,
+    "p50": 328.0,
+    "p95": 406.0,
+    "method": "nearest rank; no failed samples discarded"
+  },
+  "memory": {
+    "before_warm_pss_kb": 434386,
+    "after_warm_pss_kb": 454152,
+    "limit_pss_kb": 524288,
+    "limit_growth_kb": 65536,
+    "passed": true
+  },
+  "engineering_eligible": true,
+  "physical_device_or_release_claim": false
+}

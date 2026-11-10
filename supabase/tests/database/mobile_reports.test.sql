@@ -42,6 +42,14 @@ select is((select requests from parkey_private.mobile_report_request_limits wher
 select throws_like($$select public.mobile_report_action('e6100000-0000-4000-8000-000000000003','submit','future-date',(select payload || jsonb_build_object('observed_at',now()+interval '1 day') from report_fixture))$$,'%Observation must be within%','future observation rejected');
 select throws_like($$select public.mobile_report_action('e6100000-0000-4000-8000-000000000003','submit','stale-date',(select payload || jsonb_build_object('observed_at',now()-interval '91 days') from report_fixture))$$,'%Observation must be within%','expired observations cannot resurrect old idempotency keys');
 
+create temporary table street_report_fixture as select payload || jsonb_build_object(
+ 'intent','correction','target','osm:way/123','name','Synthetic source street correction','kind','street','restrictions','Synthetic correction',
+ 'geometry',jsonb_build_object('type','LineString','coordinates',(select jsonb_agg(jsonb_build_array(121.03+n*0.00001,14.56) order by n) from generate_series(0,12) n))) as payload from report_fixture;
+select lives_ok($$select public.mobile_report_action('e6100000-0000-4000-8000-000000000003','submit','source-street',(select payload from street_report_fixture))$$,'valid source corrections can retain more than twelve coordinates');
+select is((select extensions.st_npoints(geometry) from parkey_private.community_reports where name = 'Synthetic source street correction'),13,'source correction geometry is not silently simplified');
+select is((select external_target_url from parkey_private.community_reports where name = 'Synthetic source street correction'),'https://www.openstreetmap.org/way/123','OSM correction preserves its canonical source identity');
+select throws_like($$select public.mobile_report_action('e6100000-0000-4000-8000-000000000003','submit','too-many-added-points',(select payload || '{"intent":"add","target":null}'::jsonb from street_report_fixture))$$,'%Invalid geometry%','new editor additions retain the twelve-coordinate bound');
+
 select is(public.mobile_report_action('e6100000-0000-4000-8000-000000000001','withdraw','tap-one')->>'state','withdrawn','owner can withdraw a private report');
 select is((select count(*)::int from parkey_private.community_reports where name = 'Synthetic mobile report'),0,'withdrawal removes report contents');
 select throws_like($$select public.mobile_report_action('e6100000-0000-4000-8000-000000000001','submit','tap-one',(select payload from report_fixture))$$,'%Idempotency conflict%','withdrawn key cannot silently resubmit');

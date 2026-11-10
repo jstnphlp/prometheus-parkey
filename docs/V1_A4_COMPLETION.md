@@ -1,9 +1,11 @@
 # A4 release-quality validation
 
 **PASS for locally executable engineering checks. Production release is blocked.** Branch
-`codex/v1-a4-release-validation`, [draft PR #27](https://github.com/jstnphlp/prometheus-parkey/pull/27).
+`codex/v1-a4-release-validation`, [PR #27](https://github.com/jstnphlp/prometheus-parkey/pull/27).
 Application source `c38f130`, native compatibility configuration `be2366d`.
-Depends on unmerged A0-A3 PRs #23-#26. No production approval is granted.
+A0-A3 PRs #23-#26 merged on 2026-11-10 under owner authorization. This A4 PR
+retains their implementation and evidence. No production approval is granted.
+Owner checks and outstanding release gates: [acceptance checklist](V1_OWNER_ACCEPTANCE_CHECKLIST.md).
 
 ## Implemented during validation
 

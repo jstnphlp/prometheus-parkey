@@ -33,7 +33,7 @@ engineering progression. A2/A4 can pass locally executable engineering gates
 with reproducible emulator measurements and native evidence. The original
 physical Android P50/P95 and physical smoke requirements remain **production
 release blockers**; emulator results never satisfy them or establish iOS support.
-The owner authorized merging A0?A4 PRs #23?#27 on 2026-11-10. A0?A3 are
+The owner authorized merging A0-A4 PRs #23-#27 on 2026-11-10. A0-A3 are
 merged; A4 includes this integration update. The linked PRs record the
 individual merge commits and CI results. No independent GitHub review was
 recorded; owner merge authorization is not production release approval.

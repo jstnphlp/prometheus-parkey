@@ -149,6 +149,10 @@ export async function searchDestinations(
   center: Coordinate,
   signal: AbortSignal,
 ) {
+  if (!endpoint.trim())
+    throw new Error(
+      'Destination search is unavailable. Explore the map or saved places.',
+    )
   const url = new URL(endpoint)
   url.searchParams.set('q', query.trim())
   url.searchParams.set('limit', '6')

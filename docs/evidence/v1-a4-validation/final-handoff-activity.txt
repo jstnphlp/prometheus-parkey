@@ -1,0 +1,1 @@
+    topResumedActivity=ActivityRecord{8f35fe7 u0 com.google.android.apps.maps/com.google.android.maps.MapsActivity t86}

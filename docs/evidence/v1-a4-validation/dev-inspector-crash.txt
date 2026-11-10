@@ -1,0 +1,15 @@
+--------- beginning of crash
+11-09 12:08:41.849 10118 10118 E AndroidRuntime: FATAL EXCEPTION: main
+11-09 12:08:41.849 10118 10118 E AndroidRuntime: Process: com.parkey.discovery, PID: 10118
+11-09 12:08:41.849 10118 10118 E AndroidRuntime: java.lang.NullPointerException: java.lang.NullPointerException
+11-09 12:08:41.849 10118 10118 E AndroidRuntime: 	at com.facebook.react.devsupport.CxxInspectorPackagerConnection$WebSocketDelegate.didReceiveMessage(Native Method)
+11-09 12:08:41.849 10118 10118 E AndroidRuntime: 	at com.facebook.react.devsupport.CxxInspectorPackagerConnection$DelegateImpl$connectWebSocket$webSocket$1.onMessage$lambda$1(CxxInspectorPackagerConnection.kt:202)
+11-09 12:08:41.849 10118 10118 E AndroidRuntime: 	at com.facebook.react.devsupport.CxxInspectorPackagerConnection$DelegateImpl$connectWebSocket$webSocket$1$$ExternalSyntheticLambda3.run(D8$$SyntheticClass:0)
+11-09 12:08:41.849 10118 10118 E AndroidRuntime: 	at android.os.Handler.handleCallback(Handler.java:959)
+11-09 12:08:41.849 10118 10118 E AndroidRuntime: 	at android.os.Handler.dispatchMessage(Handler.java:100)
+11-09 12:08:41.849 10118 10118 E AndroidRuntime: 	at android.os.Looper.loopOnce(Looper.java:232)
+11-09 12:08:41.849 10118 10118 E AndroidRuntime: 	at android.os.Looper.loop(Looper.java:317)
+11-09 12:08:41.849 10118 10118 E AndroidRuntime: 	at android.app.ActivityThread.main(ActivityThread.java:8705)
+11-09 12:08:41.849 10118 10118 E AndroidRuntime: 	at java.lang.reflect.Method.invoke(Native Method)
+11-09 12:08:41.849 10118 10118 E AndroidRuntime: 	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:580)
+11-09 12:08:41.849 10118 10118 E AndroidRuntime: 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:886)

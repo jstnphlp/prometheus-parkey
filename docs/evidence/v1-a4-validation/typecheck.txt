@@ -1,0 +1,19 @@
+pnpm.cmd : $ pnpm -r typecheck && pnpm typecheck:e2e && pnpm typecheck:edge
+At line:2 char:1
++ pnpm.cmd typecheck *> output/ncr/a4-final-typecheck.log; $checkExit=$ ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ($ pnpm -r typec... typecheck:edge:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Scope: 3 of 4 workspace projects
+packages/shared-types typecheck$ tsc -p tsconfig.json
+packages/shared-types typecheck: Done
+apps/mobile typecheck$ tsc --noEmit
+apps/web typecheck$ pnpm generate-routes && tsc --noEmit
+apps/web typecheck: $ tsr generate
+apps/web typecheck: (node:15700) Warning: Accessing non-existent property 'replaceRouteChunk' of module exports inside circular dependency
+apps/web typecheck: (Use `node --trace-warnings ...` to show where the warning was created)
+apps/web typecheck: Done
+apps/mobile typecheck: Done
+$ tsc -p e2e/tsconfig.json
+$ tsc -p supabase/functions/tsconfig.json

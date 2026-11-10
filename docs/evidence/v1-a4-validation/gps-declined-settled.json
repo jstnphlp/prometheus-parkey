@@ -1,0 +1,295 @@
+[
+  {
+    "window-title": "",
+    "type": "SYSTEM",
+    "layer": 1,
+    "bounds": "[0,0][720,49]",
+    "content": [
+      {
+        "class": "android.widget.TextView",
+        "resource-id": "com.android.systemui:id/clock",
+        "text": "12:59",
+        "content-desc": "12:59 PM",
+        "bounds": "[47,10][130,39]",
+        "center": "[88,24]"
+      },
+      {
+        "class": "android.widget.ImageView",
+        "content-desc": "Security \u0026 privacy notification: Set a screen lock",
+        "bounds": "[130,1][169,49]",
+        "center": "[149,25]"
+      },
+      {
+        "class": "android.widget.ImageView",
+        "content-desc": "Android System notification: Serial console enabled",
+        "bounds": "[169,1][208,49]",
+        "center": "[188,25]"
+      },
+      {
+        "class": "android.widget.ImageView",
+        "resource-id": "com.android.systemui:id/wifi_signal",
+        "content-desc": "Wifi signal full.",
+        "bounds": "[582,11][608,37]",
+        "center": "[595,24]"
+      },
+      {
+        "class": "android.widget.FrameLayout",
+        "resource-id": "com.android.systemui:id/mobile_combo",
+        "content-desc": "Phone three bars.",
+        "bounds": "[608,5][634,44]",
+        "center": "[621,24]"
+      },
+      {
+        "class": "android.widget.LinearLayout",
+        "resource-id": "com.android.systemui:id/battery",
+        "content-desc": "Battery charging, 100 percent.",
+        "bounds": "[645,13][659,36]",
+        "center": "[652,24]"
+      }
+    ]
+  },
+  {
+    "window-title": "Parkey",
+    "type": "APPLICATION",
+    "active": true,
+    "focused": true,
+    "layer": 0,
+    "bounds": "[0,0][720,1600]",
+    "content": [
+      {
+        "class": "android.widget.FrameLayout",
+        "content-desc": "Showing a Map created with MapLibre. Scroll by dragging two fingers. Zoom by pinching two fingers.",
+        "interactions": ["CLICKABLE", "LONG_CLICKABLE", "FOCUSABLE"],
+        "bounds": "[0,0][720,1600]",
+        "center": "[360,800]"
+      },
+      {
+        "class": "android.widget.Button",
+        "content-desc": "Your car · 79 h ago · Directions",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "bounds": "[28,88][546,186]",
+        "center": "[287,137]",
+        "children": [
+          {
+            "class": "android.widget.TextView",
+            "text": "Your car · 79 h ago · Directions",
+            "bounds": "[70,116][504,158]",
+            "center": "[287,137]"
+          }
+        ]
+      },
+      {
+        "class": "android.widget.Button",
+        "content-desc": "Map data sources and attribution",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "bounds": "[28,560][105,637]",
+        "center": "[66,598]"
+      },
+      {
+        "class": "android.widget.Button",
+        "content-desc": "Center on my location",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "bounds": "[594,539][692,637]",
+        "center": "[643,588]"
+      },
+      {
+        "class": "android.widget.HorizontalScrollView",
+        "resource-id": "parking-filters",
+        "interactions": ["SCROLLABLE", "FOCUSABLE"],
+        "bounds": "[0,665][720,742]",
+        "center": "[360,703]",
+        "children": [
+          {
+            "class": "android.widget.Button",
+            "content-desc": "All",
+            "interactions": ["CLICKABLE", "FOCUSABLE"],
+            "state": ["SELECTED"],
+            "bounds": "[28,665][127,742]",
+            "center": "[77,703]",
+            "children": [
+              {
+                "class": "android.widget.TextView",
+                "text": "All",
+                "bounds": "[56,686][99,721]",
+                "center": "[77,703]"
+              }
+            ]
+          },
+          {
+            "class": "android.widget.Button",
+            "content-desc": "Free",
+            "interactions": ["CLICKABLE", "FOCUSABLE"],
+            "bounds": "[141,665][259,742]",
+            "center": "[200,703]",
+            "children": [
+              {
+                "class": "android.widget.TextView",
+                "text": "Free",
+                "bounds": "[169,686][231,721]",
+                "center": "[200,703]"
+              }
+            ]
+          },
+          {
+            "class": "android.widget.Button",
+            "content-desc": "Street",
+            "interactions": ["CLICKABLE", "FOCUSABLE"],
+            "bounds": "[273,665][418,742]",
+            "center": "[345,703]",
+            "children": [
+              {
+                "class": "android.widget.TextView",
+                "text": "Street",
+                "bounds": "[301,686][390,721]",
+                "center": "[345,703]"
+              }
+            ]
+          },
+          {
+            "class": "android.widget.Button",
+            "content-desc": "Garage",
+            "interactions": ["CLICKABLE", "FOCUSABLE"],
+            "bounds": "[432,665][591,742]",
+            "center": "[511,703]",
+            "children": [
+              {
+                "class": "android.widget.TextView",
+                "text": "Garage",
+                "bounds": "[460,686][563,721]",
+                "center": "[511,703]"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "class": "android.widget.Button",
+        "resource-id": "parking-sheet-handle",
+        "content-desc": "Parking sheet: half. Swipe down to dismiss. Activate to expand",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "bounds": "[255,763][465,819]",
+        "center": "[360,791]"
+      },
+      {
+        "class": "android.widget.EditText",
+        "resource-id": "destination-query",
+        "text": "Where to park today?",
+        "content-desc": "Where to park today?",
+        "interactions": [
+          "CLICKABLE",
+          "LONG_CLICKABLE",
+          "FOCUSABLE",
+          "EDITABLE"
+        ],
+        "bounds": "[119,824][685,905]",
+        "center": "[402,864]"
+      },
+      {
+        "class": "android.widget.HorizontalScrollView",
+        "interactions": ["SCROLLABLE", "FOCUSABLE"],
+        "bounds": "[0,956][720,1425]",
+        "center": "[360,1190]",
+        "children": [
+          {
+            "class": "android.widget.Button",
+            "content-desc": "Parking lot. 160 m from map center · straight-line. Open parking details",
+            "interactions": ["CLICKABLE", "FOCUSABLE"],
+            "bounds": "[56,984][406,1123]",
+            "center": "[231,1053]",
+            "children": [
+              {
+                "class": "android.widget.TextView",
+                "text": "Paid",
+                "bounds": "[56,984][142,1031]",
+                "center": "[99,1007]"
+              },
+              {
+                "class": "android.widget.TextView",
+                "text": "Parking lot",
+                "bounds": "[56,1041][406,1080]",
+                "center": "[231,1060]"
+              },
+              {
+                "class": "android.widget.TextView",
+                "text": "160 m from map center · straight-line",
+                "bounds": "[56,1091][406,1123]",
+                "center": "[231,1107]"
+              }
+            ]
+          },
+          {
+            "class": "android.widget.Button",
+            "content-desc": "Go to Parking lot",
+            "interactions": ["CLICKABLE", "FOCUSABLE"],
+            "bounds": "[427,1005][525,1103]",
+            "center": "[476,1054]"
+          },
+          {
+            "class": "android.widget.Button",
+            "content-desc": "Jupiter Street. Street parking · 230 m from map center · straight-line. Open parking details",
+            "interactions": ["CLICKABLE", "FOCUSABLE"],
+            "bounds": "[602,984][720,1123]",
+            "center": "[661,1053]",
+            "children": [
+              {
+                "class": "android.widget.TextView",
+                "text": "Fee unknown",
+                "bounds": "[602,984][720,1031]",
+                "center": "[661,1007]"
+              },
+              {
+                "class": "android.widget.TextView",
+                "text": "Jupiter Street",
+                "bounds": "[602,1041][720,1080]",
+                "center": "[661,1060]"
+              },
+              {
+                "class": "android.widget.TextView",
+                "text": "Street parking · 230 m from map center · straight-line",
+                "bounds": "[602,1091][720,1123]",
+                "center": "[661,1107]"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "class": "android.view.View",
+        "content-desc": "Map",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "state": ["SELECTED"],
+        "bounds": "[124,1460][295,1544]",
+        "center": "[209,1502]",
+        "children": [
+          {
+            "class": "android.widget.TextView",
+            "text": "Map",
+            "bounds": "[212,1484][264,1520]",
+            "center": "[238,1502]"
+          }
+        ]
+      },
+      {
+        "class": "android.view.View",
+        "content-desc": "Saved",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "bounds": "[302,1460][386,1544]",
+        "center": "[344,1502]"
+      },
+      {
+        "class": "android.view.View",
+        "content-desc": "You",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "bounds": "[393,1460][477,1544]",
+        "center": "[435,1502]"
+      },
+      {
+        "class": "android.widget.Button",
+        "content-desc": "Add a spot",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "bounds": "[512,1453][610,1551]",
+        "center": "[561,1502]"
+      }
+    ]
+  }
+]

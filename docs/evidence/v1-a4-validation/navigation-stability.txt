@@ -1,0 +1,83 @@
+Scope: all 4 workspace projects
+✓ Lockfile passes supply-chain policies (verified 4d ago)
+Lockfile is up to date, resolution step is skipped
+Progress: resolved 0, reused 1, downloaded 0, added 0
+Packages: -84
+--------------------------------------------------------------------------------
+Progress: resolved 0, reused 84, downloaded 0, added 0, done
+
+Done in 1.3s using pnpm v11.25.0
+[WebServer] (node:25828) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+[WebServer] $ node scripts/prepare-map-worker.mjs && expo start --web "--host" "localhost" "--port" "8388" "--max-workers" "2"
+
+[WebServer] (node:14692) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+[WebServer] (node:14692) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/JAC/Documents/projects/prometheus-parkey/apps/mobile/src/discovery/pilot-config.ts is not specified and it doesn't parse as CommonJS.
+[WebServer] Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+[WebServer] To eliminate this warning, add "type": "module" to \\?\C:\Users\JAC\Documents\projects\prometheus-parkey\apps\mobile\package.json.
+
+
+Running 20 tests using 2 workers
+
+(node:2720) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+(node:6852) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/20] [desktop-chromium] › e2e\navigation-races.spec.ts:81:1 › Back cancels a delayed external entrance refresh even when the same parking stays selected
+[2/20] [desktop-chromium] › e2e\navigation-races.spec.ts:145:1 › late GPS after Back cannot start or rearm navigation, and a new explicit request still works
+[WebServer] Detected multiple renderers concurrently rendering the same context provider. This is currently unsupported.
+
+[WebServer] Detected multiple renderers concurrently rendering the same context provider. This is currently unsupported.
+
+[WebServer] Detected multiple renderers concurrently rendering the same context provider. This is currently unsupported.
+
+[3/20] [desktop-chromium] › e2e\navigation-races.spec.ts:214:1 › closing a selected spot while persisted consent is pending cannot authorize a fresh route
+[4/20] [desktop-chromium] › e2e\navigation-races.spec.ts:281:1 › external Maps uses the newly approved entrance instead of the earlier route destination
+[5/20] [desktop-chromium] › e2e\navigation-races.spec.ts:325:1 › Back during a pending consent save prevents the completed write from starting directions
+(node:26392) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[6/20] [desktop-chromium] › e2e\navigation-races.spec.ts:81:1 › Back cancels a delayed external entrance refresh even when the same parking stays selected
+[7/20] [desktop-chromium] › e2e\navigation-races.spec.ts:214:1 › closing a selected spot while persisted consent is pending cannot authorize a fresh route
+(node:16752) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[8/20] [desktop-chromium] › e2e\navigation-races.spec.ts:145:1 › late GPS after Back cannot start or rearm navigation, and a new explicit request still works
+[9/20] [desktop-chromium] › e2e\navigation-races.spec.ts:281:1 › external Maps uses the newly approved entrance instead of the earlier route destination
+[10/20] [desktop-chromium] › e2e\navigation-races.spec.ts:325:1 › Back during a pending consent save prevents the completed write from starting directions
+(node:14260) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[11/20] [mobile-chromium] › e2e\navigation-races.spec.ts:81:1 › Back cancels a delayed external entrance refresh even when the same parking stays selected
+(node:26832) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[12/20] [mobile-chromium] › e2e\navigation-races.spec.ts:145:1 › late GPS after Back cannot start or rearm navigation, and a new explicit request still works
+[13/20] [mobile-chromium] › e2e\navigation-races.spec.ts:214:1 › closing a selected spot while persisted consent is pending cannot authorize a fresh route
+[14/20] [mobile-chromium] › e2e\navigation-races.spec.ts:281:1 › external Maps uses the newly approved entrance instead of the earlier route destination
+[15/20] [mobile-chromium] › e2e\navigation-races.spec.ts:325:1 › Back during a pending consent save prevents the completed write from starting directions
+(node:13708) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[16/20] [mobile-chromium] › e2e\navigation-races.spec.ts:81:1 › Back cancels a delayed external entrance refresh even when the same parking stays selected
+[17/20] [mobile-chromium] › e2e\navigation-races.spec.ts:214:1 › closing a selected spot while persisted consent is pending cannot authorize a fresh route
+(node:24312) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[18/20] [mobile-chromium] › e2e\navigation-races.spec.ts:145:1 › late GPS after Back cannot start or rearm navigation, and a new explicit request still works
+[19/20] [mobile-chromium] › e2e\navigation-races.spec.ts:281:1 › external Maps uses the newly approved entrance instead of the earlier route destination
+[20/20] [mobile-chromium] › e2e\navigation-races.spec.ts:325:1 › Back during a pending consent save prevents the completed write from starting directions
+  20 passed (1.8m)

@@ -22,6 +22,8 @@ import { StateCard } from './state-card'
 import { colors, IconButton, UndoToast, ui } from './ui'
 import { useSearchHistory } from './use-search-history'
 
+const hasSearchProvider = Boolean(config.geocoder.trim())
+
 export function DestinationSearch({
   query,
   onQuery,
@@ -59,9 +61,9 @@ export function DestinationSearch({
     return () => clearTimeout(timer)
   }, [cleared])
   const [results, setResults] = useState<Destination[]>([])
-  const [status, setStatus] = useState<'idle' | 'loading' | 'empty' | 'error'>(
-    'idle',
-  )
+  const [status, setStatus] = useState<
+    'idle' | 'loading' | 'empty' | 'error' | 'unavailable'
+  >('idle')
   const [notice, setNotice] = useState(false)
   const [cardTop, setCardTop] = useState(10)
   const [visibleBottom, setVisibleBottom] = useState<number | null>(null)
@@ -152,6 +154,12 @@ export function DestinationSearch({
   const search = useCallback(async () => {
     cancel()
     if (!active || query.trim().length < 3) return
+    if (!hasSearchProvider) {
+      setResults([])
+      setNotice(false)
+      setStatus('unavailable')
+      return
+    }
     const controller = new AbortController()
     request.current = controller
     const timeout = setTimeout(() => controller.abort(), 12000)
@@ -372,6 +380,14 @@ export function DestinationSearch({
                   ))}
                 </View>
               ) : null}
+              {status === 'unavailable' ? (
+                <StateCard
+                  title="Destination search is unavailable"
+                  body="Browse the map or open Saved places."
+                  action="Back to map"
+                  onAction={close}
+                />
+              ) : null}
               {status === 'error' ? (
                 <StateCard
                   title="Search couldn’t connect"
@@ -400,10 +416,10 @@ export function DestinationSearch({
                   onPress={() => select(destination)}
                 />
               ))}
-              {notice || layout === 'sheet' ? (
+              {hasSearchProvider && (notice || layout === 'sheet') ? (
                 <Text style={[ui.small, styles.message]}>
-                  Search text and map area are sent to Photon. Details in You →
-                  Privacy.
+                  Searching shares your search text and map area with the search
+                  service. Details in You → Privacy.
                 </Text>
               ) : null}
             </>

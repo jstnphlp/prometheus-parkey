@@ -1,0 +1,108 @@
+Scope: all 4 workspace projects
+✓ Lockfile passes supply-chain policies (verified 4d ago)
+Lockfile is up to date, resolution step is skipped
+Progress: resolved 0, reused 1, downloaded 0, added 0
+Packages: -84
+--------------------------------------------------------------------------------
+Progress: resolved 0, reused 84, downloaded 0, added 0, done
+
+
+   ╭────────────────────────────────────────────────────────────────────────╮
+   │                                                                        │
+   │                  Update available! 11.25.0 → 12.18.0.                  │
+   │                  Changelog: https://pnpm.io/v/12.18.0                  │
+   │   To update, run: Invoke-WebRequest https://get.pnpm.io/install.ps1    │
+   │                 -UseBasicParsing | Invoke-Expression                   │
+   │                                                                        │
+   ╰────────────────────────────────────────────────────────────────────────╯
+
+Done in 1.5s using pnpm v11.25.0
+pnpm.cmd : [WebServer] (node:14664) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+At line:2 char:34
++ ... ORT='8388'; pnpm.cmd exec playwright test --workers 1 *> output/ncr/a ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ([WebServer] (no... env being set.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] $ node scripts/prepare-map-worker.mjs && expo start --web "--host" "localhost" "--port" "8388" 
+"--max-workers" "2"
+[WebServer] (node:15876) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:15876) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of 
+file:///C:/Users/JAC/Documents/projects/prometheus-parkey/apps/mobile/src/discovery/pilot-config.ts is not specified 
+and it doesn't parse as CommonJS.
+[WebServer] Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+[WebServer] To eliminate this warning, add "type": "module" to 
+\\?\C:\Users\JAC\Documents\projects\prometheus-parkey\apps\mobile\package.json.
+
+Running 62 tests using 1 worker
+
+(node:25404) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  1 [desktop-chromium] › e2e\contributions.spec.ts:3:1 › adding a private parking draft survives reload and updates the profile (12.0s)
+  ok  2 [desktop-chromium] › e2e\contributions.spec.ts:41:1 › a correction requires an explanation before saving (3.9s)
+  ok  3 [desktop-chromium] › e2e\directions.spec.ts:13:1 › directions require consent, start navigation, and return to the map (11.5s)
+  ok  4 [desktop-chromium] › e2e\directions.spec.ts:61:1 › routing failure offers external maps and retry recovers (5.3s)
+  ok  5 [desktop-chromium] › e2e\directions.spec.ts:89:1 › arriving allows parking confirmation and saves the car location (17.1s)
+  ok  6 [desktop-chromium] › e2e\discovery.spec.ts:10:1 › loads mapped parking, opens details, and returns with browser Back (4.5s)
+  ok  7 [desktop-chromium] › e2e\discovery.spec.ts:43:3 › Street filter shows matching parking and survives reload (6.7s)
+  ok  8 [desktop-chromium] › e2e\discovery.spec.ts:43:3 › Garage filter shows matching parking and survives reload (5.8s)
+  ok  9 [desktop-chromium] › e2e\discovery.spec.ts:74:1 › Free filter can be cleared to restore nearby parking (3.6s)
+  ok 10 [desktop-chromium] › e2e\discovery.spec.ts:98:1 › selected parking survives a reload without starting directions (5.6s)
+  ok 11 [desktop-chromium] › e2e\discovery.spec.ts:110:1 › Map, Saved, and You tabs open the appropriate screens (3.4s)
+  ok 12 [desktop-chromium] › e2e\fieldwork.spec.ts:45:1 › private field form shows source anchors and refuses an empty or unattested observation (273ms)
+  ok 13 [desktop-chromium] › e2e\fieldwork.spec.ts:87:1 › synthetic field evidence exports as unreviewed with optional locally sanitized PNG (911ms)
+  ok 14 [desktop-chromium] › e2e\ncr-layout.spec.ts:11:1 › research handoff opens only the configured external console and keeps discovery available (3.8s)
+  ok 15 [desktop-chromium] › e2e\ncr-layout.spec.ts:44:1 › failed external browser opening is recoverable without exposing research inside mobile (2.6s)
+  ok 16 [desktop-chromium] › e2e\ncr-research.spec.ts:6:1 › legacy NCR route only points to separate research console; never bundles or shows research candidates (3.0s)
+  ok 17 [desktop-chromium] › e2e\parking-navigation.spec.ts:3:1 › unverified source parking cannot request directions or open an external driving route (3.3s)
+  ok 18 [desktop-chromium] › e2e\parking-trust.spec.ts:63:1 › known garage facts and unnamed classification retain source trust without invented photos (3.5s)
+  ok 19 [desktop-chromium] › e2e\parking-trust.spec.ts:87:1 › missing facts remain unknown and cannot authorize directions or substitute photos (3.3s)
+  ok 20 [desktop-chromium] › e2e\parking-trust.spec.ts:118:1 › contradictory fee and opening schedules retain raw sources without Free or computed Open claims (3.4s)
+  ok 21 [desktop-chromium] › e2e\parking-trust.spec.ts:147:3 › restricted parking authorization cannot enable a route (3.5s)
+  ok 22 [desktop-chromium] › e2e\parking-trust.spec.ts:147:3 › expired parking authorization cannot enable a route (3.4s)
+  ok 23 [desktop-chromium] › e2e\parking-trust.spec.ts:175:3 › fresh revoked approval after selection and consent prevents all navigation (5.3s)
+  ok 24 [desktop-chromium] › e2e\parking-trust.spec.ts:175:3 › fresh expired approval after selection and consent prevents all navigation (4.2s)
+  ok 25 [desktop-chromium] › e2e\saved-places.spec.ts:10:1 › favorites persist, reopen parking, and can be removed and restored (11.2s)
+  ok 26 [desktop-chromium] › e2e\saved-places.spec.ts:44:1 › viewing parking adds it to Recent (6.7s)
+  ok 27 [desktop-chromium] › e2e\saved-places.spec.ts:67:1 › home address can be searched, saved, and reopened after reload (6.7s)
+  ok 28 [desktop-chromium] › e2e\saved-places.spec.ts:105:1 › parked location persists, can be cleared, and supports undo (6.8s)
+  ok 29 [desktop-chromium] › e2e\saved-places.spec.ts:136:1 › denied location leaves parked location unsaved and shows recovery guidance (2.8s)
+  ok 30 [desktop-chromium] › e2e\search.spec.ts:3:1 › search selects a destination, persists recents, and supports clear and undo (7.5s)
+  ok 31 [desktop-chromium] › e2e\search.spec.ts:49:1 › search reports no matches and recovers from a provider error (4.0s)
+(node:26444) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 32 [mobile-chromium] › e2e\contributions.spec.ts:3:1 › adding a private parking draft survives reload and updates the profile (10.2s)
+  ok 33 [mobile-chromium] › e2e\contributions.spec.ts:41:1 › a correction requires an explanation before saving (5.0s)
+  ok 34 [mobile-chromium] › e2e\directions.spec.ts:13:1 › directions require consent, start navigation, and return to the map (13.3s)
+  ok 35 [mobile-chromium] › e2e\directions.spec.ts:61:1 › routing failure offers external maps and retry recovers (5.3s)
+  ok 36 [mobile-chromium] › e2e\directions.spec.ts:89:1 › arriving allows parking confirmation and saves the car location (18.9s)
+  ok 37 [mobile-chromium] › e2e\discovery.spec.ts:10:1 › loads mapped parking, opens details, and returns with browser Back (4.9s)
+  ok 38 [mobile-chromium] › e2e\discovery.spec.ts:43:3 › Street filter shows matching parking and survives reload (7.2s)
+  ok 39 [mobile-chromium] › e2e\discovery.spec.ts:43:3 › Garage filter shows matching parking and survives reload (6.4s)
+  ok 40 [mobile-chromium] › e2e\discovery.spec.ts:74:1 › Free filter can be cleared to restore nearby parking (4.1s)
+  ok 41 [mobile-chromium] › e2e\discovery.spec.ts:98:1 › selected parking survives a reload without starting directions (6.6s)
+  ok 42 [mobile-chromium] › e2e\discovery.spec.ts:110:1 › Map, Saved, and You tabs open the appropriate screens (4.6s)
+  ok 43 [mobile-chromium] › e2e\fieldwork.spec.ts:45:1 › private field form shows source anchors and refuses an empty or unattested observation (407ms)
+  ok 44 [mobile-chromium] › e2e\fieldwork.spec.ts:87:1 › synthetic field evidence exports as unreviewed with optional locally sanitized PNG (556ms)
+  ok 45 [mobile-chromium] › e2e\ncr-layout.spec.ts:11:1 › research handoff opens only the configured external console and keeps discovery available (3.7s)
+  ok 46 [mobile-chromium] › e2e\ncr-layout.spec.ts:44:1 › failed external browser opening is recoverable without exposing research inside mobile (2.5s)
+  ok 47 [mobile-chromium] › e2e\ncr-research.spec.ts:6:1 › legacy NCR route only points to separate research console; never bundles or shows research candidates (3.4s)
+  ok 48 [mobile-chromium] › e2e\parking-navigation.spec.ts:3:1 › unverified source parking cannot request directions or open an external driving route (3.4s)
+  ok 49 [mobile-chromium] › e2e\parking-trust.spec.ts:63:1 › known garage facts and unnamed classification retain source trust without invented photos (3.9s)
+  ok 50 [mobile-chromium] › e2e\parking-trust.spec.ts:87:1 › missing facts remain unknown and cannot authorize directions or substitute photos (3.7s)
+  ok 51 [mobile-chromium] › e2e\parking-trust.spec.ts:118:1 › contradictory fee and opening schedules retain raw sources without Free or computed Open claims (4.1s)
+  ok 52 [mobile-chromium] › e2e\parking-trust.spec.ts:147:3 › restricted parking authorization cannot enable a route (3.8s)
+  ok 53 [mobile-chromium] › e2e\parking-trust.spec.ts:147:3 › expired parking authorization cannot enable a route (4.0s)
+  ok 54 [mobile-chromium] › e2e\parking-trust.spec.ts:175:3 › fresh revoked approval after selection and consent prevents all navigation (4.5s)
+  ok 55 [mobile-chromium] › e2e\parking-trust.spec.ts:175:3 › fresh expired approval after selection and consent prevents all navigation (4.6s)
+  ok 56 [mobile-chromium] › e2e\saved-places.spec.ts:10:1 › favorites persist, reopen parking, and can be removed and restored (12.5s)
+  ok 57 [mobile-chromium] › e2e\saved-places.spec.ts:44:1 › viewing parking adds it to Recent (8.0s)
+  ok 58 [mobile-chromium] › e2e\saved-places.spec.ts:67:1 › home address can be searched, saved, and reopened after reload (11.4s)
+  ok 59 [mobile-chromium] › e2e\saved-places.spec.ts:105:1 › parked location persists, can be cleared, and supports undo (10.4s)
+  ok 60 [mobile-chromium] › e2e\saved-places.spec.ts:136:1 › denied location leaves parked location unsaved and shows recovery guidance (5.7s)
+  ok 61 [mobile-chromium] › e2e\search.spec.ts:3:1 › search selects a destination, persists recents, and supports clear and undo (13.5s)
+  ok 62 [mobile-chromium] › e2e\search.spec.ts:49:1 › search reports no matches and recovers from a provider error (7.4s)
+
+  62 passed (6.2m)

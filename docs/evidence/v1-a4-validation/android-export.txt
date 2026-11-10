@@ -1,0 +1,122 @@
+Scope: all 4 workspace projects
+✓ Lockfile passes supply-chain policies (verified 4d ago)
+Lockfile is up to date, resolution step is skipped
+Progress: resolved 0, reused 1, downloaded 0, added 0
+Packages: -84
+--------------------------------------------------------------------------------
+Progress: resolved 0, reused 84, downloaded 0, added 0, done
+
+Done in 2.1s using pnpm v11.25.0
+pnpm.cmd : (node:25764) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of 
+file:///C:/Users/JAC/Documents/projects/prometheus-parkey/apps/mobile/src/discovery/pilot-config.ts is not specified 
+and it doesn't parse as CommonJS.
+At line:2 char:151
++ ... ED='false'; pnpm.cmd --filter @parkey/mobile exec expo export --platf ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ((node:25764) [M...se as CommonJS.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to 
+\\?\C:\Users\JAC\Documents\projects\prometheus-parkey\apps\mobile\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Using src/app as the root directory for Expo Router.
+Expo Autolinking module resolution enabled
+Starting Metro Bundler
+
+Android Bundled 31010ms node_modules\expo-router\entry.js (2036 modules)
+
+› Assets (112):
+..\..\node_modules\@maplibre\maplibre-react-native\lib\module\assets\heading.png (3 variations | 450B)
+..\..\node_modules\expo-router\assets\arrow_down.png (9.5KB)
+..\..\node_modules\expo-router\assets\arrow_right.xml (307B)
+..\..\node_modules\expo-router\assets\checkmark.xml (312B)
+..\..\node_modules\expo-router\assets\error.png (469B)
+..\..\node_modules\expo-router\assets\file.png (138B)
+..\..\node_modules\expo-router\assets\forward.png (188B)
+..\..\node_modules\expo-router\assets\pkg.png (364B)
+..\..\node_modules\expo-router\assets\react-navigation\elements\back-icon-mask.png (653B)
+..\..\node_modules\expo-router\assets\react-navigation\elements\back-icon.png (4 variations | 152B)
+..\..\node_modules\expo-router\assets\react-navigation\elements\clear-icon.png (4 variations | 425B)
+..\..\node_modules\expo-router\assets\react-navigation\elements\close-icon.png (4 variations | 235B)
+..\..\node_modules\expo-router\assets\react-navigation\elements\search-icon.png (4 variations | 599B)
+..\..\node_modules\expo-router\assets\sitemap.png (465B)
+..\..\node_modules\expo-router\assets\unmatched.png (4.8KB)
+assets\figma\camera-large.png (2 variations | 1.1KB)
+assets\figma\camera.png (2 variations | 1KB)
+assets\figma\car-white.png (2 variations | 891B)
+assets\figma\info.png (2 variations | 985B)
+assets\figma\locate.png (2 variations | 1.4KB)
+assets\figma\more.png (2 variations | 960B)
+assets\figma\pencil.png (2 variations | 566B)
+assets\figma\playful\access.png (1.7KB)
+assets\figma\playful\arrival-ring.png (9.5KB)
+assets\figma\playful\arrived.png (14KB)
+assets\figma\playful\arrow.png (356B)
+assets\figma\playful\bookmark.png (1.1KB)
+assets\figma\playful\camera-brand.png (2KB)
+assets\figma\playful\car.png (1.4KB)
+assets\figma\playful\check-white.png (405B)
+assets\figma\playful\chevron-right.png (597B)
+assets\figma\playful\clock.png (2.6KB)
+assets\figma\playful\close.png (669B)
+assets\figma\playful\confetti-1.png (700B)
+assets\figma\playful\confetti-2.png (665B)
+assets\figma\playful\confetti-3.png (632B)
+assets\figma\playful\confetti.png (692B)
+assets\figma\playful\contributed.png (1.3KB)
+assets\figma\playful\draft-brand.png (1.5KB)
+assets\figma\playful\fees.png (2.7KB)
+assets\figma\playful\filter-brand.png (718B)
+assets\figma\playful\go.png (427B)
+assets\figma\playful\home.png (1.2KB)
+assets\figma\playful\info-brand.png (2.5KB)
+assets\figma\playful\info-warning.png (2.1KB)
+assets\figma\playful\locate-ink.png (1.5KB)
+assets\figma\playful\location-off.png (857B)
+assets\figma\playful\lock-teal.png (1.2KB)
+assets\figma\playful\map-active.png (829B)
+assets\figma\playful\map-label.png (499B)
+assets\figma\playful\map.png (1.1KB)
+assets\figma\playful\mascot.png (8.6KB)
+assets\figma\playful\nav-left.png (659B)
+assets\figma\playful\nav-right.png (870B)
+assets\figma\playful\nav-up.png (991B)
+assets\figma\playful\no-results.png (1.1KB)
+assets\figma\playful\pin-free.png (1.9KB)
+assets\figma\playful\pin-paid.png (1.9KB)
+assets\figma\playful\pin-unknown.png (1.2KB)
+assets\figma\playful\pin.png (2.6KB)
+assets\figma\playful\plus-small.png (426B)
+assets\figma\playful\saved-active.png (868B)
+assets\figma\playful\saved.png (1.2KB)
+assets\figma\playful\search-muted.png (1.8KB)
+assets\figma\playful\search-white.png (1.1KB)
+assets\figma\playful\selected-spot.png (8.8KB)
+assets\figma\playful\shield-teal.png (1.4KB)
+assets\figma\playful\spaces.png (2KB)
+assets\figma\playful\user-active.png (1.3KB)
+assets\figma\playful\user.png (1.9KB)
+assets\figma\playful\viewed-brand.png (2.4KB)
+assets\figma\playful\walk-back-arrow.png (619B)
+assets\figma\playful\warning.png (2.4KB)
+assets\figma\playful\work.png (1.3KB)
+assets\figma\playful\zoom-in-brand.png (770B)
+assets\figma\plus.png (2 variations | 377B)
+assets\figma\ring.png (2 variations | 6.9KB)
+assets\figma\search.png (2 variations | 970B)
+assets\figma\star.png (2 variations | 1.2KB)
+assets\figma\then-left.png (2 variations | 420B)
+assets\figma\turn-right.png (2 variations | 748B)
+assets\fonts\Nunito_600SemiBold.ttf (132KB)
+assets\fonts\Nunito_700Bold.ttf (132KB)
+assets\fonts\Nunito_800ExtraBold.ttf (132KB)
+assets\fonts\Nunito_900Black.ttf (132KB)
+
+› android bundles (1):
+_expo/static/js/android/entry-0fd6717bc033864308177b152f58bb9f.hbc (6.2MB)
+
+› Files (1):
+metadata.json (7.3KB)
+
+Exported: ../../output/ncr/v1-a4/android-export

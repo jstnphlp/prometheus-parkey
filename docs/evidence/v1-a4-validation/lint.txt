@@ -1,0 +1,7 @@
+pnpm.cmd : $ eslint . --max-warnings 0
+At line:2 char:1
++ pnpm.cmd lint *> output/ncr/a4-final-lint.log; $checkExit=$LASTEXITCO ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ($ eslint . --max-warnings 0:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 

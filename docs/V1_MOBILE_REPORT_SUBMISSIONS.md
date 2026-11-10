@@ -1,6 +1,8 @@
 # Verified-email mobile reports and selected-pin fix
 
-Status: implementation under verification on `fix/parking-pin-review-submission`.
+Status: local implementation checks recorded on `fix/parking-pin-review-submission`,
+[draft PR #28](https://github.com/jstnphlp/prometheus-parkey/pull/28). Final PR CI is
+the source of truth for regression acceptance.
 The live submission service is **not deployed or enabled**. This does not advance
 production release approval or the canonical analytics gates.
 
@@ -59,6 +61,12 @@ new-report quota. Retries with the same account/key/payload return the stored
 receipt; changed content or a withdrawn key returns a conflict. `status` recovers
 an uncertain delivery without uploading again. Provider and edge-wide abuse limits
 must also be verified before activation; account quotas do not prevent all abuse.
+
+Distinct local drafts receive separate correlation keys even within the same
+minute or millisecond. These keys are not authorization/deletion capabilities;
+server-verified account identity owns every operation. Before sending, the app
+persists an attempt marker. Storage failure prevents a new request, and a lost
+receipt is displayed as **Delivery not confirmed**, never local-only or approved.
 
 Successful submission returns HTTP 202 with only `state: received`, `receiptId`
 and `receivedAt`. This acknowledges delivery, not current moderation outcome,
@@ -122,11 +130,43 @@ Analytics remains hard-locked off. This is discovery-only work.
 
 ## Evidence
 
-- Initial targeted mobile/server/map-font tests: 18 passed.
-- Mobile and Edge Function TypeScript checks: passed before integration changes;
-  final workspace checks are pending.
-- Database runtime, browser UI and updated native artifacts: pending verification.
-- Independent review identified account-deletion retention and source-geometry
-  mismatches; both have code fixes and regression checks, with re-review pending.
-- Docker is not installed on this workstation. Database execution must use the
-  repository's disposable GitHub CI PostgreSQL job; no production database is used.
+- Final local workspace typecheck, lint, web build and Prettier passed. Automated
+  results: 255 main JavaScript tests (251 mobile), 178 operations and 23 Python
+  tests passed. One conditional local database test and 15 existing Python guards
+  were skipped, not counted as passes. Final regression CI is tracked on PR #28.
+- Initial targeted client/server/map-font tests: 18 passed. The added frozen-clock
+  identity check passed; targeted client/server/identity checks: 17 passed.
+- Focused desktop/mobile browser verification: four local draft/correction checks
+  and eight report checks passed, covering consent, no automatic upload, no token
+  persistence, late verification, storage failure and uncertain delivery. Expired
+  sessions are also rejected in the targeted client tests.
+  Email and intake endpoints were intercepted synthetic fixtures, not live sends.
+- Disposable database CI at `be4c327`: **382 assertions across seven files passed**,
+  including `mobile_reports.test.sql`. [Run 42800369455](https://github.com/jstnphlp/prometheus-parkey/actions/runs/42800369455)
+  validates private access denial, verified identities, account/key isolation,
+  existing Console queue integration, no publication, idempotency/conflict,
+  quotas, source geometry, withdrawal, retention and Auth account deletion.
+- Initial full browser CI at that run retained 70/72 legacy passes and two failures
+  from the obsolete unconditional `Not submitted` disclosure assertion. The
+  regression now asserts actual `Local only` state, disabled intake and zero
+  Auth/submission requests; reload persistence assertions remain. A Windows cold
+  SSR-shell timeout in the focused rerun was retained locally; navigation to You
+  now uses the actual app tab after verifying reload persistence. No timeout was
+  increased. Final complete legacy/pilot/report CI is required before merge.
+- API35 x86_64 host-GPU release-variant inspection at `f2430bf` verified the
+  selected 1210 pin without its dark label sprite, readable name, local Review
+  report panel, sending-disabled disclosure, Android Back and synthetic-draft
+  cleanup. [Native receipt](evidence/v1-pin-reports/receipt.json) and screenshots
+  record the exact source and hashes; AndroidRuntime error log was empty. Existing
+  saved places and parked-car state were retained. Basemap: OpenFreeMap/OpenMapTiles;
+  map/source data: © OpenStreetMap contributors (ODbL), rendered with MapLibre.
+- Independent review found account-deletion retention and source-geometry issues;
+  both fixes were re-reviewed with no remaining must-fix findings in those paths.
+  The later uncertainty/storage flow was also re-reviewed. A temporary Windows
+  encoding regression was restored before commit.
+- Updated emulator/ARM64 APKs are local test builds under `output/ncr/pin-reports/`;
+  the manual phone path remains `output/ncr/android13-phone/parkey-v1-arm64.apk`.
+  Their local build receipts record source, hashes and disabled sending/analytics.
+- No physical Android13, live OTP, live submission or production Console browser
+  round trip is claimed. Docker is absent locally; database verification used
+  disposable GitHub CI only. No production database or admin repository changed.

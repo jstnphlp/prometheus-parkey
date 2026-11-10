@@ -31,6 +31,7 @@ import { BottomNavigation, TAB_BAR_HEIGHT } from './bottom-navigation'
 import { NearbyCard, NearbyLoading } from './nearby-card'
 import { ParkingProfile } from './parking-profile'
 import { ReportSubmission } from './report-submission'
+import { createLocalDraftId } from './local-draft-id'
 import { ContributionForm } from './contribution-form'
 import { readContributions, writeContributions } from './contributions'
 import type { Destination } from './data'
@@ -873,7 +874,7 @@ export default function Explore() {
     setRouteTarget(null)
     if (record) {
       setForm({
-        id: `local-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+        id: createLocalDraftId(),
         intent: 'correction',
         targetId: record.id,
         kind: record.kind,
@@ -893,7 +894,7 @@ export default function Explore() {
         (viewport.south + viewport.north) / 2,
       ]
       setForm({
-        id: `local-${now.getTime()}`,
+        id: createLocalDraftId(),
         intent: 'add',
         targetId: null,
         kind: 'lot',
@@ -929,7 +930,7 @@ export default function Explore() {
             side: kind === 'street' ? adjusted.side : 'unknown',
           }
         : {
-            id: `local-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+            id: createLocalDraftId(),
             intent: 'add',
             targetId: null,
             kind,
@@ -945,6 +946,30 @@ export default function Explore() {
           },
     )
     setDrawing(false)
+  }
+  async function updateReportDraft(
+    id: string,
+    patch: Pick<ParkingContribution, 'submission' | 'submissionAttemptedAt'>,
+  ) {
+    if (saving.current || storage !== 'ready')
+      throw new Error('Local storage is busy.')
+    saving.current = true
+    try {
+      const current = await readContributions()
+      if (!current.some((draft) => draft.id === id))
+        throw new Error('Local draft was removed.')
+      const next = current.map((draft) =>
+        draft.id === id ? { ...draft, ...patch } : draft,
+      )
+      await writeContributions(next)
+      setDrafts(next)
+    } catch {
+      throw new Error(
+        'The local sending status could not be saved. No new send request was made.',
+      )
+    } finally {
+      saving.current = false
+    }
   }
   async function save(draft: ParkingContribution) {
     if (storage !== 'ready')
@@ -1684,7 +1709,7 @@ export default function Explore() {
           <ContributionForm
             draft={
               form ?? {
-                id: `local-${now.getTime()}`,
+                id: createLocalDraftId(),
                 intent: 'add',
                 targetId: null,
                 kind: 'lot',
@@ -2081,25 +2106,14 @@ export default function Explore() {
           key={reviewDraft.id}
           draft={reviewDraft}
           onClose={() => setReviewDraft(null)}
-          onReceipt={async (receipt) => {
-            if (saving.current || storage !== 'ready')
-              throw new Error('Local storage is busy.')
-            saving.current = true
-            try {
-              const current = await readContributions()
-              if (!current.some((draft) => draft.id === reviewDraft.id))
-                throw new Error('Local draft was removed.')
-              const next = current.map((draft) =>
-                draft.id === reviewDraft.id
-                  ? { ...draft, submission: receipt }
-                  : draft,
-              )
-              await writeContributions(next)
-              setDrafts(next)
-            } finally {
-              saving.current = false
-            }
-          }}
+          onAttempt={() =>
+            updateReportDraft(reviewDraft.id, {
+              submissionAttemptedAt: new Date().toISOString(),
+            })
+          }
+          onReceipt={(receipt) =>
+            updateReportDraft(reviewDraft.id, { submission: receipt })
+          }
         />
       ) : null}
       {menuOpen ? (

@@ -15,6 +15,9 @@ export function parseContributions(value: unknown): ParkingContribution[] {
       !isObject(item) ||
       item.status !== 'local_pending_review' ||
       (item.submission !== undefined && !isReportReceipt(item.submission)) ||
+      (item.submissionAttemptedAt !== undefined &&
+        (typeof item.submissionAttemptedAt !== 'string' ||
+          !Number.isFinite(Date.parse(item.submissionAttemptedAt)))) ||
       typeof item.id !== 'string' ||
       typeof item.name !== 'string' ||
       typeof item.hours !== 'string' ||
@@ -48,6 +51,9 @@ export function parseContributions(value: unknown): ParkingContribution[] {
       targetId: item.targetId,
       intent: item.intent,
       status: 'local_pending_review',
+      ...(typeof item.submissionAttemptedAt === 'string'
+        ? { submissionAttemptedAt: item.submissionAttemptedAt }
+        : {}),
       ...(isReportReceipt(item.submission)
         ? {
             submission: {

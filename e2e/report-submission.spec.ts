@@ -192,6 +192,47 @@ test('failed delivery retains the local report and never claims receipt', async 
   )
   expect(stored).toContain('Synthetic private report')
   expect(stored).not.toContain('receiptId')
+  expect(stored).toContain('submissionAttemptedAt')
+  await page
+    .getByRole('button', { name: 'Back to local reports', exact: true })
+    .click()
+  await expect(page.getByTestId('private-drafts')).toContainText(
+    'Delivery not confirmed',
+  )
+})
+
+test('device storage failure prevents a new sending request', async ({
+  page,
+}) => {
+  const submissions = await setup(page)
+  await verify(page)
+  await page
+    .getByRole('textbox', { name: 'Report observation date' })
+    .fill(new Date().toISOString().slice(0, 10))
+  await page
+    .getByText(
+      'I agree to send this text report and its map location for private review.',
+      { exact: true },
+    )
+    .click()
+  await page.evaluate(() => {
+    const original = Storage.prototype.setItem
+    Storage.prototype.setItem = function (key, value) {
+      if (
+        key === 'parkey.discovery.local-reviews.v1' &&
+        value.includes('submissionAttemptedAt')
+      )
+        throw new Error('Synthetic storage failure')
+      return original.call(this, key, value)
+    }
+  })
+  await page
+    .getByRole('button', { name: 'Send for review', exact: true })
+    .click()
+  await expect(
+    page.getByText(/local sending status could not be saved/),
+  ).toBeVisible()
+  expect(submissions).toHaveLength(0)
 })
 test('closing during verification discards the late session and never submits', async ({
   page,

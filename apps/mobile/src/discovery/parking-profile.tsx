@@ -182,7 +182,9 @@ export function ParkingProfile({
                   ? 'Sent for private review'
                   : draft.submission?.state === 'withdrawn'
                     ? 'Sent report withdrawn'
-                    : 'Local only'}
+                    : draft.submissionAttemptedAt
+                      ? 'Delivery not confirmed'
+                      : 'Local only'}
               </Text>
               <Button secondary onPress={() => onReviewDraft(draft)}>
                 Review report

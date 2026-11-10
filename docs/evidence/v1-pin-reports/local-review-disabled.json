@@ -1,0 +1,147 @@
+[
+  {
+    "window-title": "",
+    "type": "SYSTEM",
+    "layer": 1,
+    "bounds": "[0,0][720,49]",
+    "content": [
+      {
+        "class": "android.widget.TextView",
+        "resource-id": "com.android.systemui:id/clock",
+        "text": "10:42",
+        "content-desc": "10:42 AM",
+        "bounds": "[47,10][130,39]",
+        "center": "[88,24]"
+      },
+      {
+        "class": "android.widget.ImageView",
+        "content-desc": "Security \u0026 privacy notification: Set a screen lock",
+        "bounds": "[130,1][169,49]",
+        "center": "[149,25]"
+      },
+      {
+        "class": "android.widget.ImageView",
+        "content-desc": "Android System notification: Serial console enabled",
+        "bounds": "[169,1][208,49]",
+        "center": "[188,25]"
+      },
+      {
+        "class": "android.widget.ImageView",
+        "resource-id": "com.android.systemui:id/wifi_signal",
+        "content-desc": "Wifi signal full.",
+        "bounds": "[582,11][608,37]",
+        "center": "[595,24]"
+      },
+      {
+        "class": "android.widget.FrameLayout",
+        "resource-id": "com.android.systemui:id/mobile_combo",
+        "content-desc": "Phone signal full.",
+        "bounds": "[608,5][634,44]",
+        "center": "[621,24]"
+      },
+      {
+        "class": "android.widget.LinearLayout",
+        "resource-id": "com.android.systemui:id/battery",
+        "content-desc": "Battery charging, 100 percent.",
+        "bounds": "[645,13][659,36]",
+        "center": "[652,24]"
+      }
+    ]
+  },
+  {
+    "window-title": "",
+    "type": "APPLICATION",
+    "active": true,
+    "focused": true,
+    "layer": 0,
+    "bounds": "[0,0][720,1600]",
+    "content": [
+      {
+        "class": "android.widget.Button",
+        "content-desc": "Close panel",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "bounds": "[0,0][720,1600]",
+        "center": "[360,800]"
+      },
+      {
+        "class": "android.view.View",
+        "text": "Report for review",
+        "bounds": "[42,436][573,478]",
+        "center": "[307,457]"
+      },
+      {
+        "class": "android.widget.Button",
+        "content-desc": "Close Report for review",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "bounds": "[594,415][678,499]",
+        "center": "[636,457]"
+      },
+      {
+        "class": "android.widget.ScrollView",
+        "resource-id": "report-submission",
+        "interactions": ["SCROLLABLE", "FOCUSABLE"],
+        "bounds": "[0,541][720,1558]",
+        "center": "[360,1049]",
+        "children": [
+          {
+            "class": "android.widget.TextView",
+            "text": "SIMULATED_QA_REPORT",
+            "bounds": "[42,583][678,638]",
+            "center": "[360,610]"
+          },
+          {
+            "class": "android.widget.TextView",
+            "text": "A local copy stays on this device. Sending shares this report\u0027s text and selected map location with Parkey\u0027s private Moderation queue. Sending does not publish or verify parking.",
+            "bounds": "[42,666][678,830]",
+            "center": "[360,748]"
+          },
+          {
+            "class": "android.widget.TextView",
+            "text": "Do not include personal names, phone numbers or number plates. Photo attachments stay on this device and are not sent.",
+            "bounds": "[42,858][678,954]",
+            "center": "[360,906]"
+          },
+          {
+            "class": "android.widget.TextView",
+            "text": "Private report copies are removed after the 90-day retention window. Reviewed public facts and reviewer audit history are separate. You can withdraw a private report before publication.",
+            "bounds": "[42,982][678,1110]",
+            "center": "[360,1046]"
+          },
+          {
+            "class": "android.widget.TextView",
+            "text": "No correction or restrictions recorded.",
+            "bounds": "[42,1138][678,1179]",
+            "center": "[360,1158]"
+          },
+          {
+            "class": "android.widget.TextView",
+            "text": "Fees: Unknown. Hours: Unknown.",
+            "bounds": "[42,1207][678,1239]",
+            "center": "[360,1223]"
+          },
+          {
+            "class": "android.view.View",
+            "text": "Sending is not available in this build. Your report stays local. The verified-email submission service must be deployed and approved first.",
+            "bounds": "[42,1267][678,1390]",
+            "center": "[360,1328]"
+          },
+          {
+            "class": "android.widget.Button",
+            "content-desc": "Back to local reports",
+            "interactions": ["CLICKABLE", "FOCUSABLE"],
+            "bounds": "[42,1418][678,1516]",
+            "center": "[360,1467]",
+            "children": [
+              {
+                "class": "android.widget.TextView",
+                "text": "Back to local reports",
+                "bounds": "[211,1446][508,1488]",
+                "center": "[359,1467]"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

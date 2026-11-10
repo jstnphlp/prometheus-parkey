@@ -10,6 +10,7 @@ import { ModalSheet } from './sheets'
 import { Button, Choice, ui } from './ui'
 import {
   ReportAuthenticationError,
+  reportForSending,
   requestReportCode,
   sendReportRequest,
   verifyReportCode,
@@ -23,10 +24,12 @@ export function ReportSubmission({
   draft,
   onClose,
   onReceipt,
+  onAttempt,
 }: {
   draft: ParkingContribution
   onClose: () => void
   onReceipt: (receipt: ParkingReportReceipt) => Promise<void>
+  onAttempt: () => Promise<void>
 }) {
   const [email, setEmail] = useState('')
   const [code, setCode] = useState('')
@@ -91,6 +94,14 @@ export function ReportSubmission({
     signal: AbortSignal,
   ) {
     if (!session) return
+    if (action === 'submit') {
+      // Persist uncertainty before network I/O, so a lost receipt never claims local-only.
+      if (!consent)
+        throw new Error('Confirm that you want to send this report.')
+      reportForSending(draft, name, date)
+      await onAttempt()
+      if (!alive.current || signal.aborted) return
+    }
     const result = await sendReportRequest(
       connection,
       session,
@@ -153,6 +164,12 @@ export function ReportSubmission({
             {receipt.state === 'withdrawn'
               ? 'Sent report withdrawn'
               : 'Sent for private review'}
+          </Text>
+        ) : null}
+        {!receipt && draft.submissionAttemptedAt ? (
+          <Text accessibilityRole="alert" style={ui.body}>
+            Delivery not confirmed. Verify the same email and check sent status
+            before trying again.
           </Text>
         ) : null}
         {!enabled ? (

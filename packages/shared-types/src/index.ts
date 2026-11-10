@@ -117,6 +117,7 @@ export type ParkingContribution = {
   createdAt: string
   status: 'local_pending_review'
   submission?: ParkingReportReceipt
+  submissionAttemptedAt?: string
 }
 
 /** A private delivery acknowledgement, never approval or publication. */

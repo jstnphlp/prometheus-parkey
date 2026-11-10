@@ -63,6 +63,7 @@ export default defineConfig({
         EXPO_PUBLIC_OSRM_URL: 'https://e2e.parkey.test',
         EXPO_PUBLIC_SUPABASE_URL: 'https://e2e.parkey.test',
         EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY: 'e2e-public-fixture-key',
+        EXPO_PUBLIC_REPORT_SUBMISSIONS_ENABLED: 'false',
         EXPO_PUBLIC_ANALYTICS_ENDPOINT: '',
         EXPO_PUBLIC_SENTRY_DSN: '',
       },

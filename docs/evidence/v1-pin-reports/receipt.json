@@ -1,0 +1,41 @@
+{
+  "source_commit": "f2430bfdf5e46cc591baf4b641f950be51ef6d61",
+  "avd": "Parkey_A0_API35",
+  "api": 35,
+  "architecture": "x86_64",
+  "gpu": "host",
+  "selected_pin_dark_background_absent_visually_verified": true,
+  "selected_parking": "1210 (OSM source, not field verified)",
+  "report_fixture": "SIMULATED_QA_REPORT (local only)",
+  "review_panel_visible": true,
+  "sending_disabled_message_visible": true,
+  "android_back_closes_review_panel": true,
+  "synthetic_draft_deleted": true,
+  "existing_saved_and_parked_state_preserved": true,
+  "live_report_sent": false,
+  "live_email_sent": false,
+  "physical_android13_tested": false,
+  "runtime_error_log_bytes": 0,
+  "artifacts": [
+    {
+      "file": "selected-pin-after.png",
+      "sha256": "64ebbc25296f3613453f4880dc1723448cdd9163fe5ae107e03dccf479010afa"
+    },
+    {
+      "file": "local-review-disabled.png",
+      "sha256": "1e303b805342e297a85f83d44b7dc9c498a77430112dcf816e4ae8fe35dd51cf"
+    },
+    {
+      "file": "local-review-disabled.json",
+      "sha256": "677683fa8427af6b994a1a128c5fea226918e975b9667dbffd65c69ba9067290"
+    },
+    {
+      "file": "local-report-cleanup.json",
+      "sha256": "42eebbaa1ace415f5208464c9f90ac323f1737ade6058c083ae4dbbcf9ebc4bb"
+    },
+    {
+      "file": "native-runtime.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ]
+}

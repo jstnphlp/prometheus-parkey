@@ -6,6 +6,22 @@ import type {
 
 import { isCoordinate, isObject } from './model.ts'
 
+/** Explicit unsupported/restricted access fails closed despite another approval. */
+export function publicParkingAccess(value: unknown): boolean {
+  return (
+    value == null ||
+    (typeof value === 'string' &&
+      [
+        '',
+        'unknown',
+        'yes',
+        'public',
+        'permissive',
+        'public_visitors',
+      ].includes(value.trim().toLowerCase()))
+  )
+}
+
 export function isParkingNavigationApproval(
   value: unknown,
 ): value is ParkingNavigationApproval {
@@ -38,13 +54,18 @@ export function reviewedParkingEntrance(
         point[0] === approval.entrance[0] &&
         point[1] === approval.entrance[1],
     ) ||
-    /^(private|no|permit|residents|members|military|emergency|delivery|destination|psv|designated)$/i.test(
-      tags.access || '',
-    ) ||
+    !publicParkingAccess(tags.access) ||
+    !publicParkingAccess(tags['parking:access']) ||
+    parking.regulations.some((rule) => {
+      const match = /^Access(?: recorded by OpenStreetMap)?\s*:\s*(.*)$/i.exec(
+        rule.description,
+      )
+      return !!match && !publicParkingAccess(match[1])
+    }) ||
     Object.entries(tags).some(
       ([key, value]) =>
         /^(disused|abandoned|construction|proposed)(:|$)/.test(key) &&
-        !['no', 'false', '0', ''].includes(value.toLowerCase()),
+        !['no', 'false', '0', ''].includes(value.trim().toLowerCase()),
     )
   )
     return null

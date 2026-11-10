@@ -15,17 +15,27 @@ export function useDirectionsConsent(
   const pending = useRef<(() => void) | null>(null)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  async function request(action: (confirmed: boolean) => void) {
+  async function request(
+    action: (confirmed: boolean) => void,
+    isCurrent: () => boolean = () => true,
+  ) {
     if (busy) return
     setBusy(true)
     try {
-      if (await consent.accepted()) action(false)
+      const accepted = await consent.accepted()
+      if (!isCurrent()) return
+      if (accepted) action(false)
       else {
-        pending.current = () => action(true)
+        pending.current = () => {
+          if (isCurrent()) action(true)
+        }
         onOpen()
       }
     } catch {
-      pending.current = () => action(true)
+      if (!isCurrent()) return
+      pending.current = () => {
+        if (isCurrent()) action(true)
+      }
       onOpen()
     } finally {
       setBusy(false)

@@ -1,0 +1,233 @@
+[
+  {
+    "window-title": "",
+    "type": "SYSTEM",
+    "layer": 1,
+    "bounds": "[0,0][720,49]",
+    "content": [
+      {
+        "class": "android.widget.TextView",
+        "resource-id": "com.android.systemui:id/clock",
+        "text": "11:58",
+        "content-desc": "11:58 AM",
+        "bounds": "[47,10][130,39]",
+        "center": "[88,24]"
+      },
+      {
+        "class": "android.widget.ImageView",
+        "content-desc": "Security \u0026 privacy notification: Set a screen lock",
+        "bounds": "[130,1][169,49]",
+        "center": "[149,25]"
+      },
+      {
+        "class": "android.widget.ImageView",
+        "content-desc": "Android System notification: Serial console enabled",
+        "bounds": "[169,1][208,49]",
+        "center": "[188,25]"
+      },
+      {
+        "class": "android.widget.ImageView",
+        "resource-id": "com.android.systemui:id/wifi_signal",
+        "content-desc": "Wifi signal full.",
+        "bounds": "[582,11][608,37]",
+        "center": "[595,24]"
+      },
+      {
+        "class": "android.widget.FrameLayout",
+        "resource-id": "com.android.systemui:id/mobile_combo",
+        "content-desc": "Phone signal full.",
+        "bounds": "[608,5][634,44]",
+        "center": "[621,24]"
+      },
+      {
+        "class": "android.widget.LinearLayout",
+        "resource-id": "com.android.systemui:id/battery",
+        "content-desc": "Battery charging, 100 percent.",
+        "bounds": "[645,13][659,36]",
+        "center": "[652,24]"
+      }
+    ]
+  },
+  {
+    "window-title": "Parkey",
+    "type": "APPLICATION",
+    "active": true,
+    "focused": true,
+    "layer": 0,
+    "bounds": "[0,0][720,1600]",
+    "content": [
+      {
+        "class": "android.view.View",
+        "text": "SIMULATED NATIVE QA ONLY — image failure",
+        "bounds": "[0,70][720,104]",
+        "center": "[360,87]"
+      },
+      {
+        "class": "android.widget.TextView",
+        "text": "QA handler calls: 0",
+        "bounds": "[0,104][720,138]",
+        "center": "[360,121]"
+      },
+      {
+        "class": "android.widget.Button",
+        "content-desc": "QA known",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "bounds": "[0,138][116,214]",
+        "center": "[58,176]",
+        "children": [
+          {
+            "class": "android.widget.TextView",
+            "text": "known",
+            "bounds": "[21,159][95,193]",
+            "center": "[58,176]"
+          }
+        ]
+      },
+      {
+        "class": "android.widget.Button",
+        "content-desc": "QA missing",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "bounds": "[116,138][246,214]",
+        "center": "[181,176]",
+        "children": [
+          {
+            "class": "android.widget.TextView",
+            "text": "missing",
+            "bounds": "[137,159][225,193]",
+            "center": "[181,176]"
+          }
+        ]
+      },
+      {
+        "class": "android.widget.Button",
+        "content-desc": "QA contradictory",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "bounds": "[246,138][434,214]",
+        "center": "[340,176]",
+        "children": [
+          {
+            "class": "android.widget.TextView",
+            "text": "contradictory",
+            "bounds": "[267,159][413,193]",
+            "center": "[340,176]"
+          }
+        ]
+      },
+      {
+        "class": "android.widget.Button",
+        "content-desc": "QA restricted",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "bounds": "[434,138][580,214]",
+        "center": "[507,176]",
+        "children": [
+          {
+            "class": "android.widget.TextView",
+            "text": "restricted",
+            "bounds": "[455,159][559,193]",
+            "center": "[507,176]"
+          }
+        ]
+      },
+      {
+        "class": "android.widget.Button",
+        "content-desc": "QA expired",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "bounds": "[580,138][702,214]",
+        "center": "[641,176]",
+        "children": [
+          {
+            "class": "android.widget.TextView",
+            "text": "expired",
+            "bounds": "[601,159][681,193]",
+            "center": "[641,176]"
+          }
+        ]
+      },
+      {
+        "class": "android.widget.Button",
+        "content-desc": "QA revoked",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "bounds": "[0,214][129,290]",
+        "center": "[64,252]",
+        "children": [
+          {
+            "class": "android.widget.TextView",
+            "text": "revoked",
+            "bounds": "[21,235][108,269]",
+            "center": "[64,252]"
+          }
+        ]
+      },
+      {
+        "class": "android.widget.Button",
+        "content-desc": "QA image failure",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "bounds": "[129,214][316,290]",
+        "center": "[222,252]",
+        "children": [
+          {
+            "class": "android.widget.TextView",
+            "text": "image failure",
+            "bounds": "[150,235][295,269]",
+            "center": "[222,252]"
+          }
+        ]
+      },
+      {
+        "class": "android.widget.HorizontalScrollView",
+        "interactions": ["SCROLLABLE", "FOCUSABLE"],
+        "bounds": "[0,290][720,695]",
+        "center": "[360,492]",
+        "children": [
+          {
+            "class": "android.widget.TextView",
+            "text": "Photo unavailable",
+            "bounds": "[265,509][454,541]",
+            "center": "[359,525]"
+          }
+        ]
+      },
+      {
+        "class": "android.widget.Button",
+        "content-desc": "Previous parking photo",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "bounds": "[0,713][84,797]",
+        "center": "[42,755]"
+      },
+      {
+        "class": "android.widget.TextView",
+        "text": "Photo 1 of 1",
+        "bounds": "[295,739][424,771]",
+        "center": "[359,755]"
+      },
+      {
+        "class": "android.widget.Button",
+        "content-desc": "Next parking photo",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "bounds": "[636,713][720,797]",
+        "center": "[678,755]"
+      },
+      {
+        "class": "android.widget.TextView",
+        "text": "Synthetic image failure test, not a parking photograph",
+        "bounds": "[0,814][720,855]",
+        "center": "[360,834]"
+      },
+      {
+        "class": "android.view.View",
+        "content-desc": "Photo source: Parkey local QA fixture. Test fixture only; not approved for publication",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "bounds": "[0,873][720,950]",
+        "center": "[360,911]",
+        "children": [
+          {
+            "class": "android.widget.TextView",
+            "text": "Parkey local QA fixture · Test fixture only; not approved for publication ↗",
+            "bounds": "[0,879][720,943]",
+            "center": "[360,911]"
+          }
+        ]
+      }
+    ]
+  }
+]

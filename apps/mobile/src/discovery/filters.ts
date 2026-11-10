@@ -1,5 +1,7 @@
 import type { DiscoveryParking } from '@parkey/shared-types'
 
+import { parkingFeeFacts } from './parking-fee.ts'
+
 export type DiscoveryFilter = 'all' | 'street' | 'facilities' | 'lot' | 'garage'
 export type FeeFilter = 'all' | 'applies' | 'free'
 export type FilterPartition = {
@@ -22,10 +24,7 @@ export function partitionParking(
     if (!kindMatches) result.nonmatched.push(record)
     else if (
       fees === 'all' ||
-      (fees === 'free'
-        ? record.osmTags?.fee === 'no' ||
-          record.fees?.trim() === 'OSM records no fee; check posted signs'
-        : record.fees?.trim() === 'Fee applies; amount unavailable')
+      parkingFeeFacts(record).status === (fees === 'free' ? 'free' : 'paid')
     )
       result.matched.push(record)
     else result.unknown.push(record)

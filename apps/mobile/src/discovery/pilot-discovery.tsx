@@ -27,6 +27,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import type { Viewport } from './model'
 import { BottomNavigation } from './bottom-navigation'
 import { detailDistance } from './parking-detail-data'
+import { ParkingGallery } from './parking-photos'
+import { parkingPhotos, parkingPhotoIdentityKey } from './photos'
 import {
   partitionPilotParking,
   rankPilotParking,
@@ -1166,7 +1168,7 @@ export default function PilotDiscovery({
               · Original source: {selected.name}
             </Text>
             <Text selectable>
-              Type: {selected.featureType.replaceAll('_', ' ')} · Access:{' '}
+              Type: {pilotTypeLabel(selected.featureType)} · Access:{' '}
               {selected.accessClass || 'Unknown'}
             </Text>
             <Text selectable>
@@ -1174,9 +1176,19 @@ export default function PilotDiscovery({
               {selected.hours || 'Unknown'}
             </Text>
             <Text selectable>No live availability information.</Text>
+            <ParkingGallery
+              identityKey={parkingPhotoIdentityKey({
+                id: selected.id,
+                sourceUrl: selected.source.url,
+              })}
+              photos={parkingPhotos({
+                id: selected.id,
+                sourceUrl: selected.source.url,
+              })}
+            />
             <Text>
-              No approved parking photos. Missing imagery does not establish the
-              condition of this location.
+              Only location-matched, licensed parking photos are shown. Missing
+              imagery does not establish the condition of this location.
             </Text>
             {mode === 'public' ? (
               <Action

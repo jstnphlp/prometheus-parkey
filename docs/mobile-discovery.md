@@ -515,3 +515,7 @@ Local contributions say Draft saved on this device, explicitly not submitted for
 review, with no implication of a real moderation queue. Hours refresh at minute
 boundaries and on resume. No new account, upload, vacancy claim or public provider
 resource is introduced.
+
+### V1 A3 parking trust
+
+The [A3 completion report](V1_A3_COMPLETION.md) records the current detail/photo/navigation acceptance evidence. Consumer imagery uses only the curated, location-matched catalog with license and credit; that catalog remains empty. Raw image, Commons and Mapillary tags cannot authorize publication. Future photos require documented reuse rights, original source and an exact parking-location review. All parking driving handoffs refresh current public entrance authorization; source geometry, cached approval, ambiguous identity and offline failures never grant a route.

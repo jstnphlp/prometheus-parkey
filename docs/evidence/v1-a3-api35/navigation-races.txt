@@ -1,0 +1,7 @@
+A3 navigation follow-up, application source 613ab27.
+Command: PARKEY_E2E_WEB_PORT=8388 pnpm exec playwright test e2e/navigation-races.spec.ts --workers=1 --reporter=line
+Runner exit code: 0. Five cases across desktop/mobile.
+Only the final runner stdout chunk was retained (not a full transcript):
+  10 passed (1.4m)
+
+Mobile typecheck, scoped ESLint and242 units passed; independent scoped re-review found no remaining must-fix issue.

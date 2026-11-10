@@ -27,7 +27,7 @@ export function useRoute() {
   const load = useCallback(
     async (
       destination: Coordinate | ((origin: Coordinate) => Coordinate),
-      locate: () => Promise<Coordinate | null>,
+      locate: (signal: AbortSignal) => Promise<Coordinate | null>,
       rerouting = false,
       heading?: number,
     ) => {
@@ -44,7 +44,7 @@ export function useRoute() {
           throw new Error(
             'Directions aren’t available right now. Please try again later.',
           )
-        const from = await locate()
+        const from = await locate(request.signal)
         if (request.signal.aborted) return
         if (!from)
           throw new Error(

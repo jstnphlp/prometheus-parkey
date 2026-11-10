@@ -6,6 +6,7 @@ import { MotionPressable, MotionView } from './motion'
 import { parkingDetailData } from './parking-detail-data'
 import { reviewedParkingEntrance } from './parking-navigation'
 import { ParkingStatus } from './parking-status'
+import { parkingPhotos } from './photos'
 import { SpotThumbnail } from './spot-photo-view'
 import { fonts } from './typography'
 import { Button, colors, IconButton, ui } from './ui'
@@ -38,6 +39,7 @@ export function ParkingDetails({
   onScrollOffsetChange: (offset: number) => void
 }) {
   const details = parkingDetailData(parking, location, now)
+  const photos = parkingPhotos(parking)
   const hours = details.chips.find((chip) => /open|closed|hours/i.test(chip))
   const tiles = [
     {
@@ -153,9 +155,7 @@ export function ParkingDetails({
         {!expanded ? actions : null}
         {expanded ? (
           <>
-            {details.photo?.image ||
-            details.photo?.commons ||
-            details.photo?.mapillary ? (
+            {photos.length ? (
               <SpotThumbnail parking={parking} name={details.title} strip />
             ) : (
               <View style={styles.photos}>
@@ -184,10 +184,7 @@ export function ParkingDetails({
                 <View style={ui.flex}>
                   <Text style={ui.heading}>Source</Text>
                   <Text style={ui.small}>
-                    {parking.sourceLabel} ·{' '}
-                    {parking.verification === 'verified'
-                      ? 'Verified'
-                      : 'Not field verified'}
+                    {parking.sourceLabel} · {details.verification}
                   </Text>
                   <Text style={ui.small}>{details.sourceDate}</Text>
                   <Text style={ui.small}>

@@ -1,9 +1,9 @@
 import type { ParkingPhoto } from '@parkey/shared-types'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import {
   ActivityIndicator,
-  Animated,
   FlatList,
+  Image,
   Linking,
   Pressable,
   StyleSheet,
@@ -11,74 +11,180 @@ import {
   View,
 } from 'react-native'
 
-import { photoPage } from './photos'
+import { createPhotoLoadSession } from './photo-load-state'
+import type { PhotoLoadStatus } from './photo-load-state'
+import { isParkingPhoto, photoPage, validParkingPhotos } from './photos'
 import { colors, Icon, IconButton, ui } from './ui'
 import { useReducedMotion } from './use-reduced-motion'
+
+function resourceKey(photo: ParkingPhoto) {
+  return JSON.stringify([
+    photo.id,
+    photo.imageUrl,
+    photo.thumbnailUrl,
+    photo.caption,
+    photo.credit,
+    photo.license,
+    photo.sourceUrl,
+  ])
+}
+
+function PhotoPlaceholder({
+  unavailable,
+  thumbnail,
+}: {
+  unavailable: boolean
+  thumbnail: boolean
+}) {
+  return (
+    <View
+      accessibilityLabel={
+        unavailable ? 'Parking photo unavailable' : 'No parking photos yet'
+      }
+      style={styles.placeholder}
+    >
+      <Icon name="camera" color={colors.disabled} size={thumbnail ? 22 : 32} />
+      <Text style={ui.small}>
+        {unavailable ? 'Photo unavailable' : 'No photos yet'}
+      </Text>
+    </View>
+  )
+}
+
+function LoadedParkingImage({
+  photo,
+  thumbnail,
+}: {
+  photo: ParkingPhoto
+  thumbnail: boolean
+}) {
+  const [status, setStatus] = useState<PhotoLoadStatus>('loading')
+  const attempt = useRef<ReturnType<typeof createPhotoLoadSession> | null>(null)
+  useLayoutEffect(() => {
+    const session = createPhotoLoadSession(setStatus)
+    attempt.current = session
+    return () => {
+      session.dispose()
+      attempt.current = null
+    }
+  }, [])
+  return status === 'error' ? (
+    <PhotoPlaceholder unavailable thumbnail={thumbnail} />
+  ) : (
+    <>
+      <Image
+        accessibilityLabel={photo.caption}
+        source={{ uri: thumbnail ? photo.thumbnailUrl : photo.imageUrl }}
+        resizeMode="cover"
+        fadeDuration={0}
+        onLoad={() => attempt.current?.loaded()}
+        onError={() => attempt.current?.failed()}
+        style={[
+          StyleSheet.absoluteFill,
+          { opacity: status === 'ready' ? 1 : 0 },
+        ]}
+      />
+      {status === 'loading' ? (
+        <ActivityIndicator
+          accessibilityLabel="Loading parking photo"
+          color={colors.action}
+          style={StyleSheet.absoluteFill}
+        />
+      ) : null}
+    </>
+  )
+}
 
 export function ParkingImage({
   photo,
   thumbnail = false,
+  identityKey = '',
 }: {
   photo: ParkingPhoto | undefined
   thumbnail?: boolean
+  identityKey?: string
 }) {
-  const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading')
-  const [opacity] = useState(() => new Animated.Value(0))
-  const reduced = useReducedMotion()
-  useEffect(() => () => opacity.stopAnimation(), [opacity])
   return (
     <View style={[styles.image, thumbnail ? styles.thumbnail : styles.full]}>
-      {!photo || status === 'error' ? (
-        <View
-          accessibilityLabel={
-            photo ? 'Parking photo unavailable' : 'No parking photos yet'
-          }
-          style={styles.placeholder}
-        >
-          <Icon
-            name="camera"
-            color={colors.disabled}
-            size={thumbnail ? 22 : 32}
-          />
-          <Text style={ui.small}>
-            {photo ? 'Photo unavailable' : 'No photos yet'}
-          </Text>
-        </View>
+      {isParkingPhoto(photo) ? (
+        <LoadedParkingImage
+          key={JSON.stringify([identityKey, thumbnail, resourceKey(photo)])}
+          photo={photo}
+          thumbnail={thumbnail}
+        />
       ) : (
-        <>
-          <Animated.Image
-            accessibilityLabel={photo.caption}
-            source={{ uri: thumbnail ? photo.thumbnailUrl : photo.imageUrl }}
-            resizeMode="cover"
-            fadeDuration={0}
-            onLoad={() => {
-              setStatus('ready')
-              Animated.timing(opacity, {
-                toValue: 1,
-                duration: reduced ? 0 : 160,
-                useNativeDriver: true,
-              }).start()
-            }}
-            onError={() => setStatus('error')}
-            style={[StyleSheet.absoluteFill, { opacity }]}
-          />
-          {status === 'loading' ? (
-            <ActivityIndicator
-              accessibilityLabel="Loading parking photo"
-              color={colors.action}
-              style={StyleSheet.absoluteFill}
-            />
-          ) : null}
-        </>
+        <PhotoPlaceholder unavailable={false} thumbnail={thumbnail} />
       )}
     </View>
   )
 }
 
-export function ParkingGallery({ photos }: { photos: ParkingPhoto[] }) {
+function PhotoCredit({ photo }: { photo: ParkingPhoto }) {
+  const [error, setError] = useState<string | null>(null)
+  const active = useRef(true)
+  const attempt = useRef(0)
+  useEffect(() => {
+    active.current = true
+    return () => {
+      active.current = false
+    }
+  }, [])
+  return (
+    <>
+      <Text style={ui.body}>{photo.caption}</Text>
+      <Pressable
+        accessibilityRole="link"
+        accessibilityLabel={`Photo source: ${photo.credit}. ${photo.license}`}
+        style={styles.credit}
+        onPress={() => {
+          setError(null)
+          const current = ++attempt.current
+          void Linking.openURL(photo.sourceUrl).catch(() => {
+            if (active.current && current === attempt.current)
+              setError('The photo source could not be opened.')
+          })
+        }}
+      >
+        <Text style={[ui.small, ui.link]}>
+          {photo.credit} · {photo.license} ↗
+        </Text>
+      </Pressable>
+      {error ? (
+        <Text accessibilityRole="alert" style={[ui.small, ui.error]}>
+          {error}
+        </Text>
+      ) : null}
+    </>
+  )
+}
+
+/** Only pass location-matched entries returned by parkingPhotos(). */
+export function ParkingGallery({
+  photos,
+  identityKey = '',
+}: {
+  photos: readonly ParkingPhoto[]
+  identityKey?: string
+}) {
+  const valid = validParkingPhotos(photos)
+  return (
+    <ParkingGalleryContent
+      key={JSON.stringify([identityKey, valid.map(resourceKey)])}
+      photos={valid}
+      identityKey={identityKey}
+    />
+  )
+}
+
+function ParkingGalleryContent({
+  photos,
+  identityKey,
+}: {
+  photos: ParkingPhoto[]
+  identityKey: string
+}) {
   const [width, setWidth] = useState(0)
   const [index, setIndex] = useState(0)
-  const [error, setError] = useState<string | null>(null)
   const list = useRef<FlatList<ParkingPhoto>>(null)
   const reduced = useReducedMotion()
   const current = photos[index] ?? photos[0]
@@ -130,7 +236,7 @@ export function ParkingGallery({ photos }: { photos: ParkingPhoto[] }) {
               scrollEventThrottle={32}
               renderItem={({ item: photo }) => (
                 <View style={{ width }}>
-                  <ParkingImage key={photo.imageUrl} photo={photo} />
+                  <ParkingImage photo={photo} identityKey={identityKey} />
                 </View>
               )}
             />
@@ -152,28 +258,10 @@ export function ParkingGallery({ photos }: { photos: ParkingPhoto[] }) {
               onPress={() => move(index + 1)}
             />
           </View>
-          <Text style={ui.body}>{current.caption}</Text>
-          <Pressable
-            accessibilityRole="link"
-            style={styles.credit}
-            onPress={() => {
-              void Linking.openURL(current.sourceUrl).catch(() =>
-                setError('The photo source could not be opened.'),
-              )
-            }}
-          >
-            <Text style={[ui.small, ui.link]}>
-              {current.credit} · {current.license} ↗
-            </Text>
-          </Pressable>
-          {error ? (
-            <Text accessibilityRole="alert" style={[ui.small, ui.error]}>
-              {error}
-            </Text>
-          ) : null}
+          <PhotoCredit key={resourceKey(current)} photo={current} />
         </>
       ) : (
-        <ParkingImage photo={undefined} />
+        <ParkingImage photo={undefined} identityKey={identityKey} />
       )}
     </View>
   )

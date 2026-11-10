@@ -107,6 +107,11 @@ audit reasons are never included in the public discovery API.
 
 ## Submissions and launch gates
 
+The [verified-email text-report follow-up](V1_MOBILE_REPORT_SUBMISSIONS.md) adds
+an undeployed, disabled-by-default intake path and local review UI. Its database,
+Auth/SMTP, privacy, retention and live Console gates must pass before activation.
+The anonymous/media design below remains separate; photo uploads are not enabled.
+
 Supabase Edge Functions/Auth/private Storage and Cloudflare Turnstile are the
 selected architecture. Public uploads remain disabled; mobile drafts remain
 local, including old drafts. There is no public submission endpoint or photo

@@ -1,6 +1,7 @@
 import type { SymbolLayerSpecification } from 'maplibre-gl'
 
 import { mapTextFont } from './map-font.ts'
+import { colors } from './palette.ts'
 
 /** Native images use physical pixels; web registers the same 3× files at pixelRatio 3. */
 export function parkingMarkerLayout(scale: number) {
@@ -31,13 +32,8 @@ export function parkingMarkerLayout(scale: number) {
   } satisfies NonNullable<SymbolLayerSpecification['layout']>
 }
 
-export function parkingLabelLayout(scale: number) {
+export function parkingLabelLayout() {
   return {
-    'icon-image': 'map-label',
-    'icon-size': scale,
-    'icon-text-fit': 'both',
-    'icon-text-fit-padding': [4, 10, 4, 10],
-    'icon-allow-overlap': true,
     'text-field': ['get', 'name'],
     'text-font': mapTextFont,
     'text-size': 12,
@@ -46,3 +42,10 @@ export function parkingLabelLayout(scale: number) {
     'text-allow-overlap': true,
   } satisfies NonNullable<SymbolLayerSpecification['layout']>
 }
+
+export const parkingLabelPaint = {
+  'text-color': colors.ink,
+  'text-halo-color': colors.surface,
+  'text-halo-width': 2,
+  'text-halo-blur': 0.5,
+} satisfies NonNullable<SymbolLayerSpecification['paint']>

@@ -101,6 +101,7 @@ export function ParkingProfile({
   drafts,
   storage,
   onDeleteDraft,
+  onReviewDraft,
   onInfo,
   onClose,
 }: {
@@ -108,6 +109,7 @@ export function ParkingProfile({
   drafts: ParkingContribution[]
   storage: 'loading' | 'ready' | 'error'
   onDeleteDraft: (id: string) => Promise<boolean>
+  onReviewDraft: (draft: ParkingContribution) => void
   onInfo: () => void
   onClose: () => void
 }) {
@@ -117,7 +119,7 @@ export function ParkingProfile({
   return (
     <ParkingPage
       title="You"
-      subtitle="No account needed. Everything stays on this device."
+      subtitle="No account needed to browse. Verify email to send a report."
       onClose={onClose}
     >
       <View style={ui.row}>
@@ -159,8 +161,10 @@ export function ParkingProfile({
         <View style={styles.notice}>
           <FigmaAsset name="info-warning" size={20} />
           <Text style={[ui.small, ui.flex, { color: colors.ink }]}>
-            Stored on this device only. Not submitted, shared with Parkey or
-            uploaded.
+            Drafts stay here unless you choose Send for review. Sent copies
+            enter a private queue; sending does not publish or verify parking.
+            Deleting a local copy does not withdraw a sent report. Withdraw it
+            first if you want to remove the private queue copy.
           </Text>
         </View>
         {drafts.map((draft) => (
@@ -173,6 +177,16 @@ export function ParkingProfile({
                 {draft.intent === 'add' ? 'Missing parking' : 'Correction'} ·
                 saved {dateLabel(draft.createdAt)}
               </Text>
+              <Text style={ui.small}>
+                {draft.submission?.state === 'received'
+                  ? 'Sent for private review'
+                  : draft.submission?.state === 'withdrawn'
+                    ? 'Sent report withdrawn'
+                    : 'Local only'}
+              </Text>
+              <Button secondary onPress={() => onReviewDraft(draft)}>
+                Review report
+              </Button>
             </View>
             <MotionPressable
               accessibilityRole="button"
@@ -195,7 +209,11 @@ export function ParkingProfile({
               }}
             >
               <Text style={[styles.caption, { color: colors.error }]}>
-                {deleting === draft.id ? 'Deleting…' : 'Delete'}
+                {deleting === draft.id
+                  ? 'Deleting…'
+                  : draft.submission?.state === 'received'
+                    ? 'Delete local copy'
+                    : 'Delete'}
               </Text>
             </MotionPressable>
           </View>
@@ -221,7 +239,7 @@ export function ParkingProfile({
         <PrivacyRow
           icon="lock-teal"
           title="Private by default"
-          body="Saved places, recent searches and drafts are stored on this device."
+          body="Saved places, recent searches and drafts stay on this device unless you explicitly send a report."
         />
         <PrivacyRow
           icon="shield-teal"

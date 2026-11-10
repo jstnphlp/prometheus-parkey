@@ -8,7 +8,6 @@ import selectedSpot from '../../assets/figma/playful/mascot.png'
 import freePin from '../../assets/figma/playful/pin-free.png'
 import paidPin from '../../assets/figma/playful/pin-paid.png'
 import unknownPin from '../../assets/figma/playful/pin-unknown.png'
-import mapLabel from '../../assets/figma/playful/map-label.png'
 import navUp from '../../assets/figma/playful/nav-up.png'
 
 import { config } from './config'
@@ -17,7 +16,11 @@ import { routeBearing, splitRoute } from './drive-math'
 import { draftGeoJSON, parkingMapSources } from './map-data'
 import type { ParkingMapProps } from './map-types'
 import { mapColors, colors } from './palette'
-import { parkingLabelLayout, parkingMarkerLayout } from './map-marker-style'
+import {
+  parkingLabelLayout,
+  parkingLabelPaint,
+  parkingMarkerLayout,
+} from './map-marker-style'
 import { routeBounds } from './routing'
 import { useReducedMotion } from './use-reduced-motion'
 
@@ -156,7 +159,6 @@ export default function ParkingMap(props: ParkingMapProps) {
       ['pin-free', freePin],
       ['pin-paid', paidPin],
       ['pin-unknown', unknownPin],
-      ['map-label', mapLabel],
       ['nav-up', navUp],
     ])
     // MapLibre awaits this resolver before treating an image as missing.
@@ -332,8 +334,8 @@ export default function ParkingMap(props: ParkingMapProps) {
         id: 'selected-name',
         type: 'symbol',
         source: 'selected-facility',
-        layout: parkingLabelLayout(1),
-        paint: { 'text-color': colors.surface },
+        layout: parkingLabelLayout(),
+        paint: parkingLabelPaint,
       })
       for (const [id, color, radius] of [
         ['user', mapColors.user, 10],

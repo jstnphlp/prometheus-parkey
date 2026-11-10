@@ -12,7 +12,7 @@ const webPort = e2ePort(process.env.PARKEY_E2E_WEB_PORT, 8088)
 
 export default defineConfig({
   testDir: './e2e',
-  testIgnore: '**/pilot/**',
+  testIgnore: ['**/pilot/**', '**/report-submission.spec.ts'],
   fullyParallel: true,
   // Cold Expo route compilation plus repeated navigations can exceed 30 s.
   // Keep every assertion; give sensor-backed flows their real 15 s deadline.

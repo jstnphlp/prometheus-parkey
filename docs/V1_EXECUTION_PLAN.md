@@ -26,6 +26,12 @@ Status date: 2026-11-10. This is the **only canonical scope and gate checklist**
 
 Release gate A: A0–A4 verified, approved records only.
 
+Post-A4 follow-up **IN PROGRESS**: selected-pin label background removal and
+verified-email, explicitly sent private text reports on
+`fix/parking-pin-review-submission`. See [implementation and deployment gates](V1_MOBILE_REPORT_SUBMISSIONS.md).
+The intake is undeployed and disabled. This does not grant production approval,
+enable analytics or change private-record publication controls.
+
 ### Engineering acceptance versus production release
 
 The user explicitly authorized Windows 11 / Android 15 API 35 emulator-only

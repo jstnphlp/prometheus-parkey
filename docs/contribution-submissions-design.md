@@ -1,5 +1,10 @@
 # Contribution submissions design
 
+Update 2026-11-10: the owner selected verified-email, text-only mobile reports.
+The [staged implementation and deployment gates](V1_MOBILE_REPORT_SUBMISSIONS.md)
+describe that path. The anonymous challenge/media proposal below remains future
+work; it does not enable uploads. Existing drafts remain local until explicit send.
+
 Status: proposal for a later implementation. This document creates no endpoint,
 migration, storage bucket, hosted resource or mobile submission behavior. The app
 continues to save contributions on the device only. Server reads do not enable

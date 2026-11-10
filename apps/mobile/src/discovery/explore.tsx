@@ -30,6 +30,7 @@ import { ArrivalCelebration } from './arrival-celebration'
 import { BottomNavigation, TAB_BAR_HEIGHT } from './bottom-navigation'
 import { NearbyCard, NearbyLoading } from './nearby-card'
 import { ParkingProfile } from './parking-profile'
+import { ReportSubmission } from './report-submission'
 import { ContributionForm } from './contribution-form'
 import { readContributions, writeContributions } from './contributions'
 import type { Destination } from './data'
@@ -110,6 +111,9 @@ function sameNavigationContext(
 }
 
 export default function Explore() {
+  const [reviewDraft, setReviewDraft] = useState<ParkingContribution | null>(
+    null,
+  )
   const insets = useSafeAreaInsets()
   const connectivity = useConnectivity()
   const [locationSettingsOpen, setLocationSettingsOpen] = useState(false)
@@ -2054,6 +2058,7 @@ export default function Explore() {
           local={local}
           drafts={drafts}
           storage={storage}
+          onReviewDraft={setReviewDraft}
           onInfo={() => setPanel('info')}
           onDeleteDraft={async (id) => {
             if (saving.current || storage !== 'ready') return false
@@ -2065,6 +2070,32 @@ export default function Explore() {
               return true
             } catch {
               return false
+            } finally {
+              saving.current = false
+            }
+          }}
+        />
+      ) : null}
+      {reviewDraft ? (
+        <ReportSubmission
+          key={reviewDraft.id}
+          draft={reviewDraft}
+          onClose={() => setReviewDraft(null)}
+          onReceipt={async (receipt) => {
+            if (saving.current || storage !== 'ready')
+              throw new Error('Local storage is busy.')
+            saving.current = true
+            try {
+              const current = await readContributions()
+              if (!current.some((draft) => draft.id === reviewDraft.id))
+                throw new Error('Local draft was removed.')
+              const next = current.map((draft) =>
+                draft.id === reviewDraft.id
+                  ? { ...draft, submission: receipt }
+                  : draft,
+              )
+              await writeContributions(next)
+              setDrafts(next)
             } finally {
               saving.current = false
             }

@@ -1,5 +1,5 @@
-import { AccountDestination } from '../onboarding/account-destination'
+import { AccountForm } from '../auth/account-form'
 
 export default function LoginDestination() {
-  return <AccountDestination mode="login" />
+  return <AccountForm mode="login" />
 }

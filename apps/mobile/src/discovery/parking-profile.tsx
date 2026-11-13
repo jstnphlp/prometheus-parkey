@@ -4,6 +4,8 @@ import { useState } from 'react'
 import { ScrollView, StyleSheet, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
+import { AccountEntry } from '../auth/account-entry'
+
 import { TAB_BAR_HEIGHT } from './bottom-navigation'
 import { FigmaAsset } from './figma-assets'
 import { MotionPressable, MotionView } from './motion'
@@ -122,6 +124,7 @@ export function ParkingProfile({
       subtitle="No account needed to browse. Verify email to send a report."
       onClose={onClose}
     >
+      <AccountEntry />
       <View style={ui.row}>
         {(
           [

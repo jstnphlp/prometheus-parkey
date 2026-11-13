@@ -20,7 +20,7 @@
     "supabase:start": "supabase start",
     "supabase:stop": "supabase stop",
     "supabase:status": "supabase status",
-    "test": "node --test apps/mobile/src/discovery/*.test.mjs apps/mobile/src/onboarding/*.test.mjs apps/web/src/demo/workspace.test.mjs && pnpm test:operations && node scripts/run-python-tests.mjs",
+    "test": "node --test apps/mobile/src/discovery/*.test.mjs apps/mobile/src/onboarding/*.test.mjs apps/mobile/src/auth/*.test.mjs apps/web/src/demo/workspace.test.mjs && pnpm test:operations && node scripts/run-python-tests.mjs",
     "typecheck:e2e": "tsc -p e2e/tsconfig.json",
     "test:e2e": "playwright test && playwright test --config playwright.pilot.config.ts && playwright test --config playwright.reports.config.ts",
     "test:operations": "node --test scripts/*.test.mjs supabase/functions/discovery-moderation/*.test.mjs supabase/functions/mobile-reports/*.test.mjs supabase/functions/place-search/*.test.mjs apps/web/src/moderation/*.test.mjs",

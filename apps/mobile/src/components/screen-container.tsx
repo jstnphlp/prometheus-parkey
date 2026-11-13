@@ -1,5 +1,11 @@
 import type { ReactNode } from 'react'
-import { ScrollView, StyleSheet, View } from 'react-native'
+import {
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  View,
+} from 'react-native'
 import type { StyleProp, ViewStyle } from 'react-native'
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { StatusBar } from 'expo-status-bar'
@@ -11,24 +17,34 @@ export function ScreenContainer({
   children,
   contentStyle,
   overlay,
+  keyboardAware = false,
 }: {
   backgroundColor: string
   children: ReactNode
   contentStyle?: StyleProp<ViewStyle>
   overlay?: ReactNode
+  keyboardAware?: boolean
 }) {
   const insets = useSafeAreaInsets()
   return (
     <SafeAreaView style={[styles.screen, { backgroundColor }]}>
       <StatusBar style="light" />
-      <ScrollView
-        contentInsetAdjustmentBehavior="never"
-        contentContainerStyle={styles.scroll}
-        keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
+      <KeyboardAvoidingView
+        style={styles.keyboard}
+        enabled={keyboardAware}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={insets.top}
       >
-        <View style={[styles.content, contentStyle]}>{children}</View>
-      </ScrollView>
+        <ScrollView
+          contentInsetAdjustmentBehavior="never"
+          contentContainerStyle={styles.scroll}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="on-drag"
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={[styles.content, contentStyle]}>{children}</View>
+        </ScrollView>
+      </KeyboardAvoidingView>
       {overlay ? (
         <View
           pointerEvents="box-none"
@@ -46,6 +62,7 @@ export function ScreenContainer({
 
 const styles = StyleSheet.create({
   screen: { flex: 1 },
+  keyboard: { flex: 1 },
   scroll: { flexGrow: 1 },
   content: {
     flexGrow: 1,

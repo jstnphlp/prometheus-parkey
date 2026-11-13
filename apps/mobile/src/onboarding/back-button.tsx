@@ -5,7 +5,13 @@ import { BrandButton } from '../components/brand-button'
 
 import { useOnboarding } from './provider'
 
-export function BackButton({ backgroundColor }: { backgroundColor: string }) {
+export function BackButton({
+  backgroundColor,
+  onPress,
+}: {
+  backgroundColor: string
+  onPress?: () => void
+}) {
   const router = useRouter()
   const { completed } = useOnboarding()
   return (
@@ -15,6 +21,10 @@ export function BackButton({ backgroundColor }: { backgroundColor: string }) {
         variant="text"
         style={{ backgroundColor }}
         onPress={() => {
+          if (onPress) {
+            onPress()
+            return
+          }
           if (router.canGoBack()) router.back()
           else router.replace(completed ? '/' : '/welcome')
         }}

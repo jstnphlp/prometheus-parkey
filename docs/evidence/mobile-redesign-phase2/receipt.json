@@ -51,7 +51,8 @@
     "apkV2Signature": "verified",
     "browserE2E": "not run",
     "productionDependencyAudit": "passed at moderate threshold after node-forge override 1.4.1 -> 1.4.3",
-    "remainingAudit": "one low deepmerge advisory in upstream metadata; existing repository prototype-key patch retained"
+    "remainingAudit": "one low deepmerge advisory in upstream metadata; existing repository prototype-key patch retained",
+    "nativeReleaseAfterAuditPatch": "passed (16 seconds, cached runtime outputs unchanged)"
   },
   "androidAssertions": [
     "registration client validation focuses first invalid input",
@@ -66,7 +67,8 @@
     "Back from reset guard clears local auth state and returns to login",
     "small font-scaled field labels and scrollable controls",
     "guest discovery usable; existing parked-car state preserved",
-    "force-stop and relaunch returns to discovery without onboarding replay"
+    "force-stop and relaunch returns to discovery without onboarding replay",
+    "You -> Account optional opens the signed-out account screen from guest discovery"
   ],
   "review": {
     "kind": "local read-only code review",
@@ -102,6 +104,8 @@
   "ci": {
     "initialValidation": "failed dependency audit; node-forge override patched",
     "initialRun": "https://github.com/jstnphlp/prometheus-parkey/actions/runs/43454042802",
-    "pr": "https://github.com/jstnphlp/prometheus-parkey/pull/31"
-  }
+    "pr": "https://github.com/jstnphlp/prometheus-parkey/pull/31",
+    "auditRemediation": "node-forge 1.4.3; production audit and all workspace checks passed locally"
+  },
+  "toolingValidationCommit": "b90d347aab2ed50c2bf6026bcb1e4d45ba2bdfbf"
 }

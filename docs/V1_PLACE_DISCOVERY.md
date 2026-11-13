@@ -145,3 +145,20 @@ actual provider responses, not parking approvals or vacancy claims.
   records were returned; existing entrance-refresh, routing/rerouting and failure
   unit coverage passed. Routing remains disabled without an approved OSRM service.
   No canonical production gate was changed.
+
+### Owner-requested test UI adjustment
+
+Visible LocationIQ credits in suggestions and destination views, and the extra
+Map places source paragraph in the place card, were removed at the owner's
+request for the current test UI. General places/labels and the existing map
+information/source control are retained. Server attribution metadata is retained.
+This does not waive LocationIQ or basemap licensing obligations: restore any
+required visible attribution before public release unless the provider plan
+explicitly permits removal. Earlier attribution screenshots/checks above describe
+the preceding APK, not this revised UI.
+
+Validation of this follow-up: mobile typecheck and targeted ESLint passed. The
+standalone APK rebuilt successfully and its signature verified; the removed
+credit strings are absent from its app bundle. Artifact:
+`output/ncr/locationiq/parkey-locationiq-test-no-credits.apk`. The emulator was
+closed, so this revised UI was not reinstalled or rechecked on a device.

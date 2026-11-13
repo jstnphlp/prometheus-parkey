@@ -36,7 +36,6 @@ import { ContributionForm } from './contribution-form'
 import { readContributions, writeContributions } from './contributions'
 import type { Destination } from './data'
 import { parkingNearDestination } from './places'
-import { SearchAttribution } from './search-credit'
 import { draftParking } from './draft-parking'
 import { useNavigation } from './use-navigation'
 import { useDirectionsConsent } from './use-directions-consent'
@@ -1150,9 +1149,6 @@ export default function Explore() {
           setSelectedPlace(found)
         }}
       />
-      {!searchActive && destination ? (
-        <SearchAttribution credit={nav.searchCredit} />
-      ) : null}
     </View>
   )
   const filterStrip = (
@@ -1882,9 +1878,6 @@ export default function Explore() {
                       <Text accessibilityRole="header" style={ui.sectionTitle}>
                         {resultsTitle}
                       </Text>
-                      <SearchAttribution
-                        credit={destination ? nav.searchCredit : null}
-                      />
                       <Text style={ui.small}>
                         {visible.length} mapped{' '}
                         {visible.length === 1 ? 'location' : 'locations'}
@@ -2016,7 +2009,6 @@ export default function Explore() {
               gap: 16,
             }}
           >
-            <SearchAttribution credit={selectedPlace.attribution} />
             <Text style={ui.body}>
               {selectedPlace.address || 'Address unavailable'}
             </Text>
@@ -2036,11 +2028,6 @@ export default function Explore() {
             >
               Find Parking Nearby
             </Button>
-            <Text style={ui.small}>
-              Map places: OpenStreetMap contributors (ODbL 1.0), via
-              OpenFreeMap. Search results: configured destination provider.
-              Parking information may be unknown; no live availability.
-            </Text>
           </ScrollView>
         </ModalSheet>
       ) : null}

@@ -18,8 +18,6 @@ import {
   SearchRateLimit,
   SEARCH_DEBOUNCE_MS,
 } from './place-search'
-import type { SearchCredit } from './place-search'
-import { SearchAttribution } from './search-credit'
 import { useConnectivity } from './use-connectivity'
 import type { Destination } from './data'
 import { FigmaAsset } from './figma-assets'
@@ -62,7 +60,6 @@ export function DestinationSearch({
 }) {
   const { height } = useWindowDimensions()
   const { offline } = useConnectivity()
-  const [credit, setCredit] = useState<SearchCredit | null>(null)
   const [retryAt, setRetryAt] = useState(0)
   const [limitSeconds, setLimitSeconds] = useState(60)
   const compact = height < 700
@@ -210,7 +207,6 @@ export function DestinationSearch({
         controller.signal,
       )
       if (request.current !== controller || controller.signal.aborted) return
-      setCredit(found.attribution)
       setResults(found.results.slice(0, 6))
       setStatus(found.results.length ? 'idle' : 'empty')
     } catch (error) {
@@ -334,7 +330,6 @@ export function DestinationSearch({
           />
         ) : null}
       </View>
-      {active ? <SearchAttribution credit={credit} /> : null}
       {active ? (
         <ScrollView
           testID="destination-results"

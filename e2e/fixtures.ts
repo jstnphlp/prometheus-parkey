@@ -91,6 +91,10 @@ export const drivingRoute = {
 export const test = base.extend<{ reviewedNavigation: boolean }>({
   reviewedNavigation: [false, { option: true }],
   page: async ({ page, context, reviewedNavigation }, use) => {
+    // Discovery scenarios represent a returning user; onboarding has its own flow.
+    await context.addInitScript(() => {
+      localStorage.setItem('parkey:onboarding:v1', 'complete')
+    })
     await context.setGeolocation({
       longitude: 121.0308,
       latitude: 14.5653,

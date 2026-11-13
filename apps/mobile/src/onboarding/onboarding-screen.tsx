@@ -1,0 +1,163 @@
+import { useRouter } from 'expo-router'
+import { Image, StyleSheet, Text, View } from 'react-native'
+
+import compare from '../../assets/figma/onboarding/compare-preview.png'
+import discover from '../../assets/figma/onboarding/discover-preview.png'
+import navigate from '../../assets/figma/onboarding/navigate-preview.png'
+import { BrandButton } from '../components/brand-button'
+import { ScreenContainer } from '../components/screen-container'
+import { colors, typography } from '../theme'
+
+import { BackButton } from './back-button'
+import { useCompletion } from './use-completion'
+
+const steps = {
+  discover: {
+    number: 1,
+    title: 'Find parking.\nGo places.',
+    copy: 'Explore mapped parking locations\nnear your destination.',
+    background: colors.dark,
+    muted: colors.onDarkMuted,
+    stepColor: colors.cyan,
+    button: 'cyan',
+    image: discover,
+    imageLabel: 'Static preview: mapped parking locations',
+    next: '/onboarding/compare',
+  },
+  compare: {
+    number: 2,
+    title: 'Know before\nyou park.',
+    copy: 'Compare parking details when\nreliable information is available.',
+    background: colors.teal,
+    muted: colors.onTealMuted,
+    stepColor: colors.dark,
+    button: 'plum',
+    image: compare,
+    imageLabel: 'Static preview: parking lot and garage information',
+    next: '/onboarding/navigate',
+  },
+  navigate: {
+    number: 3,
+    title: 'Find your way\nto parking.',
+    copy: 'Follow available directions and\ncheck the confirmed entrance.',
+    background: colors.plum,
+    muted: colors.onPlumMuted,
+    stepColor: colors.cyan,
+    button: 'white',
+    image: navigate,
+    imageLabel: 'Static preview: directions to a parking entrance',
+    next: null,
+  },
+} as const
+
+export function OnboardingScreen({ step }: { step: keyof typeof steps }) {
+  const page = steps[step]
+  const router = useRouter()
+  const { finish, busy, error } = useCompletion('/register')
+  return (
+    <ScreenContainer
+      backgroundColor={page.background}
+      contentStyle={styles.content}
+      overlay={<BackButton />}
+    >
+      <Text
+        accessibilityLabel={`Step ${page.number} of 3`}
+        style={[styles.step, { color: page.stepColor }]}
+      >
+        0{page.number} / 03
+      </Text>
+      <Text accessibilityRole="header" style={styles.title}>
+        {page.title}
+      </Text>
+      <Text style={[styles.copy, { color: page.muted }]}>{page.copy}</Text>
+      <View style={styles.artworkArea}>
+        <Image
+          accessibilityRole="image"
+          accessibilityLabel={page.imageLabel}
+          source={page.image}
+          resizeMode="contain"
+          style={styles.artwork}
+        />
+      </View>
+      <View style={styles.controls}>
+        <View
+          accessible={false}
+          importantForAccessibility="no-hide-descendants"
+          style={styles.progress}
+        >
+          {[1, 2, 3].map((number) => (
+            <View
+              key={number}
+              style={[
+                styles.segment,
+                number === page.number && styles.activeSegment,
+              ]}
+            />
+          ))}
+        </View>
+        <BrandButton
+          title="Skip"
+          variant="text"
+          onPress={finish}
+          disabled={busy}
+          style={styles.skip}
+        />
+      </View>
+      {error ? (
+        <Text
+          accessibilityRole="alert"
+          accessibilityLiveRegion="polite"
+          style={styles.error}
+        >
+          {error}
+        </Text>
+      ) : null}
+      <BrandButton
+        title={page.next ? 'Continue' : 'Create Account'}
+        variant={page.button}
+        busy={busy}
+        onPress={() => {
+          if (page.next) router.push(page.next)
+          else void finish()
+        }}
+        style={styles.button}
+      />
+    </ScreenContainer>
+  )
+}
+
+const styles = StyleSheet.create({
+  content: { paddingTop: 53, paddingBottom: 31 },
+  step: { ...typography.step, marginLeft: 3 },
+  title: {
+    ...typography.title,
+    color: colors.white,
+    marginTop: 27,
+    marginHorizontal: 2,
+  },
+  copy: { ...typography.body, marginTop: 35, marginHorizontal: 2 },
+  artworkArea: { flexGrow: 1, justifyContent: 'center', marginTop: 53 },
+  artwork: {
+    width: '100%',
+    aspectRatio: 338 / 274,
+  },
+  controls: { minHeight: 44, marginTop: 11, justifyContent: 'center' },
+  progress: {
+    position: 'absolute',
+    bottom: 0,
+    alignSelf: 'center',
+    flexDirection: 'row',
+    gap: 9,
+  },
+  segment: {
+    width: 33,
+    height: 5,
+    borderRadius: 3,
+    backgroundColor: colors.progressMuted,
+    opacity: 0.48,
+  },
+  activeSegment: { backgroundColor: colors.white, opacity: 1 },
+  skip: { alignSelf: 'flex-end', paddingHorizontal: 2 },
+  button: { marginTop: 29, marginHorizontal: 2 },
+  error: { ...typography.body, color: colors.white, marginTop: 16 },
+})

@@ -6,19 +6,45 @@ import { SafeAreaProvider } from 'react-native-safe-area-context'
 
 import { initializeTelemetry } from '../discovery/telemetry'
 import { fontSources } from '../discovery/typography'
+import { OnboardingProvider, useOnboarding } from '../onboarding/provider'
+import { SplashScreen } from '../onboarding/splash-screen'
+import { StorageRecovery } from '../onboarding/storage-recovery'
+import { useReducedMotion } from '../onboarding/use-reduced-motion'
+import { fontSources as redesignFontSources } from '../theme'
+
+const allFonts = { ...fontSources, ...redesignFontSources }
 
 export default function RootLayout() {
-  const [fontsLoaded, fontError] = useFonts(fontSources)
-  useEffect(initializeTelemetry, [])
-
-  if (!fontsLoaded && !fontError) return null
-
   return (
     <SafeAreaProvider>
+      <OnboardingProvider>
+        <RootNavigator />
+      </OnboardingProvider>
+    </SafeAreaProvider>
+  )
+}
+
+function RootNavigator() {
+  const [fontsLoaded, fontError] = useFonts(allFonts)
+  const { loadState } = useOnboarding()
+  const reducedMotion = useReducedMotion()
+  useEffect(initializeTelemetry, [])
+
+  if ((!fontsLoaded && !fontError) || loadState === 'loading')
+    return <SplashScreen />
+  if (loadState === 'error') return <StorageRecovery />
+
+  return (
+    <>
       <StatusBar style="dark" />
-      <Stack screenOptions={{ headerShown: false }}>
+      <Stack
+        screenOptions={{
+          headerShown: false,
+          animation: reducedMotion ? 'none' : 'default',
+        }}
+      >
         <Stack.Screen name="index" />
       </Stack>
-    </SafeAreaProvider>
+    </>
   )
 }

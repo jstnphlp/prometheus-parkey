@@ -150,3 +150,28 @@ test('unconfigured or failed in-app routing cannot fabricate a route or open an 
   )
   assert.equal(calls, 1)
 })
+
+test('provider attribution survives shared navigation and clears for independently selected map places', () => {
+  const place = {
+    ...placeFromFeature(feature()),
+    attribution: {
+      label: 'Search by LocationIQ.com',
+      url: 'https://locationiq.com/',
+    },
+  }
+  const state = { ...navigationDefaults, ...parkingNearDestination(place) }
+  assert.deepEqual(
+    parseNavigation(navigationSearch(state)).searchCredit,
+    place.attribution,
+  )
+  assert.equal(
+    parkingNearDestination(placeFromFeature(feature())).searchCredit,
+    null,
+  )
+  assert.equal(
+    parseNavigation(
+      '?q=mall&searchLng=121&searchLat=14&credit=bad&creditUrl=javascript%3Abad',
+    ).searchCredit,
+    null,
+  )
+})

@@ -11,6 +11,7 @@ export type NavigationState = {
   position: SheetPosition
   query: string
   searchPoint: Coordinate | null
+  searchCredit: { label: string; url: string } | null
   searching: boolean
   panel: 'saved' | 'info' | 'add' | 'you' | null
   route: boolean
@@ -24,6 +25,7 @@ export const navigationDefaults: NavigationState = {
   position: 'compact',
   query: '',
   searchPoint: null,
+  searchCredit: null,
   searching: false,
   panel: null,
   route: false,
@@ -80,6 +82,24 @@ export function parseNavigation(
     ]
     if (isCoordinate(point)) state.searchPoint = point
   }
+  state.searchCredit = null
+  const creditLabel = params.get('credit'),
+    creditUrl = params.get('creditUrl')
+  if (
+    state.searchPoint &&
+    creditLabel &&
+    creditLabel.length <= 100 &&
+    creditUrl &&
+    creditUrl.length <= 500
+  ) {
+    try {
+      const link = new URL(creditUrl)
+      if (link.protocol === 'https:' && !link.username && !link.password)
+        state.searchCredit = { label: creditLabel, url: creditUrl }
+    } catch {
+      /* Invalid shared-link credits never become actionable links. */
+    }
+  }
   state.searching = params.get('search') === '1'
   const panel = params.get('panel')
   state.panel =
@@ -105,6 +125,10 @@ export function navigationSearch(state: NavigationState): string {
   if (state.query && state.searchPoint) {
     params.set('searchLng', String(state.searchPoint[0]))
     params.set('searchLat', String(state.searchPoint[1]))
+    if (state.searchCredit) {
+      params.set('credit', state.searchCredit.label)
+      params.set('creditUrl', state.searchCredit.url)
+    }
   }
   if (state.searching) params.set('search', '1')
   if (state.panel) params.set('panel', state.panel)

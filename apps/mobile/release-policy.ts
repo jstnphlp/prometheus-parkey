@@ -31,6 +31,12 @@ export function releaseConfigurationProblems(
     )
     if (problem) problems.push(problem)
   }
+  if (values.placeSearchEnabled && (!values.supabaseUrl || !values.supabaseKey))
+    problems.push('Place search requires the public Supabase connection.')
+  if (values.placeSearchEnabled && review.searchProviderReviewed !== 'true')
+    problems.push(
+      'Place search requires a recorded provider review before release.',
+    )
   for (const [name, value] of [
     ['Map style', values.mapStyle],
     ['Night map style', values.nightMapStyle],

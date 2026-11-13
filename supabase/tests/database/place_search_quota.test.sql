@@ -1,0 +1,17 @@
+begin;
+create extension if not exists pgtap with schema extensions;
+set local search_path = public, extensions;
+select plan(8);
+select ok(not has_function_privilege('anon', 'public.consume_place_search()', 'execute'), 'anon cannot bypass proxy');
+select ok(not has_function_privilege('authenticated', 'public.consume_place_search()', 'execute'), 'sessions cannot bypass proxy');
+select ok(has_function_privilege('service_role', 'public.consume_place_search()', 'execute'), 'trusted proxy can consume quota');
+select ok(not has_table_privilege('service_role', 'parkey_private.place_search_quota', 'select'), 'counters cannot be listed directly');
+update parkey_private.place_search_quota set starts_at = '-infinity', attempts = 0;
+select is(public.consume_place_search(), 0, 'first request allowed');
+select is((select sum(attempts)::integer from parkey_private.place_search_quota), 3, 'all three shared counters increment');
+update parkey_private.place_search_quota set starts_at = to_timestamp(floor(extract(epoch from clock_timestamp()) / 86400) * 86400), attempts = 1000 where bucket = 'day';
+select ok(public.consume_place_search() between 1 and 86400, 'daily budget blocks provider request');
+update parkey_private.place_search_quota set starts_at = '-infinity', attempts = 1000;
+select is(public.consume_place_search(), 0, 'expired counters reset');
+select * from finish();
+rollback;

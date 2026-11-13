@@ -35,13 +35,18 @@ export function useParking(viewport: Viewport, revision: number) {
   }, [viewport, revision])
 
   const records = useMemo(
-    () => mergeParking(pilotRecords, remote.records, viewport),
+    () =>
+      mergeParking(
+        hasDiscoveryBackend ? [] : pilotRecords,
+        remote.records,
+        viewport,
+      ),
     [remote.records, viewport],
   )
   const knownRecords = useMemo(
     () => [
       ...remote.records,
-      ...pilotRecords.filter(
+      ...(hasDiscoveryBackend ? [] : pilotRecords).filter(
         (item) =>
           !remote.records.some(
             (record) =>
@@ -58,6 +63,6 @@ export function useParking(viewport: Viewport, revision: number) {
     status: canQuery ? remote.status : 'idle',
     truncated: canQuery && remote.truncated,
     canQuery,
-    snapshotCount: pilotRecords.length,
+    snapshotCount: hasDiscoveryBackend ? 0 : pilotRecords.length,
   }
 }

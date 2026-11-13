@@ -177,3 +177,16 @@ test('actual Expo config hook rejects an unsafe explicit release build', () => {
   assert.match(result.stderr, /Release endpoints require a public HTTPS/)
   assert.equal(result.stderr.includes(publicKey), false)
 })
+
+test('public proxy search cannot ship without backend configuration and provider review', () => {
+  const problems = releaseConfigurationProblems(
+    { ...safe, placeSearchEnabled: true },
+    {},
+  )
+  assert.ok(
+    problems.some((problem) => problem.includes('public Supabase connection')),
+  )
+  assert.ok(
+    problems.some((problem) => problem.includes('recorded provider review')),
+  )
+})

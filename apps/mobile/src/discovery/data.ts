@@ -109,6 +109,7 @@ export type Destination = {
   name: string
   address: string
   coordinate: Coordinate
+  attribution?: { label: string; url: string }
 }
 
 export function parseDestinations(payload: unknown): Destination[] {

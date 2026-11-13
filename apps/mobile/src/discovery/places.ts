@@ -102,6 +102,7 @@ export function parkingNearDestination(
     searching: false,
     query: place.name,
     searchPoint: place.coordinate,
+    searchCredit: place.attribution ?? null,
     selectedId: null,
     center: place.coordinate,
     position: 'medium',

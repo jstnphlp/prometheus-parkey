@@ -13,7 +13,14 @@ import {
 import type { Coordinate } from '@parkey/shared-types'
 
 import { config } from './config'
-import { searchDestinations } from './data'
+import {
+  searchPlaces,
+  SearchRateLimit,
+  SEARCH_DEBOUNCE_MS,
+} from './place-search'
+import type { SearchCredit } from './place-search'
+import { SearchAttribution } from './search-credit'
+import { useConnectivity } from './use-connectivity'
 import type { Destination } from './data'
 import { FigmaAsset } from './figma-assets'
 import { MotionPressable } from './motion'
@@ -22,7 +29,9 @@ import { StateCard } from './state-card'
 import { colors, IconButton, UndoToast, ui } from './ui'
 import { useSearchHistory } from './use-search-history'
 
-const hasSearchProvider = Boolean(config.geocoder.trim())
+const hasSearchProvider = Boolean(
+  config.placeSearchEnabled || config.geocoder.trim(),
+)
 
 export function DestinationSearch({
   query,
@@ -52,6 +61,10 @@ export function DestinationSearch({
   placeholder?: string
 }) {
   const { height } = useWindowDimensions()
+  const { offline } = useConnectivity()
+  const [credit, setCredit] = useState<SearchCredit | null>(null)
+  const [retryAt, setRetryAt] = useState(0)
+  const [limitSeconds, setLimitSeconds] = useState(60)
   const compact = height < 700
   const [focused, setFocused] = useState(false)
   const [cleared, setCleared] = useState<Destination[] | null>(null)
@@ -62,7 +75,13 @@ export function DestinationSearch({
   }, [cleared])
   const [results, setResults] = useState<Destination[]>([])
   const [status, setStatus] = useState<
-    'idle' | 'loading' | 'empty' | 'error' | 'unavailable'
+    | 'idle'
+    | 'loading'
+    | 'empty'
+    | 'error'
+    | 'unavailable'
+    | 'offline'
+    | 'limited'
   >('idle')
   const [notice, setNotice] = useState(false)
   const [cardTop, setCardTop] = useState(10)
@@ -154,6 +173,16 @@ export function DestinationSearch({
   const search = useCallback(async () => {
     cancel()
     if (!active || query.trim().length < 3) return
+    if (offline) {
+      setResults([])
+      setStatus('offline')
+      return
+    }
+    if (Date.now() < retryAt) {
+      setResults([])
+      setStatus('limited')
+      return
+    }
     if (!hasSearchProvider) {
       setResults([])
       setNotice(false)
@@ -169,25 +198,36 @@ export function DestinationSearch({
       if (firstSearch && request.current === controller) setNotice(true)
     })
     try {
-      const found = await searchDestinations(
-        config.geocoder,
+      const found = await searchPlaces(
+        {
+          enabled: config.placeSearchEnabled,
+          backend: config.supabaseUrl,
+          publicKey: config.supabaseKey,
+          legacyEndpoint: config.geocoder,
+        },
         query,
         center,
         controller.signal,
       )
       if (request.current !== controller || controller.signal.aborted) return
-      setResults(found.slice(0, 6))
-      setStatus(found.length ? 'idle' : 'empty')
-    } catch {
-      if (request.current === controller) setStatus('error')
+      setCredit(found.attribution)
+      setResults(found.results.slice(0, 6))
+      setStatus(found.results.length ? 'idle' : 'empty')
+    } catch (error) {
+      if (request.current !== controller) return
+      if (error instanceof SearchRateLimit) {
+        setRetryAt(Date.now() + error.retryAfter * 1000)
+        setLimitSeconds(error.retryAfter)
+        setStatus('limited')
+      } else setStatus('error')
     } finally {
       clearTimeout(timeout)
     }
-  }, [active, query, center, noteSearch])
+  }, [active, query, center, noteSearch, offline, retryAt])
 
   useEffect(() => {
     if (active && query.trim().length >= 3)
-      debounce.current = setTimeout(() => void search(), 300)
+      debounce.current = setTimeout(() => void search(), SEARCH_DEBOUNCE_MS)
     return cancel
   }, [active, query, center, search])
 
@@ -196,7 +236,7 @@ export function DestinationSearch({
     input.current?.blur()
     Keyboard.dismiss()
     onSelect(destination)
-    void history.remember(destination)
+    if (!destination.attribution) void history.remember(destination)
   }
 
   return (
@@ -294,6 +334,7 @@ export function DestinationSearch({
           />
         ) : null}
       </View>
+      {active ? <SearchAttribution credit={credit} /> : null}
       {active ? (
         <ScrollView
           testID="destination-results"
@@ -388,6 +429,22 @@ export function DestinationSearch({
                   onAction={close}
                 />
               ) : null}
+              {status === 'offline' ? (
+                <StateCard
+                  title="You are offline"
+                  body="Reconnect to search places. You can still browse the map."
+                  action="Back to map"
+                  onAction={close}
+                />
+              ) : null}
+              {status === 'limited' ? (
+                <StateCard
+                  title="Search is busy"
+                  body={`Please wait ${limitSeconds} seconds before trying again.`}
+                  action="Retry search"
+                  onAction={() => void search()}
+                />
+              ) : null}
               {status === 'error' ? (
                 <StateCard
                   title="Search couldn’t connect"
@@ -418,8 +475,9 @@ export function DestinationSearch({
               ))}
               {hasSearchProvider && (notice || layout === 'sheet') ? (
                 <Text style={[ui.small, styles.message]}>
-                  Searching shares your search text and map area with the search
-                  service. Details in You → Privacy.
+                  Searching shares your text with Parkey and its search
+                  provider. Map-area bias is sent only when using the legacy
+                  provider. Details in You → Privacy.
                 </Text>
               ) : null}
             </>

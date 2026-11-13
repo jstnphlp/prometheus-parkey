@@ -20,10 +20,7 @@ test('the font stack is a valid native expression that evaluates to actual font 
 })
 
 test('normal and selected parking labels use the supported explicit font expression', () => {
-  for (const layout of [
-    parkingMarkerLayout(1 / 3),
-    parkingLabelLayout(1 / 3),
-  ]) {
+  for (const layout of [parkingMarkerLayout(1 / 3), parkingLabelLayout()]) {
     const parsed = createExpression(layout['text-font'], key)
     assert.equal(parsed.result, 'success')
     assert.deepEqual(parsed.value.evaluate({ zoom: 16 }), ['Noto Sans Bold'])

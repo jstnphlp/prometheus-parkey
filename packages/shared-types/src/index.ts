@@ -116,4 +116,13 @@ export type ParkingContribution = {
   photoUri: string | null
   createdAt: string
   status: 'local_pending_review'
+  submission?: ParkingReportReceipt
+  submissionAttemptedAt?: string
+}
+
+/** A private delivery acknowledgement, never approval or publication. */
+export type ParkingReportReceipt = {
+  state: 'received' | 'withdrawn'
+  receiptId: string
+  receivedAt: string
 }

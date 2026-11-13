@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import type { ParkingContribution } from '@parkey/shared-types'
 
 import { geometryMatchesKind, isGeometry, isObject } from './model.ts'
+import { isReportReceipt } from './report-client.ts'
 
 const STORAGE_KEY = 'parkey.discovery.local-reviews.v1'
 
@@ -13,6 +14,10 @@ export function parseContributions(value: unknown): ParkingContribution[] {
     if (
       !isObject(item) ||
       item.status !== 'local_pending_review' ||
+      (item.submission !== undefined && !isReportReceipt(item.submission)) ||
+      (item.submissionAttemptedAt !== undefined &&
+        (typeof item.submissionAttemptedAt !== 'string' ||
+          !Number.isFinite(Date.parse(item.submissionAttemptedAt)))) ||
       typeof item.id !== 'string' ||
       typeof item.name !== 'string' ||
       typeof item.hours !== 'string' ||
@@ -46,6 +51,18 @@ export function parseContributions(value: unknown): ParkingContribution[] {
       targetId: item.targetId,
       intent: item.intent,
       status: 'local_pending_review',
+      ...(typeof item.submissionAttemptedAt === 'string'
+        ? { submissionAttemptedAt: item.submissionAttemptedAt }
+        : {}),
+      ...(isReportReceipt(item.submission)
+        ? {
+            submission: {
+              state: item.submission.state,
+              receiptId: item.submission.receiptId,
+              receivedAt: item.submission.receivedAt,
+            },
+          }
+        : {}),
       side:
         item.side === 'left' || item.side === 'right' || item.side === 'both'
           ? item.side

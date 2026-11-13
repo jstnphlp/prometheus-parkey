@@ -1,0 +1,273 @@
+[
+  {
+    "window-title": "",
+    "type": "SYSTEM",
+    "layer": 1,
+    "bounds": "[0,0][720,49]",
+    "content": [
+      {
+        "class": "android.widget.TextView",
+        "resource-id": "com.android.systemui:id/clock",
+        "text": "10:42",
+        "content-desc": "10:42 AM",
+        "bounds": "[47,10][130,39]",
+        "center": "[88,24]"
+      },
+      {
+        "class": "android.widget.ImageView",
+        "content-desc": "Security \u0026 privacy notification: Set a screen lock",
+        "bounds": "[130,1][169,49]",
+        "center": "[149,25]"
+      },
+      {
+        "class": "android.widget.ImageView",
+        "content-desc": "Android System notification: Serial console enabled",
+        "bounds": "[169,1][208,49]",
+        "center": "[188,25]"
+      },
+      {
+        "class": "android.widget.ImageView",
+        "resource-id": "com.android.systemui:id/wifi_signal",
+        "content-desc": "Wifi signal full.",
+        "bounds": "[582,11][608,37]",
+        "center": "[595,24]"
+      },
+      {
+        "class": "android.widget.FrameLayout",
+        "resource-id": "com.android.systemui:id/mobile_combo",
+        "content-desc": "Phone signal full.",
+        "bounds": "[608,5][634,44]",
+        "center": "[621,24]"
+      },
+      {
+        "class": "android.widget.LinearLayout",
+        "resource-id": "com.android.systemui:id/battery",
+        "content-desc": "Battery charging, 100 percent.",
+        "bounds": "[645,13][659,36]",
+        "center": "[652,24]"
+      }
+    ]
+  },
+  {
+    "window-title": "Parkey",
+    "type": "APPLICATION",
+    "active": true,
+    "focused": true,
+    "layer": 0,
+    "bounds": "[0,0][720,1600]",
+    "content": [
+      {
+        "class": "android.widget.ScrollView",
+        "interactions": ["SCROLLABLE", "FOCUSABLE"],
+        "bounds": "[0,0][720,1600]",
+        "center": "[360,800]",
+        "children": [
+          {
+            "class": "android.widget.Button",
+            "content-desc": "Back to map",
+            "interactions": ["CLICKABLE", "FOCUSABLE"],
+            "bounds": "[28,70][692,157]",
+            "center": "[360,113]",
+            "children": [
+              {
+                "class": "android.view.View",
+                "text": "You",
+                "bounds": "[28,70][692,125]",
+                "center": "[360,97]"
+              },
+              {
+                "class": "android.widget.TextView",
+                "text": "No account needed to browse. Verify email to send a report.",
+                "bounds": "[28,125][692,157]",
+                "center": "[360,141]"
+              }
+            ]
+          },
+          {
+            "class": "android.widget.TextView",
+            "text": "3",
+            "bounds": "[59,259][204,314]",
+            "center": "[131,286]"
+          },
+          {
+            "class": "android.widget.TextView",
+            "text": "Saved",
+            "bounds": "[59,317][204,345]",
+            "center": "[131,331]"
+          },
+          {
+            "class": "android.widget.TextView",
+            "text": "9",
+            "bounds": "[287,259][433,314]",
+            "center": "[360,286]"
+          },
+          {
+            "class": "android.widget.TextView",
+            "text": "Viewed",
+            "bounds": "[287,317][433,345]",
+            "center": "[360,331]"
+          },
+          {
+            "class": "android.widget.TextView",
+            "text": "0",
+            "bounds": "[516,259][661,314]",
+            "center": "[588,286]"
+          },
+          {
+            "class": "android.widget.TextView",
+            "text": "Draft",
+            "bounds": "[516,317][661,345]",
+            "center": "[588,331]"
+          },
+          {
+            "class": "android.view.View",
+            "text": "Drafts on this device",
+            "bounds": "[60,433][625,472]",
+            "center": "[342,452]"
+          },
+          {
+            "class": "android.widget.TextView",
+            "text": "0",
+            "bounds": "[646,433][661,472]",
+            "center": "[653,452]"
+          },
+          {
+            "class": "android.widget.TextView",
+            "text": "Drafts stay here unless you choose Send for review. Sent copies enter a private queue; sending does not publish or verify parking. Deleting a local copy does not withdraw a sent report. Withdraw it first if you want to remove the private queue copy.",
+            "bounds": "[133,514][640,706]",
+            "center": "[386,610]"
+          },
+          {
+            "class": "android.widget.TextView",
+            "text": "No drafts on this device yet.",
+            "bounds": "[59,747][660,779]",
+            "center": "[359,763]"
+          },
+          {
+            "class": "android.widget.TextView",
+            "text": "Private by default",
+            "bounds": "[151,868][661,907]",
+            "center": "[406,887]"
+          },
+          {
+            "class": "android.widget.TextView",
+            "text": "Saved places, recent searches and drafts stay on this device unless you explicitly send a report.",
+            "bounds": "[151,907][661,971]",
+            "center": "[406,939]"
+          },
+          {
+            "class": "android.widget.TextView",
+            "text": "Shared only when you ask",
+            "bounds": "[151,992][661,1031]",
+            "center": "[406,1011]"
+          },
+          {
+            "class": "android.widget.TextView",
+            "text": "Search text and map area go to Photon. Directions send start and destination to the routing provider.",
+            "bounds": "[151,1031][661,1127]",
+            "center": "[406,1079]"
+          },
+          {
+            "class": "android.widget.TextView",
+            "text": "Usage reporting off",
+            "bounds": "[60,1148][298,1197]",
+            "center": "[179,1172]"
+          },
+          {
+            "class": "android.widget.TextView",
+            "text": "Error reporting off",
+            "bounds": "[312,1148][539,1197]",
+            "center": "[425,1172]"
+          },
+          {
+            "class": "android.widget.Button",
+            "content-desc": "Map data \u0026 credits, OpenStreetMap contributors",
+            "interactions": ["CLICKABLE", "FOCUSABLE"],
+            "bounds": "[28,1252][692,1386]",
+            "center": "[360,1319]",
+            "children": [
+              {
+                "class": "android.widget.TextView",
+                "text": "Map data \u0026 credits",
+                "bounds": "[151,1284][605,1323]",
+                "center": "[378,1303]"
+              },
+              {
+                "class": "android.widget.TextView",
+                "text": "OpenStreetMap contributors",
+                "bounds": "[151,1323][605,1355]",
+                "center": "[378,1339]"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "class": "android.widget.FrameLayout",
+        "content-desc": "Showing a Map created with MapLibre. Scroll by dragging two fingers. Zoom by pinching two fingers.",
+        "interactions": ["CLICKABLE", "LONG_CLICKABLE", "FOCUSABLE"],
+        "bounds": "[0,0][720,1600]",
+        "center": "[360,800]"
+      },
+      {
+        "class": "android.widget.Button",
+        "content-desc": "Map data sources and attribution",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "bounds": "[28,1460][105,1537]",
+        "center": "[66,1498]"
+      },
+      {
+        "class": "android.view.View",
+        "content-desc": "Map",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "bounds": "[128,1460][212,1544]",
+        "center": "[170,1502]"
+      },
+      {
+        "class": "android.view.View",
+        "content-desc": "Saved",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "bounds": "[219,1460][303,1544]",
+        "center": "[261,1502]"
+      },
+      {
+        "class": "android.view.View",
+        "content-desc": "You",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "state": ["SELECTED"],
+        "bounds": "[310,1460][473,1544]",
+        "center": "[391,1502]",
+        "children": [
+          {
+            "class": "android.widget.ImageView",
+            "state": ["SELECTED"],
+            "bounds": "[342,1481][384,1523]",
+            "center": "[363,1502]"
+          },
+          {
+            "class": "android.view.ViewGroup",
+            "state": ["SELECTED"],
+            "bounds": "[398,1484][442,1520]",
+            "center": "[420,1502]",
+            "children": [
+              {
+                "class": "android.widget.TextView",
+                "text": "You",
+                "state": ["SELECTED"],
+                "bounds": "[398,1484][442,1520]",
+                "center": "[420,1502]"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "class": "android.widget.Button",
+        "content-desc": "Add a spot",
+        "interactions": ["CLICKABLE", "FOCUSABLE"],
+        "bounds": "[508,1453][606,1551]",
+        "center": "[557,1502]"
+      }
+    ]
+  }
+]

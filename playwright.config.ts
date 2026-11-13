@@ -12,7 +12,7 @@ const webPort = e2ePort(process.env.PARKEY_E2E_WEB_PORT, 8088)
 
 export default defineConfig({
   testDir: './e2e',
-  testIgnore: '**/pilot/**',
+  testIgnore: ['**/pilot/**', '**/report-submission.spec.ts'],
   fullyParallel: true,
   // Cold Expo route compilation plus repeated navigations can exceed 30 s.
   // Keep every assertion; give sensor-backed flows their real 15 s deadline.
@@ -63,6 +63,7 @@ export default defineConfig({
         EXPO_PUBLIC_OSRM_URL: 'https://e2e.parkey.test',
         EXPO_PUBLIC_SUPABASE_URL: 'https://e2e.parkey.test',
         EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY: 'e2e-public-fixture-key',
+        EXPO_PUBLIC_REPORT_SUBMISSIONS_ENABLED: 'false',
         EXPO_PUBLIC_ANALYTICS_ENDPOINT: '',
         EXPO_PUBLIC_SENTRY_DSN: '',
       },

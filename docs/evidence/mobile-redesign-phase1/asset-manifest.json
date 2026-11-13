@@ -1,0 +1,98 @@
+[
+  {
+    "file": "account-logo.png",
+    "dimensions": [66, 72],
+    "bytes": 1290,
+    "sha256": "a8e7a8e3008b362c344ba4b30c3ebb8cf32b02dd514d3c38d6478c58af83f63b"
+  },
+  {
+    "file": "account-logo.svg",
+    "dimensions": [66, 72.2152],
+    "bytes": 1806,
+    "sha256": "7f22fc81ed3ea69a8d65b8a58e4cb00213ec54100076027202a153ab91772587"
+  },
+  {
+    "file": "account-logo@3x.png",
+    "dimensions": [198, 217],
+    "bytes": 3761,
+    "sha256": "9215c249b97a3ad95db477d4faa5accdd677d669d369542a58675803e88b12e4"
+  },
+  {
+    "file": "compare-preview.png",
+    "dimensions": [338, 274],
+    "bytes": 9941,
+    "sha256": "5cfe4f3742d53401a6a27065e195073c0dde1947d341430e88b27e41f1c53e01"
+  },
+  {
+    "file": "compare-preview.svg",
+    "dimensions": [338, 274],
+    "bytes": 5524,
+    "sha256": "de0e8855916158cd92e61b1b8a118ac998be95fa7ebf3e46fe46d43f859e7564"
+  },
+  {
+    "file": "compare-preview@3x.png",
+    "dimensions": [1014, 822],
+    "bytes": 34745,
+    "sha256": "98d53fcf281d7220ab947384b0c23c64d5c51016d286e71fb5b3cfbafd7b624d"
+  },
+  {
+    "file": "discover-illustration.png",
+    "dimensions": [1448, 1086],
+    "bytes": 1722290,
+    "sha256": "70e77ae901c833c487d96f0fd478c18553eef35f46e0fa857ed8a48e75e0d360"
+  },
+  {
+    "file": "navigate-preview.png",
+    "dimensions": [338, 274],
+    "bytes": 11414,
+    "sha256": "4b6ab850acad92f2e6f0d131839fdee0e7860c1ba7cbc4bb6e1184764a581b78"
+  },
+  {
+    "file": "navigate-preview.svg",
+    "dimensions": [338, 274],
+    "bytes": 5410,
+    "sha256": "f385947639fb575564d1147ab4af79360165a7babbe2451a0a3b7b39d0bb52d1"
+  },
+  {
+    "file": "navigate-preview@3x.png",
+    "dimensions": [1014, 822],
+    "bytes": 38319,
+    "sha256": "cbb3fe16f07b9fec2950b2d2083664f52ede410ce93710dda8b1219800cbfdd0"
+  },
+  {
+    "file": "splash-logo.png",
+    "dimensions": [176, 193],
+    "bytes": 3269,
+    "sha256": "590ed4c67a779440fc61d1288e023549f8a216486eee11dae096ac14d1dc41cd"
+  },
+  {
+    "file": "splash-logo.svg",
+    "dimensions": [176, 192.574],
+    "bytes": 1802,
+    "sha256": "c0c19ddba6fc11b73f543827428a0a53d888612adde3c99c664da2302d31cb11"
+  },
+  {
+    "file": "splash-logo@3x.png",
+    "dimensions": [528, 578],
+    "bytes": 11503,
+    "sha256": "0dabbaa4947b52bddffc2eb02512fdd5c836d7b34eed71bfebcd2fe88a9e799a"
+  },
+  {
+    "file": "welcome-logo.png",
+    "dimensions": [96, 106],
+    "bytes": 1852,
+    "sha256": "5728be52a72dfce54f2d5424ecbfec6523766979b5e1a6fbd594b9bfe55b3f90"
+  },
+  {
+    "file": "welcome-logo.svg",
+    "dimensions": [96, 106],
+    "bytes": 1794,
+    "sha256": "80b49f1dabb51fec01489927897172c28d800957b46048617aeaddc230b494c3"
+  },
+  {
+    "file": "welcome-logo@3x.png",
+    "dimensions": [288, 318],
+    "bytes": 5696,
+    "sha256": "e529916321f0a06721b97d192e1b718c3a6749dbdd9897cca7f581eb0423e961"
+  }
+]

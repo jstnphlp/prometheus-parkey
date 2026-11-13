@@ -17,6 +17,7 @@
     "expo-location": "~58.0.19",
     "expo-network": "~58.0.4",
     "expo-router": "~58.0.26",
+    "expo-splash-screen": "~58.0.14",
     "expo-status-bar": "~58.0.4",
     "expo-system-ui": "~58.0.6",
     "maplibre-gl": "6.16.0",
@@ -44,7 +45,7 @@
     "typecheck": "tsc --noEmit",
     "check:release": "node ../../scripts/check-mobile-release.mjs",
     "eas-build-post-install": "node ../../scripts/check-mobile-build.mjs",
-    "test": "node --test src/discovery/*.test.mjs",
+    "test": "node --test src/discovery/*.test.mjs src/onboarding/*.test.mjs",
     "export:web": "node scripts/prepare-map-worker.mjs && expo export --platform web"
   },
   "private": true

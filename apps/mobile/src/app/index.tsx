@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Redirect } from 'expo-router'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
@@ -6,8 +7,14 @@ import Explore from '../discovery/explore'
 import { colors } from '../discovery/palette'
 import { pilotDiscoveryEnabled } from '../discovery/pilot-config'
 import PilotDiscovery from '../discovery/pilot-discovery'
+import { useOnboarding } from '../onboarding/provider'
 
-export default function MainDiscovery() {
+export default function IndexRoute() {
+  const { completed } = useOnboarding()
+  return completed ? <MainDiscovery /> : <Redirect href="/welcome" />
+}
+
+function MainDiscovery() {
   const [legacy, setLegacy] = useState(false)
   const insets = useSafeAreaInsets()
   const legacyAllowed = process.env.NODE_ENV === 'development'

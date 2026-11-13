@@ -1,0 +1,95 @@
+{
+  "created_at": "2026-11-13T13:39:21.070Z",
+  "branch": "codex/mobile-redesign-phase-1",
+  "base_branch": "feat/v1-place-discovery",
+  "parent_pr": 29,
+  "source_commit": "6b99f30ceb7c6c332bc59246f39202d7e5e87d4f",
+  "native_configuration_commit": "1ab51a381b73975d99b51c94c542b9427420b994",
+  "native_apk": {
+    "path": "apps/mobile/android/app/build/outputs/apk/debug/app-debug.apk",
+    "sha256": "dc669bf2caa5be8ea26795133bd406ab95007ef5dae4dd41ca4c5c86fb9b8694",
+    "variant": "debug",
+    "javascript": "Served by Metro from the source commit; not an embedded release bundle"
+  },
+  "tooling": {
+    "node": "v24.22.2",
+    "pnpm": "11.25.0",
+    "expo": "58.0.19"
+  },
+  "device": {
+    "platform": "Android",
+    "version": "15",
+    "api": 35,
+    "abi": "x86_64",
+    "avd": "Parkey_A0_API35",
+    "mode": "read-only cold boot",
+    "gpu": "swiftshader"
+  },
+  "profiles": [
+    {
+      "logical_size": [390, 844],
+      "pixels": [780, 1688],
+      "density": 320,
+      "font_scale": 1
+    },
+    {
+      "logical_size": [320, 640],
+      "pixels": [640, 1280],
+      "density": 320,
+      "font_scale": 1.5
+    }
+  ],
+  "reduced_motion": {
+    "animator_duration_scale": 0,
+    "transition_animation_scale": 0,
+    "window_animation_scale": 0
+  },
+  "figma": {
+    "file_key": "UaU1KMJV2tMlwGB7Y1Co1g",
+    "nodes": [
+      "41:5",
+      "39:6",
+      "11:16",
+      "19:2",
+      "19:32",
+      "19:60",
+      "11:44",
+      "11:30"
+    ],
+    "discover_image_node": "54:83",
+    "references": "Frozen get_design_context screenshots; Figma on left in comparison images"
+  },
+  "checks": {
+    "mobile_typecheck": "passed",
+    "mobile_lint": "passed",
+    "workspace_lint": "passed",
+    "workspace_typecheck": "passed",
+    "workspace_format": "passed",
+    "web_build": "passed",
+    "targeted_node_tests": {
+      "passed": 15,
+      "failed": 0,
+      "command": "node --test apps/mobile/src/onboarding/persistence.test.mjs apps/mobile/src/discovery/local-state.test.mjs"
+    },
+    "native_debug_build": "passed"
+  },
+  "native_observations": [
+    "Original native splash logo is complete and unmasked at its adjusted Android size",
+    "Welcome login opens unavailable-auth destination; Android Back returns to welcome",
+    "Continue navigates Discover -> Compare -> Navigate",
+    "Android Back from Compare returns to Discover",
+    "Completion and Skip reach registration",
+    "Android Back after completion exits to launcher without replaying onboarding",
+    "Force-stop/relaunch opens existing discovery instead of introduction",
+    "Guest Explore parking reaches original discovery search",
+    "Existing saved-car control remained available; no discovery data was cleared",
+    "Welcome controls fit at 320x640 with font scale 1.5; onboarding controls are reachable by scrolling"
+  ],
+  "limitations": [
+    "No physical-device or iOS verification",
+    "No browser/E2E suite run",
+    "Emulator was offline; live map/search/backend integration not verified",
+    "Active font-scale changes produced a dev-client duplicate-linking warning; clean launches were used for profile captures",
+    "No performance or production-release claim; no V1 gate advanced"
+  ]
+}

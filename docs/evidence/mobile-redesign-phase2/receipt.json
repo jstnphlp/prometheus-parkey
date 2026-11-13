@@ -49,7 +49,9 @@
     "nativeReleaseBuild": "passed",
     "finalIncrementalRelease": "passed (57 seconds)",
     "apkV2Signature": "verified",
-    "browserE2E": "not run"
+    "browserE2E": "not run",
+    "productionDependencyAudit": "passed at moderate threshold after node-forge override 1.4.1 -> 1.4.3",
+    "remainingAudit": "one low deepmerge advisory in upstream metadata; existing repository prototype-key patch retained"
   },
   "androidAssertions": [
     "registration client validation focuses first invalid input",
@@ -96,5 +98,10 @@
     "OAuth providers disabled; social login not implemented",
     "native secure auth only; web discovery retained",
     "physical phone, iOS and production release approval remain unverified"
-  ]
+  ],
+  "ci": {
+    "initialValidation": "failed dependency audit; node-forge override patched",
+    "initialRun": "https://github.com/jstnphlp/prometheus-parkey/actions/runs/43454042802",
+    "pr": "https://github.com/jstnphlp/prometheus-parkey/pull/31"
+  }
 }

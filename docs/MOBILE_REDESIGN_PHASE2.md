@@ -134,6 +134,13 @@ Workspace lint, typecheck and web build passed. Native debug and locally signed
 release-variant Android builds passed. The standalone APK's v2 signature was
 verified. It launches with Metro stopped and all original artwork bundled.
 
+Initial GitHub validation failed on moderate `node-forge` advisories in the
+existing Expo CLI dependency tree. The repository's existing override was
+updated from 1.4.1 to patched 1.4.3, and workspace checks were rerun. Production
+dependency audit passes at CI's moderate threshold. Upstream audit metadata still
+lists one low `deepmerge` advisory; the repository's existing prototype-key
+filtering patch remains applied. No framework version was changed.
+
 Android API 35 checks include native validation/focus/keyboard, password
 visibility, Remember me, Back, actual invalid-credentials handling, offline
 failure/reconnection, invalid then replacement email links, forgot-password

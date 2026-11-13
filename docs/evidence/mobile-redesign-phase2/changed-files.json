@@ -56,5 +56,6 @@
   "docs/evidence/mobile-redesign-phase2/integration.json",
   "docs/evidence/mobile-redesign-phase2/receipt.json",
   "package.json",
-  "pnpm-lock.yaml"
+  "pnpm-lock.yaml",
+  "pnpm-workspace.yaml"
 ]

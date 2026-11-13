@@ -35,6 +35,7 @@ import { createLocalDraftId } from './local-draft-id'
 import { ContributionForm } from './contribution-form'
 import { readContributions, writeContributions } from './contributions'
 import type { Destination } from './data'
+import { parkingNearDestination } from './places'
 import { draftParking } from './draft-parking'
 import { useNavigation } from './use-navigation'
 import { useDirectionsConsent } from './use-directions-consent'
@@ -115,6 +116,13 @@ export default function Explore() {
   const [reviewDraft, setReviewDraft] = useState<ParkingContribution | null>(
     null,
   )
+  const [selectedPlace, setSelectedPlace] = useState<Destination | null>(null)
+  useEffect(() => {
+    if (Platform.OS !== 'web' || !selectedPlace) return
+    const dismiss = () => setSelectedPlace(null)
+    window.addEventListener('popstate', dismiss)
+    return () => window.removeEventListener('popstate', dismiss)
+  }, [selectedPlace])
   const insets = useSafeAreaInsets()
   const connectivity = useConnectivity()
   const [locationSettingsOpen, setLocationSettingsOpen] = useState(false)
@@ -578,7 +586,8 @@ export default function Explore() {
   }, [mapStatus, mapRevision])
   function dismissTopmost() {
     Keyboard.dismiss()
-    if (nav.consent) closeNavigation({ consent: false })
+    if (selectedPlace) setSelectedPlace(null)
+    else if (nav.consent) closeNavigation({ consent: false })
     else if (nav.searching)
       closeNavigation({
         searching: false,
@@ -1131,25 +1140,8 @@ export default function Explore() {
             })
         }}
         onSelect={(found) => {
-          const matches = partitionParking(
-            [...parking.knownRecords, ...previews],
-            filter,
-            feeFilter,
-          ).matched
-          const closest = rankParking(matches, found.coordinate)[0]
-          const focus =
-            closest &&
-            distanceMeters(anchor(closest.geometry), found.coordinate) <= 1500
-              ? anchor(closest.geometry)
-              : found.coordinate
-          updateNavigation({
-            searching: false,
-            query: found.name,
-            searchPoint: found.coordinate,
-            selectedId: null,
-            center: [focus[0], focus[1]],
-            position: 'medium',
-          })
+          updateNavigation({ searching: false }, 'replace')
+          setSelectedPlace(found)
         }}
       />
     </View>
@@ -1271,6 +1263,11 @@ export default function Explore() {
             onSelect={(id) => {
               if (!nav.route) select(id)
             }}
+            onPlaceSelect={
+              nav.route || drawing || panel !== null
+                ? undefined
+                : setSelectedPlace
+            }
             onMapPress={(point) => {
               if (nav.route) return
               if (searchActive) {
@@ -1995,6 +1992,45 @@ export default function Explore() {
           </View>
         ) : null}
       </View>
+      {selectedPlace ? (
+        <ModalSheet
+          title={selectedPlace.name}
+          onClose={() => setSelectedPlace(null)}
+        >
+          <ScrollView
+            contentContainerStyle={{
+              paddingHorizontal: 24,
+              paddingBottom: 24,
+              gap: 16,
+            }}
+          >
+            <Text style={ui.body}>
+              {selectedPlace.address || 'Address unavailable'}
+            </Text>
+            <Text style={ui.small}>
+              Mapped place; this does not confirm parking or visitor access.
+            </Text>
+            <Button
+              onPress={() => {
+                clearRoute()
+                setRouteTarget(null)
+                navigationViewportPrivate.current = false
+                updateNavigation(parkingNearDestination(selectedPlace))
+                setAreaRefresh(false)
+                setRevision((current) => current + 1)
+                setSelectedPlace(null)
+              }}
+            >
+              Find Parking Nearby
+            </Button>
+            <Text style={ui.small}>
+              Map places: OpenStreetMap contributors (ODbL 1.0), via
+              OpenFreeMap. Search results: configured destination provider.
+              Parking information may be unknown; no live availability.
+            </Text>
+          </ScrollView>
+        </ModalSheet>
+      ) : null}
       {locationSettingsOpen ? (
         <ModalSheet
           title="Location settings"

@@ -6,6 +6,7 @@ import {
   Map,
 } from '@maplibre/maplibre-react-native'
 import type {
+  MapRef,
   CameraRef,
   GeoJSONSourceRef,
 } from '@maplibre/maplibre-react-native'
@@ -18,6 +19,8 @@ import paidPin from '../../assets/figma/playful/pin-paid.png'
 import unknownPin from '../../assets/figma/playful/pin-unknown.png'
 import navUp from '../../assets/figma/playful/nav-up.png'
 import selectedParkingPinImage from '../../assets/figma/playful/mascot.png'
+
+import { placeFromFeature, placeLayer } from './places'
 
 import { config } from './config'
 import { createLocalMapBenchmark } from './local-map-benchmark'
@@ -45,6 +48,15 @@ const parkingImages = {
 
 export default function NativeMap(props: ParkingMapProps) {
   const [markMapReady] = useState(() => createLocalMapBenchmark())
+  const map = useRef<MapRef>(null)
+  const placeRequest = useRef(0)
+  useEffect(() => {
+    const request = placeRequest
+    request.current++
+    return () => {
+      request.current++
+    }
+  }, [props.onPlaceSelect, props.searching, props.drawing])
   const camera = useRef<CameraRef>(null)
   const facilities = useRef<GeoJSONSourceRef>(null)
   const previousTarget = useRef(props.target)
@@ -136,6 +148,7 @@ export default function NativeMap(props: ParkingMapProps) {
 
   return (
     <Map
+      ref={map}
       style={StyleSheet.absoluteFill}
       mapStyle={props.night ? config.nightMapStyle : config.mapStyle}
       attribution={false}
@@ -154,7 +167,32 @@ export default function NativeMap(props: ParkingMapProps) {
           props.onPan?.()
         }
       }}
-      onPress={(event) => props.onMapPress(event.nativeEvent.lngLat)}
+      onPress={async (event) => {
+        const { point, lngLat } = event.nativeEvent
+        const request = ++placeRequest.current
+        if (props.drawing || props.searching || !props.onPlaceSelect) {
+          props.onMapPress(lngLat)
+          return
+        }
+        try {
+          const features = await map.current?.queryRenderedFeatures(
+            [
+              [point[0] - 10, point[1] - 10],
+              [point[0] + 10, point[1] + 10],
+            ],
+            { layers: [placeLayer.id] },
+          )
+          if (request !== placeRequest.current) return
+          const place = features
+            ?.map(placeFromFeature)
+            .find((item) => item !== null)
+          if (place) props.onPlaceSelect(place)
+          else props.onMapPress(lngLat)
+        } catch {
+          // A missing POI layer in a custom style must not break map interaction.
+          if (request === placeRequest.current) props.onMapPress(lngLat)
+        }
+      }}
       onRegionDidChange={(event) => {
         const {
           bounds: [west, south, east, north],
@@ -163,6 +201,7 @@ export default function NativeMap(props: ParkingMapProps) {
         props.onViewport({ west, south, east, north, zoom })
       }}
     >
+      <Layer {...placeLayer} />
       <Images images={parkingImages} />
       <Camera
         ref={camera}
@@ -217,6 +256,7 @@ export default function NativeMap(props: ParkingMapProps) {
         data={records.streets}
         onPress={(event) => {
           if (props.drawing) return
+          placeRequest.current++
           event.stopPropagation()
           const id: unknown = event.nativeEvent.features[0]?.properties?.id
           if (typeof id === 'string') props.onSelect(id)
@@ -259,6 +299,7 @@ export default function NativeMap(props: ParkingMapProps) {
         clusterMaxZoom={15}
         onPress={(event) => {
           if (props.drawing) return
+          placeRequest.current++
           event.stopPropagation()
           const feature = event.nativeEvent.features[0]
           if (props.searching && feature?.geometry.type === 'Point') {
@@ -361,6 +402,7 @@ export default function NativeMap(props: ParkingMapProps) {
         data={records.selected}
         onPress={(event) => {
           if (props.drawing) return
+          placeRequest.current++
           event.stopPropagation()
           const id: unknown = event.nativeEvent.features[0]?.properties?.id
           if (typeof id === 'string') props.onSelect(id)

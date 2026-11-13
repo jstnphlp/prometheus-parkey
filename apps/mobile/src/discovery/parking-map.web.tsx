@@ -10,6 +10,8 @@ import paidPin from '../../assets/figma/playful/pin-paid.png'
 import unknownPin from '../../assets/figma/playful/pin-unknown.png'
 import navUp from '../../assets/figma/playful/nav-up.png'
 
+import { placeFromFeature, placeLayer } from './places'
+
 import { config } from './config'
 import { mapTextFont } from './map-font'
 import { routeBearing, splitRoute } from './drive-math'
@@ -102,7 +104,23 @@ export default function ParkingMap(props: ParkingMapProps) {
       }
       const id: unknown = feature?.properties.id
       if (!props.drawing && typeof id === 'string') props.onSelect(id)
-      else props.onMapPress([event.lngLat.lng, event.lngLat.lat])
+      else {
+        const places =
+          !props.drawing &&
+          props.onPlaceSelect &&
+          map.current?.getLayer(placeLayer.id)
+            ? map.current.queryRenderedFeatures(
+                [
+                  [event.point.x - 10, event.point.y - 10],
+                  [event.point.x + 10, event.point.y + 10],
+                ],
+                { layers: [placeLayer.id] },
+              )
+            : []
+        const place = places.map(placeFromFeature).find((item) => item !== null)
+        if (place) props.onPlaceSelect?.(place)
+        else props.onMapPress([event.lngLat.lng, event.lngLat.lat])
+      }
     },
   )
   const panned = useEffectEvent(() => {
@@ -175,6 +193,7 @@ export default function ParkingMap(props: ParkingMapProps) {
       }
     })
     instance.on('load', () => {
+      if (instance.getSource(placeLayer.source)) instance.addLayer(placeLayer)
       instance.addSource('route', {
         type: 'geojson',
         data: { type: 'FeatureCollection', features: [] },

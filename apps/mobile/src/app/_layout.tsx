@@ -5,6 +5,7 @@ import * as NativeSplash from 'expo-splash-screen'
 import { StatusBar } from 'expo-status-bar'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 
+import { AuthProvider } from '../auth/provider'
 import { initializeTelemetry } from '../discovery/telemetry'
 import { fontSources } from '../discovery/typography'
 import { OnboardingProvider, useOnboarding } from '../onboarding/provider'
@@ -22,7 +23,9 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <OnboardingProvider>
-        <RootNavigator />
+        <AuthProvider>
+          <RootNavigator />
+        </AuthProvider>
       </OnboardingProvider>
     </SafeAreaProvider>
   )
@@ -52,6 +55,10 @@ function RootNavigator() {
         }}
       >
         <Stack.Screen name="index" />
+        <Stack.Screen
+          name="reset-password"
+          options={{ gestureEnabled: false }}
+        />
       </Stack>
     </>
   )

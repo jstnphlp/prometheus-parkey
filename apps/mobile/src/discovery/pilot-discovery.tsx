@@ -6,7 +6,7 @@ import type {
   PilotDestination,
   PilotParking,
 } from '@parkey/shared-types'
-import { Stack } from 'expo-router'
+import { Stack, useRouter } from 'expo-router'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   ActivityIndicator,
@@ -120,6 +120,7 @@ export default function PilotDiscovery({
   onOpenLegacy: () => void
 }) {
   const insets = useSafeAreaInsets()
+  const router = useRouter()
   const [city, setCity] = useState<PilotCity>('Manila')
   const [mode, setMode] = useState<PilotRequest['mode']>('public')
   const [token, setToken] = useState<string | null>(null)
@@ -772,6 +773,7 @@ export default function PilotDiscovery({
             {location.status === 'locating' ? 'Locating…' : 'My location'}
           </Action>
           <Action onPress={() => chooseCity(city)}>City center</Action>
+          <Action onPress={() => router.push('/account')}>Account</Action>
           <Action
             onPress={() => {
               setSelection(null)

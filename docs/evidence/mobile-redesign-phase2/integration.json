@@ -1,0 +1,32 @@
+{
+  "checkedAt": "2026-11-13T14:49:46.381Z",
+  "project": "nuepweyzpkqfihjsbsik",
+  "publicAuthSettings": {
+    "status": 200,
+    "emailEnabled": true,
+    "signupEnabled": true,
+    "emailConfirmationRequired": true,
+    "googleEnabled": false,
+    "facebookEnabled": false
+  },
+  "invalidLogin": {
+    "code": "invalid_credentials",
+    "status": 400,
+    "sessionIssued": false
+  },
+  "anonymousProfileRead": {
+    "status": 401,
+    "limit": 0
+  },
+  "passwordPolicy": {
+    "source": "owner supplied in task conversation",
+    "minimumLength": 8,
+    "uppercase": true,
+    "lowercase": true,
+    "specialCharacter": true,
+    "hostedManagementRead": false
+  },
+  "confirmationSuccess": "not tested: no dedicated inbox supplied",
+  "passwordResetSuccess": "not tested: no dedicated inbox supplied",
+  "redirectAllowlist": "not verified: management access unavailable"
+}

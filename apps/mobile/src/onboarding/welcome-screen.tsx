@@ -22,23 +22,18 @@ export function WelcomeScreen() {
         </View>
       }
     >
-      <BrandLogo variant="welcome" />
-      <Text accessibilityLabel="Parkey" style={styles.wordmark}>
-        park<Text style={styles.cyan}>ey</Text>
-      </Text>
-      <Text accessibilityRole="header" style={styles.tagline}>
-        Parking, made simpler.
-      </Text>
-      <Text style={styles.description}>
-        Find parking near your destination.
-      </Text>
-      <View style={styles.artworkArea}>
-        <View
-          accessible
-          accessibilityRole="image"
-          accessibilityLabel="Parking arrival animation placeholder"
-          style={styles.placeholder}
-        />
+      <View style={styles.hero}>
+        <BrandLogo variant="welcome" style={styles.logo} />
+        <Text accessibilityLabel="Parkey" style={styles.wordmark}>
+          park<Text style={styles.cyan}>ey</Text>
+        </Text>
+        <Text accessibilityRole="header" style={styles.tagline}>
+          Designed Around the Driver.
+        </Text>
+        <Text style={styles.description}>
+          Find parking near your destination. Including street parking, open
+          lots, obscure spots.
+        </Text>
       </View>
       <BrandButton
         title="Get Started"
@@ -50,7 +45,10 @@ export function WelcomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  content: { paddingTop: 22, paddingBottom: 29 },
+  content: { paddingBottom: 29 },
+  hero: { flexGrow: 1, justifyContent: 'center', paddingTop: 72 },
+  // Preserve the original logo's optical offset without changing its dimensions.
+  logo: { transform: [{ translateX: 13 }] },
   loginBackdrop: { backgroundColor: colors.plum },
   wordmark: {
     ...typography.wordmark,
@@ -58,6 +56,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     // The original wordmark's text box overlaps the logo by 12pt.
     marginTop: -12,
+    marginLeft: 4,
   },
   cyan: { color: colors.cyan },
   tagline: {
@@ -65,19 +64,24 @@ const styles = StyleSheet.create({
     color: colors.white,
     textAlign: 'center',
     marginTop: -3,
+    alignSelf: 'center',
+    width: '100%',
+    maxWidth: 314,
+    marginLeft: 4,
   },
   description: {
     ...typography.welcomeBody,
     color: colors.onPlumMuted,
     textAlign: 'center',
-    marginTop: 23,
-  },
-  artworkArea: { flexGrow: 1, justifyContent: 'center', marginTop: 34 },
-  placeholder: {
+    marginTop: 7,
+    alignSelf: 'center',
     width: '100%',
-    aspectRatio: 338 / 347,
-    borderRadius: radius.artwork,
-    backgroundColor: colors.white,
+    maxWidth: 306,
+    marginLeft: 4,
   },
-  button: { marginTop: 17, marginHorizontal: 6, minHeight: 50 },
+  button: {
+    marginHorizontal: 6,
+    minHeight: 50,
+    borderRadius: radius.compactButton,
+  },
 })

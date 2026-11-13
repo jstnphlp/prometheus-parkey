@@ -2,11 +2,11 @@ import { useRouter } from 'expo-router'
 import { Image, StyleSheet, Text, View } from 'react-native'
 
 import compare from '../../assets/figma/onboarding/compare-preview.png'
-import discover from '../../assets/figma/onboarding/discover-preview.png'
+import discover from '../../assets/figma/onboarding/discover-illustration.png'
 import navigate from '../../assets/figma/onboarding/navigate-preview.png'
 import { BrandButton } from '../components/brand-button'
 import { ScreenContainer } from '../components/screen-container'
-import { colors, typography } from '../theme'
+import { colors, radius, typography } from '../theme'
 
 import { BackButton } from './back-button'
 import { useCompletion } from './use-completion'
@@ -18,10 +18,9 @@ const steps = {
     copy: 'Explore mapped parking locations\nnear your destination.',
     background: colors.dark,
     muted: colors.onDarkMuted,
-    stepColor: colors.cyan,
     button: 'cyan',
     image: discover,
-    imageLabel: 'Static preview: mapped parking locations',
+    imageLabel: 'Static illustration: discovering parking with Parkey',
     next: '/onboarding/compare',
   },
   compare: {
@@ -30,7 +29,6 @@ const steps = {
     copy: 'Compare parking details when\nreliable information is available.',
     background: colors.teal,
     muted: colors.onTealMuted,
-    stepColor: colors.dark,
     button: 'plum',
     image: compare,
     imageLabel: 'Static preview: parking lot and garage information',
@@ -42,7 +40,6 @@ const steps = {
     copy: 'Follow available directions and\ncheck the confirmed entrance.',
     background: colors.plum,
     muted: colors.onPlumMuted,
-    stepColor: colors.cyan,
     button: 'white',
     image: navigate,
     imageLabel: 'Static preview: directions to a parking entrance',
@@ -61,22 +58,28 @@ export function OnboardingScreen({ step }: { step: keyof typeof steps }) {
       overlay={<BackButton backgroundColor={page.background} />}
     >
       <Text
-        accessibilityLabel={`Step ${page.number} of 3`}
-        style={[styles.step, { color: page.stepColor }]}
+        accessibilityRole="header"
+        accessibilityLabel={`Step ${page.number} of 3. ${page.title.replace('\n', ' ')}`}
+        style={styles.title}
       >
-        0{page.number} / 03
-      </Text>
-      <Text accessibilityRole="header" style={styles.title}>
         {page.title}
       </Text>
       <Text style={[styles.copy, { color: page.muted }]}>{page.copy}</Text>
-      <View style={styles.artworkArea}>
+      <View
+        style={[
+          styles.artworkArea,
+          step === 'discover' && styles.discoverArtworkArea,
+        ]}
+      >
         <Image
           accessibilityRole="image"
           accessibilityLabel={page.imageLabel}
           source={page.image}
-          resizeMode="contain"
-          style={styles.artwork}
+          resizeMode={step === 'discover' ? 'cover' : 'contain'}
+          style={[
+            styles.artwork,
+            step === 'discover' && styles.discoverArtwork,
+          ]}
         />
       </View>
       <View style={styles.controls}>
@@ -127,19 +130,24 @@ export function OnboardingScreen({ step }: { step: keyof typeof steps }) {
 }
 
 const styles = StyleSheet.create({
-  content: { paddingTop: 53, paddingBottom: 31 },
-  step: { ...typography.step, marginLeft: 3 },
+  content: { paddingTop: 98, paddingBottom: 31 },
   title: {
     ...typography.title,
     color: colors.white,
-    marginTop: 27,
     marginHorizontal: 2,
   },
   copy: { ...typography.body, marginTop: 35, marginHorizontal: 2 },
   artworkArea: { flexGrow: 1, justifyContent: 'center', marginTop: 53 },
+  discoverArtworkArea: { marginLeft: -13, marginRight: -14 },
   artwork: {
     width: '100%',
+    // Clear Image's intrinsic bitmap height so the slot ratio controls layout.
+    height: undefined,
     aspectRatio: 338 / 274,
+  },
+  discoverArtwork: {
+    aspectRatio: 365 / 274,
+    borderRadius: radius.rasterArtwork,
   },
   controls: { minHeight: 44, marginTop: 11, justifyContent: 'center' },
   progress: {

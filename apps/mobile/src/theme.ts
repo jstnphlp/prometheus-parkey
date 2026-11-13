@@ -29,7 +29,12 @@ export const spacing = {
   screen: 26,
 } as const
 
-export const radius = { button: 14, artwork: 20 } as const
+export const radius = {
+  button: 14,
+  compactButton: 13,
+  rasterArtwork: 17,
+  artwork: 20,
+} as const
 export const layout = {
   maxWidth: 440,
   buttonHeight: 52,
@@ -54,7 +59,6 @@ export const fontSources = {
 }
 
 export const typography = {
-  step: { fontFamily: fonts.regular, fontSize: 14, lineHeight: 18 },
   title: {
     fontFamily: fonts.black,
     fontSize: 37,

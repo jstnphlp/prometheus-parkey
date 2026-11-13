@@ -1,4 +1,5 @@
 import { Image } from 'react-native'
+import type { ImageStyle, StyleProp } from 'react-native'
 
 import account from '../../assets/figma/onboarding/account-logo.png'
 import splash from '../../assets/figma/onboarding/splash-logo.png'
@@ -10,7 +11,13 @@ const logos = {
   account: { source: account, width: 66, height: 72.2152 },
 } as const
 
-export function BrandLogo({ variant }: { variant: keyof typeof logos }) {
+export function BrandLogo({
+  variant,
+  style,
+}: {
+  variant: keyof typeof logos
+  style?: StyleProp<ImageStyle>
+}) {
   const logo = logos[variant]
   return (
     <Image
@@ -18,7 +25,10 @@ export function BrandLogo({ variant }: { variant: keyof typeof logos }) {
       accessibilityLabel="Parkey"
       accessibilityRole="image"
       resizeMode="contain"
-      style={{ width: logo.width, height: logo.height, alignSelf: 'center' }}
+      style={[
+        { width: logo.width, height: logo.height, alignSelf: 'center' },
+        style,
+      ]}
     />
   )
 }

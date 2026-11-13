@@ -70,6 +70,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   textButton: { minHeight: layout.touchTarget, borderRadius: 0 },
-  label: { textAlign: 'center' },
+  label: { alignSelf: 'stretch', textAlign: 'center' },
   dimmed: { opacity: 0.65 },
 })

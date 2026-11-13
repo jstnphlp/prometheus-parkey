@@ -13,11 +13,13 @@ export function WelcomeScreen() {
       backgroundColor={colors.plum}
       contentStyle={styles.content}
       overlay={
-        <BrandButton
-          title="Log In"
-          variant="text"
-          onPress={() => router.push('/login')}
-        />
+        <View style={styles.loginBackdrop}>
+          <BrandButton
+            title="Log In"
+            variant="text"
+            onPress={() => router.push('/login')}
+          />
+        </View>
       }
     >
       <BrandLogo variant="welcome" />
@@ -49,6 +51,7 @@ export function WelcomeScreen() {
 
 const styles = StyleSheet.create({
   content: { paddingTop: 22, paddingBottom: 29 },
+  loginBackdrop: { backgroundColor: colors.plum },
   wordmark: {
     ...typography.wordmark,
     color: colors.white,

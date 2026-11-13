@@ -18,7 +18,9 @@ export function AccountDestination({ mode }: { mode: 'register' | 'login' }) {
     <ScreenContainer
       backgroundColor={registering ? colors.plum : colors.dark}
       contentStyle={styles.content}
-      overlay={<BackButton />}
+      overlay={
+        <BackButton backgroundColor={registering ? colors.plum : colors.dark} />
+      }
     >
       <BrandLogo variant="account" />
       <Text

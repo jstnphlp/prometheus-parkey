@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { useFonts } from 'expo-font'
 import { Stack } from 'expo-router'
+import * as NativeSplash from 'expo-splash-screen'
 import { StatusBar } from 'expo-status-bar'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 
@@ -13,6 +14,9 @@ import { useReducedMotion } from '../onboarding/use-reduced-motion'
 import { fontSources as redesignFontSources } from '../theme'
 
 const allFonts = { ...fontSources, ...redesignFontSources }
+
+// Keep the native brand screen visible while fonts and local progress load.
+void NativeSplash.preventAutoHideAsync()
 
 export default function RootLayout() {
   return (
@@ -29,6 +33,10 @@ function RootNavigator() {
   const { loadState } = useOnboarding()
   const reducedMotion = useReducedMotion()
   useEffect(initializeTelemetry, [])
+  useEffect(() => {
+    if ((fontsLoaded || fontError) && loadState !== 'loading')
+      NativeSplash.hide()
+  }, [fontsLoaded, fontError, loadState])
 
   if ((!fontsLoaded && !fontError) || loadState === 'loading')
     return <SplashScreen />

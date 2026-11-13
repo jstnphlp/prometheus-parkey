@@ -58,7 +58,7 @@ export function OnboardingScreen({ step }: { step: keyof typeof steps }) {
     <ScreenContainer
       backgroundColor={page.background}
       contentStyle={styles.content}
-      overlay={<BackButton />}
+      overlay={<BackButton backgroundColor={page.background} />}
     >
       <Text
         accessibilityLabel={`Step ${page.number} of 3`}

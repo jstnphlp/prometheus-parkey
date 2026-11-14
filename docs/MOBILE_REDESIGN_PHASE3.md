@@ -2,9 +2,10 @@
 
 Branch: `codex/mobile-redesign-phase-3-polish`.
 Stacked parent/PR target: `codex/mobile-redesign-phase-2-auth` (draft PR #31).
-Cached parent: `dbfeccc046e3068a9d96ba8732ec3d98d1daf7f2`.
-This branch does not start from main. GitHub Git/API connections timed out
-during this run, so the latest remote parent and PR publication remain pending.
+Verified latest parent: `dbfeccc046e3068a9d96ba8732ec3d98d1daf7f2`.
+This branch does not start from main. GitHub connectivity recovered after the
+initial timeouts; [draft PR #32](https://github.com/jstnphlp/prometheus-parkey/pull/32)
+is open against Phase 2.
 No V1 acceptance gate is advanced.
 
 ## Implementation
@@ -157,9 +158,9 @@ account/inbox and configuration review described above. Native secure-storage
 failure injection was not performed. No fake success states or auth bypasses
 were introduced. Final animations remain deferred by the owner.
 
-GitHub connectivity must recover before checking/rebasing onto the latest
-Phase 2 parent, pushing this branch and opening the stacked review PR. No merge
-or deployment was attempted. The two pre-existing documentation edits in
+The latest Phase 2 parent is verified and the stacked review PR is published.
+CI validate and database jobs pass; browser E2E jobs were still running at this
+update. No merge or deployment was attempted. The two pre-existing documentation edits in
 `V1_OWNER_ACCEPTANCE_CHECKLIST.md` and `mobile-discovery.md` are excluded.
 
 ## Owner follow-up: inline password rules and signup diagnosis
@@ -210,8 +211,18 @@ startup, the Supabase hostname resolved from Android. The owner then confirmed
 that signup reached Check your email. This establishes that the prior signup
 transport failure was resolved on this emulator; it does not certify delivery.
 
-The owner has not received mail yet. Resend's actual event status is pending
-owner inspection. Accepted signup responses can be generic for previously
+The owner has not received mail and reports no entry in Resend. The first test
+address was already listed in Supabase Auth and used for a console account;
+its confirmation status was not supplied. Accepted signup responses can be generic for previously
 registered addresses, so this work does not infer a fresh account or successful
 email send from the pending screen. Email delivery, confirmation, verified
 session and recovery remain open until actual provider/inbox evidence exists.
+
+A subsequent owner attempt produced an actual `email_delivery` failure with
+HTTP 500 and no recognized structured code, followed by another transport
+failure. The email-delivery category matches Supabase's fixed Error sending
+confirmation email response. This confirms that the email-sending step failed;
+it does not identify a specific SMTP credential, sender, template or timeout
+cause. Further signup attempts were paused while requesting the detailed Auth
+log error from the owner. Neither SMTP nor confirmation security was changed
+as a workaround.

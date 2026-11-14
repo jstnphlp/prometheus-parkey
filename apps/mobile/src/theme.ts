@@ -17,6 +17,14 @@ export const colors = {
   onDarkMuted: '#C8D9DE',
   onTealMuted: '#F0FFFF',
   progressMuted: '#D7D0DB',
+  fieldInk: '#233D49',
+  fieldIcon: '#007F88',
+  controlBorder: '#D4E8EB',
+  successSurface: '#DDF6F4',
+  warningSurface: '#FFF2D8',
+  warningInk: '#8B4F00',
+  errorSurface: '#FBE4F2',
+  backdrop: 'rgba(32, 22, 46, 0.72)',
 } as const
 
 export const spacing = {

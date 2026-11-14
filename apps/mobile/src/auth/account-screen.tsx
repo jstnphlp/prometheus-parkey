@@ -1,12 +1,12 @@
-import { useState } from 'react'
 import { useRouter } from 'expo-router'
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native'
 
 import { BrandButton } from '../components/brand-button'
+import { BrandIcon } from '../components/brand-icon'
+import { usePopup } from '../components/popup-provider'
 import { useCompletion } from '../onboarding/use-completion'
 import { colors, typography } from '../theme'
 
-import { Notice } from './account-form'
 import { AuthShell } from './auth-shell'
 import { useAuth } from './provider'
 
@@ -14,27 +14,34 @@ export function AccountScreen() {
   const auth = useAuth()
   const router = useRouter()
   const guest = useCompletion('/')
-  const [notice, setNotice] = useState<string | null>(null)
+  const popup = usePopup()
   const name: unknown = auth.state.user?.user_metadata.full_name
   async function signOut() {
     try {
       const revoked = await auth.signOut()
-      setNotice(
-        revoked
-          ? 'Signed out on this device. Your saved parking stays here.'
-          : 'Signed out on this device. Server sign-out could not be confirmed. Your saved parking stays here.',
-      )
+      popup.show({
+        tone: revoked ? 'success' : 'warning',
+        title: 'Signed out',
+        message: revoked
+          ? 'Your saved parking stays on this device.'
+          : 'Signed out on this device. Server sign-out could not be confirmed.',
+      })
     } catch {
-      setNotice(
-        'Could not clear secure session storage. Please retry signing out.',
-      )
+      popup.show({
+        tone: 'error',
+        title: 'Could not sign out',
+        message: 'Could not clear secure storage. Please try again.',
+        primary: {
+          title: 'Retry',
+          onPress: () => void signOut(),
+          restoreFocus: false,
+        },
+        secondary: { title: 'Not now' },
+      })
     }
   }
   return (
-    <AuthShell
-      title="Your account"
-      subtitle="Parking discovery is always available without an account"
-    >
+    <AuthShell title="Your account" subtitle="Your Parkey account">
       <View style={styles.content}>
         {auth.state.status === 'checking' ? (
           <ActivityIndicator
@@ -56,7 +63,7 @@ export function AccountScreen() {
           </>
         ) : auth.state.status === 'recovery' ? (
           <>
-            <Notice text="Finish your password reset or sign out of this recovery session." />
+            <BrandIcon name="lock" color={colors.cyan} size={44} />
             <BrandButton
               title="Continue password reset"
               onPress={() => router.replace('/reset-password')}
@@ -71,10 +78,10 @@ export function AccountScreen() {
           <>
             <Text style={styles.body}>
               {auth.state.status === 'error'
-                ? 'Your session could not be verified. Reconnect and retry, sign out of this device, or continue exploring.'
+                ? 'Session unavailable'
                 : auth.state.status === 'unavailable'
-                  ? 'Secure sign-in is unavailable in this build.'
-                  : 'You are exploring as a guest.'}
+                  ? 'Sign-in unavailable'
+                  : 'Exploring as a guest'}
             </Text>
             {auth.state.status === 'error' ? (
               <>
@@ -102,9 +109,6 @@ export function AccountScreen() {
             />
           </>
         )}
-        {notice || guest.error ? (
-          <Notice text={notice ?? guest.error ?? ''} />
-        ) : null}
         <BrandButton
           title="Explore parking"
           variant="text"
@@ -112,10 +116,6 @@ export function AccountScreen() {
           busy={guest.busy}
           onPress={guest.finish}
         />
-        <Text style={styles.body}>
-          Saved parking and onboarding progress stay on this device when you
-          sign in or out.
-        </Text>
       </View>
     </AuthShell>
   )

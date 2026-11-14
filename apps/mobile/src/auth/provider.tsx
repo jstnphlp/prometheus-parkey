@@ -12,6 +12,7 @@ import { AppState } from 'react-native'
 import { createAuthRuntime, secrets } from './client'
 import type { AuthRuntime } from './client'
 import { authRedirectUrl, readEmailFlow } from './links'
+import { resendConfirmation } from './resend-confirmation'
 import { pendingFlowKey, sessionStorageKey } from './secure-storage'
 import { createSessionVerifier } from './session'
 import type { AuthSnapshot } from './session'
@@ -41,6 +42,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   })
   const [busy, setBusy] = useState(false)
   const operation = useRef(false)
+  const cleanupRequired = useRef(false)
   const recovery = useRef(false)
   const verifier = useRef<ReturnType<typeof createSessionVerifier> | null>(null)
 
@@ -49,8 +51,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const next = await createAuthRuntime()
       setRuntime(next)
       if (!next) setState({ status: 'unavailable', user: null })
+      return true
     } catch {
       setState({ status: 'error', user: null })
+      return false
     }
   }, [])
   useEffect(() => {
@@ -125,7 +129,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   async function action<T>(
     work: (current: AuthRuntime) => Promise<T>,
   ): Promise<T> {
-    if (!runtime || operation.current)
+    if (!runtime || operation.current || cleanupRequired.current)
       throw new Error('Authentication is not ready.')
     operation.current = true
     setBusy(true)
@@ -139,11 +143,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   async function emailFlow(
     kind: 'signup' | 'recovery',
+    email: string,
     work: () => Promise<{ error: unknown }>,
   ) {
     await secrets.setItem(
       pendingFlowKey,
-      JSON.stringify({ kind, createdAt: Date.now() }),
+      JSON.stringify({
+        kind,
+        createdAt: Date.now(),
+        email: email.trim().toLowerCase(),
+      }),
     )
     const result = await work()
     if (result.error) {
@@ -156,6 +165,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     state,
     busy,
     async retry() {
+      if (operation.current) return
+      if (cleanupRequired.current) {
+        try {
+          await value.signOut()
+        } catch {
+          /* signOut restores the error state for another retry. */
+        }
+        return
+      }
+      setState({ status: 'checking', user: null })
       if (runtime) await verifier.current?.verify()
       else await boot()
     },
@@ -176,7 +195,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       action(async (current) => {
         await current.storage.setRemember(false)
         let hasSession = false
-        await emailFlow('signup', async () => {
+        await emailFlow('signup', email, async () => {
           const result = await current.client.auth.signUp({
             email: email.trim(),
             password,
@@ -196,21 +215,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }),
     sendEmail: (email, kind) =>
       action(async (current) => {
-        if (
-          kind === 'signup' &&
-          !(await current.storage.getItem(`${sessionStorageKey}-code-verifier`))
-        )
-          throw invalidLink()
-        await emailFlow(kind, () =>
-          kind === 'recovery'
-            ? current.client.auth.resetPasswordForEmail(email.trim(), {
-                redirectTo: authRedirectUrl,
-              })
-            : current.client.auth.resend({
-                type: 'signup',
-                email: email.trim(),
-                options: { emailRedirectTo: authRedirectUrl },
-              }),
+        if (kind === 'signup') {
+          // A rejected/rate-limited resend must not invalidate the original link.
+          await resendConfirmation(secrets, current.storage, email, () =>
+            current.client.auth.resend({
+              type: 'signup',
+              email: email.trim(),
+              options: { emailRedirectTo: authRedirectUrl },
+            }),
+          )
+          return
+        }
+        await emailFlow(kind, email, () =>
+          current.client.auth.resetPasswordForEmail(email.trim(), {
+            redirectTo: authRedirectUrl,
+          }),
         )
       }),
     callback: (code) =>
@@ -248,13 +267,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (operation.current)
         throw new Error('Wait for the current request to finish.')
       operation.current = true
+      cleanupRequired.current = true
       setBusy(true)
       verifier.current?.cancel()
       recovery.current = false
       setState({ status: 'signed-out', user: null })
       try {
         if (!runtime) {
-          await boot()
+          if (!(await boot()))
+            throw new Error('Could not restart authentication.')
+          cleanupRequired.current = false
           return true
         }
         let cached: unknown = null
@@ -286,7 +308,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 .catch(() => ({ error: true }))
             ).error
           : null
-        await boot()
+        if (!(await boot()))
+          throw new Error('Could not restart authentication.')
+        cleanupRequired.current = false
         return !error
       } catch {
         setState({ status: 'error', user: null })

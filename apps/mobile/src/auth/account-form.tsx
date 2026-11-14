@@ -5,11 +5,14 @@ import { Keyboard, Pressable, StyleSheet, Text, View } from 'react-native'
 import type { TextInput } from 'react-native'
 
 import { BrandButton } from '../components/brand-button'
+import { BrandIcon } from '../components/brand-icon'
+import { usePopup } from '../components/popup-provider'
 import { useCompletion } from '../onboarding/use-completion'
 import { colors, fonts, typography } from '../theme'
 
 import { AuthShell } from './auth-shell'
 import { FormField } from './form-field'
+import { authErrorCode, authFeedback } from './feedback'
 import { useAuth } from './provider'
 import {
   authErrorMessage,
@@ -23,13 +26,16 @@ export function AccountForm({ mode }: { mode: 'register' | 'login' }) {
   const router = useRouter()
   const guest = useCompletion('/')
   const registering = mode === 'register'
+  const popup = usePopup()
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmation, setConfirmation] = useState('')
   const [remember, setRemember] = useState(false)
   const [attempted, setAttempted] = useState(false)
-  const [message, setMessage] = useState<string | null>(null)
+  const [serverPasswordError, setServerPasswordError] = useState<string | null>(
+    null,
+  )
   const [pending, setPending] = useState(false)
   const focused = useRef(false)
   const nameInput = useRef<ComponentRef<typeof TextInput>>(null)
@@ -52,9 +58,9 @@ export function AccountForm({ mode }: { mode: 'register' | 'login' }) {
     auth.state.status !== 'checking' && auth.state.status !== 'unavailable'
 
   async function submit() {
-    if (busy) return
+    if (busy || !focused.current) return
     setAttempted(true)
-    setMessage(null)
+    setServerPasswordError(null)
     if (registering && errors.name) {
       nameInput.current?.focus()
       return
@@ -91,19 +97,62 @@ export function AccountForm({ mode }: { mode: 'register' | 'login' }) {
         }
       }
     } catch (error) {
-      if (focused.current) setMessage(authErrorMessage(error))
+      if (!focused.current) return
+      if (registering && authErrorCode(error) === 'weak_password') {
+        setServerPasswordError(authErrorMessage(error))
+        passwordInput.current?.focus()
+        return
+      }
+      popup.show({
+        ...authFeedback(
+          error,
+          registering ? 'Could not create account' : 'Could not sign in',
+        ),
+        returnFocus: () => passwordInput.current?.focus(),
+        primary:
+          authErrorCode(error) === 'email_not_confirmed'
+            ? {
+                title: 'Resend email',
+                onPress: () => void resend(),
+                restoreFocus: false,
+              }
+            : { title: 'Try again' },
+      })
     }
   }
 
   async function resend() {
+    if (busy || !focused.current) return
     try {
       await auth.sendEmail(email, 'signup')
       if (focused.current)
-        setMessage(
-          'If confirmation is needed for this address, another email has been requested. Check spam too. Open the latest link on this device.',
-        )
+        popup.show({
+          tone: 'info',
+          title: 'Email requested',
+          message:
+            'If confirmation is needed, check your inbox and spam. Open the latest link on this device.',
+        })
     } catch (error) {
-      if (focused.current) setMessage(authErrorMessage(error))
+      if (focused.current)
+        popup.show({
+          ...authFeedback(error, 'Could not resend email'),
+          primary:
+            authErrorCode(error) === 'verification_request_missing'
+              ? {
+                  title: 'Start registration',
+                  onPress: () => {
+                    setPending(false)
+                    router.replace('/register')
+                  },
+                  restoreFocus: false,
+                }
+              : {
+                  title: 'Try again',
+                  onPress: () => void resend(),
+                  restoreFocus: false,
+                },
+          secondary: { title: 'Not now' },
+        })
     }
   }
 
@@ -134,15 +183,33 @@ export function AccountForm({ mode }: { mode: 'register' | 'login' }) {
     >
       {pending ? (
         <View style={styles.pending}>
+          <BrandIcon name="mail" color={colors.cyan} size={44} />
           <Text style={styles.body}>
-            If this address can register, a confirmation email will arrive. Open
-            the latest email link on this device. You can explore parking while
-            you wait.
+            If this address can register, check your inbox and spam. Open the
+            latest confirmation link on this device.
           </Text>
           <BrandButton
             title="Resend confirmation email"
             onPress={() => void resend()}
             busy={auth.busy}
+          />
+          <BrandButton
+            title="Didn't receive it?"
+            variant="text"
+            onPress={() =>
+              popup.show({
+                tone: 'info',
+                title: 'Check your inbox',
+                message:
+                  'Delivery may take a few minutes. If you already have an account, log in instead.',
+                primary: {
+                  title: 'Log In',
+                  onPress: () => router.replace('/login'),
+                  restoreFocus: false,
+                },
+                secondary: { title: 'Got it' },
+              })
+            }
           />
         </View>
       ) : (
@@ -151,7 +218,7 @@ export function AccountForm({ mode }: { mode: 'register' | 'login' }) {
             {registering ? (
               <FormField
                 label="Full name"
-                icon="◉"
+                icon="person"
                 value={name}
                 onChangeText={setName}
                 autoCapitalize="words"
@@ -168,7 +235,7 @@ export function AccountForm({ mode }: { mode: 'register' | 'login' }) {
             <FormField
               label="Email address"
               placeholder={registering ? 'Email address' : 'you@example.com'}
-              icon="✉"
+              icon="mail"
               value={email}
               onChangeText={setEmail}
               autoComplete="email"
@@ -183,10 +250,13 @@ export function AccountForm({ mode }: { mode: 'register' | 'login' }) {
             />
             <FormField
               label="Password"
-              icon="♙"
+              icon="lock"
               password
               value={password}
-              onChangeText={setPassword}
+              onChangeText={(value) => {
+                setPassword(value)
+                setServerPasswordError(null)
+              }}
               autoComplete={registering ? 'new-password' : 'current-password'}
               inputRef={passwordInput}
               accessibilityHint={
@@ -201,7 +271,7 @@ export function AccountForm({ mode }: { mode: 'register' | 'login' }) {
               error={
                 attempted
                   ? registering
-                    ? errors.password
+                    ? (serverPasswordError ?? errors.password)
                     : !password
                       ? 'Enter your password.'
                       : null
@@ -211,7 +281,7 @@ export function AccountForm({ mode }: { mode: 'register' | 'login' }) {
             {registering ? (
               <FormField
                 label="Confirm password"
-                icon="✉"
+                icon="shield-check"
                 password
                 value={confirmation}
                 onChangeText={setConfirmation}
@@ -236,7 +306,9 @@ export function AccountForm({ mode }: { mode: 'register' | 'login' }) {
                 style={styles.remember}
               >
                 <View style={styles.checkbox}>
-                  {remember ? <Text style={styles.check}>✓</Text> : null}
+                  {remember ? (
+                    <BrandIcon name="check" size={12} color={colors.plum} />
+                  ) : null}
                 </View>
                 <Text style={styles.optionText}>Remember me</Text>
               </Pressable>
@@ -252,12 +324,6 @@ export function AccountForm({ mode }: { mode: 'register' | 'login' }) {
               </Pressable>
             </View>
           ) : null}
-          {auth.state.status === 'unavailable' ? (
-            <Notice text="Secure sign-in is unavailable in this build. You can still explore parking." />
-          ) : null}
-          {auth.state.status === 'checking' ? (
-            <Notice text="Checking your secure session…" />
-          ) : null}
           {auth.state.status === 'error' ? (
             <BrandButton
               title="Retry session check"
@@ -272,31 +338,23 @@ export function AccountForm({ mode }: { mode: 'register' | 'login' }) {
             onPress={() => void submit()}
             style={[styles.primary, !registering && styles.loginPrimary]}
           />
-          <Text style={styles.guidance}>
-            {registering
-              ? passwordGuidance
-              : 'Remember me securely saves your session for app restarts. Your password is never stored.'}
-          </Text>
+          <BrandButton
+            title={registering ? 'Password requirements' : 'About Remember me'}
+            variant="text"
+            onPress={() =>
+              popup.show({
+                tone: 'info',
+                title: registering ? 'Choose a strong password' : 'Remember me',
+                message: registering
+                  ? passwordGuidance
+                  : 'Keeps your session in secure device storage after closing the app. Your password is never saved.',
+              })
+            }
+          />
         </>
       )}
-      {message || guest.error ? (
-        <Notice text={message ?? guest.error ?? ''} />
-      ) : null}
-      {!registering && message ? (
-        <BrandButton
-          title="Resend confirmation email"
-          variant="text"
-          busy={auth.busy}
-          onPress={() => {
-            if (emailProblem(email)) {
-              setAttempted(true)
-              emailInput.current?.focus()
-            } else void resend()
-          }}
-        />
-      ) : null}
       <BrandButton
-        title="Explore parking as a guest"
+        title="Explore parking"
         variant="text"
         onPress={guest.finish}
         disabled={auth.busy}
@@ -322,17 +380,6 @@ export function AccountForm({ mode }: { mode: 'register' | 'login' }) {
   )
 }
 
-export function Notice({ text }: { text: string }) {
-  return (
-    <Text
-      accessibilityRole="alert"
-      accessibilityLiveRegion="polite"
-      style={styles.notice}
-    >
-      {text}
-    </Text>
-  )
-}
 const styles = StyleSheet.create({
   fields: { marginTop: 33, gap: 6 },
   loginFields: { marginTop: 19 },
@@ -363,7 +410,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  check: { fontSize: 11, lineHeight: 12, color: colors.plum },
   forgot: { minHeight: 44, justifyContent: 'center' },
   optionText: {
     fontFamily: fonts.medium,
@@ -371,8 +417,6 @@ const styles = StyleSheet.create({
     lineHeight: 16,
     color: colors.onDarkMuted,
   },
-  guidance: { ...typography.accountBody, color: colors.white, marginTop: 16 },
-  notice: { ...typography.accountBody, color: colors.white, marginTop: 16 },
   guest: { marginTop: 18 },
   footer: {
     marginTop: 'auto',

@@ -10,6 +10,7 @@ import {
 import {
   authRedirectUrl,
   callbackCode,
+  canResendSignup,
   normalizeAuthLink,
   readEmailFlow,
 } from './links.ts'
@@ -52,7 +53,7 @@ test('server errors are safe, useful, and never echo raw server text or credenti
     /Confirm your email/,
   )
   assert.match(authErrorMessage({ code: 'invalid_credentials' }), /incorrect/)
-  assert.match(authErrorMessage({ code: 'weak_password' }), /8 characters/)
+  assert.match(authErrorMessage({ code: 'weak_password' }), /8\+ characters/)
   assert.match(authErrorMessage({ code: 'otp_expired' }), /expired/)
   assert.match(authErrorMessage({ code: 'over_email_send_rate_limit' }), /Wait/)
   assert.match(authErrorMessage(new TypeError('network down')), /connection/)
@@ -108,4 +109,47 @@ test('a recovery requires a bounded same-device flow, never URL-supplied claims'
     null,
   )
   assert.equal(readEmailFlow('invalid', 2000), null)
+})
+
+test('resend is bound to the original email, signup flow and local PKCE proof', () => {
+  const request = readEmailFlow(
+    JSON.stringify({
+      kind: 'signup',
+      createdAt: 1000,
+      email: 'driver@example.com',
+    }),
+    2000,
+  )
+  assert.equal(canResendSignup(request, ' Driver@example.com ', 'proof'), true)
+  assert.equal(canResendSignup(request, 'other@example.com', 'proof'), false)
+  assert.equal(canResendSignup(request, 'driver@example.com', null), false)
+  assert.equal(
+    canResendSignup(
+      { kind: 'recovery', createdAt: 1000, email: 'driver@example.com' },
+      'driver@example.com',
+      'proof',
+    ),
+    false,
+  )
+  assert.equal(
+    canResendSignup(
+      readEmailFlow(
+        JSON.stringify({
+          kind: 'signup',
+          createdAt: 1000,
+          email: 'driver@example.com',
+        }),
+        3601001,
+      ),
+      'driver@example.com',
+      'proof',
+    ),
+    false,
+  )
+  const legacy = readEmailFlow(
+    JSON.stringify({ kind: 'signup', createdAt: 1000 }),
+    2000,
+  )
+  assert.ok(legacy, 'existing Phase 2 confirmation links can still finish')
+  assert.equal(canResendSignup(legacy, 'driver@example.com', 'proof'), false)
 })

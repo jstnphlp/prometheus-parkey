@@ -1,12 +1,19 @@
 import { useRouter } from 'expo-router'
-import { Image, StyleSheet, Text, View } from 'react-native'
+import {
+  Image,
+  StyleSheet,
+  Text,
+  View,
+  useWindowDimensions,
+} from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-import compare from '../../assets/figma/onboarding/compare-preview.png'
-import discover from '../../assets/figma/onboarding/discover-illustration.png'
-import navigate from '../../assets/figma/onboarding/navigate-preview.png'
+import compare from '../../assets/figma/onboarding/phase3-compare.png'
+import discover from '../../assets/figma/onboarding/phase3-discover.png'
+import navigate from '../../assets/figma/onboarding/phase3-navigate.png'
 import { BrandButton } from '../components/brand-button'
 import { ScreenContainer } from '../components/screen-container'
-import { colors, radius, typography } from '../theme'
+import { colors, typography } from '../theme'
 
 import { BackButton } from './back-button'
 import { useCompletion } from './use-completion'
@@ -14,10 +21,10 @@ import { useCompletion } from './use-completion'
 const steps = {
   discover: {
     number: 1,
-    title: 'Find parking.\nGo places.',
-    copy: 'Explore mapped parking locations\nnear your destination.',
+    title: 'Accessible Parking Spots.',
+    copy: 'From street parking and shopping malls to restaurants, open parking lots, and hidden spots you never knew existed.',
     background: colors.dark,
-    muted: colors.onDarkMuted,
+    muted: colors.onPlumMuted,
     button: 'cyan',
     image: discover,
     imageLabel: 'Static illustration: discovering parking with Parkey',
@@ -36,8 +43,8 @@ const steps = {
   },
   navigate: {
     number: 3,
-    title: 'Find your way\nto parking.',
-    copy: 'Follow available directions and\ncheck the confirmed entrance.',
+    title: 'Your route. Your choice.',
+    copy: 'You can use your preferred navigation app to find your way to your parking spot.',
     background: colors.plum,
     muted: colors.onPlumMuted,
     button: 'white',
@@ -50,13 +57,51 @@ const steps = {
 export function OnboardingScreen({ step }: { step: keyof typeof steps }) {
   const page = steps[step]
   const router = useRouter()
-  const { finish, busy, error } = useCompletion('/register')
+  const { finish, busy } = useCompletion('/register')
+  const { width, height } = useWindowDimensions()
+  const insets = useSafeAreaInsets()
+  const artScale = Math.min(Math.min(width, 440) / 390, height / 844)
   return (
     <ScreenContainer
       backgroundColor={page.background}
-      contentStyle={styles.content}
-      overlay={<BackButton backgroundColor={page.background} />}
+      contentStyle={[
+        styles.content,
+        {
+          paddingTop: Math.max(64, 97 - insets.top),
+          paddingBottom: Math.max(24, 65 - insets.bottom),
+        },
+      ]}
+      overlay={
+        <View style={styles.navigation}>
+          <View style={styles.back}>
+            <BackButton backgroundColor={page.background} />
+          </View>
+          <BrandButton
+            title="Skip"
+            variant="text"
+            onPress={finish}
+            disabled={busy}
+          />
+        </View>
+      }
     >
+      <View style={[styles.artworkArea, { height: 351 * artScale }]}>
+        <Image
+          accessibilityRole="image"
+          accessibilityLabel={page.imageLabel}
+          source={page.image}
+          resizeMode="contain"
+          style={{
+            width: (step === 'navigate' ? 348 : 390) * artScale,
+            height:
+              (step === 'compare' ? 251 : step === 'navigate' ? 348 : 351) *
+              artScale,
+            marginTop:
+              (step === 'compare' ? 74 : step === 'navigate' ? 6 : 0) *
+              artScale,
+          }}
+        />
+      </View>
       <Text
         accessibilityRole="header"
         accessibilityLabel={`Step ${page.number} of 3. ${page.title.replace('\n', ' ')}`}
@@ -64,24 +109,15 @@ export function OnboardingScreen({ step }: { step: keyof typeof steps }) {
       >
         {page.title}
       </Text>
-      <Text style={[styles.copy, { color: page.muted }]}>{page.copy}</Text>
-      <View
+      <Text
         style={[
-          styles.artworkArea,
-          step === 'discover' && styles.discoverArtworkArea,
+          styles.copy,
+          step === 'discover' && styles.discoverCopy,
+          { color: page.muted },
         ]}
       >
-        <Image
-          accessibilityRole="image"
-          accessibilityLabel={page.imageLabel}
-          source={page.image}
-          resizeMode={step === 'discover' ? 'cover' : 'contain'}
-          style={[
-            styles.artwork,
-            step === 'discover' && styles.discoverArtwork,
-          ]}
-        />
-      </View>
+        {page.copy}
+      </Text>
       <View style={styles.controls}>
         <View
           accessible={false}
@@ -98,25 +134,9 @@ export function OnboardingScreen({ step }: { step: keyof typeof steps }) {
             />
           ))}
         </View>
-        <BrandButton
-          title="Skip"
-          variant="text"
-          onPress={finish}
-          disabled={busy}
-          style={styles.skip}
-        />
       </View>
-      {error ? (
-        <Text
-          accessibilityRole="alert"
-          accessibilityLiveRegion="polite"
-          style={styles.error}
-        >
-          {error}
-        </Text>
-      ) : null}
       <BrandButton
-        title={page.next ? 'Continue' : 'Create Account'}
+        title="Continue"
         variant={page.button}
         busy={busy}
         onPress={() => {
@@ -130,42 +150,46 @@ export function OnboardingScreen({ step }: { step: keyof typeof steps }) {
 }
 
 const styles = StyleSheet.create({
-  content: { paddingTop: 98, paddingBottom: 31 },
+  content: { paddingHorizontal: 28 },
+  navigation: {
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingRight: 7,
+  },
+  back: { flex: 1 },
   title: {
     ...typography.title,
     color: colors.white,
-    marginHorizontal: 2,
+    marginTop: 44,
   },
-  copy: { ...typography.body, marginTop: 35, marginHorizontal: 2 },
-  artworkArea: { flexGrow: 1, justifyContent: 'center', marginTop: 53 },
-  discoverArtworkArea: { marginLeft: -13, marginRight: -14 },
-  artwork: {
-    width: '100%',
-    // Clear Image's intrinsic bitmap height so the slot ratio controls layout.
-    height: undefined,
-    aspectRatio: 338 / 274,
+  copy: {
+    ...typography.body,
+    minHeight: 57,
+    marginTop: 20,
+    marginHorizontal: 3,
   },
-  discoverArtwork: {
-    aspectRatio: 365 / 274,
-    borderRadius: radius.rasterArtwork,
+  discoverCopy: { ...typography.welcomeBody },
+  artworkArea: { marginHorizontal: -28, alignItems: 'center' },
+  controls: {
+    flexGrow: 1,
+    minHeight: 5,
+    marginTop: 34,
+    justifyContent: 'flex-end',
   },
-  controls: { minHeight: 44, marginTop: 11, justifyContent: 'center' },
   progress: {
-    position: 'absolute',
-    bottom: 0,
     alignSelf: 'center',
     flexDirection: 'row',
-    gap: 9,
+    gap: 6,
   },
   segment: {
-    width: 33,
+    width: 5,
     height: 5,
     borderRadius: 3,
     backgroundColor: colors.progressMuted,
     opacity: 0.48,
   },
-  activeSegment: { backgroundColor: colors.white, opacity: 1 },
-  skip: { alignSelf: 'flex-end', paddingHorizontal: 2 },
-  button: { marginTop: 29, marginHorizontal: 2 },
-  error: { ...typography.body, color: colors.white, marginTop: 16 },
+  activeSegment: { width: 23, backgroundColor: colors.white, opacity: 1 },
+  button: { marginTop: 25 },
 })

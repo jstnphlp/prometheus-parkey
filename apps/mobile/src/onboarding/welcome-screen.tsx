@@ -1,5 +1,8 @@
 import { useRouter } from 'expo-router'
-import { StyleSheet, Text, View } from 'react-native'
+import { Image, StyleSheet, Text, View } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
+
+import wordmark from '../../assets/figma/onboarding/phase3-welcome-wordmark.png'
 
 import { BrandButton } from '../components/brand-button'
 import { BrandLogo } from '../components/brand-logo'
@@ -8,10 +11,17 @@ import { colors, radius, typography } from '../theme'
 
 export function WelcomeScreen() {
   const router = useRouter()
+  const insets = useSafeAreaInsets()
   return (
     <ScreenContainer
       backgroundColor={colors.plum}
-      contentStyle={styles.content}
+      contentStyle={[
+        styles.content,
+        {
+          paddingTop: Math.max(24, 61 - insets.top),
+          paddingBottom: Math.max(24, 65 - insets.bottom),
+        },
+      ]}
       overlay={
         <View style={styles.loginBackdrop}>
           <BrandButton
@@ -22,18 +32,24 @@ export function WelcomeScreen() {
         </View>
       }
     >
+      <Text accessibilityRole="header" style={styles.heading}>
+        Welcome
+      </Text>
       <View style={styles.hero}>
-        <BrandLogo variant="welcome" style={styles.logo} />
-        <Text accessibilityLabel="Parkey" style={styles.wordmark}>
-          park<Text style={styles.cyan}>ey</Text>
-        </Text>
-        <Text accessibilityRole="header" style={styles.tagline}>
-          Designed Around the Driver.
-        </Text>
-        <Text style={styles.description}>
-          Find parking near your destination. Including street parking, open
-          lots, obscure spots.
-        </Text>
+        <View
+          accessible
+          accessibilityRole="image"
+          accessibilityLabel="Parkey"
+          style={styles.lockup}
+        >
+          <BrandLogo variant="welcome" style={styles.logo} />
+          <Image
+            source={wordmark}
+            resizeMode="contain"
+            style={styles.wordmark}
+          />
+        </View>
+        <Text style={styles.tagline}>Designed Around the Driver</Text>
       </View>
       <BrandButton
         title="Get Started"
@@ -45,42 +61,32 @@ export function WelcomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  content: { paddingBottom: 29 },
-  hero: { flexGrow: 1, justifyContent: 'center', paddingTop: 72 },
-  // Preserve the original logo's optical offset without changing its dimensions.
-  logo: { transform: [{ translateX: 13 }] },
+  content: { paddingHorizontal: 29 },
+  heading: { ...typography.subtitle, color: colors.white, textAlign: 'center' },
+  hero: { flexGrow: 1, minHeight: 240, justifyContent: 'center' },
+  lockup: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'center',
+    gap: 3,
+    transform: [{ translateX: 7 }],
+  },
+  logo: { width: 42, height: 47, alignSelf: 'flex-start' },
   loginBackdrop: { backgroundColor: colors.plum },
   wordmark: {
-    ...typography.wordmark,
-    color: colors.white,
-    textAlign: 'center',
-    // The original wordmark's text box overlaps the logo by 12pt.
-    marginTop: -12,
-    marginLeft: 4,
+    width: 175,
+    height: 62,
   },
-  cyan: { color: colors.cyan },
   tagline: {
-    ...typography.subtitle,
-    color: colors.white,
-    textAlign: 'center',
-    marginTop: -3,
-    alignSelf: 'center',
-    width: '100%',
-    maxWidth: 314,
-    marginLeft: 4,
-  },
-  description: {
     ...typography.welcomeBody,
     color: colors.onPlumMuted,
     textAlign: 'center',
-    marginTop: 7,
     alignSelf: 'center',
     width: '100%',
     maxWidth: 306,
     marginLeft: 4,
   },
   button: {
-    marginHorizontal: 6,
     minHeight: 50,
     borderRadius: radius.compactButton,
   },

@@ -5,26 +5,23 @@ import { BackHandler, Keyboard, StyleSheet, Text, View } from 'react-native'
 import type { TextInput } from 'react-native'
 
 import { BrandButton } from '../components/brand-button'
+import { BrandIcon } from '../components/brand-icon'
+import { usePopup } from '../components/popup-provider'
 import { useCompletion } from '../onboarding/use-completion'
 import { colors, typography } from '../theme'
 
-import { Notice } from './account-form'
 import { AuthShell } from './auth-shell'
+import { authFeedback } from './feedback'
 import { FormField } from './form-field'
 import { useAuth } from './provider'
-import {
-  authErrorMessage,
-  emailProblem,
-  passwordGuidance,
-  passwordProblem,
-} from './validation'
+import { emailProblem, passwordGuidance, passwordProblem } from './validation'
 
 export function ForgotPasswordScreen() {
   const auth = useAuth()
   const guest = useCompletion('/')
+  const popup = usePopup()
+  const emailInput = useRef<ComponentRef<typeof TextInput>>(null)
   const [email, setEmail] = useState('')
-  const [attempted, setAttempted] = useState(false)
-  const [message, setMessage] = useState<string | null>(null)
   const [requested, setRequested] = useState(false)
   const focused = useRef(false)
   useFocusEffect(
@@ -37,15 +34,32 @@ export function ForgotPasswordScreen() {
   )
   async function send() {
     if (auth.busy || guest.busy) return
-    setAttempted(true)
-    setMessage(null)
-    if (emailProblem(email)) return
+    const problem = emailProblem(email)
+    if (problem) {
+      popup.show({
+        tone: 'warning',
+        title: 'Check your email address',
+        message: problem,
+        returnFocus: () => emailInput.current?.focus(),
+      })
+      return
+    }
     Keyboard.dismiss()
     try {
       await auth.sendEmail(email, 'recovery')
       if (focused.current) setRequested(true)
     } catch (error) {
-      if (focused.current) setMessage(authErrorMessage(error))
+      if (focused.current)
+        popup.show({
+          ...authFeedback(error, 'Could not send reset email'),
+          primary: {
+            title: 'Retry',
+            onPress: () => void send(),
+            restoreFocus: false,
+          },
+          secondary: { title: 'Not now' },
+          returnFocus: () => emailInput.current?.focus(),
+        })
     }
   }
   if (auth.state.status === 'signed-in') return <Redirect href="/account" />
@@ -61,14 +75,13 @@ export function ForgotPasswordScreen() {
       <View style={styles.form}>
         {requested ? (
           <Text style={styles.body}>
-            If an account exists for this address, a reset email has been
-            requested. Check spam too. Open the link on the device where you
-            requested it. Parking discovery remains available.
+            If an account exists, check your inbox and spam. Open the latest
+            reset link on this device.
           </Text>
         ) : null}
         <FormField
           label="Email address"
-          icon="✉"
+          icon="mail"
           value={email}
           onChangeText={(value) => {
             setEmail(value)
@@ -78,8 +91,8 @@ export function ForgotPasswordScreen() {
           keyboardType="email-address"
           returnKeyType="send"
           maxLength={254}
+          inputRef={emailInput}
           editable={!auth.busy}
-          error={attempted ? emailProblem(email) : null}
           onSubmitEditing={() => void send()}
         />
         <BrandButton
@@ -92,14 +105,8 @@ export function ForgotPasswordScreen() {
           }
           onPress={() => void send()}
         />
-        {auth.state.status === 'unavailable' ? (
-          <Notice text="Secure authentication is unavailable in this build. Use an Android or iOS build with the public Supabase configuration." />
-        ) : null}
-        {message || guest.error ? (
-          <Notice text={message ?? guest.error ?? ''} />
-        ) : null}
         <BrandButton
-          title="Explore parking as a guest"
+          title="Explore parking"
           variant="text"
           disabled={auth.busy}
           busy={guest.busy}
@@ -114,12 +121,12 @@ export function ResetPasswordScreen() {
   const auth = useAuth()
   const { busy, signOut } = auth
   const router = useRouter()
+  const popup = usePopup()
   const [password, setPassword] = useState('')
   const [confirmation, setConfirmation] = useState('')
-  const [attempted, setAttempted] = useState(false)
-  const [message, setMessage] = useState<string | null>(null)
   const [done, setDone] = useState(false)
   const focused = useRef(false)
+  const passwordInput = useRef<ComponentRef<typeof TextInput>>(null)
   const confirmationInput = useRef<ComponentRef<typeof TextInput>>(null)
   const cancel = useCallback(async () => {
     if (busy) return
@@ -128,9 +135,13 @@ export function ResetPasswordScreen() {
       if (focused.current) router.replace('/login')
     } catch {
       if (focused.current)
-        setMessage('Could not clear this recovery session. Try again.')
+        popup.show({
+          tone: 'error',
+          title: 'Could not sign out',
+          message: 'Could not clear secure storage. Please try again.',
+        })
     }
-  }, [busy, signOut, router])
+  }, [busy, signOut, router, popup])
   useFocusEffect(
     useCallback(() => {
       focused.current = true
@@ -152,10 +163,25 @@ export function ResetPasswordScreen() {
   )
   async function save() {
     if (auth.busy) return
-    setAttempted(true)
-    setMessage(null)
-    if (passwordProblem(password) || !confirmation || password !== confirmation)
+    const problem = passwordProblem(password)
+    if (problem) {
+      popup.show({
+        tone: 'warning',
+        title: 'Choose a stronger password',
+        message: problem,
+        returnFocus: () => passwordInput.current?.focus(),
+      })
       return
+    }
+    if (!confirmation || password !== confirmation) {
+      popup.show({
+        tone: 'warning',
+        title: 'Passwords do not match',
+        message: 'Enter the same password in both fields.',
+        returnFocus: () => confirmationInput.current?.focus(),
+      })
+      return
+    }
     Keyboard.dismiss()
     try {
       await auth.updatePassword(password)
@@ -165,19 +191,34 @@ export function ResetPasswordScreen() {
       if (focused.current) {
         setDone(true)
         if (!revoked)
-          setMessage(
-            'Signed out on this device. Server sign-out could not be confirmed.',
-          )
+          popup.show({
+            tone: 'warning',
+            title: 'Signed out on this device',
+            message:
+              'Server sign-out could not be confirmed. Reconnect before using other sessions.',
+          })
       }
     } catch (error) {
-      if (focused.current) setMessage(authErrorMessage(error))
+      if (focused.current)
+        popup.show({
+          ...authFeedback(error, 'Could not update password'),
+          returnFocus: () => passwordInput.current?.focus(),
+          primary: {
+            title: 'Retry',
+            onPress: () => void save(),
+            restoreFocus: false,
+          },
+          secondary: { title: 'Not now' },
+        })
     }
   }
   const authorized = auth.state.status === 'recovery'
   return (
     <AuthShell
       title={done ? 'Password changed' : 'Choose a new password'}
-      subtitle={done ? 'Log in with your new password' : passwordGuidance}
+      subtitle={
+        done ? 'Log in with your new password' : 'Secure your Parkey account'
+      }
       onBack={() => void cancel()}
     >
       <View style={styles.form}>
@@ -190,32 +231,27 @@ export function ResetPasswordScreen() {
           <>
             <FormField
               label="New password"
-              icon="♙"
+              icon="lock"
               password
               value={password}
               onChangeText={setPassword}
               autoComplete="new-password"
               accessibilityHint={passwordGuidance}
               editable={!auth.busy}
-              error={attempted ? passwordProblem(password) : null}
+              inputRef={passwordInput}
               returnKeyType="next"
               submitBehavior="submit"
               onSubmitEditing={() => confirmationInput.current?.focus()}
             />
             <FormField
               label="Confirm password"
-              icon="✉"
+              icon="shield-check"
               password
               value={confirmation}
               onChangeText={setConfirmation}
               autoComplete="new-password"
               editable={!auth.busy}
               inputRef={confirmationInput}
-              error={
-                attempted && password !== confirmation
-                  ? 'Passwords must match.'
-                  : null
-              }
               returnKeyType="go"
               onSubmitEditing={() => void save()}
             />
@@ -224,16 +260,27 @@ export function ResetPasswordScreen() {
               busy={auth.busy}
               onPress={() => void save()}
             />
+            <BrandButton
+              title="Password requirements"
+              variant="text"
+              onPress={() =>
+                popup.show({
+                  tone: 'info',
+                  title: 'Choose a strong password',
+                  message: passwordGuidance,
+                  returnFocus: () => passwordInput.current?.focus(),
+                })
+              }
+            />
           </>
         ) : (
           <>
-            <Notice
-              text={
-                auth.state.status === 'checking'
-                  ? 'Checking your secure recovery session…'
-                  : 'A verified reset link is required. Request a new email from this device.'
-              }
-            />
+            <BrandIcon name="lock" color={colors.cyan} size={44} />
+            <Text style={styles.body}>
+              {auth.state.status === 'checking'
+                ? 'Checking session…'
+                : 'Open a reset link from this device.'}
+            </Text>
             {auth.state.status === 'error' ? (
               <BrandButton
                 title="Retry session check"
@@ -246,7 +293,6 @@ export function ResetPasswordScreen() {
             />
           </>
         )}
-        {message ? <Notice text={message} /> : null}
         {!done ? (
           <BrandButton
             title="Cancel password reset"

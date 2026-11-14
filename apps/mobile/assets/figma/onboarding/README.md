@@ -23,3 +23,23 @@ data. The current Welcome node has no animation slot. Replace only the onboardin
 illustration slots when approved animation assets are supplied; respect
 the platform reduced-motion preference. Native status/navigation bars replace
 the Figma phone chrome; no status icons or home indicator are exported.
+
+## Phase 3 current Figma exports
+
+The owner deferred final animations and requested the current Figma artwork.
+These PNG renders were exported through Figma MCP with the source layout's
+clipping preserved; no replacement artwork was generated.
+
+| File                          | Source node            | Export dimensions |
+| ----------------------------- | ---------------------- | ----------------- |
+| `phase3-discover.png`         | `70:553` in `70:537`   | 390 × 351         |
+| `phase3-compare.png`          | `94:936` in `94:920`   | 390 × 251         |
+| `phase3-navigate.png`         | `103:996` in `103:980` | 348 × 348         |
+| `phase3-welcome-wordmark.png` | `70:428` in `70:333`   | 175 × 62          |
+
+The compact Welcome lockup combines the existing original logo with the exact
+rendered Baloo 2 wordmark glyphs. The three scene exports replace the older
+preview slots in the UI; the earlier files remain as Phase 1 source evidence.
+These are static illustrations, including illustrative parking signs, and do
+not represent live prices or availability. Final loop/animation acceptance is
+deferred until approved files are supplied. No remote asset URL is used at runtime.

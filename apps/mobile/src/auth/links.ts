@@ -1,5 +1,9 @@
 export const authRedirectUrl = 'parkey://auth/callback'
-export type EmailFlow = { kind: 'signup' | 'recovery'; createdAt: number }
+export type EmailFlow = {
+  kind: 'signup' | 'recovery'
+  createdAt: number
+  email?: string
+}
 export function readEmailFlow(
   value: string | null,
   now = Date.now(),
@@ -17,11 +21,31 @@ export function readEmailFlow(
       parsed.createdAt <= now &&
       now - parsed.createdAt <= 60 * 60 * 1000
     )
-      return { kind: parsed.kind, createdAt: parsed.createdAt }
+      return {
+        kind: parsed.kind,
+        createdAt: parsed.createdAt,
+        ...('email' in parsed && typeof parsed.email === 'string'
+          ? { email: parsed.email }
+          : {}),
+      }
   } catch {
     /* A corrupt or expired flow cannot authorize a recovery. */
   }
   return null
+}
+
+// Only resend against the signup and PKCE proof created on this device.
+// Legacy Phase 2 requests can still complete a callback, but must restart to resend.
+export function canResendSignup(
+  flow: EmailFlow | null,
+  email: string,
+  proof: string | null,
+): boolean {
+  return Boolean(
+    flow?.kind === 'signup' &&
+    flow.email === email.trim().toLowerCase() &&
+    proof,
+  )
 }
 
 export function callbackCode(params: Record<string, unknown>): string | null {

@@ -1,5 +1,5 @@
 export const passwordGuidance =
-  'Use at least 8 characters, an uppercase letter, a lowercase letter and a special character.'
+  '8+ characters with uppercase, lowercase and a special character.'
 
 export function emailProblem(email: string): string | null {
   return email.trim().length <= 254 &&
@@ -44,9 +44,9 @@ export function authErrorMessage(error: unknown): string {
     case 'invalid_credentials':
       return 'Email or password is incorrect. Please try again.'
     case 'email_not_confirmed':
-      return 'Confirm your email before logging in. You can request another confirmation email below.'
+      return 'Confirm your email, then try logging in.'
     case 'weak_password':
-      return `This password was not accepted. ${passwordGuidance} Avoid common or compromised passwords.`
+      return `${passwordGuidance} Avoid common passwords.`
     case 'same_password':
       return 'Choose a password you have not used for this account.'
     case 'over_request_rate_limit':
@@ -57,7 +57,15 @@ export function authErrorMessage(error: unknown): string {
     case 'flow_state_not_found':
     case 'bad_code_verifier':
     case 'pkce_code_verifier_not_found':
-      return 'This link is expired or cannot be verified on this device. Request a new email from this app.'
+      return 'This link expired or belongs to another device. Request a new link here.'
+    case 'verification_request_missing':
+      return 'Start registration on this device to request a new confirmation link.'
+    case 'email_address_not_authorized':
+      return 'Email delivery is not configured for this address. Please try later.'
+    case 'email_address_not_valid':
+      return 'This email address cannot receive verification messages.'
+    case 'unexpected_failure':
+      return 'The service could not process this request. Try again later.'
     case 'user_banned':
       return 'This account cannot sign in. Contact Parkey support.'
     case 'signup_disabled':

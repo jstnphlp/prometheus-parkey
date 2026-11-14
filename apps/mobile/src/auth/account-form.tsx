@@ -1,16 +1,30 @@
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import type { ComponentRef } from 'react'
 import { Redirect, useFocusEffect, useRouter } from 'expo-router'
-import { Keyboard, Pressable, StyleSheet, Text, View } from 'react-native'
+import {
+  AppState,
+  Keyboard,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native'
 import type { TextInput } from 'react-native'
 
 import { BrandButton } from '../components/brand-button'
-import { useCompletion } from '../onboarding/use-completion'
+import { BrandIcon } from '../components/brand-icon'
+import { usePopup } from '../components/popup-provider'
 import { colors, fonts, typography } from '../theme'
 
 import { AuthShell } from './auth-shell'
 import { FormField } from './form-field'
+import { authErrorCode, authFeedback } from './feedback'
 import { useAuth } from './provider'
+import { PasswordRequirements } from './password-requirements'
+import { PendingConfirmation } from './pending-confirmation'
+import { SignedInRedirect } from './signed-in-redirect'
+import { SocialButtons } from './social-buttons'
+import type { SocialProvider } from './oauth-policy'
 import {
   authErrorMessage,
   emailProblem,
@@ -21,21 +35,32 @@ import {
 export function AccountForm({ mode }: { mode: 'register' | 'login' }) {
   const auth = useAuth()
   const router = useRouter()
-  const guest = useCompletion('/')
   const registering = mode === 'register'
+  const popup = usePopup()
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmation, setConfirmation] = useState('')
   const [remember, setRemember] = useState(false)
   const [attempted, setAttempted] = useState(false)
-  const [message, setMessage] = useState<string | null>(null)
+  const [serverPasswordError, setServerPasswordError] = useState<string | null>(
+    null,
+  )
   const [pending, setPending] = useState(false)
   const focused = useRef(false)
   const nameInput = useRef<ComponentRef<typeof TextInput>>(null)
   const emailInput = useRef<ComponentRef<typeof TextInput>>(null)
   const passwordInput = useRef<ComponentRef<typeof TextInput>>(null)
   const confirmationInput = useRef<ComponentRef<typeof TextInput>>(null)
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', (state) => {
+      if (state !== 'active') {
+        setPassword('')
+        setConfirmation('')
+      }
+    })
+    return () => subscription.remove()
+  }, [])
   useFocusEffect(
     useCallback(() => {
       focused.current = true
@@ -47,14 +72,14 @@ export function AccountForm({ mode }: { mode: 'register' | 'login' }) {
     }, []),
   )
   const errors = registrationProblems({ name, email, password, confirmation })
-  const busy = auth.busy || guest.busy
+  const busy = auth.busy
   const ready =
     auth.state.status !== 'checking' && auth.state.status !== 'unavailable'
 
   async function submit() {
-    if (busy) return
+    if (busy || !focused.current) return
     setAttempted(true)
-    setMessage(null)
+    setServerPasswordError(null)
     if (registering && errors.name) {
       nameInput.current?.focus()
       return
@@ -76,10 +101,10 @@ export function AccountForm({ mode }: { mode: 'register' | 'login' }) {
       if (registering) {
         const signedIn = await auth.signUp(name, email, password)
         if (!focused.current) return
-        setPassword('')
         setConfirmation('')
-        if (signedIn) router.replace('/account')
-        else {
+        if (signedIn) {
+          setPassword('')
+        } else {
           setPending(true)
           setAttempted(false)
         }
@@ -87,27 +112,79 @@ export function AccountForm({ mode }: { mode: 'register' | 'login' }) {
         await auth.signIn(email, password, remember)
         if (focused.current) {
           setPassword('')
-          router.replace('/account')
         }
       }
     } catch (error) {
-      if (focused.current) setMessage(authErrorMessage(error))
+      if (!focused.current) return
+      if (registering && authErrorCode(error) === 'weak_password') {
+        setServerPasswordError(authErrorMessage(error))
+        passwordInput.current?.focus()
+        return
+      }
+      popup.show({
+        ...authFeedback(
+          error,
+          registering ? 'Could not create account' : 'Could not sign in',
+        ),
+        returnFocus: () => passwordInput.current?.focus(),
+        primary:
+          authErrorCode(error) === 'email_not_confirmed'
+            ? {
+                title: 'Resend email',
+                onPress: () => void resend(),
+                restoreFocus: false,
+              }
+            : { title: 'Try again' },
+      })
     }
   }
 
   async function resend() {
+    if (busy || !focused.current) return
     try {
       await auth.sendEmail(email, 'signup')
       if (focused.current)
-        setMessage(
-          'If confirmation is needed for this address, another email has been requested. Check spam too. Open the latest link on this device.',
-        )
+        popup.show({
+          tone: 'info',
+          title: 'Email requested',
+          message:
+            'If confirmation is needed, check your inbox and spam. You can confirm on any device.',
+        })
     } catch (error) {
-      if (focused.current) setMessage(authErrorMessage(error))
+      if (focused.current)
+        popup.show({
+          ...authFeedback(error, 'Could not resend email'),
+          primary:
+            authErrorCode(error) === 'verification_request_missing'
+              ? {
+                  title: 'Start registration',
+                  onPress: () => {
+                    setPending(false)
+                    router.replace('/register')
+                  },
+                  restoreFocus: false,
+                }
+              : {
+                  title: 'Try again',
+                  onPress: () => void resend(),
+                  restoreFocus: false,
+                },
+          secondary: { title: 'Not now' },
+        })
     }
   }
 
-  if (auth.state.status === 'signed-in') return <Redirect href="/account" />
+  async function socialSignIn(provider: SocialProvider) {
+    if (busy || !focused.current) return
+    Keyboard.dismiss()
+    try {
+      await auth.signInWithProvider(provider, !registering && remember)
+    } catch (error) {
+      if (focused.current) popup.show(authFeedback(error, 'Could not sign in'))
+    }
+  }
+
+  if (auth.state.status === 'signed-in') return <SignedInRedirect />
   if (auth.state.status === 'recovery')
     return <Redirect href="/reset-password" />
   return (
@@ -133,25 +210,19 @@ export function AccountForm({ mode }: { mode: 'register' | 'login' }) {
       }
     >
       {pending ? (
-        <View style={styles.pending}>
-          <Text style={styles.body}>
-            If this address can register, a confirmation email will arrive. Open
-            the latest email link on this device. You can explore parking while
-            you wait.
-          </Text>
-          <BrandButton
-            title="Resend confirmation email"
-            onPress={() => void resend()}
-            busy={auth.busy}
-          />
-        </View>
+        <PendingConfirmation
+          email={email}
+          password={password}
+          setPassword={setPassword}
+          resend={resend}
+        />
       ) : (
         <>
           <View style={[styles.fields, !registering && styles.loginFields]}>
             {registering ? (
               <FormField
                 label="Full name"
-                icon="◉"
+                icon="person"
                 value={name}
                 onChangeText={setName}
                 autoCapitalize="words"
@@ -168,7 +239,7 @@ export function AccountForm({ mode }: { mode: 'register' | 'login' }) {
             <FormField
               label="Email address"
               placeholder={registering ? 'Email address' : 'you@example.com'}
-              icon="✉"
+              icon="mail"
               value={email}
               onChangeText={setEmail}
               autoComplete="email"
@@ -183,10 +254,13 @@ export function AccountForm({ mode }: { mode: 'register' | 'login' }) {
             />
             <FormField
               label="Password"
-              icon="♙"
+              icon="lock"
               password
               value={password}
-              onChangeText={setPassword}
+              onChangeText={(value) => {
+                setPassword(value)
+                setServerPasswordError(null)
+              }}
               autoComplete={registering ? 'new-password' : 'current-password'}
               inputRef={passwordInput}
               accessibilityHint={
@@ -201,17 +275,21 @@ export function AccountForm({ mode }: { mode: 'register' | 'login' }) {
               error={
                 attempted
                   ? registering
-                    ? errors.password
+                    ? (serverPasswordError ??
+                      (errors.password
+                        ? 'Meet the password requirements below.'
+                        : null))
                     : !password
                       ? 'Enter your password.'
                       : null
                   : null
               }
             />
+            {registering ? <PasswordRequirements password={password} /> : null}
             {registering ? (
               <FormField
                 label="Confirm password"
-                icon="✉"
+                icon="shield-check"
                 password
                 value={confirmation}
                 onChangeText={setConfirmation}
@@ -236,7 +314,9 @@ export function AccountForm({ mode }: { mode: 'register' | 'login' }) {
                 style={styles.remember}
               >
                 <View style={styles.checkbox}>
-                  {remember ? <Text style={styles.check}>✓</Text> : null}
+                  {remember ? (
+                    <BrandIcon name="check" size={12} color={colors.plum} />
+                  ) : null}
                 </View>
                 <Text style={styles.optionText}>Remember me</Text>
               </Pressable>
@@ -252,12 +332,6 @@ export function AccountForm({ mode }: { mode: 'register' | 'login' }) {
               </Pressable>
             </View>
           ) : null}
-          {auth.state.status === 'unavailable' ? (
-            <Notice text="Secure sign-in is unavailable in this build. You can still explore parking." />
-          ) : null}
-          {auth.state.status === 'checking' ? (
-            <Notice text="Checking your secure session…" />
-          ) : null}
           {auth.state.status === 'error' ? (
             <BrandButton
               title="Retry session check"
@@ -268,41 +342,17 @@ export function AccountForm({ mode }: { mode: 'register' | 'login' }) {
           <BrandButton
             title={registering ? 'Create Account' : 'Log In'}
             busy={auth.busy}
-            disabled={!ready || guest.busy}
+            disabled={!ready}
             onPress={() => void submit()}
             style={[styles.primary, !registering && styles.loginPrimary]}
           />
-          <Text style={styles.guidance}>
-            {registering
-              ? passwordGuidance
-              : 'Remember me securely saves your session for app restarts. Your password is never stored.'}
-          </Text>
+          <SocialButtons
+            providers={auth.socialProviders}
+            disabled={busy || !ready}
+            onPress={(provider) => void socialSignIn(provider)}
+          />
         </>
       )}
-      {message || guest.error ? (
-        <Notice text={message ?? guest.error ?? ''} />
-      ) : null}
-      {!registering && message ? (
-        <BrandButton
-          title="Resend confirmation email"
-          variant="text"
-          busy={auth.busy}
-          onPress={() => {
-            if (emailProblem(email)) {
-              setAttempted(true)
-              emailInput.current?.focus()
-            } else void resend()
-          }}
-        />
-      ) : null}
-      <BrandButton
-        title="Explore parking as a guest"
-        variant="text"
-        onPress={guest.finish}
-        disabled={auth.busy}
-        busy={guest.busy}
-        style={styles.guest}
-      />
       <View style={styles.footer}>
         <Text style={[styles.optionText, registering && styles.plumMuted]}>
           {registering ? 'Already have an account?' : "Don't have an account?"}
@@ -322,17 +372,6 @@ export function AccountForm({ mode }: { mode: 'register' | 'login' }) {
   )
 }
 
-export function Notice({ text }: { text: string }) {
-  return (
-    <Text
-      accessibilityRole="alert"
-      accessibilityLiveRegion="polite"
-      style={styles.notice}
-    >
-      {text}
-    </Text>
-  )
-}
 const styles = StyleSheet.create({
   fields: { marginTop: 33, gap: 6 },
   loginFields: { marginTop: 19 },
@@ -363,7 +402,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  check: { fontSize: 11, lineHeight: 12, color: colors.plum },
   forgot: { minHeight: 44, justifyContent: 'center' },
   optionText: {
     fontFamily: fonts.medium,
@@ -371,9 +409,6 @@ const styles = StyleSheet.create({
     lineHeight: 16,
     color: colors.onDarkMuted,
   },
-  guidance: { ...typography.accountBody, color: colors.white, marginTop: 16 },
-  notice: { ...typography.accountBody, color: colors.white, marginTop: 16 },
-  guest: { marginTop: 18 },
   footer: {
     marginTop: 'auto',
     paddingTop: 28,
@@ -385,6 +420,4 @@ const styles = StyleSheet.create({
   },
   alternate: { minHeight: 44, minWidth: 66, justifyContent: 'center' },
   alternateText: { ...typography.link, fontSize: 12, color: colors.white },
-  pending: { marginTop: 32, gap: 24 },
-  body: { ...typography.body, color: colors.white },
 })

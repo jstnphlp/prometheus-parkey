@@ -10,6 +10,8 @@ import {
 } from 'react-native'
 import type { TextInputProps } from 'react-native'
 
+import { BrandIcon } from '../components/brand-icon'
+import type { BrandIconName } from '../components/brand-icon'
 import { colors, fonts, radius, typography } from '../theme'
 
 export function FormField({
@@ -21,13 +23,14 @@ export function FormField({
   ...props
 }: TextInputProps & {
   label: string
-  icon: string
+  icon: BrandIconName
   error?: string | null
   password?: boolean
   inputRef?: Ref<ComponentRef<typeof TextInput>>
 }) {
   const [visible, setVisible] = useState(false)
   const { fontScale } = useWindowDimensions()
+  const fieldId = `auth-${label.toLowerCase().replaceAll(' ', '-')}`
   return (
     <View style={styles.group}>
       {fontScale >= 1.3 ? (
@@ -40,23 +43,35 @@ export function FormField({
           {label}
         </Text>
       ) : null}
-      <View style={styles.field}>
-        <Text accessible={false} style={styles.icon}>
-          {icon}
-        </Text>
-        <TextInput
-          {...props}
-          ref={inputRef}
-          accessibilityLabel={label}
-          accessibilityHint={error || props.accessibilityHint}
-          placeholder={props.placeholder ?? label}
-          placeholderTextColor={fieldColors.ink}
-          secureTextEntry={password && !visible}
-          autoCorrect={false}
-          autoCapitalize={props.autoCapitalize ?? 'none'}
-          selectionColor={fieldColors.icon}
-          style={styles.input}
-        />
+      <View
+        testID={`${fieldId}-container`}
+        style={[
+          styles.field,
+          { height: Math.max(50, Math.ceil(18 * fontScale + 28)) },
+        ]}
+      >
+        <View testID={`${fieldId}-icon`} style={styles.icon}>
+          <BrandIcon name={icon} />
+        </View>
+        <View style={styles.inputSlot}>
+          <TextInput
+            {...props}
+            ref={inputRef}
+            accessibilityLabel={label}
+            accessibilityHint={error || props.accessibilityHint}
+            placeholder={props.placeholder ?? label}
+            placeholderTextColor={fieldColors.ink}
+            secureTextEntry={password && !visible}
+            multiline={false}
+            numberOfLines={1}
+            scrollEnabled
+            underlineColorAndroid="transparent"
+            autoCorrect={false}
+            autoCapitalize={props.autoCapitalize ?? 'none'}
+            selectionColor={fieldColors.icon}
+            style={styles.input}
+          />
+        </View>
         {password ? (
           <Pressable
             accessibilityRole="button"
@@ -66,7 +81,7 @@ export function FormField({
             onPress={() => setVisible((value) => !value)}
             style={styles.toggle}
           >
-            <Text style={styles.toggleText}>{visible ? 'Hide' : 'Show'}</Text>
+            <BrandIcon name={visible ? 'eye-off' : 'eye'} />
           </Pressable>
         ) : null}
       </View>
@@ -83,12 +98,17 @@ export function FormField({
   )
 }
 
-export const fieldColors = { ink: '#233D49', icon: '#007F88' } as const
+export const fieldColors = {
+  ink: colors.fieldInk,
+  icon: colors.fieldIcon,
+} as const
 const styles = StyleSheet.create({
-  group: { gap: 4 },
+  group: { gap: 4, width: '100%', minWidth: 0 },
   visibleLabel: { ...typography.accountBody, color: colors.white },
   field: {
-    minHeight: 50,
+    width: '100%',
+    minWidth: 0,
+    flexShrink: 0,
     flexDirection: 'row',
     alignItems: 'center',
     paddingLeft: 16,
@@ -99,32 +119,37 @@ const styles = StyleSheet.create({
   },
   icon: {
     width: 22,
-    fontFamily: 'InterRegular',
-    fontSize: 17,
-    color: fieldColors.icon,
-    textAlign: 'center',
+    height: 22,
+    flexShrink: 0,
+  },
+  inputSlot: {
+    flexGrow: 1,
+    flexShrink: 1,
+    flexBasis: 0,
+    minWidth: 0,
+    height: '100%',
+    overflow: 'hidden',
   },
   input: {
     flex: 1,
+    width: '100%',
+    maxWidth: '100%',
     minWidth: 0,
-    minHeight: 50,
-    paddingVertical: 14,
+    height: '100%',
+    paddingVertical: 0,
     paddingHorizontal: 0,
+    textAlignVertical: 'center',
     color: fieldColors.ink,
     fontFamily: fonts.medium,
     fontSize: 13,
     lineHeight: 18,
   },
   toggle: {
-    minWidth: 44,
+    width: 44,
     minHeight: 44,
+    flexShrink: 0,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  toggleText: {
-    fontFamily: fonts.medium,
-    fontSize: 12,
-    color: fieldColors.icon,
   },
   error: { ...typography.accountBody, color: colors.white },
 })

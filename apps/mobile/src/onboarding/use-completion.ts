@@ -1,15 +1,17 @@
 import { useCallback, useRef, useState } from 'react'
 import { useFocusEffect, useRouter } from 'expo-router'
 
+import { usePopup } from '../components/popup-provider'
+
 import { useOnboarding } from './provider'
 
 export function useCompletion(destination: '/register' | '/') {
   const router = useRouter()
   const { complete } = useOnboarding()
+  const popup = usePopup()
   const inFlight = useRef(false)
   const focused = useRef(false)
   const [busy, setBusy] = useState(false)
-  const [error, setError] = useState<string | null>(null)
 
   useFocusEffect(
     useCallback(() => {
@@ -24,7 +26,6 @@ export function useCompletion(destination: '/register' | '/') {
     if (inFlight.current) return
     inFlight.current = true
     setBusy(true)
-    setError(null)
     try {
       await complete()
       if (!focused.current) return
@@ -32,12 +33,23 @@ export function useCompletion(destination: '/register' | '/') {
       if (router.canDismiss()) router.dismissAll()
       router.replace(destination)
     } catch {
-      setError('Could not save your progress. Please try again.')
+      if (focused.current)
+        popup.show({
+          tone: 'error',
+          title: 'Could not save progress',
+          message: 'Your progress could not be saved on this device.',
+          primary: {
+            title: 'Retry',
+            onPress: () => void finish(),
+            restoreFocus: false,
+          },
+          secondary: { title: 'Not now' },
+        })
     } finally {
       inFlight.current = false
       setBusy(false)
     }
   }
 
-  return { finish, busy, error }
+  return { finish, busy }
 }

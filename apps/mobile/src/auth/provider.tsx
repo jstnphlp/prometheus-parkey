@@ -8,17 +8,32 @@ import {
   useState,
 } from 'react'
 import { AppState } from 'react-native'
+import * as WebBrowser from 'expo-web-browser'
+
+import { config } from '../discovery/config'
 
 import { createAuthRuntime, secrets } from './client'
+import { authFailure } from './auth-failure'
 import type { AuthRuntime } from './client'
 import { authRedirectUrl, readEmailFlow } from './links'
+import { resendConfirmation } from './resend-confirmation'
 import { pendingFlowKey, sessionStorageKey } from './secure-storage'
 import { createSessionVerifier } from './session'
 import type { AuthSnapshot } from './session'
+import { completeOAuth, invalidOAuth, openOAuth } from './oauth-flow'
+import { enabledSocialProviders } from './oauth-policy'
+import type { SocialProvider } from './oauth-policy'
+import { boundedAuthFetch } from './network'
 
 type AuthContextValue = {
   state: AuthSnapshot
   busy: boolean
+  socialProviders: Record<SocialProvider, boolean>
+  signInWithProvider: (
+    provider: SocialProvider,
+    remember: boolean,
+  ) => Promise<boolean>
+  oauthCallback: (code: string) => Promise<void>
   retry: () => Promise<void>
   signIn: (email: string, password: string, remember: boolean) => Promise<void>
   signUp: (name: string, email: string, password: string) => Promise<boolean>
@@ -40,17 +55,52 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     user: null,
   })
   const [busy, setBusy] = useState(false)
+  const [socialProviders, setSocialProviders] = useState<
+    Record<SocialProvider, boolean>
+  >({ google: false, facebook: false })
   const operation = useRef(false)
+  const cleanupRequired = useRef(false)
   const recovery = useRef(false)
   const verifier = useRef<ReturnType<typeof createSessionVerifier> | null>(null)
+  useEffect(() => {
+    if (!runtime) return
+    let active = true
+    void boundedAuthFetch(`${config.supabaseUrl}/auth/v1/settings`, {
+      headers: { apikey: config.supabaseKey },
+    })
+      .then(async (response) =>
+        response.ok
+          ? enabledSocialProviders(await response.json())
+          : { google: false, facebook: false },
+      )
+      .then((providers) => {
+        if (active)
+          setSocialProviders({
+            google:
+              providers.google &&
+              process.env.EXPO_PUBLIC_GOOGLE_LOGIN_ENABLED === 'true',
+            facebook:
+              providers.facebook &&
+              process.env.EXPO_PUBLIC_FACEBOOK_LOGIN_ENABLED === 'true',
+          })
+      })
+      .catch(() => {
+        /* Provider lookup failure never blocks guest/email auth. */
+      })
+    return () => {
+      active = false
+    }
+  }, [runtime])
 
   const boot = useCallback(async () => {
     try {
       const next = await createAuthRuntime()
       setRuntime(next)
       if (!next) setState({ status: 'unavailable', user: null })
+      return true
     } catch {
       setState({ status: 'error', user: null })
+      return false
     }
   }, [])
   useEffect(() => {
@@ -125,7 +175,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   async function action<T>(
     work: (current: AuthRuntime) => Promise<T>,
   ): Promise<T> {
-    if (!runtime || operation.current)
+    if (!runtime || operation.current || cleanupRequired.current)
       throw new Error('Authentication is not ready.')
     operation.current = true
     setBusy(true)
@@ -139,11 +189,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   async function emailFlow(
     kind: 'signup' | 'recovery',
+    email: string,
     work: () => Promise<{ error: unknown }>,
   ) {
     await secrets.setItem(
       pendingFlowKey,
-      JSON.stringify({ kind, createdAt: Date.now() }),
+      JSON.stringify({
+        kind,
+        createdAt: Date.now(),
+        email: email.trim().toLowerCase(),
+      }),
     )
     const result = await work()
     if (result.error) {
@@ -155,7 +210,51 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const value: AuthContextValue = {
     state,
     busy,
+    socialProviders,
+    signInWithProvider: (provider, remember) =>
+      action(async (current) => {
+        if (!socialProviders[provider] || state.status === 'recovery')
+          throw Object.assign(new Error('Provider is unavailable.'), {
+            code: 'provider_disabled',
+          })
+        await current.storage.setRemember(remember)
+        recovery.current = false
+        return openOAuth({
+          client: current.client,
+          storage: current.storage,
+          secrets,
+          provider,
+          projectUrl: config.supabaseUrl,
+          browser: WebBrowser.openAuthSessionAsync,
+          verify: async () =>
+            (await verifier.current?.verify())?.status === 'signed-in',
+        })
+      }),
+    oauthCallback: (code) =>
+      action(async (current) => {
+        if (state.status === 'recovery') throw invalidOAuth()
+        await completeOAuth(
+          {
+            client: current.client,
+            storage: current.storage,
+            secrets,
+            verify: async () =>
+              (await verifier.current?.verify())?.status === 'signed-in',
+          },
+          code,
+        )
+      }),
     async retry() {
+      if (operation.current) return
+      if (cleanupRequired.current) {
+        try {
+          await value.signOut()
+        } catch {
+          /* signOut restores the error state for another retry. */
+        }
+        return
+      }
+      setState({ status: 'checking', user: null })
       if (runtime) await verifier.current?.verify()
       else await boot()
     },
@@ -172,45 +271,54 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (verified?.status !== 'signed-in')
           throw new Error('Session could not be verified.')
       }),
-    signUp: (name, email, password) =>
-      action(async (current) => {
-        await current.storage.setRemember(false)
-        let hasSession = false
-        await emailFlow('signup', async () => {
-          const result = await current.client.auth.signUp({
-            email: email.trim(),
-            password,
-            options: {
-              data: { full_name: name.trim() },
-              emailRedirectTo: authRedirectUrl,
-            },
+    async signUp(name, email, password) {
+      try {
+        return await action(async (current) => {
+          await current.storage.setRemember(false)
+          let hasSession = false
+          await emailFlow('signup', email, async () => {
+            const result = await current.client.auth.signUp({
+              email: email.trim(),
+              password,
+              options: {
+                data: { full_name: name.trim() },
+                emailRedirectTo: authRedirectUrl,
+              },
+            })
+            hasSession = Boolean(result.data.session)
+            return result
           })
-          hasSession = Boolean(result.data.session)
-          return result
+          if (hasSession) {
+            const verified = await verifier.current?.verify()
+            return verified?.status === 'signed-in'
+          }
+          return false
         })
-        if (hasSession) {
-          const verified = await verifier.current?.verify()
-          return verified?.status === 'signed-in'
-        }
-        return false
-      }),
+      } catch (error) {
+        console.warn(
+          'ParkeyAuthSignupFailure',
+          JSON.stringify(authFailure(error)),
+        )
+        throw error
+      }
+    },
     sendEmail: (email, kind) =>
       action(async (current) => {
-        if (
-          kind === 'signup' &&
-          !(await current.storage.getItem(`${sessionStorageKey}-code-verifier`))
-        )
-          throw invalidLink()
-        await emailFlow(kind, () =>
-          kind === 'recovery'
-            ? current.client.auth.resetPasswordForEmail(email.trim(), {
-                redirectTo: authRedirectUrl,
-              })
-            : current.client.auth.resend({
-                type: 'signup',
-                email: email.trim(),
-                options: { emailRedirectTo: authRedirectUrl },
-              }),
+        if (kind === 'signup') {
+          // A rejected/rate-limited resend must not invalidate the original link.
+          await resendConfirmation(secrets, current.storage, email, () =>
+            current.client.auth.resend({
+              type: 'signup',
+              email: email.trim(),
+              options: { emailRedirectTo: authRedirectUrl },
+            }),
+          )
+          return
+        }
+        await emailFlow(kind, email, () =>
+          current.client.auth.resetPasswordForEmail(email.trim(), {
+            redirectTo: authRedirectUrl,
+          }),
         )
       }),
     callback: (code) =>
@@ -248,13 +356,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (operation.current)
         throw new Error('Wait for the current request to finish.')
       operation.current = true
+      cleanupRequired.current = true
       setBusy(true)
       verifier.current?.cancel()
       recovery.current = false
       setState({ status: 'signed-out', user: null })
       try {
         if (!runtime) {
-          await boot()
+          if (!(await boot()))
+            throw new Error('Could not restart authentication.')
+          cleanupRequired.current = false
           return true
         }
         let cached: unknown = null
@@ -286,7 +397,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 .catch(() => ({ error: true }))
             ).error
           : null
-        await boot()
+        if (!(await boot()))
+          throw new Error('Could not restart authentication.')
+        cleanupRequired.current = false
         return !error
       } catch {
         setState({ status: 'error', user: null })

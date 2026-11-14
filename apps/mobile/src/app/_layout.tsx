@@ -6,6 +6,7 @@ import { StatusBar } from 'expo-status-bar'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 
 import { AuthProvider } from '../auth/provider'
+import { PopupProvider } from '../components/popup-provider'
 import { initializeTelemetry } from '../discovery/telemetry'
 import { fontSources } from '../discovery/typography'
 import { OnboardingProvider, useOnboarding } from '../onboarding/provider'
@@ -24,7 +25,9 @@ export default function RootLayout() {
     <SafeAreaProvider>
       <OnboardingProvider>
         <AuthProvider>
-          <RootNavigator />
+          <PopupProvider>
+            <RootNavigator />
+          </PopupProvider>
         </AuthProvider>
       </OnboardingProvider>
     </SafeAreaProvider>

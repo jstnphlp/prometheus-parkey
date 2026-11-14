@@ -9,6 +9,7 @@ const variants = {
   plum: { backgroundColor: colors.plum, color: colors.white },
   white: { backgroundColor: colors.white, color: colors.plum },
   text: { backgroundColor: 'transparent', color: colors.white },
+  plain: { backgroundColor: 'transparent', color: colors.plum },
 } as const
 
 export function BrandButton({
@@ -37,7 +38,7 @@ export function BrandButton({
       style={({ pressed }) => [
         styles.button,
         { backgroundColor: palette.backgroundColor },
-        variant === 'text' && styles.textButton,
+        (variant === 'text' || variant === 'plain') && styles.textButton,
         (pressed || disabled || busy) && styles.dimmed,
         style,
       ]}
@@ -47,7 +48,9 @@ export function BrandButton({
       ) : (
         <Text
           style={[
-            variant === 'text' ? typography.link : typography.button,
+            variant === 'text' || variant === 'plain'
+              ? typography.link
+              : typography.button,
             styles.label,
             { color: palette.color },
           ]}

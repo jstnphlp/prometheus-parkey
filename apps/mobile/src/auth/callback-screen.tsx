@@ -1,20 +1,25 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router'
+import { useIsFocused } from 'expo-router/react-navigation'
 import { ActivityIndicator, StyleSheet, View } from 'react-native'
 
 import { BrandButton } from '../components/brand-button'
+import { BrandIcon } from '../components/brand-icon'
+import { usePopup } from '../components/popup-provider'
 import { colors } from '../theme'
 
-import { Notice } from './account-form'
 import { AuthShell } from './auth-shell'
 import { callbackCode } from './links'
 import { useAuth } from './provider'
+import { SignedInRedirect } from './signed-in-redirect'
 import { authErrorMessage } from './validation'
 
 export function CallbackScreen() {
   const auth = useAuth()
   const params = useLocalSearchParams()
   const router = useRouter()
+  const popup = usePopup()
+  const isFocused = useIsFocused()
   const attemptedCode = useRef<string | null>(null)
   const latestCode = useRef<string | null>(null)
   const focused = useRef(false)
@@ -22,10 +27,11 @@ export function CallbackScreen() {
     code: string
     message: string
   } | null>(null)
+  const [verifiedCode, setVerifiedCode] = useState<string | null>(null)
   const code = callbackCode(params)
   const message =
     !code || auth.state.status === 'unavailable'
-      ? 'This email link is invalid or cannot be verified here. Request a new email from this app on this device.'
+      ? 'This link cannot be verified here. Request a new email on this device.'
       : failure?.code === code
         ? failure.message
         : null
@@ -38,9 +44,20 @@ export function CallbackScreen() {
     }, []),
   )
   useEffect(() => {
+    if (message && isFocused)
+      popup.show({
+        tone: 'error',
+        title: 'Link could not be verified',
+        message,
+        onceKey: `callback:${code ?? 'missing'}`,
+        group: 'auth-system',
+      })
+  }, [message, code, popup, isFocused])
+  useEffect(() => {
     latestCode.current = code
     if (
       !code ||
+      !isFocused ||
       attemptedCode.current === code ||
       auth.busy ||
       auth.state.status === 'checking' ||
@@ -51,14 +68,22 @@ export function CallbackScreen() {
     void auth
       .callback(code)
       .then((kind) => {
-        if (focused.current && latestCode.current === code)
-          router.replace(kind === 'recovery' ? '/reset-password' : '/account')
+        if (focused.current && latestCode.current === code) {
+          if (kind === 'recovery') router.replace('/reset-password')
+          else setVerifiedCode(code)
+        }
       })
       .catch((error) => {
         if (focused.current && latestCode.current === code)
           setMessage({ code, message: authErrorMessage(error) })
       })
-  }, [auth, code, router])
+  }, [auth, code, router, isFocused])
+  if (
+    verifiedCode &&
+    verifiedCode === code &&
+    auth.state.status === 'signed-in'
+  )
+    return <SignedInRedirect />
   return (
     <AuthShell
       title="Verify your email link"
@@ -67,7 +92,7 @@ export function CallbackScreen() {
       <View style={styles.content}>
         {message ? (
           <>
-            <Notice text={message} />
+            <BrandIcon name="warning" color={colors.cyan} size={44} />
             <BrandButton
               title="Request a password reset"
               onPress={() => router.replace('/forgot-password')}

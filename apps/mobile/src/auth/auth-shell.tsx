@@ -6,6 +6,7 @@ import { BrandLogo } from '../components/brand-logo'
 import { ScreenContainer } from '../components/screen-container'
 import { BackButton } from '../onboarding/back-button'
 import { colors, typography } from '../theme'
+import { useAuthSystemPopup } from './use-system-popup'
 
 export function AuthShell({
   registering = false,
@@ -21,6 +22,7 @@ export function AuthShell({
   onBack?: () => void
 }) {
   const insets = useSafeAreaInsets()
+  useAuthSystemPopup()
   const background = registering ? colors.plum : colors.dark
   return (
     <ScreenContainer

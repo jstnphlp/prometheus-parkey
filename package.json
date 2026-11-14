@@ -23,7 +23,7 @@
     "test": "node --test apps/mobile/src/discovery/*.test.mjs apps/mobile/src/onboarding/*.test.mjs apps/mobile/src/auth/*.test.mjs apps/web/src/demo/workspace.test.mjs && pnpm test:operations && node scripts/run-python-tests.mjs",
     "typecheck:e2e": "tsc -p e2e/tsconfig.json",
     "test:e2e": "playwright test && playwright test --config playwright.pilot.config.ts && playwright test --config playwright.reports.config.ts",
-    "test:operations": "node --test scripts/*.test.mjs supabase/functions/discovery-moderation/*.test.mjs supabase/functions/mobile-reports/*.test.mjs supabase/functions/place-search/*.test.mjs apps/web/src/moderation/*.test.mjs",
+    "test:operations": "node --test scripts/*.test.mjs supabase/functions/discovery-moderation/*.test.mjs supabase/functions/mobile-reports/*.test.mjs supabase/functions/place-search/*.test.mjs apps/web/src/moderation/*.test.mjs apps/web/src/auth/*.test.mjs",
     "audit:data": "node scripts/audit-parking.mjs --check && node scripts/parking-review-queue.mjs --check && node scripts/osm-snapshot-sql.mjs --check && node scripts/generate-import-db-test.mjs --check",
     "typecheck:edge": "tsc -p supabase/functions/tsconfig.json",
     "data:refresh": "node scripts/audit-parking.mjs --write && node scripts/parking-review-queue.mjs && node scripts/osm-snapshot-sql.mjs && node scripts/generate-import-db-test.mjs",

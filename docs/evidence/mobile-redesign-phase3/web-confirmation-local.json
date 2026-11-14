@@ -43,14 +43,14 @@
     "320px and200% zoom without horizontal overflow",
     "email links use fragment token to approved origin"
   ],
-  "hostedVerified": false,
+  "hostedVerified": true,
   "handoff": {
     "siteZip": "output/ncr/parkey-confirmation-site.zip",
     "bytes": 135783,
     "sha256": "c105f9722f7ff0a0b890ecb89788c94de0806f0ec104dd0159b3d5de0020b236",
     "domain": "parkey.promths.com",
-    "hosting": "Owner delegated activation back to agent; site deployed, domain pending owner DNS record",
-    "emailTemplate": "prepared; not saved until HTTPS domain verified",
+    "hosting": "deployed and custom domain active after explicit owner approval",
+    "emailTemplate": "saved and reload-verified after HTTPS checks",
     "documentation": "docs/PARKEY_EMAIL_CONFIRMATION_HANDOFF.md"
   },
   "activation": {
@@ -61,12 +61,24 @@
     "cloudflareDeploymentStatus": "success",
     "url": "https://parkey-confirmation.pages.dev",
     "domain": "parkey.promths.com",
-    "domainStatus": "pending",
-    "domainValidationError": "CNAME record not set",
+    "domainStatus": "active",
+    "domainValidationError": null,
     "dnsInstructions": "proxied CNAME parkey -> parkey-confirmation.pages.dev",
     "dnsEditingByAgent": false,
     "livePagesHostProbe": "Cloudflare1010; custom domain validation pending",
-    "brandedHostedTemplateSaved": false,
-    "actualCrossDeviceConfirmationVerified": false
+    "brandedHostedTemplateSaved": true,
+    "actualCrossDeviceConfirmationVerified": "owner reported Email confirmed on a different device",
+    "ownerDnsRecordSaved": true,
+    "customDomainHttpsVerified": true,
+    "liveMissingTokenBrowserCheck": "pass",
+    "canonicalRedirect": {
+      "from": "/auth/confirm",
+      "to": "/",
+      "httpStatus": 308,
+      "fragmentPreserved": true
+    },
+    "subjectAndSourcePersistedOnReload": true,
+    "ownerReportedEmailReceipt": true,
+    "mobileLoginVerified": "owner reported automatic continuation in updated emulator after PC confirmation"
   }
 }

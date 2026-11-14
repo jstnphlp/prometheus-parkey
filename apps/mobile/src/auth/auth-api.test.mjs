@@ -88,6 +88,42 @@ test('SDK signup sends name metadata and S256 PKCE, and does not invent an authe
   assert.equal(await storage.getItem(sessionStorageKey), null)
 })
 
+test('pending signup only obtains a session after real password login confirms the email', async () => {
+  let confirmed = false
+  const { client, storage, values } = setup((url) =>
+    url.includes('/token') && !confirmed
+      ? {
+          status: 400,
+          json: { code: 'email_not_confirmed', msg: 'Email not confirmed' },
+        }
+      : { json: url.endsWith('/user') ? fixtureUser : sessionPayload() },
+  )
+  await storage.setRemember(false)
+  const before = await client.auth.signInWithPassword({
+    email: fixtureUser.email,
+    password: 'Example!Aa',
+  })
+  assert.equal(before.error.code, 'email_not_confirmed')
+  assert.equal(before.data.session, null)
+  confirmed = true
+  const after = await client.auth.signInWithPassword({
+    email: fixtureUser.email,
+    password: 'Example!Aa',
+  })
+  assert.equal(after.error, null)
+  assert.ok(after.data.session)
+  assert.equal(
+    (await client.auth.getUser()).data.user.email_confirmed_at,
+    fixtureUser.email_confirmed_at,
+  )
+  assert.ok(
+    [...values.values()].every(
+      (value) => !value.includes('unit-test-refresh-token'),
+    ),
+    'unchecked registration session is never persisted',
+  )
+})
+
 test('SMTP failure during signup rejects account creation without an authenticated session', async () => {
   const { client } = setup(() => ({
     status: 500,

@@ -7,26 +7,44 @@ Explore parking buttons are removed; existing Back/onboarding routes retain
 guest discovery.
 
 Welcome and onboarding now match the current static Figma compositions and
-locally exported artwork. The owner deferred final animations. SMTP investigation
-has resumed with owner-configured Resend; delivery remains unverified.
+locally exported artwork. The owner deferred final animations. Auth logs proved
+SMTP `535 Invalid username`; the owner authorized correcting `Resend` to
+`resend`, and confirmed email receipt afterward.
 Resend now preserves failed requests, renews successful requests, and binds the
 email to the local PKCE signup. Callback focus and failed sign-out retry are
 hardened. Signup failure feedback distinguishes transport from server/email
 failures and records only safe local codes/status. An owner signup failure was
 traced to emulator DNS, which was corrected; the next attempt reached Check your
-email. A later fresh-address attempt returned HTTP 500 during confirmation-email
-sending; detailed server configuration diagnosis remains open. Guest discovery
-and persisted parking data remain intact.
+email. Guest discovery and persisted parking data remain intact.
+
+A branded signup email now confirms on any device through a dedicated HTTPS
+page at `parkey.promths.com`. It verifies the one-time fragment token with
+Supabase, rejects failed/expired links and discards browser session credentials.
+The static build excludes the moderation workspace. The owner explicitly
+approved hosting/domain/template activation, added the CNAME and confirmed a
+real successful verification from another device. Native recovery stays PKCE.
+
+The pending mobile screen checks with the signup password held only in memory,
+using bounded/backed-off real sign-in and server user verification. It stops and
+clears credentials on blur, background, failure, expiry or success. The app
+continues only after Supabase confirms a session, without public email-status
+enumeration or password persistence.
 
 Validation: mobile strict TypeScript, scoped ESLint/Prettier, 299 baseline mobile tests
-plus 38 passing targeted auth tests after the follow-up (including five new cases),
+plus 44 passing targeted auth tests after the follow-ups,
 dependency audit (one existing low advisory), signed standalone Android APK,
 API 35 native checks at 360×800, 390×844 and 320×640/150% text. Includes real
 keyboard, 254-character selection/paste, modal Back/focus and onboarding/relaunch
 checks. Before/after screenshots, measurements and platform/integration limits
 are documented in `docs/MOBILE_REDESIGN_PHASE3.md`.
 
-Review target: `codex/mobile-redesign-phase-2-auth` (PR #31), not main. Positive
-email delivery/auth recovery, iOS/physical devices, manual screen-reader and
-autofill-provider checks, and final animations remain outstanding. No settings,
-migrations, deployment or auth-confirmation bypass was introduced.
+Cross-device page: workspace lint/TypeScript/format/web build, auth-only build,
+six new confirmation unit tests, local browser cases and live HTTPS/fragment
+checks passed. Operations reports 192 passed and one existing skip.
+
+Review target: `codex/mobile-redesign-phase-2-auth` (PR #31), not main. The owner
+reported successful automatic continuation after PC confirmation in the updated
+emulator. Positive password recovery, background/resume, iOS/physical devices, manual
+screen-reader and autofill-provider checks, and final animations remain open.
+The authorized confirmation-site/template activation is recorded separately;
+there are no database migrations, app deployments/merges or auth bypasses.

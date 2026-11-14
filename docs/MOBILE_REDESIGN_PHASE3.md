@@ -286,16 +286,60 @@ reports success. The auth-only bundle is published at
 new Workers auto-detection rejected the monorepo root; no app code was deployed
 as a Worker and no merge occurred.
 
-Custom domain `parkey.promths.com` is attached but pending DNS: Cloudflare reports
-CNAME record not set. The selected OAuth authorization has Pages-write and
-zone-read access, not DNS-edit access. The owner was given the exact record and
-the domain's DNS page: proxied CNAME `parkey` to `parkey-confirmation.pages.dev`.
-No existing domain record was overwritten. Public Pages-host checks returned
-Cloudflare error 1010, so live HTTP/HTTPS verification remains open; local
-fixture checks are not substituted for that verification.
+The selected OAuth authorization has Pages-write and zone-read access, not
+DNS-edit access. The owner added the exact proxied CNAME `parkey` to
+`parkey-confirmation.pages.dev`; no existing domain record was overwritten.
+Cloudflare now reports the custom domain, verification and validation active.
+Live HTTPS is valid and the page/security headers were checked. Pages redirects
+`/auth/confirm` to `/`; browser verification confirmed that the fragment survives
+that canonical redirect and is removed before the verification POST. The live
+missing-token page returns a truthful error and stores no browser session.
+The earlier Pages-host probe returned Cloudflare error 1010; that result was
+not counted as a successful page test. The custom-domain checks passed.
 
-The current working Supabase email stays active until the custom HTTPS page is
-ready. The branded template has **not** been saved. Real cross-device email
-verification and mobile login remain pending activation and an owner-controlled
-fresh signup. Setup/rebuild and rollback steps are in the
+After HTTPS verification, the owner-approved subject and branded email source
+were saved in Supabase and verified by reloading the template model. The old
+subject/source are retained privately under ignored `output/ncr/` for rollback.
+The recovery template was unchanged. The owner registered through Parkey,
+received the new email and opened it on a different device; the owner confirmed
+that the live page displayed Email confirmed. This is actual owner-reported
+cross-device confirmation evidence, distinct from local fixtures. After the
+native follow-up below, the owner repeated fresh signup and confirmed that
+Parkey automatically continued to Account.
+Setup/rebuild and rollback steps are in the
 [setup guide](PARKEY_EMAIL_CONFIRMATION_HANDOFF.md).
+
+## Automatic pending-screen continuation
+
+After confirming from a different device, the owner requested periodic checks
+inside Parkey rather than restarting the app. The pending screen now uses a
+bounded foreground watcher and the normal Supabase password sign-in method.
+Expected email-not-confirmed responses remain silent. A successful sign-in
+still requires the provider's fresh server user/session verification before
+Account is shown; an email click is never treated as a fabricated session.
+
+The signup password stays in volatile component memory while this screen is
+active, never in AsyncStorage, SecureStore, logs or a backend status table.
+Leaving, backgrounding, an error, success or the ten-minute bound stops checks
+and clears password state. After returning, the user can enter the password
+once to resume without recreating the account or restarting. Initial checks
+back off through 5, 10, 20, 30 and 60 seconds, with no overlapping requests.
+Check now is available. Unexpected network/rate/credential failures stop the
+watcher and show one recoverable popup instead of repeating each interval.
+The resulting registration session is memory-only, matching the existing
+unchecked Remember me policy.
+
+No public lookup by email, service-role credential, weakened policy, migration
+or new hosted endpoint was introduced for these checks. Code review found no
+major issues. Strict mobile TypeScript, scoped auth ESLint/Prettier and all
+44 auth tests pass. New tests cover backoff, single-flight checks, cancellation
+and late responses, expiry, failure stopping and the SDK's actual unconfirmed
+versus verified session behavior. The release APK builds and verifies, and is
+installed on the API 35 emulator for the owner's real acceptance test.
+The owner completed the requested fresh signup and PC confirmation in the
+updated emulator, then reported that Parkey continued automatically without
+restart. This is owner-reported acceptance, not an inferred timer/SDK fixture
+result or a captured signed-in Account screenshot. A later privacy-filtered UI
+probe saw a surface containing Log In, so it is not used as independent signed-in
+evidence. Native pending-screen background/resume acceptance, physical/iOS
+devices and real password recovery remain unverified.

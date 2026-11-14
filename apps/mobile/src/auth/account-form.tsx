@@ -1,7 +1,14 @@
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import type { ComponentRef } from 'react'
 import { Redirect, useFocusEffect, useRouter } from 'expo-router'
-import { Keyboard, Pressable, StyleSheet, Text, View } from 'react-native'
+import {
+  AppState,
+  Keyboard,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native'
 import type { TextInput } from 'react-native'
 
 import { BrandButton } from '../components/brand-button'
@@ -14,6 +21,7 @@ import { FormField } from './form-field'
 import { authErrorCode, authFeedback } from './feedback'
 import { useAuth } from './provider'
 import { PasswordRequirements } from './password-requirements'
+import { PendingConfirmation } from './pending-confirmation'
 import {
   authErrorMessage,
   emailProblem,
@@ -41,6 +49,15 @@ export function AccountForm({ mode }: { mode: 'register' | 'login' }) {
   const emailInput = useRef<ComponentRef<typeof TextInput>>(null)
   const passwordInput = useRef<ComponentRef<typeof TextInput>>(null)
   const confirmationInput = useRef<ComponentRef<typeof TextInput>>(null)
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', (state) => {
+      if (state !== 'active') {
+        setPassword('')
+        setConfirmation('')
+      }
+    })
+    return () => subscription.remove()
+  }, [])
   useFocusEffect(
     useCallback(() => {
       focused.current = true
@@ -81,10 +98,11 @@ export function AccountForm({ mode }: { mode: 'register' | 'login' }) {
       if (registering) {
         const signedIn = await auth.signUp(name, email, password)
         if (!focused.current) return
-        setPassword('')
         setConfirmation('')
-        if (signedIn) router.replace('/account')
-        else {
+        if (signedIn) {
+          setPassword('')
+          router.replace('/account')
+        } else {
           setPending(true)
           setAttempted(false)
         }
@@ -129,7 +147,7 @@ export function AccountForm({ mode }: { mode: 'register' | 'login' }) {
           tone: 'info',
           title: 'Email requested',
           message:
-            'If confirmation is needed, check your inbox and spam. Open the latest link on this device.',
+            'If confirmation is needed, check your inbox and spam. You can confirm on any device.',
         })
     } catch (error) {
       if (focused.current)
@@ -181,36 +199,12 @@ export function AccountForm({ mode }: { mode: 'register' | 'login' }) {
       }
     >
       {pending ? (
-        <View style={styles.pending}>
-          <BrandIcon name="mail" color={colors.cyan} size={44} />
-          <Text style={styles.body}>
-            If this address can register, check your inbox and spam. Open the
-            latest confirmation link on this device.
-          </Text>
-          <BrandButton
-            title="Resend confirmation email"
-            onPress={() => void resend()}
-            busy={auth.busy}
-          />
-          <BrandButton
-            title="Didn't receive it?"
-            variant="text"
-            onPress={() =>
-              popup.show({
-                tone: 'info',
-                title: 'Check your inbox',
-                message:
-                  'Delivery may take a few minutes. If you already have an account, log in instead.',
-                primary: {
-                  title: 'Log In',
-                  onPress: () => router.replace('/login'),
-                  restoreFocus: false,
-                },
-                secondary: { title: 'Got it' },
-              })
-            }
-          />
-        </View>
+        <PendingConfirmation
+          email={email}
+          password={password}
+          setPassword={setPassword}
+          resend={resend}
+        />
       ) : (
         <>
           <View style={[styles.fields, !registering && styles.loginFields]}>
@@ -424,6 +418,4 @@ const styles = StyleSheet.create({
   },
   alternate: { minHeight: 44, minWidth: 66, justifyContent: 'center' },
   alternateText: { ...typography.link, fontSize: 12, color: colors.white },
-  pending: { marginTop: 32, gap: 24 },
-  body: { ...typography.body, color: colors.white },
 })

@@ -5,9 +5,12 @@ requires lowercase `resend`. The owner authorized that correction, it was saved
 and verified by reloading, and the owner confirmed receiving email afterward.
 The SMTP password was not read or changed.
 
-The owner requested confirmation from any device and a branded email. That
-implementation is ready locally, with hosting/template activation handed to
-the owner. No new site, DNS record or email template was published by this work.
+The owner requested confirmation from any device and a branded email, then
+delegated activation back to Codex and explicitly approved hosting, DNS and the
+template. The static site is deployed, the owner added the CNAME, the custom
+domain is active, and the new signup template is saved. The owner confirmed
+receiving a new email and seeing Email confirmed after opening it on a different
+device. The instructions below are retained as setup/rebuild/rollback reference.
 
 ## Files to use
 
@@ -85,6 +88,9 @@ private.
   heading focus, 320px layout and 200% zoom.
 - Read-only code review found no major issues; its encoding finding was fixed.
 
-These are local checks. Real cross-device confirmation and app login are still
-pending the owner's hosting/template activation and real inbox test. Email
+The page's missing-token state and fragment-preserving redirect also passed live
+HTTPS/browser checks. Cross-device email confirmation was reported successful
+by the owner after a real fresh signup and inbox test. The owner subsequently
+reported automatic continuation in the updated emulator after PC confirmation,
+without restart. Background/resume and real password recovery remain open. Email
 client rendering may vary; Outlook can omit rounded corners and custom fonts.

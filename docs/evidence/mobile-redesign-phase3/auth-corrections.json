@@ -29,7 +29,7 @@
     "publicDkimAndSpfPresent": true,
     "signupErrorCause": "Android emulator DNS could not resolve Supabase hostname",
     "successfulEmailDeliveryVerified": false,
-    "hostedSettingsChangedByAgent": false,
+    "hostedSettingsChangedByAgent": true,
     "observedSignupFailure": {
       "category": "network",
       "status": null,
@@ -55,7 +55,24 @@
         "code": "unclassified"
       }
     ],
-    "emailFailureDiagnosis": "Supabase confirmation-email sending failed; exact SMTP/template/provider reason awaits detailed Auth log"
+    "emailFailureDiagnosis": "Auth log: SMTP535 Invalid username on signup; configured username Resend differs from required lowercase resend",
+    "smtpDiagnosis": {
+      "authLogTime": "14 Nov 2026 11:10:30 dashboard time",
+      "endpoint": "POST /signup",
+      "httpStatus": 500,
+      "smtpStatus": 535,
+      "smtpError": "Invalid username",
+      "configuredUsername": "Resend",
+      "documentedUsername": "resend",
+      "host": "smtp.resend.com",
+      "port": 465,
+      "passwordRead": false,
+      "passwordModified": false,
+      "correctionState": "Saved with explicit owner authorization; persisted lowercase resend verified by reload",
+      "documentation": "https://resend.com/docs/send-with-supabase-smtp"
+    },
+    "redirectAllowlistVerified": true,
+    "nativeRedirectAllowlisted": "parkey://auth/callback"
   },
   "emulatorInput": {
     "hardwareKeyboardEnabled": true,

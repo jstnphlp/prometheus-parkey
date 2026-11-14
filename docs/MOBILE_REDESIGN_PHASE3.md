@@ -226,3 +226,17 @@ it does not identify a specific SMTP credential, sender, template or timeout
 cause. Further signup attempts were paused while requesting the detailed Auth
 log error from the owner. Neither SMTP nor confirmation security was changed
 as a workaround.
+
+Authenticated dashboard inspection subsequently established the specific
+failure: the Auth log at 14 Nov 2026 11:10:30 reports HTTP 500 on POST `/signup`
+with SMTP `535 "Invalid username"`. The SMTP configuration contains username
+`Resend`; Resend's official Supabase SMTP guide specifies lowercase `resend`.
+Host `smtp.resend.com`, port 465 and sender `no-reply@auth.promths.com` match the
+documented setup. The password remains hidden and was not read or modified.
+The owner explicitly authorized saving the username correction. The dashboard
+reported Successfully updated settings; a reload confirmed persisted username
+`resend`. The stored password was not changed. Read-only URL Configuration
+inspection also confirmed `parkey://auth/callback` is allowlisted, without an
+allowlist change. Delivery remains unverified pending an owner retry. The
+existing emulator is open on Register with Gboard and explicit DNS enabled;
+Supabase hostname resolution was verified after startup networking settled.

@@ -6,7 +6,7 @@ import {
   useState,
 } from 'react'
 import type { ComponentRef } from 'react'
-import { useFocusEffect, useRouter } from 'expo-router'
+import { useFocusEffect } from 'expo-router'
 import { useIsFocused } from 'expo-router/react-navigation'
 import {
   ActivityIndicator,
@@ -41,7 +41,6 @@ export function PendingConfirmation({
 }) {
   const auth = useAuth()
   const popup = usePopup()
-  const router = useRouter()
   const focused = useIsFocused()
   const [foreground, setForeground] = useState(
     AppState.currentState === 'active',
@@ -53,10 +52,10 @@ export function PendingConfirmation({
   const [resumePassword, setResumePassword] = useState('')
   const input = useRef<ComponentRef<typeof TextInput>>(null)
   const monitor = useRef<ReturnType<typeof watchConfirmation> | null>(null)
-  const latest = useRef({ auth, popup, router, setPassword })
+  const latest = useRef({ auth, popup, setPassword })
   useLayoutEffect(() => {
-    latest.current = { auth, popup, router, setPassword }
-  }, [auth, popup, router, setPassword])
+    latest.current = { auth, popup, setPassword }
+  }, [auth, popup, setPassword])
   const clearSecrets = useCallback(() => {
     monitor.current?.stop()
     latest.current.setPassword('')
@@ -89,7 +88,7 @@ export function PendingConfirmation({
       waiting: () => setProgress('waiting'),
       confirmed() {
         clearSecrets()
-        latest.current.router.replace('/account')
+        // The signed-in parent opens discovery through SignedInRedirect.
       },
       expired() {
         clearSecrets()

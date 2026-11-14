@@ -62,3 +62,10 @@ one low deepmerge advisory, no moderate or higher. New before/after and
 320x640/150% text screenshots are in the Phase 3 evidence folder.
 See docs/MOBILE_SOCIAL_AUTH.md for provider setup, public eligibility/privacy
 and deletion requirements, native limitations and acceptance steps.
+
+Owner phone feedback follow-up: successful email/social authentication and email
+confirmation now open the main discovery app instead of Your account. The shared
+handoff reuses durable onboarding completion and clears introduction history,
+including Login from Welcome. Recovery and the explicit Account entry stay intact.
+62 auth/onboarding-persistence tests, mobile types and auth lint pass. Updated
+phone APK and exact verification limits are in the navigation receipt/report.

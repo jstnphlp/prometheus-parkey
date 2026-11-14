@@ -16,6 +16,7 @@ import { AuthShell } from './auth-shell'
 import { authFeedback } from './feedback'
 import { callbackCode } from './links'
 import { useAuth } from './provider'
+import { SignedInRedirect } from './signed-in-redirect'
 
 export function OAuthCallbackScreen() {
   const auth = useAuth()
@@ -65,7 +66,7 @@ export function OAuthCallbackScreen() {
       popup.show(authFeedback(error, 'Could not sign in'))
     })
   }, [auth, code, focused, popup])
-  if (auth.state.status === 'signed-in') return <Redirect href="/account" />
+  if (auth.state.status === 'signed-in') return <SignedInRedirect />
   if (auth.state.status === 'recovery')
     return <Redirect href="/reset-password" />
   return (

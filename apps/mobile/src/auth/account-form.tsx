@@ -22,6 +22,7 @@ import { authErrorCode, authFeedback } from './feedback'
 import { useAuth } from './provider'
 import { PasswordRequirements } from './password-requirements'
 import { PendingConfirmation } from './pending-confirmation'
+import { SignedInRedirect } from './signed-in-redirect'
 import { SocialButtons } from './social-buttons'
 import type { SocialProvider } from './oauth-policy'
 import {
@@ -103,7 +104,6 @@ export function AccountForm({ mode }: { mode: 'register' | 'login' }) {
         setConfirmation('')
         if (signedIn) {
           setPassword('')
-          router.replace('/account')
         } else {
           setPending(true)
           setAttempted(false)
@@ -112,7 +112,6 @@ export function AccountForm({ mode }: { mode: 'register' | 'login' }) {
         await auth.signIn(email, password, remember)
         if (focused.current) {
           setPassword('')
-          router.replace('/account')
         }
       }
     } catch (error) {
@@ -185,7 +184,7 @@ export function AccountForm({ mode }: { mode: 'register' | 'login' }) {
     }
   }
 
-  if (auth.state.status === 'signed-in') return <Redirect href="/account" />
+  if (auth.state.status === 'signed-in') return <SignedInRedirect />
   if (auth.state.status === 'recovery')
     return <Redirect href="/reset-password" />
   return (

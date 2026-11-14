@@ -11,6 +11,7 @@ import { colors } from '../theme'
 import { AuthShell } from './auth-shell'
 import { callbackCode } from './links'
 import { useAuth } from './provider'
+import { SignedInRedirect } from './signed-in-redirect'
 import { authErrorMessage } from './validation'
 
 export function CallbackScreen() {
@@ -26,6 +27,7 @@ export function CallbackScreen() {
     code: string
     message: string
   } | null>(null)
+  const [verifiedCode, setVerifiedCode] = useState<string | null>(null)
   const code = callbackCode(params)
   const message =
     !code || auth.state.status === 'unavailable'
@@ -66,14 +68,22 @@ export function CallbackScreen() {
     void auth
       .callback(code)
       .then((kind) => {
-        if (focused.current && latestCode.current === code)
-          router.replace(kind === 'recovery' ? '/reset-password' : '/account')
+        if (focused.current && latestCode.current === code) {
+          if (kind === 'recovery') router.replace('/reset-password')
+          else setVerifiedCode(code)
+        }
       })
       .catch((error) => {
         if (focused.current && latestCode.current === code)
           setMessage({ code, message: authErrorMessage(error) })
       })
   }, [auth, code, router, isFocused])
+  if (
+    verifiedCode &&
+    verifiedCode === code &&
+    auth.state.status === 'signed-in'
+  )
+    return <SignedInRedirect />
   return (
     <AuthShell
       title="Verify your email link"

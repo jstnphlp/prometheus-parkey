@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState } from 'react'
 import type { ComponentRef } from 'react'
-import { Redirect, useFocusEffect, useRouter } from 'expo-router'
+import { useFocusEffect, useRouter } from 'expo-router'
 import { BackHandler, Keyboard, StyleSheet, Text, View } from 'react-native'
 import type { TextInput } from 'react-native'
 
@@ -14,6 +14,7 @@ import { authFeedback } from './feedback'
 import { FormField } from './form-field'
 import { useAuth } from './provider'
 import { PasswordRequirements } from './password-requirements'
+import { SignedInRedirect } from './signed-in-redirect'
 import { emailProblem, passwordGuidance, passwordProblem } from './validation'
 
 export function ForgotPasswordScreen() {
@@ -61,7 +62,7 @@ export function ForgotPasswordScreen() {
         })
     }
   }
-  if (auth.state.status === 'signed-in') return <Redirect href="/account" />
+  if (auth.state.status === 'signed-in') return <SignedInRedirect />
   return (
     <AuthShell
       title={requested ? 'Check your email' : 'Reset password'}

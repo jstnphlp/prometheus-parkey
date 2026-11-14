@@ -412,3 +412,30 @@ native Account return and remembered relaunch remain pending. iOS is unavailable
 Google/Meta public eligibility, policy/deletion URLs and branding/review remain
 owner gates; providers stay off by default for public builds. Phase 3 remains a
 draft, with no merge or app deployment.
+
+## Sign-in destination correction
+
+After testing on an actual phone, the owner requested entering the main app
+instead of Your account. Email/password login, authenticated registration,
+Google/Facebook callbacks and automatic email-confirmation continuation now share
+`SignedInRedirect`, which uses the existing onboarding completion/history cleanup
+and opens `/`, the unchanged main discovery route. Login opened directly from
+Welcome also records completion, preventing the root welcome gate from replaying.
+Progress-save errors retain the existing popup/retry and a Continue to Parkey
+fallback. Password-recovery callbacks still open Reset Password. The explicit
+Account entry inside discovery remains available. No saved parking/session data
+is cleared, and no auth/server configuration is changed.
+
+Mobile typecheck, scoped auth lint and 62 existing auth/onboarding-persistence
+tests pass. The latter cover durable completion before navigation, retry on failed
+writes, idempotency, preservation of discovery data, session verification and
+recovery isolation. No new test merely mirrors a route string. Native build and
+latest APK details are recorded in the navigation receipt. The owner reported
+phone testing reaching Account in the previous build; provider-specific successful
+Google/Facebook acceptance was not specified. The corrected destination still
+needs an authenticated phone retest; no session was fabricated for verification.
+
+Updated phone build: `output/ncr/parkey-phase3-main-app-test.apk`, 114877270
+bytes, SHA-256 `52d6793690a0a312d1c6cf155a9ac6bf285ca7d17b057566be263affe8e66b48`.
+Final native build passed in 1m36s; v2 signature verified. The previous OAuth
+APK is retained. [Navigation verification receipt](evidence/mobile-redesign-phase3/post-auth-navigation.json).

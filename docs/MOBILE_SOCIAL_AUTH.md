@@ -53,7 +53,7 @@ OAuth request containing provider and the SDK's exact verifier slot ID. Exchange
 selects that slot explicitly and rejects recovery proofs before calling
 Supabase. Cancellation removes the request's indexed slot and matching
 compatibility key without clearing another request. Only a real exchanged
-session followed by the existing fresh server user/expiry check enters Account.
+session followed by the existing fresh server user/expiry check opens the main discovery app.
 The provider busy guard serializes native callback and browser-result handling.
 Cold callback delivery can finish the securely stored pending request.
 
@@ -93,6 +93,6 @@ records workspace checks, native build and owner acceptance separately.
 iOS/physical-device flows and public provider eligibility remain unverified.
 
 Owner acceptance for each provider: choose it from Login, authenticate privately
-in the browser, consent and verify return to Account. Sign out, repeat with
+in the browser, consent and verify return to the main discovery app. Sign out, repeat with
 Remember me, relaunch and verify persistence. Cancel with Android Back, retry
 and check discovery/saved data. Never share passwords, callback URLs or tokens.

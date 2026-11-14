@@ -8,6 +8,9 @@ import {
   useState,
 } from 'react'
 import { AppState } from 'react-native'
+import * as WebBrowser from 'expo-web-browser'
+
+import { config } from '../discovery/config'
 
 import { createAuthRuntime, secrets } from './client'
 import { authFailure } from './auth-failure'
@@ -17,10 +20,20 @@ import { resendConfirmation } from './resend-confirmation'
 import { pendingFlowKey, sessionStorageKey } from './secure-storage'
 import { createSessionVerifier } from './session'
 import type { AuthSnapshot } from './session'
+import { completeOAuth, invalidOAuth, openOAuth } from './oauth-flow'
+import { enabledSocialProviders } from './oauth-policy'
+import type { SocialProvider } from './oauth-policy'
+import { boundedAuthFetch } from './network'
 
 type AuthContextValue = {
   state: AuthSnapshot
   busy: boolean
+  socialProviders: Record<SocialProvider, boolean>
+  signInWithProvider: (
+    provider: SocialProvider,
+    remember: boolean,
+  ) => Promise<boolean>
+  oauthCallback: (code: string) => Promise<void>
   retry: () => Promise<void>
   signIn: (email: string, password: string, remember: boolean) => Promise<void>
   signUp: (name: string, email: string, password: string) => Promise<boolean>
@@ -42,10 +55,42 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     user: null,
   })
   const [busy, setBusy] = useState(false)
+  const [socialProviders, setSocialProviders] = useState<
+    Record<SocialProvider, boolean>
+  >({ google: false, facebook: false })
   const operation = useRef(false)
   const cleanupRequired = useRef(false)
   const recovery = useRef(false)
   const verifier = useRef<ReturnType<typeof createSessionVerifier> | null>(null)
+  useEffect(() => {
+    if (!runtime) return
+    let active = true
+    void boundedAuthFetch(`${config.supabaseUrl}/auth/v1/settings`, {
+      headers: { apikey: config.supabaseKey },
+    })
+      .then(async (response) =>
+        response.ok
+          ? enabledSocialProviders(await response.json())
+          : { google: false, facebook: false },
+      )
+      .then((providers) => {
+        if (active)
+          setSocialProviders({
+            google:
+              providers.google &&
+              process.env.EXPO_PUBLIC_GOOGLE_LOGIN_ENABLED === 'true',
+            facebook:
+              providers.facebook &&
+              process.env.EXPO_PUBLIC_FACEBOOK_LOGIN_ENABLED === 'true',
+          })
+      })
+      .catch(() => {
+        /* Provider lookup failure never blocks guest/email auth. */
+      })
+    return () => {
+      active = false
+    }
+  }, [runtime])
 
   const boot = useCallback(async () => {
     try {
@@ -165,6 +210,40 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const value: AuthContextValue = {
     state,
     busy,
+    socialProviders,
+    signInWithProvider: (provider, remember) =>
+      action(async (current) => {
+        if (!socialProviders[provider] || state.status === 'recovery')
+          throw Object.assign(new Error('Provider is unavailable.'), {
+            code: 'provider_disabled',
+          })
+        await current.storage.setRemember(remember)
+        recovery.current = false
+        return openOAuth({
+          client: current.client,
+          storage: current.storage,
+          secrets,
+          provider,
+          projectUrl: config.supabaseUrl,
+          browser: WebBrowser.openAuthSessionAsync,
+          verify: async () =>
+            (await verifier.current?.verify())?.status === 'signed-in',
+        })
+      }),
+    oauthCallback: (code) =>
+      action(async (current) => {
+        if (state.status === 'recovery') throw invalidOAuth()
+        await completeOAuth(
+          {
+            client: current.client,
+            storage: current.storage,
+            secrets,
+            verify: async () =>
+              (await verifier.current?.verify())?.status === 'signed-in',
+          },
+          code,
+        )
+      }),
     async retry() {
       if (operation.current) return
       if (cleanupRequired.current) {

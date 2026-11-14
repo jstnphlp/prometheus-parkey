@@ -67,6 +67,21 @@ export function callbackCode(params: Record<string, unknown>): string | null {
 export function normalizeAuthLink(path: string): string {
   try {
     const url = new URL(path, 'parkey://local')
+    const oauth = url.pathname === '/oauth' || url.pathname === '/auth/oauth'
+    if (oauth) {
+      const code = callbackCode(Object.fromEntries(url.searchParams))
+      const validOrigin =
+        (path.startsWith('/auth/oauth') && url.hostname === 'local') ||
+        (url.protocol === 'parkey:' &&
+          ((url.hostname === 'auth' && url.pathname === '/oauth') ||
+            (url.hostname === '' && url.pathname === '/auth/oauth')))
+      return !url.hash &&
+        code &&
+        url.searchParams.getAll('code').length === 1 &&
+        validOrigin
+        ? `/auth/oauth?code=${encodeURIComponent(code)}`
+        : '/auth/oauth?error=invalid_link'
+    }
     const callback =
       (url.hostname === 'auth' && url.pathname === '/callback') ||
       url.pathname === '/auth/callback'

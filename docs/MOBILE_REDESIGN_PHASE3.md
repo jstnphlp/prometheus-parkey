@@ -10,11 +10,21 @@ No V1 acceptance gate is advanced.
 
 ## Implementation
 
+Google/Facebook OAuth follow-up: [setup, security and acceptance](MOBILE_SOCIAL_AUTH.md).
+The owner saved provider credentials and the native OAuth redirect. Hosted public
+settings independently confirm both providers enabled; successful consent and
+native return are separate device acceptance checks. The Expo-compatible
+`expo-web-browser` dependency/plugin supplies the system browser auth session.
+Provider buttons remain off by default and are enabled explicitly in the internal
+OAuth test build. PKCE request-slot binding, cancellation cleanup, cold callbacks
+and recovery isolation have focused SDK tests. No discovery or hosted policy
+changes are included.
+
 The email field now has a constrained flex slot, stable container geometry and
 fixed vector-icon/toggle slots. It retains native horizontal scrolling,
 selection, cursor, autofill configuration and accessibility font scaling.
-Register, Login and password screens share clean SVG icons. No icon library or
-other dependency was added.
+Register, Login and password screens share clean SVG icons. No icon library was
+added; the later OAuth integration adds only the compatible browser module.
 
 A reusable Parkey native modal handles system failures and progressive help.
 It provides deduplication, retry/recovery actions, native Back, keyboard
@@ -343,3 +353,62 @@ result or a captured signed-in Account screenshot. A later privacy-filtered UI
 probe saw a surface containing Log In, so it is not used as independent signed-in
 evidence. Native pending-screen background/resume acceptance, physical/iOS
 devices and real password recovery remain unverified.
+
+## Optional Google/Facebook OAuth follow-up
+
+This supersedes the historical disabled-provider observation above. Hosted public
+settings now independently report Google/Facebook enabled and email confirmation
+still required. The owner saved credentials directly in Supabase and reports the
+exact `parkey://auth/oauth` allowlist entry saved. Dashboard reread was unavailable.
+See [configuration and limitations](MOBILE_SOCIAL_AUTH.md).
+
+The native flow uses the compatible Expo browser module and system browser,
+S256 PKCE and an explicit SDK verifier-slot ID held in SecureStore for at most
+15 minutes. Recovery proofs are rejected before exchange. Cancellation cleans
+only the matching request's indexed proof and compatibility key. A fresh server
+user/session check remains mandatory. Login honors Remember me; registration
+sessions stay in memory. Guest data and discovery code are unchanged.
+
+Buttons require both hosted availability and explicit build flags, false in the
+tracked template. The internal OAuth test APK enables both for owner testing.
+Google's official multicolor G is a deliberate brand-guideline difference from
+Figma's monochrome mark. Original Parkey typography, colors and responsive native
+forms remain. Login's redundant About Remember me button is removed; the checkbox
+retains its secure-storage accessibility hint.
+
+Verification: **56 auth tests pass, including 12 OAuth tests**. The tests use the
+installed SDK against explicit fixtures, not fabricated live provider success.
+Workspace lint/typecheck/format/web build passed; final changed-source checks also
+passed. Initial targeted failures (callback-origin handling, test globals, a test
+flow-ID fixture/type and formatting an unsupported env file) were corrected and
+relevant checks rerun. Dependency audit has one low `deepmerge` advisory and no
+moderate or higher advisory. The reviewed final Android release build passed in
+1m40s and its v2 signature verifies. No remaining P1/P2 code-review finding.
+
+API35 emulator observations: both real Google and Facebook credential pages
+loaded, without the agent entering credentials. Google Android Back returned to
+Login without an error popup. Chrome's first-run setup was completed outside the
+auth session without adding a browser account. Login/Register controls remain
+reachable by scrolling at 320x640 with 150% text; standard display/font and Gboard
+were restored. A first partial Login scroll had not reached Facebook; scrolling
+to the bottom verified both controls. These are not successful consent/callback,
+secure-session restoration or physical-device acceptance claims.
+
+- [Before/after Login](evidence/mobile-redesign-phase3/compare-login-oauth.png)
+- [Login with social controls](evidence/mobile-redesign-phase3/android-login-oauth.png)
+- [Small Login controls at 150% text](evidence/mobile-redesign-phase3/android-login-oauth-small-large-text-controls.png)
+- [Small Register controls at 150% text](evidence/mobile-redesign-phase3/android-register-oauth-small-large-text-controls.png)
+- [Sanitized verification receipt](evidence/mobile-redesign-phase3/oauth.json)
+
+APK: `output/ncr/parkey-phase3-oauth-test.apk` (114876522 bytes), also copied to
+`output/ncr/parkey-phase3-test.apk`. SHA-256:
+`63bcc378c3b0a508a4f2dda9dbb89a2526cccd0d07771e0a0f54e2c790742694`.
+The prior automatic-confirmation build is retained at
+`output/ncr/parkey-phase3-auto-confirmation.apk`. Existing local test signing,
+not production/store signing. The new APK is installed in the emulator. The owner
+requested transferring this APK to a physical phone for provider acceptance;
+no physical phone is currently connected over ADB. Successful real consent,
+native Account return and remembered relaunch remain pending. iOS is unavailable.
+Google/Meta public eligibility, policy/deletion URLs and branding/review remain
+owner gates; providers stay off by default for public builds. Phase 3 remains a
+draft, with no merge or app deployment.

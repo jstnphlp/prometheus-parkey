@@ -22,6 +22,8 @@ import { authErrorCode, authFeedback } from './feedback'
 import { useAuth } from './provider'
 import { PasswordRequirements } from './password-requirements'
 import { PendingConfirmation } from './pending-confirmation'
+import { SocialButtons } from './social-buttons'
+import type { SocialProvider } from './oauth-policy'
 import {
   authErrorMessage,
   emailProblem,
@@ -170,6 +172,16 @@ export function AccountForm({ mode }: { mode: 'register' | 'login' }) {
                 },
           secondary: { title: 'Not now' },
         })
+    }
+  }
+
+  async function socialSignIn(provider: SocialProvider) {
+    if (busy || !focused.current) return
+    Keyboard.dismiss()
+    try {
+      await auth.signInWithProvider(provider, !registering && remember)
+    } catch (error) {
+      if (focused.current) popup.show(authFeedback(error, 'Could not sign in'))
     }
   }
 
@@ -335,20 +347,11 @@ export function AccountForm({ mode }: { mode: 'register' | 'login' }) {
             onPress={() => void submit()}
             style={[styles.primary, !registering && styles.loginPrimary]}
           />
-          {!registering ? (
-            <BrandButton
-              title="About Remember me"
-              variant="text"
-              onPress={() =>
-                popup.show({
-                  tone: 'info',
-                  title: 'Remember me',
-                  message:
-                    'Keeps your session in secure device storage after closing the app. Your password is never saved.',
-                })
-              }
-            />
-          ) : null}
+          <SocialButtons
+            providers={auth.socialProviders}
+            disabled={busy || !ready}
+            onPress={(provider) => void socialSignIn(provider)}
+          />
         </>
       )}
       <View style={styles.footer}>

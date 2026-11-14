@@ -48,3 +48,17 @@ emulator. Positive password recovery, background/resume, iOS/physical devices, m
 screen-reader and autofill-provider checks, and final animations remain open.
 The authorized confirmation-site/template activation is recorded separately;
 there are no database migrations, app deployments/merges or auth bypasses.
+
+Optional Google/Facebook follow-up: both hosted providers are independently confirmed
+enabled. Native system-browser S256 PKCE, request-specific secure verifier slots,
+cancellation cleanup, recovery isolation and fresh server user verification are
+implemented. Buttons require hosted enablement plus explicit build flags, off
+by default. The internal OAuth APK exposes both for testing. Both real provider
+login pages and Google Android Back cancellation were observed; successful
+consent/native return remains pending owner acceptance. No secrets enter the app.
+56 auth tests pass, including 12 OAuth cases. Required workspace checks,
+scoped final type/lint/format and the signed native release build passed. Audit:
+one low deepmerge advisory, no moderate or higher. New before/after and
+320x640/150% text screenshots are in the Phase 3 evidence folder.
+See docs/MOBILE_SOCIAL_AUTH.md for provider setup, public eligibility/privacy
+and deletion requirements, native limitations and acceptance steps.

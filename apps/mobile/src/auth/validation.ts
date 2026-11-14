@@ -83,6 +83,10 @@ export function authErrorMessage(error: unknown): string {
       return 'This account cannot sign in. Contact Parkey support.'
     case 'signup_disabled':
       return 'New accounts are currently unavailable. You can still explore parking.'
+    case 'provider_disabled':
+      return 'This sign-in option is not available right now. Use email or try again later.'
+    case 'oauth_not_verified':
+      return 'Sign-in could not be verified. Return to Log In and try again.'
     case 'reauthentication_needed':
       return 'Request a new password reset email to verify your identity again.'
     default:

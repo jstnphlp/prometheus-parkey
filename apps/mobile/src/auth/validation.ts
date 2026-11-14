@@ -1,5 +1,16 @@
+import { authFailure } from './auth-failure.ts'
+
 export const passwordGuidance =
   '8+ characters with uppercase, lowercase and a special character.'
+
+export function passwordRequirements(password: string) {
+  return [
+    { label: 'At least 8 characters', met: password.length >= 8 },
+    { label: 'One uppercase letter', met: /[A-Z]/.test(password) },
+    { label: 'One lowercase letter', met: /[a-z]/.test(password) },
+    { label: 'One special character', met: /[\p{P}\p{S}]/u.test(password) },
+  ]
+}
 
 export function emailProblem(email: string): string | null {
   return email.trim().length <= 254 &&
@@ -9,10 +20,7 @@ export function emailProblem(email: string): string | null {
 }
 
 export function passwordProblem(password: string): string | null {
-  return password.length >= 8 &&
-    /[A-Z]/.test(password) &&
-    /[a-z]/.test(password) &&
-    /[\p{P}\p{S}]/u.test(password)
+  return passwordRequirements(password).every((requirement) => requirement.met)
     ? null
     : passwordGuidance
 }
@@ -38,6 +46,11 @@ export function registrationProblems(fields: {
 }
 
 export function authErrorMessage(error: unknown): string {
+  const failure = authFailure(error)
+  if (failure.category === 'network')
+    return 'Check your connection and try again.'
+  if (failure.category === 'email_delivery')
+    return 'We could not send your confirmation email. Please try again later.'
   const code =
     error && typeof error === 'object' && 'code' in error ? error.code : null
   switch (code) {
@@ -73,6 +86,8 @@ export function authErrorMessage(error: unknown): string {
     case 'reauthentication_needed':
       return 'Request a new password reset email to verify your identity again.'
     default:
-      return 'Could not complete the request. Check your connection and try again.'
+      return failure.status !== null
+        ? 'The account service could not complete this request. Please try again later.'
+        : 'Could not complete the request. Please try again.'
   }
 }

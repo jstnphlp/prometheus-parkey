@@ -7,18 +7,17 @@ import type { TextInput } from 'react-native'
 import { BrandButton } from '../components/brand-button'
 import { BrandIcon } from '../components/brand-icon'
 import { usePopup } from '../components/popup-provider'
-import { useCompletion } from '../onboarding/use-completion'
 import { colors, typography } from '../theme'
 
 import { AuthShell } from './auth-shell'
 import { authFeedback } from './feedback'
 import { FormField } from './form-field'
 import { useAuth } from './provider'
+import { PasswordRequirements } from './password-requirements'
 import { emailProblem, passwordGuidance, passwordProblem } from './validation'
 
 export function ForgotPasswordScreen() {
   const auth = useAuth()
-  const guest = useCompletion('/')
   const popup = usePopup()
   const emailInput = useRef<ComponentRef<typeof TextInput>>(null)
   const [email, setEmail] = useState('')
@@ -33,7 +32,7 @@ export function ForgotPasswordScreen() {
     }, []),
   )
   async function send() {
-    if (auth.busy || guest.busy) return
+    if (auth.busy) return
     const problem = emailProblem(email)
     if (problem) {
       popup.show({
@@ -100,17 +99,9 @@ export function ForgotPasswordScreen() {
           busy={auth.busy}
           disabled={
             auth.state.status === 'checking' ||
-            auth.state.status === 'unavailable' ||
-            guest.busy
+            auth.state.status === 'unavailable'
           }
           onPress={() => void send()}
-        />
-        <BrandButton
-          title="Explore parking"
-          variant="text"
-          disabled={auth.busy}
-          busy={guest.busy}
-          onPress={guest.finish}
         />
       </View>
     </AuthShell>
@@ -165,12 +156,7 @@ export function ResetPasswordScreen() {
     if (auth.busy) return
     const problem = passwordProblem(password)
     if (problem) {
-      popup.show({
-        tone: 'warning',
-        title: 'Choose a stronger password',
-        message: problem,
-        returnFocus: () => passwordInput.current?.focus(),
-      })
+      passwordInput.current?.focus()
       return
     }
     if (!confirmation || password !== confirmation) {
@@ -243,6 +229,7 @@ export function ResetPasswordScreen() {
               submitBehavior="submit"
               onSubmitEditing={() => confirmationInput.current?.focus()}
             />
+            <PasswordRequirements password={password} />
             <FormField
               label="Confirm password"
               icon="shield-check"
@@ -259,18 +246,6 @@ export function ResetPasswordScreen() {
               title="Update password"
               busy={auth.busy}
               onPress={() => void save()}
-            />
-            <BrandButton
-              title="Password requirements"
-              variant="text"
-              onPress={() =>
-                popup.show({
-                  tone: 'info',
-                  title: 'Choose a strong password',
-                  message: passwordGuidance,
-                  returnFocus: () => passwordInput.current?.focus(),
-                })
-              }
             />
           </>
         ) : (

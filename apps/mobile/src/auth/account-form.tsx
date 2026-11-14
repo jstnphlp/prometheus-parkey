@@ -7,13 +7,13 @@ import type { TextInput } from 'react-native'
 import { BrandButton } from '../components/brand-button'
 import { BrandIcon } from '../components/brand-icon'
 import { usePopup } from '../components/popup-provider'
-import { useCompletion } from '../onboarding/use-completion'
 import { colors, fonts, typography } from '../theme'
 
 import { AuthShell } from './auth-shell'
 import { FormField } from './form-field'
 import { authErrorCode, authFeedback } from './feedback'
 import { useAuth } from './provider'
+import { PasswordRequirements } from './password-requirements'
 import {
   authErrorMessage,
   emailProblem,
@@ -24,7 +24,6 @@ import {
 export function AccountForm({ mode }: { mode: 'register' | 'login' }) {
   const auth = useAuth()
   const router = useRouter()
-  const guest = useCompletion('/')
   const registering = mode === 'register'
   const popup = usePopup()
   const [name, setName] = useState('')
@@ -53,7 +52,7 @@ export function AccountForm({ mode }: { mode: 'register' | 'login' }) {
     }, []),
   )
   const errors = registrationProblems({ name, email, password, confirmation })
-  const busy = auth.busy || guest.busy
+  const busy = auth.busy
   const ready =
     auth.state.status !== 'checking' && auth.state.status !== 'unavailable'
 
@@ -271,13 +270,17 @@ export function AccountForm({ mode }: { mode: 'register' | 'login' }) {
               error={
                 attempted
                   ? registering
-                    ? (serverPasswordError ?? errors.password)
+                    ? (serverPasswordError ??
+                      (errors.password
+                        ? 'Meet the password requirements below.'
+                        : null))
                     : !password
                       ? 'Enter your password.'
                       : null
                   : null
               }
             />
+            {registering ? <PasswordRequirements password={password} /> : null}
             {registering ? (
               <FormField
                 label="Confirm password"
@@ -334,33 +337,26 @@ export function AccountForm({ mode }: { mode: 'register' | 'login' }) {
           <BrandButton
             title={registering ? 'Create Account' : 'Log In'}
             busy={auth.busy}
-            disabled={!ready || guest.busy}
+            disabled={!ready}
             onPress={() => void submit()}
             style={[styles.primary, !registering && styles.loginPrimary]}
           />
-          <BrandButton
-            title={registering ? 'Password requirements' : 'About Remember me'}
-            variant="text"
-            onPress={() =>
-              popup.show({
-                tone: 'info',
-                title: registering ? 'Choose a strong password' : 'Remember me',
-                message: registering
-                  ? passwordGuidance
-                  : 'Keeps your session in secure device storage after closing the app. Your password is never saved.',
-              })
-            }
-          />
+          {!registering ? (
+            <BrandButton
+              title="About Remember me"
+              variant="text"
+              onPress={() =>
+                popup.show({
+                  tone: 'info',
+                  title: 'Remember me',
+                  message:
+                    'Keeps your session in secure device storage after closing the app. Your password is never saved.',
+                })
+              }
+            />
+          ) : null}
         </>
       )}
-      <BrandButton
-        title="Explore parking"
-        variant="text"
-        onPress={guest.finish}
-        disabled={auth.busy}
-        busy={guest.busy}
-        style={styles.guest}
-      />
       <View style={styles.footer}>
         <Text style={[styles.optionText, registering && styles.plumMuted]}>
           {registering ? 'Already have an account?' : "Don't have an account?"}
@@ -417,7 +413,6 @@ const styles = StyleSheet.create({
     lineHeight: 16,
     color: colors.onDarkMuted,
   },
-  guest: { marginTop: 18 },
   footer: {
     marginTop: 'auto',
     paddingTop: 28,

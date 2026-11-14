@@ -27,6 +27,12 @@ discovery keeps its existing components and essential parking disclosures.
   Server password-strength rejection may also appear against that field.
   Forgot/Reset validation uses a popup with focus returned to the relevant input;
   inline validation is confined to Login and Register.
+- Password creation shows a four-item checklist immediately below the Password
+  input, before Confirm password. It is always visible on Register and verified
+  Reset, and uses the same predicates as validation. Completed rules use a check
+  plus an accessible Met label; updates do not announce every keystroke. There
+  is no password-requirements button or modal. Login does not apply signup rules
+  to existing credentials.
 
 ## Popups
 
@@ -38,7 +44,17 @@ safe copy. Do not treat a successful email request as proof of delivery.
 Requests contain a tone, concise title and supporting sentence. Use one clear
 primary action and at most one secondary action. Preserve retry, resend,
 registration restart and recovery actions. Help text belongs behind a named
-help button rather than beneath every primary action.
+help button rather than beneath every primary action. The password checklist
+above is an explicit exception requested by the owner.
+
+Auth screens have no Explore parking action. Native Back and the existing
+onboarding completion route still provide guest access; discovery has no auth
+requirement and saved parking is not changed by this presentation choice.
+
+Known transport failures receive connection feedback. HTTP/service and email
+delivery failures must not be described as offline. Local signup diagnostics
+may contain only an allowlisted failure category/code and numeric HTTP status;
+never log the raw error, request/response body, headers, URL or account values.
 
 The shared native modal uses a plum backdrop, white card, 24-point radius and
 padding, Outfit, a 56-point status-symbol surface, and a 44-point close target.

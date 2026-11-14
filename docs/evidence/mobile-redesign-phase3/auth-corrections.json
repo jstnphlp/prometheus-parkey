@@ -1,0 +1,59 @@
+{
+  "scope": "Owner auth UI corrections and signup diagnosis",
+  "changes": [
+    "Password checklist directly below password on Register and authorized Reset",
+    "Password-requirements popup/button removed",
+    "Explore parking removed from Login/Register/Forgot/Account; guest route retained",
+    "Unknown server/local errors no longer imply offline",
+    "Signup diagnostics limited to category, allowlisted code and status"
+  ],
+  "checks": {
+    "mobileStrictTypecheck": "pass",
+    "authEslint": "pass",
+    "authUnitTests": {
+      "passed": 38,
+      "failed": 0
+    },
+    "nativeReleaseBuild": "pass",
+    "apkSignature": "verified",
+    "nativeUiInspection": "checklist between Password/Confirm; no Explore parking or password-help button"
+  },
+  "integration": {
+    "targetProject": "nuepweyzpkqfihjsbsik",
+    "publicAuthSettingsStatus": 200,
+    "emailSignupEnabled": true,
+    "emailConfirmationRequired": true,
+    "androidNetworkValidated": true,
+    "ownerReportsSmtpConfigured": true,
+    "senderDomain": "auth.promths.com",
+    "publicDkimAndSpfPresent": true,
+    "signupErrorCause": "Android emulator DNS could not resolve Supabase hostname",
+    "successfulEmailDeliveryVerified": false,
+    "hostedSettingsChangedByAgent": false,
+    "observedSignupFailure": {
+      "category": "network",
+      "status": null,
+      "code": "unclassified"
+    },
+    "bundledPublicConfigurationMatchesVerifiedEnvironment": true,
+    "emulatorDnsBefore": "unknown host",
+    "emulatorDnsLaunchFlag": "-dns-server 1.1.1.1,8.8.8.8",
+    "emulatorDnsAfter": "Supabase hostname resolves",
+    "ownerObservedSignupAfterFix": "Check your email",
+    "ownerReceivedEmail": false,
+    "resendDeliveryStatus": "owner reports no email entry",
+    "existingAccountStatus": "awaiting owner Auth Users check"
+  },
+  "emulatorInput": {
+    "hardwareKeyboardEnabled": true,
+    "inputMethod": "Gboard",
+    "automationImeReleased": true,
+    "manualTypingConfirmation": "owner confirmed typing works"
+  },
+  "artifact": {
+    "path": "output/ncr/parkey-phase3-test.apk",
+    "bytes": 114768531,
+    "sha256": "e4495cb9a0e3cffef5a65e8e216321fdcfbd80f3915244d972ef755e611a4f80",
+    "originalBaselineCopy": "output/ncr/parkey-phase3-d80ca7af.apk"
+  }
+}

@@ -161,3 +161,57 @@ GitHub connectivity must recover before checking/rebasing onto the latest
 Phase 2 parent, pushing this branch and opening the stacked review PR. No merge
 or deployment was attempted. The two pre-existing documentation edits in
 `V1_OWNER_ACCEPTANCE_CHECKLIST.md` and `mobile-discovery.md` are excluded.
+
+## Owner follow-up: inline password rules and signup diagnosis
+
+The owner requested a visible password checklist directly under the password
+input, removal of Explore parking, and investigation of failed registration
+despite internet connectivity. This supersedes the baseline password-help modal
+and auth guest buttons shown in the earlier screenshots.
+
+Register and verified Reset now share the four-rule checklist with their actual
+validation policy. There is no requirements modal or button. Login, Register,
+Forgot and Account no longer show Explore parking. Discovery remains accessible
+through the existing Back/onboarding routes and retains its data and logic.
+
+Unknown service/local failures no longer blame the connection. Known transport,
+HTTP/service, email-delivery, account-database and rate-limit failures are
+distinguished. A failed signup logs only a fixed safe category, allowlisted code
+and numeric status locally; no entered identity, password, token, raw provider
+message, body or header is logged. A new SDK fixture demonstrates that a rejected
+confirmation-email send can fail the signup request before the pending screen;
+it is not evidence that this was the owner's actual server error.
+
+The public settings request for the configured Parkey project returned HTTP 200
+with email signup enabled and confirmation still required. Android reported a
+validated internet-capable network. The owner reports configuring Resend for
+`auth.promths.com`; DKIM/SPF records resolve publicly. Successful mail delivery
+and the actual failed signup response still require a real owner attempt and
+sanitized failure evidence. No hosted settings were changed by this follow-up.
+
+Targeted mobile strict TypeScript, auth ESLint and 38 auth tests pass. The updated
+standalone Android APK builds and its signature verifies. Native inspection
+confirmed the checklist order and absence of the removed buttons. The original
+baseline build is preserved locally as `output/ncr/parkey-phase3-d80ca7af.apk`;
+`output/ncr/parkey-phase3-test.apk` now contains these corrections. See the
+[follow-up receipt](evidence/mobile-redesign-phase3/auth-corrections.json).
+
+During the owner retry, the emulator was found using the automation IME and had
+hardware keyboard input disabled. It was restarted with hardware input enabled,
+Gboard selected and the software keyboard available. App data was preserved.
+Automation input was released for manual testing.
+
+The owner confirmed typing worked and retried signup. Its actual local
+diagnostic was `network`, null HTTP status and `unclassified` code. Android
+could not resolve the configured Supabase hostname, while the host reached its
+public Auth settings and the APK's URL/public key matched that configuration.
+The emulator was restarted with `-dns-server 1.1.1.1,8.8.8.8`. After network
+startup, the Supabase hostname resolved from Android. The owner then confirmed
+that signup reached Check your email. This establishes that the prior signup
+transport failure was resolved on this emulator; it does not certify delivery.
+
+The owner has not received mail yet. Resend's actual event status is pending
+owner inspection. Accepted signup responses can be generic for previously
+registered addresses, so this work does not infer a fresh account or successful
+email send from the pending screen. Email delivery, confirmation, verified
+session and recovery remain open until actual provider/inbox evidence exists.

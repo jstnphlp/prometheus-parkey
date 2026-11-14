@@ -10,6 +10,7 @@ import {
 import { AppState } from 'react-native'
 
 import { createAuthRuntime, secrets } from './client'
+import { authFailure } from './auth-failure'
 import type { AuthRuntime } from './client'
 import { authRedirectUrl, readEmailFlow } from './links'
 import { resendConfirmation } from './resend-confirmation'
@@ -191,28 +192,37 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (verified?.status !== 'signed-in')
           throw new Error('Session could not be verified.')
       }),
-    signUp: (name, email, password) =>
-      action(async (current) => {
-        await current.storage.setRemember(false)
-        let hasSession = false
-        await emailFlow('signup', email, async () => {
-          const result = await current.client.auth.signUp({
-            email: email.trim(),
-            password,
-            options: {
-              data: { full_name: name.trim() },
-              emailRedirectTo: authRedirectUrl,
-            },
+    async signUp(name, email, password) {
+      try {
+        return await action(async (current) => {
+          await current.storage.setRemember(false)
+          let hasSession = false
+          await emailFlow('signup', email, async () => {
+            const result = await current.client.auth.signUp({
+              email: email.trim(),
+              password,
+              options: {
+                data: { full_name: name.trim() },
+                emailRedirectTo: authRedirectUrl,
+              },
+            })
+            hasSession = Boolean(result.data.session)
+            return result
           })
-          hasSession = Boolean(result.data.session)
-          return result
+          if (hasSession) {
+            const verified = await verifier.current?.verify()
+            return verified?.status === 'signed-in'
+          }
+          return false
         })
-        if (hasSession) {
-          const verified = await verifier.current?.verify()
-          return verified?.status === 'signed-in'
-        }
-        return false
-      }),
+      } catch (error) {
+        console.warn(
+          'ParkeyAuthSignupFailure',
+          JSON.stringify(authFailure(error)),
+        )
+        throw error
+      }
+    },
     sendEmail: (email, kind) =>
       action(async (current) => {
         if (kind === 'signup') {

@@ -107,7 +107,7 @@
     "runtimeFigmaUrls": false
   },
   "artifact": {
-    "path": "output/ncr/parkey-phase3-test.apk",
+    "path": "output/ncr/parkey-phase3-d80ca7af.apk",
     "bytes": 114765779,
     "sha256": "d80ca7af9a62563cba251e7903f1400d60183e26ca735e9b6289745e30fe8072",
     "package": "com.parkey.discovery",
@@ -123,5 +123,6 @@
     "prBody": "pr-body.md",
     "merged": false,
     "deployed": false
-  }
+  },
+  "supersededBy": "auth-corrections.json"
 }

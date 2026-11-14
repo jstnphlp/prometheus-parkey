@@ -4,6 +4,7 @@ import test from 'node:test'
 
 import { createAuthClient } from './auth-api.ts'
 import { authRedirectUrl } from './links.ts'
+import { authFailure } from './auth-failure.ts'
 import { createSessionStorage, sessionStorageKey } from './secure-storage.ts'
 
 const fixtureUser = {
@@ -85,6 +86,25 @@ test('SDK signup sends name metadata and S256 PKCE, and does not invent an authe
   assert.match(signup.body.code_challenge, /^[A-Za-z0-9_-]{43}$/)
   assert.deepEqual(signup.body.data, { full_name: 'Test Driver' })
   assert.equal(await storage.getItem(sessionStorageKey), null)
+})
+
+test('SMTP failure during signup rejects account creation without an authenticated session', async () => {
+  const { client } = setup(() => ({
+    status: 500,
+    json: {
+      code: 'unexpected_failure',
+      msg: 'Error sending confirmation email',
+    },
+  }))
+  const result = await client.auth.signUp({
+    email: fixtureUser.email,
+    password: 'Example!Aa',
+    options: { emailRedirectTo: authRedirectUrl },
+  })
+  assert.equal(result.data.session, null)
+  assert.equal(result.data.user, null)
+  assert.equal(authFailure(result.error).category, 'email_delivery')
+  assert.equal((await client.auth.getSession()).data.session, null)
 })
 
 test('SDK recovery link exchange identifies recovery from the stored proof, not callback claims', async () => {

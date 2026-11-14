@@ -4,7 +4,6 @@ import { ActivityIndicator, StyleSheet, Text, View } from 'react-native'
 import { BrandButton } from '../components/brand-button'
 import { BrandIcon } from '../components/brand-icon'
 import { usePopup } from '../components/popup-provider'
-import { useCompletion } from '../onboarding/use-completion'
 import { colors, typography } from '../theme'
 
 import { AuthShell } from './auth-shell'
@@ -13,7 +12,6 @@ import { useAuth } from './provider'
 export function AccountScreen() {
   const auth = useAuth()
   const router = useRouter()
-  const guest = useCompletion('/')
   const popup = usePopup()
   const name: unknown = auth.state.user?.user_metadata.full_name
   async function signOut() {
@@ -109,13 +107,6 @@ export function AccountScreen() {
             />
           </>
         )}
-        <BrandButton
-          title="Explore parking"
-          variant="text"
-          disabled={auth.busy}
-          busy={guest.busy}
-          onPress={guest.finish}
-        />
       </View>
     </AuthShell>
   )

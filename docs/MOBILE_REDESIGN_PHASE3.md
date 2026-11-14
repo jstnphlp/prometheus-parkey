@@ -240,3 +240,62 @@ inspection also confirmed `parkey://auth/callback` is allowlisted, without an
 allowlist change. Delivery remains unverified pending an owner retry. The
 existing emulator is open on Register with Gboard and explicit DNS enabled;
 Supabase hostname resolution was verified after startup networking settled.
+
+## Cross-device confirmation and branded email
+
+The owner confirmed receiving the email after the SMTP correction. The email
+was opened on a PC/another phone, so its native `parkey://` handoff could not
+open the emulator. The owner requested device-independent confirmation and
+approved `parkey.promths.com` as the public domain.
+
+The prepared signup email uses Parkey colors, bold text, a teal confirmation
+button and concise copy. Its two action links target
+`https://parkey.promths.com/auth/confirm#token_hash={{ .TokenHash }}`. The new
+browser page verifies the one-time hash directly with Supabase's documented
+email verification API. It does not need the mobile PKCE verifier. Success
+requires the real API to return a user with a confirmed email, then directs the
+user to log into Parkey on any device. It does not fake a browser login or
+persist returned tokens/cookies/session storage. Native recovery remains PKCE.
+
+The one-time hash stays in the URL fragment until the page removes it before
+verification. It is not part of page requests or server/referrer logs. StrictMode
+does not duplicate verification; failed/used/expired links remain errors. The
+page has accessible status/focus, retry, original logo, local Outfit fonts,
+responsive layout and no analytics. A separate static build publishes only this
+confirmation page, excluding the moderation workspace. Build validation rejects
+missing/wrong project configuration or privileged keys. Cloudflare static
+headers constrain scripts/assets/API connections and disable caching/referrers.
+
+Sources and activation order: [email/hosting documentation](../supabase/templates/README.md).
+The existing web route tree was updated by the official Router generator.
+No new dependency or migration was added. Workspace lint, TypeScript, formatting
+and web build pass. Six new confirmation unit tests pass; the operations suite
+reports 192 passing and one existing skip. Focused local browser checks with
+explicit API fixtures cover success, expired/invalid/unverified/missing tokens,
+network retry, focus, single request, token/storage privacy, 320px and 200% zoom.
+These fixtures are not live account evidence. The report is
+[web-confirmation-local.json](evidence/mobile-redesign-phase3/web-confirmation-local.json),
+with page and email previews alongside it. Read-only code review found no major
+issues; the reported encoding defect was corrected.
+
+The owner reviewed and authorized hosting, domain connection and the new signup
+template. Cloudflare Pages project `parkey-confirmation` is created in the
+account managing `promths.com`; deployment `75bc27e8-c254-4a9c-888d-046438ef537e`
+reports success. The auth-only bundle is published at
+`parkey-confirmation.pages.dev`. The direct Pages path was used after Wrangler's
+new Workers auto-detection rejected the monorepo root; no app code was deployed
+as a Worker and no merge occurred.
+
+Custom domain `parkey.promths.com` is attached but pending DNS: Cloudflare reports
+CNAME record not set. The selected OAuth authorization has Pages-write and
+zone-read access, not DNS-edit access. The owner was given the exact record and
+the domain's DNS page: proxied CNAME `parkey` to `parkey-confirmation.pages.dev`.
+No existing domain record was overwritten. Public Pages-host checks returned
+Cloudflare error 1010, so live HTTP/HTTPS verification remains open; local
+fixture checks are not substituted for that verification.
+
+The current working Supabase email stays active until the custom HTTPS page is
+ready. The branded template has **not** been saved. Real cross-device email
+verification and mobile login remain pending activation and an owner-controlled
+fresh signup. Setup/rebuild and rollback steps are in the
+[setup guide](PARKEY_EMAIL_CONFIRMATION_HANDOFF.md).

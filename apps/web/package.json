@@ -10,6 +10,7 @@
     "generate-routes": "tsr generate",
     "typecheck": "pnpm generate-routes && tsc --noEmit",
     "build": "vite build",
+    "build:confirmation": "vite build --config confirmation.vite.config.ts",
     "preview": "vite preview"
   },
   "dependencies": {

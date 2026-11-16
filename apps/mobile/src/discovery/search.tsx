@@ -44,7 +44,7 @@ export function DestinationSearch({
   onSaved,
   layout = 'overlay',
   fillSheet = false,
-  placeholder = 'Search parking or landmark', 
+  placeholder = 'Search parking or landmark',
 }: {
   query: string
   onQuery: (query: string) => void

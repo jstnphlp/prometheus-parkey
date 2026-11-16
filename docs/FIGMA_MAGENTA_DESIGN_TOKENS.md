@@ -2,27 +2,27 @@
 
 Source: Figma `Parkey / Semantic Colors` collection `VariableCollectionId:138:72`, modes `212:0` (Light + Magenta) and `212:1` (Dark + Magenta). Retrieved from live Figma node values on 2026-11-16; do not substitute visually estimated colors. Variable names below are verbatim. Other Figma modes (teal) are not part of this implementation.
 
-| Semantic token | Light + Magenta | Dark + Magenta |
-|---|---|---|
-| background/canvas | `#FFFFFF` | `#20162E` |
-| background/surface | `#FBF7FA` | `#291D35` |
-| background/card | `#FFFFFF` | `#30243D` |
-| text/primary | `#20162E` | `#FFFFFF` |
-| text/secondary | `#655A6D` | `#D9CFDE` |
-| border/default | `#EDE1EA` | `#58405A` |
-| action/primary | `#840561` | `#840561` |
-| action/brand | `#840561` | `#840561` |
-| map/canvas | `#F9F0F6` | `#271D30` |
-| map/block | `#ECDDE8` | `#382D41` |
-| map/road | `#FFFFFF` | `#554A5E` |
-| status/pending | `#840561` | `#E460AA` |
-| status/verified | `#007F80` | `#00A6A7` |
-| background/accent-soft | `#F7E6F0` | `#41243A` |
-| text/on-action | `#FFFFFF` | `#FFFFFF` |
-| map/marker | `#840561` | `#840561` |
-| navigation/active | `#840561` | `#FFFFFF` |
-| navigation/inactive | `#716A77` | `#D9CFDE` |
-| navigation/back | `#00A6A7` | `#00A6A7` |
+| Semantic token         | Light + Magenta | Dark + Magenta |
+| ---------------------- | --------------- | -------------- |
+| background/canvas      | `#FFFFFF`       | `#20162E`      |
+| background/surface     | `#FBF7FA`       | `#291D35`      |
+| background/card        | `#FFFFFF`       | `#30243D`      |
+| text/primary           | `#20162E`       | `#FFFFFF`      |
+| text/secondary         | `#655A6D`       | `#D9CFDE`      |
+| border/default         | `#EDE1EA`       | `#58405A`      |
+| action/primary         | `#840561`       | `#840561`      |
+| action/brand           | `#840561`       | `#840561`      |
+| map/canvas             | `#F9F0F6`       | `#271D30`      |
+| map/block              | `#ECDDE8`       | `#382D41`      |
+| map/road               | `#FFFFFF`       | `#554A5E`      |
+| status/pending         | `#840561`       | `#E460AA`      |
+| status/verified        | `#007F80`       | `#00A6A7`      |
+| background/accent-soft | `#F7E6F0`       | `#41243A`      |
+| text/on-action         | `#FFFFFF`       | `#FFFFFF`      |
+| map/marker             | `#840561`       | `#840561`      |
+| navigation/active      | `#840561`       | `#FFFFFF`      |
+| navigation/inactive    | `#716A77`       | `#D9CFDE`      |
+| navigation/back        | `#00A6A7`       | `#00A6A7`      |
 
 The Figma reference `ARCHITECTURE / FOUR THEME REFERENCE` (node `283:3284`) confirms white/light canvas and `#20162E` dark canvas; **official logo colors stay unchanged across modes**. The Figma frame `16A Appearance` depicts four modes, but this handoff implements **exactly two**: Light + Magenta and Dark + Magenta.
 

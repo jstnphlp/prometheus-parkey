@@ -1,0 +1,375 @@
+{
+  "schemaVersion": 1,
+  "source": "Figma MCP inspection 2026-11-16; node pairs from docs/FIGMA_MAGENTA_SCREEN_INDEX.md",
+  "fileKey": "UaU1KMJV2tMlwGB7Y1Co1g",
+  "fileUrl": "https://www.figma.com/design/UaU1KMJV2tMlwGB7Y1Co1g/Parkey-Initial-Design?node-id=244-2804",
+  "pageNodeId": "244:2804",
+  "boards": {
+    "journey": "283:3352",
+    "lightMagenta": "289:3698",
+    "darkMagenta": "289:3905"
+  },
+  "themes": ["light-magenta", "dark-magenta"],
+  "screenPairs": [
+    {
+      "id": "1",
+      "label": "Splash",
+      "lightNodeId": "249:1658",
+      "darkNodeId": "249:5087"
+    },
+    {
+      "id": "2",
+      "label": "Walkthrough 1",
+      "lightNodeId": "249:1662",
+      "darkNodeId": "249:5091"
+    },
+    {
+      "id": "3",
+      "label": "Walkthrough 2",
+      "lightNodeId": "249:1688",
+      "darkNodeId": "249:5117"
+    },
+    {
+      "id": "4",
+      "label": "Walkthrough 3",
+      "lightNodeId": "249:1714",
+      "darkNodeId": "249:5143"
+    },
+    {
+      "id": "5",
+      "label": "Welcome / auth choice",
+      "lightNodeId": "249:1740",
+      "darkNodeId": "249:5169"
+    },
+    {
+      "id": "6",
+      "label": "Create account",
+      "lightNodeId": "249:1787",
+      "darkNodeId": "249:5216"
+    },
+    {
+      "id": "6A",
+      "label": "Registration validation error",
+      "lightNodeId": "249:1852",
+      "darkNodeId": "249:5282"
+    },
+    {
+      "id": "7",
+      "label": "Verify email",
+      "lightNodeId": "249:1916",
+      "darkNodeId": "249:5346"
+    },
+    {
+      "id": "7A",
+      "label": "Verification code expired",
+      "lightNodeId": "249:1954",
+      "darkNodeId": "249:5385"
+    },
+    {
+      "id": "7B",
+      "label": "Email verified",
+      "lightNodeId": "249:1992",
+      "darkNodeId": "249:5423"
+    },
+    {
+      "id": "8",
+      "label": "Basic profile information",
+      "lightNodeId": "249:2015",
+      "darkNodeId": "249:5446"
+    },
+    {
+      "id": "9",
+      "label": "Vehicle type selection",
+      "lightNodeId": "249:2053",
+      "darkNodeId": "249:5485"
+    },
+    {
+      "id": "10",
+      "label": "About You (required in Figma)",
+      "lightNodeId": "249:2142",
+      "darkNodeId": "249:5575"
+    },
+    {
+      "id": "11",
+      "label": "Driving Habits (required in Figma)",
+      "lightNodeId": "249:2181",
+      "darkNodeId": "249:5615"
+    },
+    {
+      "id": "12",
+      "label": "Parking Preferences (required in Figma)",
+      "lightNodeId": "249:2222",
+      "darkNodeId": "249:5657"
+    },
+    {
+      "id": "13",
+      "label": "Setup complete",
+      "lightNodeId": "249:2264",
+      "darkNodeId": "249:5699"
+    },
+    {
+      "id": "16",
+      "label": "Profile & Settings",
+      "lightNodeId": "249:2286",
+      "darkNodeId": "249:5721"
+    },
+    {
+      "id": "14",
+      "label": "My Vehicles",
+      "lightNodeId": "249:2425",
+      "darkNodeId": "249:5860"
+    },
+    {
+      "id": "15",
+      "label": "Add another vehicle",
+      "lightNodeId": "249:2540",
+      "darkNodeId": "249:5975"
+    },
+    {
+      "id": "17",
+      "label": "Sign in",
+      "lightNodeId": "249:2625",
+      "darkNodeId": "249:6060"
+    },
+    {
+      "id": "17A",
+      "label": "Invalid credentials",
+      "lightNodeId": "249:2679",
+      "darkNodeId": "249:6114"
+    },
+    {
+      "id": "18",
+      "label": "Forgot password",
+      "lightNodeId": "249:2733",
+      "darkNodeId": "249:6168"
+    },
+    {
+      "id": "18A",
+      "label": "Reset email sent",
+      "lightNodeId": "249:2767",
+      "darkNodeId": "249:6202"
+    },
+    {
+      "id": "18B",
+      "label": "Set new password",
+      "lightNodeId": "249:2796",
+      "darkNodeId": "249:6231"
+    },
+    {
+      "id": "19",
+      "label": "Sign-in success",
+      "lightNodeId": "249:2837",
+      "darkNodeId": "249:6272"
+    },
+    {
+      "id": "20",
+      "label": "Location permission",
+      "lightNodeId": "249:2862",
+      "darkNodeId": "249:6297"
+    },
+    {
+      "id": "20A",
+      "label": "Location denied",
+      "lightNodeId": "249:2913",
+      "darkNodeId": "249:6348"
+    },
+    {
+      "id": "21",
+      "label": "Parking list",
+      "lightNodeId": "249:2964",
+      "darkNodeId": "249:6399"
+    },
+    {
+      "id": "22",
+      "label": "Parking map",
+      "lightNodeId": "249:3020",
+      "darkNodeId": "249:6455"
+    },
+    {
+      "id": "22A",
+      "label": "Destination / parking search",
+      "lightNodeId": "249:3098",
+      "darkNodeId": "249:6533"
+    },
+    {
+      "id": "22B",
+      "label": "Parking filters",
+      "lightNodeId": "249:3144",
+      "darkNodeId": "249:6579"
+    },
+    {
+      "id": "22C",
+      "label": "No results",
+      "lightNodeId": "249:3188",
+      "darkNodeId": "249:6623"
+    },
+    {
+      "id": "23",
+      "label": "Parking status unconfirmed preview",
+      "lightNodeId": "249:3217",
+      "darkNodeId": "249:6652"
+    },
+    {
+      "id": "24",
+      "label": "Illustrative parking-available preview (V1: truthful record preview only)",
+      "lightNodeId": "249:3304",
+      "darkNodeId": "249:6739"
+    },
+    {
+      "id": "25",
+      "label": "Parking details long scroll",
+      "lightNodeId": "249:3392",
+      "darkNodeId": "249:6827"
+    },
+    {
+      "id": "26",
+      "label": "Saved/bookmark feedback",
+      "lightNodeId": "249:3515",
+      "darkNodeId": "249:6952"
+    },
+    {
+      "id": "27",
+      "label": "Share parking sheet",
+      "lightNodeId": "249:3570",
+      "darkNodeId": "249:7008"
+    },
+    {
+      "id": "28",
+      "label": "Entrance & access",
+      "lightNodeId": "249:3649",
+      "darkNodeId": "249:7088"
+    },
+    {
+      "id": "29",
+      "label": "Directions and external app choice",
+      "lightNodeId": "249:3714",
+      "darkNodeId": "249:7153"
+    },
+    {
+      "id": "30",
+      "label": "In-app navigation concept",
+      "lightNodeId": "249:3783",
+      "darkNodeId": "249:7222"
+    },
+    {
+      "id": "26B",
+      "label": "Saved collection",
+      "lightNodeId": "249:3853",
+      "darkNodeId": "249:7292"
+    },
+    {
+      "id": "26A",
+      "label": "Saved empty",
+      "lightNodeId": "249:3911",
+      "darkNodeId": "249:7350"
+    },
+    {
+      "id": "EXT",
+      "label": "External integration notice",
+      "lightNodeId": "249:3935",
+      "darkNodeId": "249:7374"
+    },
+    {
+      "id": "22R",
+      "label": "Recentered map feedback",
+      "lightNodeId": "249:3942",
+      "darkNodeId": "249:7381"
+    },
+    {
+      "id": "30R",
+      "label": "Recentered navigation/route feedback",
+      "lightNodeId": "249:4019",
+      "darkNodeId": "249:7458"
+    },
+    {
+      "id": "16A",
+      "label": "Appearance selector (Figma displays four themes; V1 target only magenta pair)",
+      "lightNodeId": "249:4092",
+      "darkNodeId": "249:7531"
+    },
+    {
+      "id": "1B",
+      "label": "Additional welcome",
+      "lightNodeId": "249:4141",
+      "darkNodeId": "249:7580"
+    },
+    {
+      "id": "77",
+      "label": "Personal Info",
+      "lightNodeId": "249:4164",
+      "darkNodeId": "249:7603"
+    },
+    {
+      "id": "78",
+      "label": "Security",
+      "lightNodeId": "249:4208",
+      "darkNodeId": "249:7647"
+    },
+    {
+      "id": "79",
+      "label": "Language",
+      "lightNodeId": "249:4252",
+      "darkNodeId": "249:7691"
+    },
+    {
+      "id": "80",
+      "label": "Help Center A",
+      "lightNodeId": "249:4298",
+      "darkNodeId": "249:7737"
+    },
+    {
+      "id": "81",
+      "label": "Help Center B",
+      "lightNodeId": "249:4350",
+      "darkNodeId": "249:7789"
+    },
+    {
+      "id": "82",
+      "label": "Help Center C",
+      "lightNodeId": "249:4458",
+      "darkNodeId": "249:7897"
+    },
+    {
+      "id": "83",
+      "label": "Privacy & Data",
+      "lightNodeId": "249:4523",
+      "darkNodeId": "249:7962"
+    },
+    {
+      "id": "84",
+      "label": "About Parkey",
+      "lightNodeId": "249:4563",
+      "darkNodeId": "249:8002"
+    },
+    {
+      "id": "85",
+      "label": "Log Out",
+      "lightNodeId": "249:4614",
+      "darkNodeId": "249:8053"
+    },
+    {
+      "id": "73",
+      "label": "Vehicle delete",
+      "lightNodeId": "249:4762",
+      "darkNodeId": "249:8201"
+    },
+    {
+      "id": "74",
+      "label": "Vehicle delete confirmation",
+      "lightNodeId": "249:4881",
+      "darkNodeId": "249:8320"
+    },
+    {
+      "id": "78A",
+      "label": "Security: Remember enabled",
+      "lightNodeId": "249:5009",
+      "darkNodeId": "249:8448"
+    },
+    {
+      "id": "5P",
+      "label": "Phone sign-in integration notice",
+      "lightNodeId": "249:5053",
+      "darkNodeId": "249:8492"
+    }
+  ]
+}

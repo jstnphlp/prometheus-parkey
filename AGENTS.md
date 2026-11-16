@@ -86,3 +86,19 @@ Figma MCP and exact paired node IDs rather than guessing. The canonical V1 execu
 plan and the preceding security/discovery-only instructions still override any
 unapproved prototype feature: keep anonymous exploration, truthful parking data,
 no booking/live vacancy, no fake account/provider success and no silent deployments.
+
+## Offline Figma reference workflow
+
+For Parkey Interactive Architecture UI work, prefer the checked-in offline reference
+in [design-reference/README.md](design-reference/README.md): `manifest.json` for
+60 light/dark-magenta pairs, verified `tokens/figma-tokens.json`, and
+`flows/navigation.json`. Screenshot PNGs and per-screen layout JSONs become
+available **only after** a real Figma REST export via
+`scripts/figma-snapshot.mjs`; do not claim they exist from the manifest alone.
+Use a locally configured read-only `FIGMA_ACCESS_TOKEN`, never commit or print
+that credential, and use small `--screens=` exports before any full run. Inspect
+existing exports before requesting live Figma MCP. Reserve MCP calls for specific
+ambiguities or stale snapshots; do not repeatedly fetch the entire canvas.
+Treat exported Figma mock content as a design reference, never as trustworthy
+parking data or permission to bypass V1 scope, auth/data/privacy gates, or the
+existing native/web discovery integrations.

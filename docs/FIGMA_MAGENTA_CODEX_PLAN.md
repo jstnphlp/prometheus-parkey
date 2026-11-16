@@ -7,7 +7,7 @@ Entry references: [architecture](FIGMA_MAGENTA_INTERACTIVE_ARCHITECTURE.md), [al
 ## Working agreement
 
 1. Read `AGENTS.md`, canonical V1 plan, discovery docs, all three magenta handoff docs; inspect the current Expo tree and current PRs before modifying. Run `git status` and never overwrite local work.
-2. Use the connected Figma MCP to get **high-fidelity node context and screenshot** of each paired screen and its essential children. Refer to exact IDs in the screen index. Node `244:2804` is the page; fetch leaf frames rather than dumping the whole canvas. Review the two architecture route boards and canonical journey. Test real interactions, not decorative flow connections.
+2. **Prefer checked-in offline Figma exports** via `design-reference/README.md`: verified colors, 60-pair manifest, product-aware flow graph, and (after REST export) frame screenshots and layout hierarchy. Use `node scripts/figma-snapshot.mjs --plan` to inspect, `--screens=...` to export a subset with a local REST token, and `--check` to verify a complete 120-frame snapshot. Do not assume screenshots exist before export. If a specific layout remains ambiguous, use connected Figma MCP sparingly on that node; do not re-read whole page. Test real interactions, not decorative flow connections.
 3. Make a brief existing-vs-Figma feature gap table. Classify each screen as **V1 ready**, **V1 UI with controlled gating**, **requires backend/consent**, or **out of V1**; retain references for deferred screens. Never implement fake auth, public inventory, live parking availability, or booking.
 4. Work in staged PRs (or self-contained commits), each buildable/testable. Maintain the existing discovery map and provider code. No speculative UI framework/large navigation rewrite. Use React Native/Expo Router/StyleSheet and existing shared primitives.
 5. Existing `src/app/index.tsx` selects the pilot experience when `EXPO_PUBLIC_PILOT_DISCOVERY_ENABLED=true`. Address **both active runtime branches** or explicitly and safely consolidate only with owner authorization; no invisible theme mismatch on production pilot builds.
@@ -15,8 +15,8 @@ Entry references: [architecture](FIGMA_MAGENTA_INTERACTIVE_ARCHITECTURE.md), [al
 ## Delivery order
 
 ### Phase 0 — inspection, screenshot inventory, functional gap analysis
-- Read tokens, route boards, all paired frame IDs and representative metadata. Inspect actual source: `palette.ts`, `ui.tsx`, `typography.ts`, `explore.tsx`, `pilot-discovery.tsx`, `bottom-navigation.tsx`, `discovery-sheet.tsx`, map renderers, account/security/report source.
-- Record screenshot baselines for representative splash, welcome, discovery map/list, search/filter, selected parking, details, direction, saved, appearance, permission and error states in **both modes**. Mark which app components already exist and which flows need approval.
+- Read tokens, route-board summaries, all paired frame IDs, and locally exported images/layouts if available. Export representative pairs via Figma REST when needed (token only in local environment). Inspect actual source: `palette.ts`, `ui.tsx`, `typography.ts`, `explore.tsx`, `pilot-discovery.tsx`, `bottom-navigation.tsx`, `discovery-sheet.tsx`, map renderers, account/security/report source.
+- Record screenshot baselines for representative splash, welcome, discovery map/list, search/filter, selected parking, details, direction, saved, appearance, permission and error states in **both modes**. The local exports belong in `design-reference/screens/` and layout trees in `design-reference/layouts/`. If image export is blocked, label those references missing and continue safe theme work from verified token snapshot; never fake images. Mark which app components already exist and which flows need approval.
 - Produce a traceable PR checklist against the 60-pair index. Do not edit Figma canvas unless explicitly requested.
 
 ### Phase 1 — centralized themes + typography

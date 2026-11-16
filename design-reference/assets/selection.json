@@ -1,0 +1,5 @@
+{
+  "schemaVersion": 1,
+  "assets": [],
+  "note": "Optional curated Figma vector/UI asset exports. Add {name:'parkey-logo',nodeId:'123:456',format:'svg'} only for verified reusable assets and run --assets. Do not export illustrative parking photos as real parking evidence. Never paste temporary asset URLs here."
+}

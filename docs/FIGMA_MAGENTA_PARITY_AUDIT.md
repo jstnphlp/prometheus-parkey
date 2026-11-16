@@ -3,6 +3,7 @@
 **Implementation target:** `codex/figma-magenta-interactive`, not `main`. This audit PR is stacked on the implementation branch and does not merge it to main or authorize a release.
 
 **Figma reference:** [Interactive Architecture](https://www.figma.com/design/UaU1KMJV2tMlwGB7Y1Co1g/Parkey-Initial-Design?node-id=244-2804). Reviewed original frames:
+
 - Light + Magenta parking map: `249:3020` (live Figma screenshot + reference context).
 - Dark + Magenta parking list: `249:6399` (live Figma screenshot).
 - Dark + Magenta appearance: `249:7531` (live screenshot and code context).
@@ -18,13 +19,13 @@
 
 ## Confirmed mismatches and action
 
-| Area | Difference against Figma | Correction |
-|---|---|---|
-| Map vs list, IDs 21/22 | Prototype has distinct List and Map actions; browser evidence labelled 22 shows the expanded results sheet rather than the fullscreen Figma map. Existing app uses a map-first resizable sheet instead of duplicate routes | Added explicitly labelled **Show parking list** map action and **Show parking map** list action, reusing the existing compact/expanded state. This improves functional parity but does **not** claim pixel-level layout parity |
-| Search wording, IDs 21/22/22A | Figma uses `Search parking or landmark`, app showed `Where to park today?` | Unified visible input placeholder with Figma |
-| Search overlay saved action | An old overlay displayed static `Makati` while invoking *Saved places*, misleading when searching other locations | Corrected visible label to **Saved** (accessibility name was already `Open saved places`) |
-| Web-native compatibility | A stored browser evidence image shows a React warning starting `React does not recognize the im...`; native-only accessibility properties were passed to web Views | Guard native-only accessibility properties on both map and popup wrappers; keep web `aria-hidden` / inert behavior, native modal semantics and web-only popup-title `tabIndex` |
-| Long detail captions | Current list can clip a long line of recorded distance/status metadata in the captured browser fixture | Not rewritten: data-trust requirements require source/distance qualifiers; needs new responsive screenshot and text-scale verification, not arbitrary data removal |
+| Area                          | Difference against Figma                                                                                                                                                                                                   | Correction                                                                                                                                                                                                                     |
+| ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Map vs list, IDs 21/22        | Prototype has distinct List and Map actions; browser evidence labelled 22 shows the expanded results sheet rather than the fullscreen Figma map. Existing app uses a map-first resizable sheet instead of duplicate routes | Added explicitly labelled **Show parking list** map action and **Show parking map** list action, reusing the existing compact/expanded state. This improves functional parity but does **not** claim pixel-level layout parity |
+| Search wording, IDs 21/22/22A | Figma uses `Search parking or landmark`, app showed `Where to park today?`                                                                                                                                                 | Unified visible input placeholder with Figma                                                                                                                                                                                   |
+| Search overlay saved action   | An old overlay displayed static `Makati` while invoking _Saved places_, misleading when searching other locations                                                                                                          | Corrected visible label to **Saved** (accessibility name was already `Open saved places`)                                                                                                                                      |
+| Web-native compatibility      | A stored browser evidence image shows a React warning starting `React does not recognize the im...`; native-only accessibility properties were passed to web Views                                                         | Guard native-only accessibility properties on both map and popup wrappers; keep web `aria-hidden` / inert behavior, native modal semantics and web-only popup-title `tabIndex`                                                 |
+| Long detail captions          | Current list can clip a long line of recorded distance/status metadata in the captured browser fixture                                                                                                                     | Not rewritten: data-trust requirements require source/distance qualifiers; needs new responsive screenshot and text-scale verification, not arbitrary data removal                                                             |
 
 ## Open visual/integration gaps
 

@@ -2,7 +2,7 @@
 
 Figma file: https://www.figma.com/design/UaU1KMJV2tMlwGB7Y1Co1g/Parkey-Initial-Design?node-id=244-2804
 
-**Read the actual nodes via the connected Figma MCP before implementing.** Each row below pairs the same screen in Light + Magenta and Dark + Magenta. All 60 pairs were inspected in the Figma page index on 2026-11-16. Their order is the canvas order, **not** the navigation order. Figma's canonical journey is node `283:3352`; architecture route boards are `289:3698` and `289:3905`. Implementation requirements and V1 feature gating: [interactive architecture](FIGMA_MAGENTA_INTERACTIVE_ARCHITECTURE.md).
+**Use the offline design snapshot first**, when present: [design-reference/README.md](../design-reference/README.md) and its `manifest.json`, screenshot PNGs, and layout JSONs. If an export is missing or stale, use the local Figma REST exporter; reserve live MCP for a narrow unresolved visual detail. **Do not claim PNGs/layout data exist before export.** Each row below pairs the same screen in Light + Magenta and Dark + Magenta. All 60 pairs were inspected in the Figma page index on 2026-11-16. Their order is the canvas order, **not** the navigation order. Figma's canonical journey is node `283:3352`; architecture route boards are `289:3698` and `289:3905`. Implementation requirements and V1 feature gating: [interactive architecture](FIGMA_MAGENTA_INTERACTIVE_ARCHITECTURE.md).
 
 | ID | Intent / UI state | Light + Magenta | Dark + Magenta |
 |---|---|---|---|
@@ -69,7 +69,7 @@ Figma file: https://www.figma.com/design/UaU1KMJV2tMlwGB7Y1Co1g/Parkey-Initial-D
 
 ## Codex usage
 
-1. For each feature, fetch the **specific light/dark node pair** with Figma MCP `get_design_context` (including screenshots); inspect nested nodes whenever root context is sparse. Do not rely only on this human-readable inventory.
+1. For each feature, first check `design-reference/screens/<theme>/<id>.png` and `design-reference/layouts/<theme>/<id>.json` (verify via `export-index.json`). Export missing frames with `node scripts/figma-snapshot.mjs --screens=<ids>` using a locally configured REST token. Only use MCP on a specific Figma node when those exports are insufficient or stale.
 2. Build the interaction once and theme with semantic roles from [design tokens](FIGMA_MAGENTA_DESIGN_TOKENS.md). Verify both screenshots and runtime behavior.
 3. Validate success, error, permission-denied, empty, keyboard, loading, offline and Back states; do not skip small variant screens.
 4. Distinguish designed click-through states from actual operational integrations. Do not make setup/account required for discovery under the canonical V1 plan. Never implement booking or live availability.

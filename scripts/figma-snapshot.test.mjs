@@ -44,7 +44,7 @@ test('CLI selects a paired screen without requiring Figma', async () => {
 test('bad manifest duplicates and unknown screen IDs fail', async () => {
   const data = await load('manifest.json')
   assert.throws(() => selectScreens(data, parseOptions(['--screens=999'])), /Unknown screen/)
-  const corrupt = structuredClone(data)
+  const corrupt = JSON.parse(JSON.stringify(data))
   corrupt.screenPairs[1].darkNodeId = corrupt.screenPairs[0].lightNodeId
   assert.throws(() => validateManifest(corrupt), /Duplicate Figma node/)
 })

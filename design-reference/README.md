@@ -6,22 +6,22 @@ Design: https://www.figma.com/design/UaU1KMJV2tMlwGB7Y1Co1g/Parkey-Initial-Desig
 
 ## Snapshot status (2026-11-16)
 
-| Artifact | Status |
-|---|---|
-| `manifest.json` | **Included** — 60 verified Figma screen pairs / 120 node IDs |
-| `tokens/figma-tokens.json` | **Included** — 19 inspected semantic color roles, metrics and Outfit examples |
-| `flows/navigation.json` | **Included** — manually curated product-aware transition graph |
-| `scripts/figma-snapshot.mjs` | **Included** — executable Figma **REST** exporter |
-| `screens/{light-magenta,dark-magenta}/*.png` | **Not exported yet** — requires running the exporter with a locally held Figma token |
-| `layouts/{light-magenta,dark-magenta}/*.json` | **Not exported yet** — requires the same token |
-| `assets/exported/*` and `assets/fills/*` | **Not exported yet** — selected reusable assets / image fills are opt-in |
-| `export-index.json` | Generated **only after a successful export**; includes SHA-256 provenance and completeness checks |
+| Artifact                                      | Status                                                                                            |
+| --------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| `manifest.json`                               | **Included** — 60 verified Figma screen pairs / 120 node IDs                                      |
+| `tokens/figma-tokens.json`                    | **Included** — 19 inspected semantic color roles, metrics and Outfit examples                     |
+| `flows/navigation.json`                       | **Included** — manually curated product-aware transition graph                                    |
+| `scripts/figma-snapshot.mjs`                  | **Included** — executable Figma **REST** exporter                                                 |
+| `screens/{light-magenta,dark-magenta}/*.png`  | **Not exported yet** — requires running the exporter with a locally held Figma token              |
+| `layouts/{light-magenta,dark-magenta}/*.json` | **Not exported yet** — requires the same token                                                    |
+| `assets/exported/*` and `assets/fills/*`      | **Not exported yet** — selected reusable assets / image fills are opt-in                          |
+| `export-index.json`                           | Generated **only after a successful export**; includes SHA-256 provenance and completeness checks |
 
 Do not confuse these seeded manifests with exported screenshots. No screenshots/assets have been fabricated or embedded from a rendered mockup. The file is ready for Codex but **the complete local visual reference requires the export step**.
 
 ## One-time setup — local machine only
 
-Use Node **24 LTS** and generate a Figma **personal access token** under *Figma account Settings → Security → Personal access tokens*, with the minimum `file_content:read` scope and access to this file. The token is **not** your MCP connection: the REST API is separately rate-limited. Token expiration may require renewal. Read [Figma's official token guide](https://developers.figma.com/docs/rest-api/personal-access-tokens/) and [REST rate limits](https://developers.figma.com/docs/rest-api/rate-limits/).
+Use Node **24 LTS** and generate a Figma **personal access token** under _Figma account Settings → Security → Personal access tokens_, with the minimum `file_content:read` scope and access to this file. The token is **not** your MCP connection: the REST API is separately rate-limited. Token expiration may require renewal. Read [Figma's official token guide](https://developers.figma.com/docs/rest-api/personal-access-tokens/) and [REST rate limits](https://developers.figma.com/docs/rest-api/rate-limits/).
 
 **Never paste tokens into ChatGPT/Codex, GitHub issues, shell command history, app source, or `EXPO_PUBLIC_*` variables.** The exporter reads only the ephemeral `FIGMA_ACCESS_TOKEN` process environment variable and sends it in the Figma REST `X-Figma-Token` request header.
 

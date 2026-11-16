@@ -26,7 +26,7 @@ The manifest and token JSON are checked in; **screen PNGs, layout JSONs and expo
 ## Figma reading strategy: offline first
 
 1. Use existing `design-reference/screens/<theme>/<id>.png` and `design-reference/layouts/<theme>/<id>.json` first.
-2. If missing, run `node scripts/figma-snapshot.mjs --plan` and, if `FIGMA_ACCESS_TOKEN` is *already configured in your local environment*, export only needed screen pairs with `node scripts/figma-snapshot.mjs --screens=21,22,22A,22B,22C,23,24,25 --theme=both`. This uses the **Figma REST API** and obeys its separate rate limits. Never request the secret in chat, print it, log it or write it to a file.
+2. If missing, run `node scripts/figma-snapshot.mjs --plan` and, if `FIGMA_ACCESS_TOKEN` is _already configured in your local environment_, export only needed screen pairs with `node scripts/figma-snapshot.mjs --screens=21,22,22A,22B,22C,23,24,25 --theme=both`. This uses the **Figma REST API** and obeys its separate rate limits. Never request the secret in chat, print it, log it or write it to a file.
 3. If no local token is configured or a REST export is blocked, work safely from the verified tokens, paired IDs, documented flows, existing code and any already exported screenshots. Explicitly report missing visual references rather than inventing layout details.
 4. Only call the connected **Figma MCP** if a specific outstanding screen/layer issue cannot be resolved from local reference and MCP is available. Do not loop over all 120 frames via MCP.
 5. If new Figma versions invalidate local screenshots, refresh the affected IDs and record provenance; never silently treat stale data as current.

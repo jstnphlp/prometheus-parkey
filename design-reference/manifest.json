@@ -9,10 +9,7 @@
     "lightMagenta": "289:3698",
     "darkMagenta": "289:3905"
   },
-  "themes": [
-    "light-magenta",
-    "dark-magenta"
-  ],
+  "themes": ["light-magenta", "dark-magenta"],
   "screenPairs": [
     {
       "id": "1",

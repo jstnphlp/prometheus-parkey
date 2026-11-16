@@ -8,7 +8,7 @@
  */
 import { createHash } from 'node:crypto'
 import { readFile, writeFile, mkdir, rename, stat } from 'node:fs/promises'
-import { dirname, join, resolve } from 'node:path'
+import { dirname, join, resolve, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import process from 'node:process'
 
@@ -107,7 +107,9 @@ export function simplifyNode(node) {
     'cornerRadius','rectangleCornerRadii','strokeWeight','strokeAlign',
     'strokeDashes','blendMode','characters','style','characterStyleOverrides',
     'styleOverrideTable','textAutoResize','componentId','componentProperties',
-    'reactions','styles','exportSettings'
+    'reactions','styles','exportSettings','boundVariables',
+    'componentPropertyReferences','layoutSizingHorizontal','layoutSizingVertical',
+    'minWidth','maxWidth','minHeight','maxHeight','textTruncation','textCase'
   ]
   const out = {}
   for (const key of props) if (node[key] !== undefined) out[key] = node[key]
@@ -233,7 +235,7 @@ async function verify(manifest, targets) {
       const item = record[kind]
       if (!item) { missing.push(key + ':' + kind); continue }
       const path = resolve(DESIGN, item.path)
-      if (!path.startsWith(DESIGN + '/')) { invalid.push(key + ':' + kind); continue }
+      if (!path.startsWith(DESIGN + sep)) { invalid.push(key + ':' + kind); continue }
       try {
         const contents = await readFile(path)
         if (digest(contents) !== item.sha256) invalid.push(key + ':' + kind)
@@ -290,7 +292,7 @@ async function exportAssets(client, manifest, index) {
   const seen = new Set()
   for (const asset of selection.assets) {
     assert(/^\d+:\d+$/.test(asset.nodeId), 'Invalid selected asset node ID')
-    assert(/^[a-z0-9][a-z0-9-_]{0,63}$/.test(asset.name), 'Asset name must be a safe lowercase slug')
+    assert(/^[a-z0-9][a-z0-9_-]{0,63}$/.test(asset.name), 'Asset name must be a safe lowercase slug')
     assert(['svg', 'png'].includes(asset.format), 'Asset format must be svg or png')
     assert(!seen.has(asset.name), 'Duplicate asset name')
     seen.add(asset.name)

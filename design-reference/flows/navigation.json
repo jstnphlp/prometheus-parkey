@@ -5,10 +5,7 @@
     "verifiedAt": "2026-11-16",
     "warning": "This is a product-aware flow outline, not an exported Figma prototype reaction graph. Per-node reactions are exported by scripts/figma-snapshot.mjs where available."
   },
-  "modes": [
-    "light-magenta",
-    "dark-magenta"
-  ],
+  "modes": ["light-magenta", "dark-magenta"],
   "policy": {
     "product": "Discovery-only V1; account-free exploration; data trust required",
     "flags": [
@@ -28,18 +25,7 @@
     {
       "id": "entry",
       "status": "v1",
-      "screenIds": [
-        "1",
-        "1B",
-        "2",
-        "3",
-        "4",
-        "5",
-        "20",
-        "20A",
-        "21",
-        "22"
-      ],
+      "screenIds": ["1", "1B", "2", "3", "4", "5", "20", "20A", "21", "22"],
       "note": "Optional/skippable visual intro. Guest Browse always available. Location denied → manual search."
     },
     {
@@ -64,15 +50,7 @@
     {
       "id": "returning-account",
       "status": "gated",
-      "screenIds": [
-        "5",
-        "17",
-        "17A",
-        "18",
-        "18A",
-        "18B",
-        "19"
-      ],
+      "screenIds": ["5", "17", "17A", "18", "18A", "18B", "19"],
       "note": "Requires real sign-in and password reset, no simulated responses."
     },
     {

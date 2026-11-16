@@ -1,0 +1,98 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "collection": "Parkey / Semantic Colors",
+    "figmaCollectionId": "VariableCollectionId:138:72",
+    "lightModeId": "212:0",
+    "darkModeId": "212:1",
+    "verifiedAt": "2026-11-16",
+    "note": "Verified by Figma plugin API. This static snapshot does not auto-update; revalidate manually if the design changes."
+  },
+  "modes": {
+    "light-magenta": {
+      "background/canvas": "#FFFFFF",
+      "background/surface": "#FBF7FA",
+      "background/card": "#FFFFFF",
+      "text/primary": "#20162E",
+      "text/secondary": "#655A6D",
+      "border/default": "#EDE1EA",
+      "action/primary": "#840561",
+      "action/brand": "#840561",
+      "map/canvas": "#F9F0F6",
+      "map/block": "#ECDDE8",
+      "map/road": "#FFFFFF",
+      "status/pending": "#840561",
+      "status/verified": "#007F80",
+      "background/accent-soft": "#F7E6F0",
+      "text/on-action": "#FFFFFF",
+      "map/marker": "#840561",
+      "navigation/active": "#840561",
+      "navigation/inactive": "#716A77",
+      "navigation/back": "#00A6A7"
+    },
+    "dark-magenta": {
+      "background/canvas": "#20162E",
+      "background/surface": "#291D35",
+      "background/card": "#30243D",
+      "text/primary": "#FFFFFF",
+      "text/secondary": "#D9CFDE",
+      "border/default": "#58405A",
+      "action/primary": "#840561",
+      "action/brand": "#840561",
+      "map/canvas": "#271D30",
+      "map/block": "#382D41",
+      "map/road": "#554A5E",
+      "status/pending": "#E460AA",
+      "status/verified": "#00A6A7",
+      "background/accent-soft": "#41243A",
+      "text/on-action": "#FFFFFF",
+      "map/marker": "#840561",
+      "navigation/active": "#FFFFFF",
+      "navigation/inactive": "#D9CFDE",
+      "navigation/back": "#00A6A7"
+    }
+  },
+  "metrics": {
+    "space/8": 8,
+    "space/12": 12,
+    "space/16": 16,
+    "space/24": 24,
+    "radius/12": 12,
+    "radius/16": 16,
+    "radius/24": 24
+  },
+  "typography": {
+    "family": "Outfit",
+    "observedExamples": [
+      {
+        "role": "registration-heading",
+        "weight": "ExtraBold",
+        "size": 31,
+        "lineHeightPercent": 120
+      },
+      {
+        "role": "registration-subtitle",
+        "weight": "Medium",
+        "size": 15,
+        "lineHeightPercent": 120
+      },
+      {
+        "role": "input-label",
+        "weight": "SemiBold",
+        "size": 13,
+        "lineHeightPercent": 120
+      },
+      {
+        "role": "input",
+        "weight": "Medium",
+        "size": 14,
+        "lineHeightPercent": 120
+      }
+    ]
+  },
+  "productRules": [
+    "Only two magenta modes; other Figma modes are not targets.",
+    "Preserve official logo asset colors.",
+    "Figma illustrative map styling is not approval to replace real licensed MapLibre basemaps."
+  ]
+}

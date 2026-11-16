@@ -135,3 +135,24 @@ test('Map, Saved, and You tabs open the appropriate screens', async ({
     page.getByRole('tab', { name: 'Explore', exact: true }),
   ).toHaveText('Explore')
 })
+
+test('the Figma map/list actions preserve discovery state and search wording', async ({
+  page,
+}) => {
+  await openMap(page)
+  await expect(page.getByTestId('destination-query')).toHaveAttribute(
+    'placeholder',
+    'Search parking or landmark',
+  )
+  await page.getByRole('button', { name: 'Show parking list' }).click()
+  await expect(page.getByTestId('parking-sheet-handle')).toHaveAccessibleName(
+    /Parking sheet: full/,
+  )
+  await page.getByRole('button', { name: 'Show parking map' }).click()
+  await expect(page.getByTestId('parking-sheet-handle')).toHaveAccessibleName(
+    /Parking sheet: peek/,
+  )
+  await expect(
+    page.getByRole('tab', { name: 'Explore', exact: true }),
+  ).toHaveAttribute('aria-selected', 'true')
+})

@@ -1107,7 +1107,7 @@ export default function Explore() {
       <DestinationSearch
         layout="sheet"
         fillSheet
-        placeholder="Where to park today?"
+        placeholder="Search parking or landmark"
         onSaved={() => setPanel('saved')}
         query={nav.query}
         active={searchActive}
@@ -1153,6 +1153,16 @@ export default function Explore() {
           setSelectedPlace(found)
         }}
       />
+      {!searchActive && sheet.position === 'expanded' ? (
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Show parking map"
+          onPress={() => changeSheetPosition('compact')}
+          style={styles.mapReturn}
+        >
+          <Text style={styles.mapReturnText}>Map</Text>
+        </Pressable>
+      ) : null}
     </View>
   )
   const filterStrip = (
@@ -1234,9 +1244,13 @@ export default function Explore() {
         testID="map-interface"
         style={StyleSheet.absoluteFill}
         aria-hidden={fullPageActive}
-        importantForAccessibility={
-          fullPageActive ? 'no-hide-descendants' : 'auto'
-        }
+        {...(Platform.OS === 'web'
+          ? {}
+          : {
+              importantForAccessibility: fullPageActive
+                ? ('no-hide-descendants' as const)
+                : ('auto' as const),
+            })}
         pointerEvents={fullPageActive ? 'none' : 'box-none'}
       >
         {topOverlayHeight > 0 ? (
@@ -1484,9 +1498,19 @@ export default function Explore() {
               <View
                 style={[
                   styles.controls,
+                  !selected && styles.mapActions,
                   { bottom: sheetHeight + (selected ? 12 : 72) },
                 ]}
               >
+                {!selected ? (
+                  <IconButton
+                    icon="list"
+                    label="Show parking list"
+                    color={colors.ink}
+                    onPress={() => changeSheetPosition('expanded')}
+                    style={[ui.shadow, styles.mapListAction]}
+                  />
+                ) : null}
                 <IconButton
                   style={[
                     ui.shadow,
@@ -2354,6 +2378,33 @@ const useStyles = createThemedStyles(({ colors }) =>
       right: 16,
       gap: 12,
       alignItems: 'flex-end',
+    },
+    mapActions: { flexDirection: 'row', alignItems: 'center' },
+    mapListAction: {
+      width: 56,
+      height: 56,
+      backgroundColor: colors.surface,
+      borderWidth: 2,
+      borderColor: colors.border,
+    },
+    mapReturn: {
+      alignSelf: 'center',
+      minHeight: 44,
+      minWidth: 112,
+      paddingHorizontal: 20,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginTop: 8,
+      borderRadius: 24,
+      backgroundColor: colors.selected,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    mapReturnText: {
+      fontFamily: fonts.semibold,
+      fontSize: 15,
+      lineHeight: 20,
+      color: colors.brandDeep,
     },
     bottom: {
       position: 'absolute',

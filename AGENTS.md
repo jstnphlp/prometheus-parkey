@@ -73,3 +73,16 @@
 ## Active V1 Tracks A/D: mandatory phase-gate instructions
 
 Read [docs/V1_EXECUTION_PLAN.md](docs/V1_EXECUTION_PLAN.md) and [docs/V1_ANALYTICS_CONTRACT.md](docs/V1_ANALYTICS_CONTRACT.md) before implementing V1 tasks. The plan is the sole canonical scope/phase truth. Codex owns Track A discovery only; Track D admin analytics UI, read API and ingestion are owned by ChatGPT in the separate jstnphlp/parkey-research-console repo. Only add mobile instrumentation after backend D2 is deployed. V1 is strictly discovery-only. Do not implement any booking, reservation, reservation mock, QR check-in/out, payment, operator inventory, public vacancy claim or private record publication. Historical schema and Figma booking ideas are out of V1 scope. Do not advance a gate without its stated tests and evidence. Update the plan only when an acceptance gate has truly passed, and cite branch/PR, tests, and device results.
+
+## Figma magenta UI implementation handoff (2026-11-16)
+
+When working on the Parkey Interactive Architecture design, read
+[docs/FIGMA_MAGENTA_INTERACTIVE_ARCHITECTURE.md](docs/FIGMA_MAGENTA_INTERACTIVE_ARCHITECTURE.md),
+[docs/FIGMA_MAGENTA_SCREEN_INDEX.md](docs/FIGMA_MAGENTA_SCREEN_INDEX.md),
+[docs/FIGMA_MAGENTA_DESIGN_TOKENS.md](docs/FIGMA_MAGENTA_DESIGN_TOKENS.md), and
+[docs/FIGMA_MAGENTA_CODEX_PLAN.md](docs/FIGMA_MAGENTA_CODEX_PLAN.md) before editing UI.
+The Figma page's magenta Light/Dark variants are the visual target; use the connected
+Figma MCP and exact paired node IDs rather than guessing. The canonical V1 execution
+plan and the preceding security/discovery-only instructions still override any
+unapproved prototype feature: keep anonymous exploration, truthful parking data,
+no booking/live vacancy, no fake account/provider success and no silent deployments.

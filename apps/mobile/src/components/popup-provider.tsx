@@ -160,8 +160,12 @@ export function PopupProvider({ children }: { children: ReactNode }) {
           {current ? (
             <View
               style={styles.card}
-              accessibilityViewIsModal
-              importantForAccessibility="yes"
+              {...(Platform.OS === 'web'
+                ? {}
+                : {
+                    accessibilityViewIsModal: true,
+                    importantForAccessibility: 'yes' as const,
+                  })}
             >
               <ScrollView
                 contentContainerStyle={styles.content}
@@ -192,7 +196,7 @@ export function PopupProvider({ children }: { children: ReactNode }) {
                 </View>
                 <Text
                   ref={title}
-                  tabIndex={-1}
+                  {...(Platform.OS === 'web' ? { tabIndex: -1 } : {})}
                   accessibilityRole="header"
                   style={styles.title}
                 >

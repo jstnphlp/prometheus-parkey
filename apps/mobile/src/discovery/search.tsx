@@ -44,9 +44,7 @@ export function DestinationSearch({
   onSaved,
   layout = 'overlay',
   fillSheet = false,
-  placeholder = layout === 'sheet'
-    ? 'Search for an address'
-    : 'Where do you need parking?',
+  placeholder = 'Search parking or landmark', 
 }: {
   query: string
   onQuery: (query: string) => void
@@ -278,7 +276,7 @@ export function DestinationSearch({
             accessibilityLabel="Open saved places"
             style={({ pressed }) => [styles.savedAction, pressed && ui.pressed]}
           >
-            <Text style={ui.small}>Makati</Text>
+            <Text style={ui.small}>Saved</Text>
           </MotionPressable>
         </View>
       ) : null}

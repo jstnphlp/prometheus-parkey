@@ -13,6 +13,7 @@ import {
   findNodeHandle,
   Keyboard,
   Modal,
+  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -22,9 +23,10 @@ import {
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
+import type { ParkeyTheme } from '../theme-colors'
+import { useTheme, createThemedStyles } from '../theme-provider'
 import { useReducedMotion } from '../onboarding/use-reduced-motion'
-import { colors, typography } from '../theme'
-
+import { typography } from '../theme'
 import { BrandButton } from './brand-button'
 import { BrandIcon } from './brand-icon'
 import { createPopupGate } from './popup-policy'
@@ -42,29 +44,38 @@ export type PopupRequest = PopupIdentity & {
 }
 type QueuedPopup = PopupRequest & {
   origin: string
-  input: ReturnType<typeof TextInput.State.currentlyFocusedInput>
+  input: { focus: () => void } | null
 }
 type PopupApi = {
   show: (request: PopupRequest) => void
   allowAgain: (key: string) => void
 }
 const PopupContext = createContext<PopupApi | null>(null)
-const palettes = {
-  error: { icon: 'error', surface: colors.errorSurface, ink: colors.plum },
-  warning: {
-    icon: 'warning',
-    surface: colors.warningSurface,
-    ink: colors.warningInk,
-  },
-  success: {
-    icon: 'check',
-    surface: colors.successSurface,
-    ink: colors.fieldIcon,
-  },
-  info: { icon: 'info', surface: colors.successSurface, ink: colors.fieldIcon },
-} as const
+const getPalettes = (colors: ParkeyTheme['entryColors']) =>
+  ({
+    error: { icon: 'error', surface: colors.errorSurface, ink: colors.error },
+    warning: {
+      icon: 'warning',
+      surface: colors.warningSurface,
+      ink: colors.warningInk,
+    },
+    success: {
+      icon: 'check',
+      surface: colors.successSurface,
+      ink: colors.fieldIcon,
+    },
+    info: {
+      icon: 'info',
+      surface: colors.successSurface,
+      ink: colors.fieldIcon,
+    },
+  }) as const
 
 export function PopupProvider({ children }: { children: ReactNode }) {
+  const { entryColors: colors } = useTheme()
+  const palettes = getPalettes(colors)
+  const styles = useStyles()
+
   const pathname = usePathname()
   const path = useRef(pathname)
   const queue = useRef<QueuedPopup[]>([])
@@ -109,15 +120,24 @@ export function PopupProvider({ children }: { children: ReactNode }) {
     }
   }
   function focusTitle() {
+    if (Platform.OS === 'web' && title.current instanceof HTMLElement) {
+      title.current.focus()
+      return
+    }
     const target = findNodeHandle(title.current)
     if (target) AccessibilityInfo.setAccessibilityFocus(target)
   }
   const api: PopupApi = {
     show(request) {
       if (!gate.current.accept(request)) return
-      const input = TextInput.State.currentlyFocusedInput()
+      const input =
+        Platform.OS === 'web'
+          ? document.activeElement instanceof HTMLElement
+            ? document.activeElement
+            : null
+          : TextInput.State.currentlyFocusedInput()
       Keyboard.dismiss()
-      const item = { ...request, origin: path.current, input }
+      const item = { ...request, origin: path.current, input: input ?? null }
       queue.current.push(item)
       if (queue.current.length === 1) setCurrent(item)
     },
@@ -172,6 +192,7 @@ export function PopupProvider({ children }: { children: ReactNode }) {
                 </View>
                 <Text
                   ref={title}
+                  tabIndex={-1}
                   accessibilityRole="header"
                   style={styles.title}
                 >
@@ -204,41 +225,43 @@ export function usePopup() {
   if (!popup) throw new Error('PopupProvider is required.')
   return popup
 }
-const styles = StyleSheet.create({
-  backdrop: {
-    flex: 1,
-    backgroundColor: colors.backdrop,
-    justifyContent: 'center',
-    padding: 24,
-  },
-  card: {
-    width: '100%',
-    maxWidth: 380,
-    maxHeight: '100%',
-    alignSelf: 'center',
-    backgroundColor: colors.white,
-    borderRadius: 24,
-    overflow: 'hidden',
-  },
-  content: { padding: 24, gap: 16 },
-  top: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  symbol: {
-    width: 56,
-    height: 56,
-    borderRadius: 18,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  close: {
-    width: 44,
-    height: 44,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  title: { ...typography.subtitle, color: colors.dark },
-  message: { ...typography.body, color: colors.fieldInk, marginBottom: 4 },
-})
+const useStyles = createThemedStyles(({ entryColors: colors }) =>
+  StyleSheet.create({
+    backdrop: {
+      flex: 1,
+      backgroundColor: colors.backdrop,
+      justifyContent: 'center',
+      padding: 24,
+    },
+    card: {
+      width: '100%',
+      maxWidth: 380,
+      maxHeight: '100%',
+      alignSelf: 'center',
+      backgroundColor: colors.card,
+      borderRadius: 24,
+      overflow: 'hidden',
+    },
+    content: { padding: 24, gap: 16 },
+    top: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+    symbol: {
+      width: 56,
+      height: 56,
+      borderRadius: 18,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    close: {
+      width: 44,
+      height: 44,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    title: { ...typography.subtitle, color: colors.dark },
+    message: { ...typography.body, color: colors.fieldInk, marginBottom: 4 },
+  }),
+)

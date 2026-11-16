@@ -7,7 +7,7 @@ import { ScrollView, Text, TextInput } from 'react-native'
 
 import { config } from './config'
 import { ModalSheet } from './sheets'
-import { Button, Choice, ui } from './ui'
+import { Button, Choice, useUI } from './ui'
 import {
   ReportAuthenticationError,
   reportForSending,
@@ -31,6 +31,8 @@ export function ReportSubmission({
   onReceipt: (receipt: ParkingReportReceipt) => Promise<void>
   onAttempt: () => Promise<void>
 }) {
+  const ui = useUI()
+
   const [email, setEmail] = useState('')
   const [code, setCode] = useState('')
   const [codeRequested, setCodeRequested] = useState(false)

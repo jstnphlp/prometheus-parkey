@@ -42,7 +42,7 @@ test('directions require consent, start navigation, and return to the map', asyn
   await panel.getByRole('button', { name: 'End', exact: true }).click()
   await expect(panel).toHaveCount(0)
   await expect(
-    page.getByRole('tab', { name: 'Map', exact: true }),
+    page.getByRole('tab', { name: 'Explore', exact: true }),
   ).toBeVisible()
   await page.goto(spotPath)
   await page.getByTestId('parking-get-directions').click()

@@ -104,6 +104,9 @@ export function useNavigation(onRouteExit?: () => void) {
       )
     }
     function pop() {
+      // Expo Router owns other paths. A retained map must not rewrite a
+      // settings/account URL or consume that screen's Back event.
+      if (window.location.pathname !== '/') return
       const next = {
         ...parseNavigation(window.location.search),
         ...pendingClose.current,

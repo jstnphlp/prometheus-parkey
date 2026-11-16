@@ -1,13 +1,15 @@
 import { Linking, Pressable, Text } from 'react-native'
 
 import type { SearchCredit } from './place-search'
-import { ui } from './ui'
+import { useUI } from './ui'
 
 export function SearchAttribution({
   credit,
 }: {
   credit: SearchCredit | null | undefined
 }) {
+  const ui = useUI()
+
   if (!credit) return null
   return (
     <Pressable

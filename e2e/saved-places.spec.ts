@@ -97,9 +97,9 @@ test('home address can be searched, saved, and reopened after reload', async ({
     .click()
   await expect(page).not.toHaveURL(/panel=saved/)
   await expect(page).toHaveURL(/lng=121.0308&lat=14.5653/)
-  await expect(page.getByRole('tab', { name: 'Map', exact: true })).toHaveText(
-    'Map',
-  )
+  await expect(
+    page.getByRole('tab', { name: 'Explore', exact: true }),
+  ).toHaveText('Explore')
 })
 
 test('parked location persists, can be cleared, and supports undo', async ({

@@ -11,10 +11,11 @@ import {
   View,
 } from 'react-native'
 
+import { useTheme, createThemedStyles } from '../theme-provider'
 import { createPhotoLoadSession } from './photo-load-state'
 import type { PhotoLoadStatus } from './photo-load-state'
 import { isParkingPhoto, photoPage, validParkingPhotos } from './photos'
-import { colors, Icon, IconButton, ui } from './ui'
+import { Icon, IconButton, useUI } from './ui'
 import { useReducedMotion } from './use-reduced-motion'
 
 function resourceKey(photo: ParkingPhoto) {
@@ -36,6 +37,10 @@ function PhotoPlaceholder({
   unavailable: boolean
   thumbnail: boolean
 }) {
+  const { colors } = useTheme()
+  const ui = useUI()
+  const styles = useStyles()
+
   return (
     <View
       accessibilityLabel={
@@ -58,6 +63,8 @@ function LoadedParkingImage({
   photo: ParkingPhoto
   thumbnail: boolean
 }) {
+  const { colors } = useTheme()
+
   const [status, setStatus] = useState<PhotoLoadStatus>('loading')
   const attempt = useRef<ReturnType<typeof createPhotoLoadSession> | null>(null)
   useLayoutEffect(() => {
@@ -104,6 +111,8 @@ export function ParkingImage({
   thumbnail?: boolean
   identityKey?: string
 }) {
+  const styles = useStyles()
+
   return (
     <View style={[styles.image, thumbnail ? styles.thumbnail : styles.full]}>
       {isParkingPhoto(photo) ? (
@@ -120,6 +129,9 @@ export function ParkingImage({
 }
 
 function PhotoCredit({ photo }: { photo: ParkingPhoto }) {
+  const ui = useUI()
+  const styles = useStyles()
+
   const [error, setError] = useState<string | null>(null)
   const active = useRef(true)
   const attempt = useRef(0)
@@ -183,6 +195,8 @@ function ParkingGalleryContent({
   photos: ParkingPhoto[]
   identityKey: string
 }) {
+  const ui = useUI()
+
   const [width, setWidth] = useState(0)
   const [index, setIndex] = useState(0)
   const list = useRef<FlatList<ParkingPhoto>>(null)
@@ -267,20 +281,22 @@ function ParkingGalleryContent({
   )
 }
 
-const styles = StyleSheet.create({
-  image: {
-    backgroundColor: colors.canvas,
-    borderRadius: 16,
-    overflow: 'hidden',
-  },
-  thumbnail: { width: 92, height: 96 },
-  full: { width: '100%', aspectRatio: 16 / 9 },
-  placeholder: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 6,
-    padding: 6,
-  },
-  credit: { minHeight: 44, justifyContent: 'center' },
-})
+const useStyles = createThemedStyles(({ colors }) =>
+  StyleSheet.create({
+    image: {
+      backgroundColor: colors.canvas,
+      borderRadius: 16,
+      overflow: 'hidden',
+    },
+    thumbnail: { width: 92, height: 96 },
+    full: { width: '100%', aspectRatio: 16 / 9 },
+    placeholder: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 6,
+      padding: 6,
+    },
+    credit: { minHeight: 44, justifyContent: 'center' },
+  }),
+)

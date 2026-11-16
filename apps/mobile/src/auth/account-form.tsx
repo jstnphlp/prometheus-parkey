@@ -11,11 +11,11 @@ import {
 } from 'react-native'
 import type { TextInput } from 'react-native'
 
+import { useTheme, createThemedStyles } from '../theme-provider'
 import { BrandButton } from '../components/brand-button'
 import { BrandIcon } from '../components/brand-icon'
 import { usePopup } from '../components/popup-provider'
-import { colors, fonts, typography } from '../theme'
-
+import { fonts, typography } from '../theme'
 import { AuthShell } from './auth-shell'
 import { FormField } from './form-field'
 import { authErrorCode, authFeedback } from './feedback'
@@ -33,6 +33,9 @@ import {
 } from './validation'
 
 export function AccountForm({ mode }: { mode: 'register' | 'login' }) {
+  const { entryColors: colors } = useTheme()
+  const styles = useStyles()
+
   const auth = useAuth()
   const router = useRouter()
   const registering = mode === 'register'
@@ -372,52 +375,54 @@ export function AccountForm({ mode }: { mode: 'register' | 'login' }) {
   )
 }
 
-const styles = StyleSheet.create({
-  fields: { marginTop: 33, gap: 6 },
-  loginFields: { marginTop: 19 },
-  primary: { marginTop: 24, minHeight: 50, borderRadius: 13 },
-  loginPrimary: { marginTop: 23 },
-  cyan: { color: colors.cyan },
-  plumMuted: { color: colors.onPlumMuted },
-  options: {
-    marginTop: 4,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-  },
-  remember: {
-    minHeight: 44,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-    paddingRight: 8,
-  },
-  checkbox: {
-    width: 14,
-    height: 14,
-    borderWidth: 1,
-    borderColor: '#D4E8EB',
-    borderRadius: 3,
-    backgroundColor: colors.white,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  forgot: { minHeight: 44, justifyContent: 'center' },
-  optionText: {
-    fontFamily: fonts.medium,
-    fontSize: 12,
-    lineHeight: 16,
-    color: colors.onDarkMuted,
-  },
-  footer: {
-    marginTop: 'auto',
-    paddingTop: 28,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    alignItems: 'center',
-    justifyContent: 'center',
-    columnGap: 7,
-  },
-  alternate: { minHeight: 44, minWidth: 66, justifyContent: 'center' },
-  alternateText: { ...typography.link, fontSize: 12, color: colors.white },
-})
+const useStyles = createThemedStyles(({ entryColors: colors }) =>
+  StyleSheet.create({
+    fields: { marginTop: 33, gap: 6 },
+    loginFields: { marginTop: 19 },
+    primary: { marginTop: 24, minHeight: 50, borderRadius: 13 },
+    loginPrimary: { marginTop: 23 },
+    cyan: { color: colors.cyan },
+    plumMuted: { color: colors.onPlumMuted },
+    options: {
+      marginTop: 4,
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      justifyContent: 'space-between',
+    },
+    remember: {
+      minHeight: 44,
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 10,
+      paddingRight: 8,
+    },
+    checkbox: {
+      width: 14,
+      height: 14,
+      borderWidth: 1,
+      borderColor: colors.controlBorder,
+      borderRadius: 3,
+      backgroundColor: colors.card,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    forgot: { minHeight: 44, justifyContent: 'center' },
+    optionText: {
+      fontFamily: fonts.medium,
+      fontSize: 12,
+      lineHeight: 16,
+      color: colors.onDarkMuted,
+    },
+    footer: {
+      marginTop: 'auto',
+      paddingTop: 28,
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      alignItems: 'center',
+      justifyContent: 'center',
+      columnGap: 7,
+    },
+    alternate: { minHeight: 44, minWidth: 66, justifyContent: 'center' },
+    alternateText: { ...typography.link, fontSize: 12, color: colors.text },
+  }),
+)

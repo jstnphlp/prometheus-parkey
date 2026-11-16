@@ -2,30 +2,10 @@ import type { TextStyle } from 'react-native'
 
 import regular from '../assets/fonts/Outfit_400Regular.ttf'
 import medium from '../assets/fonts/Outfit_500Medium.ttf'
+import semibold from '../assets/fonts/Outfit_600SemiBold.ttf'
 import bold from '../assets/fonts/Outfit_700Bold.ttf'
 import extraBold from '../assets/fonts/Outfit_800ExtraBold.ttf'
 import black from '../assets/fonts/Outfit_900Black.ttf'
-
-// Original Figma palette for the redesign. Discovery retains its existing palette.
-export const colors = {
-  plum: '#840561',
-  teal: '#00A6A7',
-  cyan: '#00C3BC',
-  dark: '#20162E',
-  white: '#FFFFFF',
-  onPlumMuted: '#FFE4F2',
-  onDarkMuted: '#C8D9DE',
-  onTealMuted: '#F0FFFF',
-  progressMuted: '#D7D0DB',
-  fieldInk: '#233D49',
-  fieldIcon: '#007F88',
-  controlBorder: '#D4E8EB',
-  successSurface: '#DDF6F4',
-  warningSurface: '#FFF2D8',
-  warningInk: '#8B4F00',
-  errorSurface: '#FBE4F2',
-  backdrop: 'rgba(32, 22, 46, 0.72)',
-} as const
 
 export const spacing = {
   xs: 4,
@@ -52,15 +32,17 @@ export const layout = {
 export const fonts = {
   regular: 'OutfitRegular',
   medium: 'OutfitMedium',
+  semibold: 'OutfitSemiBold',
   bold: 'OutfitBold',
   extraBold: 'OutfitExtraBold',
   black: 'OutfitBlack',
-  wordmark: 'NunitoBlack',
+  wordmark: 'OutfitBlack',
 } as const
 
 export const fontSources = {
   [fonts.regular]: regular,
   [fonts.medium]: medium,
+  [fonts.semibold]: semibold,
   [fonts.bold]: bold,
   [fonts.extraBold]: extraBold,
   [fonts.black]: black,
@@ -81,8 +63,8 @@ export const typography = {
   },
   accountTitle: {
     fontFamily: fonts.extraBold,
-    fontSize: 30,
-    lineHeight: 39,
+    fontSize: 31,
+    lineHeight: 38,
     letterSpacing: -0.75,
   },
   loginTitle: {
@@ -93,7 +75,7 @@ export const typography = {
   },
   body: { fontFamily: fonts.regular, fontSize: 16, lineHeight: 21 },
   welcomeBody: { fontFamily: fonts.regular, fontSize: 15, lineHeight: 19 },
-  accountBody: { fontFamily: fonts.medium, fontSize: 13, lineHeight: 18 },
+  accountBody: { fontFamily: fonts.medium, fontSize: 15, lineHeight: 18 },
   button: { fontFamily: fonts.bold, fontSize: 17, lineHeight: 22 },
   link: { fontFamily: fonts.bold, fontSize: 13, lineHeight: 18 },
   wordmark: {

@@ -155,7 +155,7 @@ export const test = base.extend<{ reviewedNavigation: boolean }>({
                     },
                   },
                 ]
-              : [],
+              : archive,
             truncated: false,
           },
         })

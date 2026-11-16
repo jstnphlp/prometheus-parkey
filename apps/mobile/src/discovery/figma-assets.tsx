@@ -1,5 +1,6 @@
 import { Image } from 'react-native'
 
+import { useTheme } from '../theme-provider'
 import asset6 from '../../assets/figma/more.png'
 import asset7 from '../../assets/figma/plus.png'
 import asset8 from '../../assets/figma/locate.png'
@@ -13,7 +14,6 @@ import asset22 from '../../assets/figma/turn-right.png'
 import asset23 from '../../assets/figma/then-left.png'
 import asset25 from '../../assets/figma/ring.png'
 import asset29 from '../../assets/figma/car-white.png'
-
 import playful0 from '../../assets/figma/playful/mascot.png'
 import playful1 from '../../assets/figma/playful/selected-spot.png'
 import playful2 from '../../assets/figma/playful/arrow.png'
@@ -41,11 +41,8 @@ import playful23 from '../../assets/figma/playful/confetti.png'
 import playful24 from '../../assets/figma/playful/confetti-1.png'
 import playful25 from '../../assets/figma/playful/confetti-2.png'
 import playful26 from '../../assets/figma/playful/confetti-3.png'
-
 import extra0 from '../../assets/figma/playful/arrival-ring.png'
-
 import extra1 from '../../assets/figma/playful/search-white.png'
-
 import v2Asset0 from '../../assets/figma/playful/go.png'
 import v2Asset1 from '../../assets/figma/playful/search-muted.png'
 import v2Asset2 from '../../assets/figma/playful/add-spot.png'
@@ -58,7 +55,6 @@ import v2Asset8 from '../../assets/figma/playful/pencil-brand.png'
 import v2Asset9 from '../../assets/figma/playful/nav-up.png'
 import v2Asset10 from '../../assets/figma/playful/nav-right.png'
 import v2Asset11 from '../../assets/figma/playful/nav-left.png'
-
 import chevronRight from '../../assets/figma/playful/chevron-right.png'
 import lockTeal from '../../assets/figma/playful/lock-teal.png'
 import shieldTeal from '../../assets/figma/playful/shield-teal.png'
@@ -152,6 +148,39 @@ export function FigmaAsset({
   name: FigmaAssetName
   size?: number
 }) {
+  const { colors } = useTheme()
+  const inkIcons: readonly FigmaAssetName[] = [
+    'locate-ink',
+    'search-muted',
+    'close',
+    'camera',
+    'search',
+    'info',
+  ]
+  const actionIcons: readonly FigmaAssetName[] = [
+    'bookmark',
+    'clock',
+    'fees',
+    'access',
+    'home',
+    'work',
+    'car',
+    'pin',
+    'star',
+    'info-brand',
+    'viewed-brand',
+    'draft-brand',
+    'zoom-in-brand',
+    'filter-brand',
+    'chevron-right',
+    'pencil-brand',
+    'camera-brand',
+  ]
+  const tintColor = inkIcons.includes(name)
+    ? colors.muted
+    : actionIcons.includes(name)
+      ? colors.link
+      : undefined
   const asset = assets[name]
   const width = size ?? asset.width
   return (
@@ -159,7 +188,11 @@ export function FigmaAsset({
       accessible={false}
       source={asset.source}
       resizeMode="contain"
-      style={{ width, height: (width * asset.height) / asset.width }}
+      style={{
+        width,
+        height: (width * asset.height) / asset.width,
+        ...(tintColor ? { tintColor } : {}),
+      }}
     />
   )
 }

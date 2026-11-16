@@ -18,12 +18,16 @@ import {
   Pressable,
   ScrollView,
   StyleSheet,
-  Text,
+  Text as NativeText,
   TextInput,
   View,
 } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import type { TextProps } from 'react-native'
 
+import { AppearanceButton } from '../components/appearance-button'
+import { SettingsLinks } from '../settings/settings-screen'
+import { useTheme, createThemedStyles } from '../theme-provider'
 import type { Viewport } from './model'
 import { BottomNavigation } from './bottom-navigation'
 import { detailDistance } from './parking-detail-data'
@@ -43,7 +47,6 @@ import { publicPilotCache } from './pilot-cache-storage'
 import { PUBLIC_PILOT_CACHE_TTL_MS } from './pilot-cache'
 import { samePilotRecords, uniquePilotRecords } from './pilot-performance'
 import NcrMap from './ncr-map'
-import { colors } from './palette'
 import {
   createPilotRequestGate,
   fetchPilotPage,
@@ -63,8 +66,14 @@ import {
   pilotConfig,
   pilotCities,
 } from './pilot-config'
+import { useUI } from './ui'
 import { ModalSheet } from './sheets'
 import { useLocation } from './use-location'
+
+function Text({ style, ...props }: TextProps) {
+  const ui = useUI()
+  return <NativeText {...props} style={[ui.body, style]} />
+}
 
 function Action({
   children,
@@ -79,6 +88,9 @@ function Action({
   disabled?: boolean
   testID?: string
 }) {
+  const { colors } = useTheme()
+  const styles = useStyles()
+
   return (
     <Pressable
       accessibilityRole="button"
@@ -92,7 +104,7 @@ function Action({
         disabled && styles.disabled,
       ]}
     >
-      <Text style={{ color: selected ? colors.surface : colors.ink }}>
+      <Text style={{ color: selected ? colors.onAction : colors.ink }}>
         {children}
       </Text>
     </Pressable>
@@ -119,6 +131,8 @@ export default function PilotDiscovery({
   allowLegacy: boolean
   onOpenLegacy: () => void
 }) {
+  const styles = useStyles()
+
   const insets = useSafeAreaInsets()
   const router = useRouter()
   const [city, setCity] = useState<PilotCity>('Manila')
@@ -854,6 +868,7 @@ export default function PilotDiscovery({
             Parking list and filters
           </Action>
           <Action onPress={() => setSheet('sources')}>Sources</Action>
+          <AppearanceButton />
         </View>
       </View>
       <BottomNavigation
@@ -1157,6 +1172,7 @@ export default function PilotDiscovery({
             testID="pilot-details"
             contentContainerStyle={styles.content}
           >
+            <AppearanceButton />
             <Text selectable style={styles.status}>
               {selected.officialName ||
                 selected.descriptiveLabel ||
@@ -1338,6 +1354,7 @@ export default function PilotDiscovery({
       {sheet === 'sources' ? (
         <ModalSheet title="Map information" onClose={() => setSheet(null)}>
           <ScrollView contentContainerStyle={styles.content}>
+            <SettingsLinks />
             <Text>
               Parkey helps you discover parking. It does not offer bookings or
               guarantee parking space. Saved places and your parked-car pin stay
@@ -1541,67 +1558,69 @@ export default function PilotDiscovery({
     </View>
   )
 }
-const styles = StyleSheet.create({
-  context: {
-    gap: 8,
-    padding: 12,
-    backgroundColor: colors.soft,
-    borderRadius: 12,
-  },
-  screen: { flex: 1, backgroundColor: colors.canvas },
-  top: {
-    position: 'absolute',
-    left: 12,
-    right: 12,
-    gap: 6,
-    maxWidth: 600,
-    alignSelf: 'center',
-  },
-  bottom: {
-    position: 'absolute',
-    left: 12,
-    right: 12,
-    padding: 12,
-    gap: 8,
-    backgroundColor: colors.surface,
-    borderRadius: 16,
-    maxWidth: 600,
-    alignSelf: 'center',
-  },
-  row: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
-  action: {
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    minHeight: 44,
-    borderRadius: 14,
-  },
-  active: { backgroundColor: colors.brand, borderColor: colors.brand },
-  disabled: { opacity: 0.45 },
-  content: { padding: 16, gap: 12 },
-  status: { fontSize: 16, fontWeight: '600', color: colors.ink },
-  input: {
-    borderWidth: 1,
-    borderColor: colors.border,
-    minHeight: 48,
-    borderRadius: 12,
-    padding: 12,
-    color: colors.ink,
-    backgroundColor: colors.surface,
-  },
-  record: {
-    padding: 14,
-    gap: 6,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-  },
-  warning: {
-    color: colors.amber,
-    backgroundColor: colors.warningSurface,
-    padding: 8,
-    borderRadius: 8,
-  },
-  error: { color: colors.error },
-})
+const useStyles = createThemedStyles(({ colors }) =>
+  StyleSheet.create({
+    context: {
+      gap: 8,
+      padding: 12,
+      backgroundColor: colors.soft,
+      borderRadius: 12,
+    },
+    screen: { flex: 1, backgroundColor: colors.canvas },
+    top: {
+      position: 'absolute',
+      left: 12,
+      right: 12,
+      gap: 6,
+      maxWidth: 600,
+      alignSelf: 'center',
+    },
+    bottom: {
+      position: 'absolute',
+      left: 12,
+      right: 12,
+      padding: 12,
+      gap: 8,
+      backgroundColor: colors.surface,
+      borderRadius: 16,
+      maxWidth: 600,
+      alignSelf: 'center',
+    },
+    row: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
+    action: {
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.border,
+      paddingHorizontal: 12,
+      paddingVertical: 10,
+      minHeight: 44,
+      borderRadius: 14,
+    },
+    active: { backgroundColor: colors.brand, borderColor: colors.brand },
+    disabled: { opacity: 0.45 },
+    content: { padding: 16, gap: 12 },
+    status: { fontSize: 16, fontFamily: 'OutfitBold', color: colors.ink },
+    input: {
+      borderWidth: 1,
+      borderColor: colors.border,
+      minHeight: 48,
+      borderRadius: 12,
+      padding: 12,
+      color: colors.ink,
+      backgroundColor: colors.surface,
+    },
+    record: {
+      padding: 14,
+      gap: 6,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border,
+    },
+    warning: {
+      color: colors.amber,
+      backgroundColor: colors.warningSurface,
+      padding: 8,
+      borderRadius: 8,
+    },
+    error: { color: colors.error },
+  }),
+)

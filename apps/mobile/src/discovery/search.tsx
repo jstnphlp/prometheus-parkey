@@ -12,6 +12,8 @@ import {
 } from 'react-native'
 import type { Coordinate } from '@parkey/shared-types'
 
+import { AppearanceButton } from '../components/appearance-button'
+import { useTheme, createThemedStyles } from '../theme-provider'
 import { config } from './config'
 import {
   searchPlaces,
@@ -24,7 +26,7 @@ import { FigmaAsset } from './figma-assets'
 import { MotionPressable } from './motion'
 import { fonts } from './typography'
 import { StateCard } from './state-card'
-import { colors, IconButton, UndoToast, ui } from './ui'
+import { IconButton, UndoToast, useUI } from './ui'
 import { useSearchHistory } from './use-search-history'
 
 const hasSearchProvider = Boolean(
@@ -58,6 +60,10 @@ export function DestinationSearch({
   fillSheet?: boolean
   placeholder?: string
 }) {
+  const { colors } = useTheme()
+  const ui = useUI()
+  const styles = useStyles()
+
   const { height } = useWindowDimensions()
   const { offline } = useConnectivity()
   const [retryAt, setRetryAt] = useState(0)
@@ -322,6 +328,7 @@ export function DestinationSearch({
           returnKeyType="search"
           style={[styles.input, layout === 'sheet' && styles.sheetInput]}
         />
+        <AppearanceButton />
         {query ? (
           <IconButton
             icon="close"
@@ -495,6 +502,9 @@ function DestinationRow({
   recent?: boolean
   onPress: () => void
 }) {
+  const ui = useUI()
+  const styles = useStyles()
+
   return (
     <MotionPressable
       accessibilityRole="button"
@@ -518,112 +528,119 @@ function DestinationRow({
   )
 }
 
-const styles = StyleSheet.create({
-  searchButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: colors.brand,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 10,
-  },
-  container: {
-    borderRadius: 32,
-    backgroundColor: colors.surface,
-    overflow: 'hidden',
-    padding: 16,
-  },
-  compactContainer: { padding: 12 },
-  sheetContainer: {
-    paddingTop: 0,
-    paddingBottom: 12,
-    borderRadius: 0,
-    flexShrink: 1,
-    minHeight: 0,
-  },
-  sheetBar: {
-    minHeight: 52,
-    borderRadius: 999,
-    backgroundColor: colors.soft,
-    borderColor: 'transparent',
-  },
-  sheetInput: { fontSize: 15, lineHeight: 22, paddingVertical: 12 },
-  compactHeader: { paddingBottom: 8 },
-  compactBrand: { fontSize: 26, lineHeight: 30 },
-  header: {
-    flexShrink: 0,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: 12,
-    paddingHorizontal: 4,
-    paddingBottom: 12,
-  },
-  bar: {
-    flexShrink: 0,
-    minHeight: 52,
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingLeft: 14,
-    paddingRight: 2,
-    gap: 12,
-    borderRadius: 28,
-    borderWidth: 2,
-    borderColor: 'transparent',
-    backgroundColor: colors.soft,
-  },
-  focusedBar: { borderColor: colors.accent },
-  brand: {
-    fontFamily: fonts.black,
-    fontSize: 32,
-    lineHeight: 36,
-    letterSpacing: -1,
-    color: colors.brand,
-  },
-  savedAction: {
-    minHeight: 44,
-    backgroundColor: colors.soft,
-    justifyContent: 'center',
-    paddingHorizontal: 12,
-    borderRadius: 24,
-  },
-  input: {
-    fontFamily: fonts.regular,
-    flex: 1,
-    minWidth: 0,
-    paddingVertical: 14,
-    fontSize: 17,
-    lineHeight: 24,
-    color: colors.ink,
-  },
-  results: { flexShrink: 1, minHeight: 0, maxHeight: 360, marginTop: 8 },
-  resultsContent: { paddingBottom: 4 },
-  result: {
-    minHeight: 64,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    paddingVertical: 12,
-  },
-  resultName: { ...ui.heading, fontFamily: fonts.bold },
-  resultIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: colors.selected,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  locationBadge: { backgroundColor: colors.positiveSurface },
-  clearAction: {
-    minHeight: 48,
-    justifyContent: 'center',
-    paddingHorizontal: 8,
-  },
-  message: { paddingVertical: 12 },
-  skeleton: { backgroundColor: colors.border, borderRadius: 8 },
-  skeletonText: { gap: 8 },
-  skeletonName: { width: '65%', height: 16 },
-  skeletonArea: { width: '90%', height: 12 },
-})
+const useStyles = createThemedStyles(({ colors }) =>
+  StyleSheet.create({
+    searchButton: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      backgroundColor: colors.brand,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginRight: 10,
+    },
+    container: {
+      borderRadius: 32,
+      backgroundColor: colors.surface,
+      overflow: 'hidden',
+      padding: 16,
+    },
+    compactContainer: { padding: 12 },
+    sheetContainer: {
+      paddingTop: 0,
+      paddingBottom: 12,
+      borderRadius: 0,
+      flexShrink: 1,
+      minHeight: 0,
+    },
+    sheetBar: {
+      minHeight: 52,
+      borderRadius: 16,
+      backgroundColor: colors.soft,
+      borderColor: colors.border,
+    },
+    sheetInput: { fontSize: 15, lineHeight: 22, paddingVertical: 12 },
+    compactHeader: { paddingBottom: 8 },
+    compactBrand: { fontSize: 26, lineHeight: 30 },
+    header: {
+      flexShrink: 0,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      gap: 12,
+      paddingHorizontal: 4,
+      paddingBottom: 12,
+    },
+    bar: {
+      flexShrink: 0,
+      minHeight: 52,
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingLeft: 14,
+      paddingRight: 2,
+      gap: 12,
+      borderRadius: 28,
+      borderWidth: 2,
+      borderColor: 'transparent',
+      backgroundColor: colors.soft,
+    },
+    focusedBar: { borderColor: colors.accent },
+    brand: {
+      fontFamily: fonts.black,
+      fontSize: 32,
+      lineHeight: 36,
+      letterSpacing: -1,
+      color: colors.brand,
+    },
+    savedAction: {
+      minHeight: 44,
+      backgroundColor: colors.soft,
+      justifyContent: 'center',
+      paddingHorizontal: 12,
+      borderRadius: 24,
+    },
+    input: {
+      fontFamily: fonts.regular,
+      flex: 1,
+      minWidth: 0,
+      paddingVertical: 14,
+      fontSize: 17,
+      lineHeight: 24,
+      color: colors.ink,
+    },
+    results: { flexShrink: 1, minHeight: 0, maxHeight: 360, marginTop: 8 },
+    resultsContent: { paddingBottom: 4 },
+    result: {
+      minHeight: 64,
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 12,
+      paddingVertical: 12,
+    },
+    resultName: {
+      fontFamily: fonts.bold,
+      fontSize: 17,
+      lineHeight: 22,
+      color: colors.ink,
+    },
+    resultIcon: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      backgroundColor: colors.selected,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    locationBadge: { backgroundColor: colors.positiveSurface },
+    clearAction: {
+      minHeight: 48,
+      justifyContent: 'center',
+      paddingHorizontal: 8,
+    },
+    message: { paddingVertical: 12 },
+    skeleton: { backgroundColor: colors.border, borderRadius: 8 },
+    skeletonText: { gap: 8 },
+    skeletonName: { width: '65%', height: 16 },
+    skeletonArea: { width: '90%', height: 12 },
+  }),
+)

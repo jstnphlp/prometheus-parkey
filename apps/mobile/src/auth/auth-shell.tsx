@@ -2,10 +2,11 @@ import type { ReactNode } from 'react'
 import { StyleSheet, Text } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
+import { useTheme, createThemedStyles } from '../theme-provider'
 import { BrandLogo } from '../components/brand-logo'
 import { ScreenContainer } from '../components/screen-container'
 import { BackButton } from '../onboarding/back-button'
-import { colors, typography } from '../theme'
+import { typography } from '../theme'
 import { useAuthSystemPopup } from './use-system-popup'
 
 export function AuthShell({
@@ -21,9 +22,12 @@ export function AuthShell({
   children: ReactNode
   onBack?: () => void
 }) {
+  const { entryColors: colors } = useTheme()
+  const styles = useStyles()
+
   const insets = useSafeAreaInsets()
   useAuthSystemPopup()
-  const background = registering ? colors.plum : colors.dark
+  const background = colors.canvas
   return (
     <ScreenContainer
       backgroundColor={background}
@@ -64,10 +68,12 @@ export function AuthShell({
   )
 }
 
-const styles = StyleSheet.create({
-  content: { paddingHorizontal: 32, paddingBottom: 28 },
-  title: { color: colors.white, marginTop: 17 },
-  loginTitle: { marginTop: 19 },
-  subtitle: { ...typography.accountBody, marginTop: 6 },
-  loginSubtitle: { marginTop: 14 },
-})
+const useStyles = createThemedStyles(({ entryColors: colors }) =>
+  StyleSheet.create({
+    content: { paddingHorizontal: 32, paddingBottom: 28 },
+    title: { color: colors.text, marginTop: 17 },
+    loginTitle: { marginTop: 19 },
+    subtitle: { ...typography.accountBody, marginTop: 6 },
+    loginSubtitle: { marginTop: 14 },
+  }),
+)

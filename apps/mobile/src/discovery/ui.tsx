@@ -4,18 +4,17 @@ import { Platform, StyleSheet, Text, View } from 'react-native'
 import type { StyleProp, ViewStyle } from 'react-native'
 import Svg, { Circle, Path } from 'react-native-svg'
 
-import { FigmaAsset } from './figma-assets'
+import { useTheme, createThemedStyles } from '../theme-provider'
 import { MotionPressable, MotionView, SelectionPop } from './motion'
-import type { FigmaAssetName } from './figma-assets'
-import { colors } from './palette'
 import { parkingPin } from './parking-pin'
 import { fonts } from './typography'
-
-export { colors } from './palette'
 
 export const detailsPeekHeight = 420
 
 const paths = {
+  share: 'M12 16V2m-5 5 5-5 5 5M5 10H3v12h18V10h-2',
+  appearance: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18ZM12 3v18',
+  person: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM4 22v-2a8 8 0 0 1 16 0v2',
   clock: 'M12 6v6l4 2M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0',
   fees: 'M4 3h16v18l-4-2-4 2-4-2-4 2V3ZM8 8h8M8 12h6',
   access: 'M5 21V3h14v18M9 21V7h6v14M13 14h.01M3 21h18',
@@ -42,6 +41,8 @@ const paths = {
 export type IconName = keyof typeof paths
 
 export function ParkingPinIcon({ size = 28 }: { size?: number }) {
+  const { colors } = useTheme()
+
   return (
     <Svg width={size} height={(size * 44) / 36} viewBox="0 0 36 44">
       <Path
@@ -58,7 +59,7 @@ export function ParkingPinIcon({ size = 28 }: { size?: number }) {
 
 export function Icon({
   name,
-  color = colors.ink,
+  color: colorProp,
   size = 22,
   filled = false,
 }: {
@@ -67,31 +68,9 @@ export function Icon({
   size?: number
   filled?: boolean
 }) {
-  const asset: FigmaAssetName | undefined =
-    name === 'check' && color === colors.surface
-      ? 'check-white'
-      : name === 'locate' && color === colors.ink
-        ? 'locate-ink'
-        : name === 'bookmark' && !filled
-          ? 'bookmark'
-          : name === 'arrow' && color === colors.surface
-            ? 'arrow'
-            : name === 'close' && color === colors.muted
-              ? 'close'
-              : name === 'camera' && color === colors.disabled
-                ? 'camera'
-                : name === 'search' && color === colors.disabled
-                  ? 'search'
-                  : name === 'info' && color === colors.disabled
-                    ? 'info'
-                    : name === 'locate' && color === colors.action
-                      ? 'locate'
-                      : name === 'star' && !filled && color === colors.brand
-                        ? 'star'
-                        : name === 'pin' && color === colors.brand
-                          ? 'pin'
-                          : undefined
-  if (asset) return <FigmaAsset name={asset} size={size} />
+  const { colors } = useTheme()
+  const color = colorProp ?? colors.ink
+
   return (
     <Svg
       width={size}
@@ -132,6 +111,9 @@ export function IconButton({
   selected?: boolean
   color?: string
 }) {
+  const { colors } = useTheme()
+  const ui = useUI()
+
   const [focused, setFocused] = useState(false)
   const target = useRef<ComponentRef<typeof View>>(null)
   useEffect(() => {
@@ -180,8 +162,8 @@ export function IconButton({
                   (icon === 'close' || icon === 'info'
                     ? colors.muted
                     : icon === 'star'
-                      ? colors.brand
-                      : colors.action))
+                      ? colors.link
+                      : colors.link))
           }
         />
       </SelectionPop>
@@ -204,12 +186,15 @@ export function Button({
   icon?: IconName
   testID?: string
 }) {
+  const { colors } = useTheme()
+  const ui = useUI()
+
   const [focused, setFocused] = useState(false)
   const foreground = disabled
     ? colors.disabled
     : secondary
       ? colors.brandDeep
-      : colors.surface
+      : colors.onAction
   return (
     <MotionPressable
       testID={testID}
@@ -242,6 +227,8 @@ export function Choice({
   selected: boolean
   onPress: () => void
 }) {
+  const ui = useUI()
+
   const [focused, setFocused] = useState(false)
   return (
     <MotionPressable
@@ -268,165 +255,170 @@ export function Choice({
 }
 
 export function Notice({ children }: { children: ReactNode }) {
+  const { colors } = useTheme()
+  const ui = useUI()
+
   return (
     <View style={ui.notice}>
-      <Icon name="info" color={colors.action} size={18} />
+      <Icon name="info" color={colors.link} size={18} />
       <Text style={[ui.muted, ui.flex]}>{children}</Text>
     </View>
   )
 }
 
-export const ui = StyleSheet.create({
-  row: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  flex: { flex: 1 },
-  sheetScroll: {
-    flexShrink: 1,
-    minHeight: 0,
-    ...Platform.select({
-      web: { overscrollBehaviorY: 'contain', overflowAnchor: 'none' },
-    }),
-  },
-  body: {
-    fontFamily: fonts.regular,
-    fontSize: 15,
-    lineHeight: 23,
-    color: colors.ink,
-  },
-  muted: {
-    fontFamily: fonts.regular,
-    fontSize: 14,
-    lineHeight: 22,
-    color: colors.muted,
-  },
-  small: {
-    fontFamily: fonts.regular,
-    fontSize: 13,
-    lineHeight: 18,
-    color: colors.muted,
-  },
-  link: { color: colors.brandDeep, fontFamily: fonts.semibold },
-  error: { color: colors.error },
-  title: {
-    fontFamily: fonts.black,
-    fontSize: 28,
-    lineHeight: 31,
-    letterSpacing: -0.8,
-    color: colors.ink,
-  },
-  sectionTitle: {
-    fontFamily: fonts.black,
-    fontSize: 20,
-    lineHeight: 24,
-    letterSpacing: -0.5,
-    color: colors.ink,
-  },
-  heading: {
-    fontFamily: fonts.bold,
-    fontSize: 17,
-    lineHeight: 22,
-    letterSpacing: -0.2,
-    color: colors.ink,
-  },
-  eyebrow: {
-    fontFamily: fonts.semibold,
-    fontSize: 12,
-    lineHeight: 18,
-    letterSpacing: 0.4,
-    color: colors.muted,
-  },
-  iconButton: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: colors.soft,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  button: {
-    minHeight: 56,
-    paddingHorizontal: 24,
-    paddingVertical: 14,
-    borderRadius: 999,
-    backgroundColor: colors.brand,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 10,
-  },
-  buttonText: {
-    fontFamily: fonts.bold,
-    flexShrink: 1,
-    fontSize: 17,
-    lineHeight: 24,
-    color: colors.surface,
-    textAlign: 'center',
-  },
-  secondary: {
-    backgroundColor: colors.selected,
-  },
-  choice: {
-    minHeight: 44,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 999,
-    backgroundColor: colors.surface,
-    boxShadow: `inset 0px 0px 0px 2px ${colors.border}`,
-  },
-  iconSelected: { backgroundColor: colors.selected },
-  choiceSelected: {
-    backgroundColor: colors.brand,
-    boxShadow: 'none',
-  },
-  choiceText: {
-    fontFamily: fonts.bold,
-    fontSize: 17,
-    lineHeight: 20,
-    color: colors.ink,
-  },
-  choiceTextSelected: { color: colors.surface },
-  pressed: { backgroundColor: colors.soft },
-  iconPressed: { backgroundColor: colors.disabledSurface },
-  buttonPressed: {
-    backgroundColor: colors.brandDeep,
-    transform: [{ scale: 0.97 }],
-  },
-  secondaryPressed: {
-    backgroundColor: colors.selectedPressed,
-    transform: [{ scale: 0.97 }],
-  },
-  disabled: {
-    backgroundColor: colors.disabledSurface,
-    boxShadow: `inset 0px 0px 0px 1px ${colors.border}`,
-  },
-  focused: {
-    outlineColor: colors.brandDeep,
-    outlineWidth: 2,
-    outlineOffset: 2,
-  },
-  shadow: {
-    boxShadow: `0px 4px 24px ${colors.shadow}`,
-  },
-  notice: {
-    flexDirection: 'row',
-    gap: 12,
-    padding: 16,
-    borderRadius: 24,
-    backgroundColor: colors.soft,
-    alignItems: 'flex-start',
-  },
-  input: {
-    fontFamily: fonts.regular,
-    backgroundColor: colors.surface,
-    boxShadow: `inset 0px 0px 0px 1px ${colors.border}`,
-    borderRadius: 24,
-    padding: 16,
-    minHeight: 56,
-    fontSize: 16,
-    lineHeight: 24,
-    color: colors.ink,
-  },
-  divider: { height: StyleSheet.hairlineWidth, backgroundColor: colors.line },
-})
+export const useUI = createThemedStyles(({ colors }) =>
+  StyleSheet.create({
+    row: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+    flex: { flex: 1 },
+    sheetScroll: {
+      flexShrink: 1,
+      minHeight: 0,
+      ...Platform.select({
+        web: { overscrollBehaviorY: 'contain', overflowAnchor: 'none' },
+      }),
+    },
+    body: {
+      fontFamily: fonts.regular,
+      fontSize: 15,
+      lineHeight: 23,
+      color: colors.ink,
+    },
+    muted: {
+      fontFamily: fonts.regular,
+      fontSize: 14,
+      lineHeight: 22,
+      color: colors.muted,
+    },
+    small: {
+      fontFamily: fonts.regular,
+      fontSize: 13,
+      lineHeight: 18,
+      color: colors.muted,
+    },
+    link: { color: colors.link, fontFamily: fonts.semibold },
+    error: { color: colors.error },
+    title: {
+      fontFamily: fonts.black,
+      fontSize: 28,
+      lineHeight: 31,
+      letterSpacing: -0.8,
+      color: colors.ink,
+    },
+    sectionTitle: {
+      fontFamily: fonts.black,
+      fontSize: 20,
+      lineHeight: 24,
+      letterSpacing: -0.5,
+      color: colors.ink,
+    },
+    heading: {
+      fontFamily: fonts.bold,
+      fontSize: 17,
+      lineHeight: 22,
+      letterSpacing: -0.2,
+      color: colors.ink,
+    },
+    eyebrow: {
+      fontFamily: fonts.semibold,
+      fontSize: 12,
+      lineHeight: 18,
+      letterSpacing: 0.4,
+      color: colors.muted,
+    },
+    iconButton: {
+      width: 48,
+      height: 48,
+      borderRadius: 24,
+      backgroundColor: colors.soft,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    button: {
+      minHeight: 56,
+      paddingHorizontal: 24,
+      paddingVertical: 14,
+      borderRadius: 16,
+      backgroundColor: colors.brand,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 10,
+    },
+    buttonText: {
+      fontFamily: fonts.bold,
+      flexShrink: 1,
+      fontSize: 17,
+      lineHeight: 24,
+      color: colors.onAction,
+      textAlign: 'center',
+    },
+    secondary: {
+      backgroundColor: colors.selected,
+    },
+    choice: {
+      minHeight: 44,
+      paddingVertical: 12,
+      paddingHorizontal: 16,
+      borderRadius: 999,
+      backgroundColor: colors.surface,
+      boxShadow: `inset 0px 0px 0px 2px ${colors.border}`,
+    },
+    iconSelected: { backgroundColor: colors.selected },
+    choiceSelected: {
+      backgroundColor: colors.brand,
+      boxShadow: 'none',
+    },
+    choiceText: {
+      fontFamily: fonts.bold,
+      fontSize: 17,
+      lineHeight: 20,
+      color: colors.ink,
+    },
+    choiceTextSelected: { color: colors.onAction },
+    pressed: { backgroundColor: colors.soft },
+    iconPressed: { backgroundColor: colors.disabledSurface },
+    buttonPressed: {
+      backgroundColor: colors.actionPressed,
+      transform: [{ scale: 0.97 }],
+    },
+    secondaryPressed: {
+      backgroundColor: colors.selectedPressed,
+      transform: [{ scale: 0.97 }],
+    },
+    disabled: {
+      backgroundColor: colors.disabledSurface,
+      boxShadow: `inset 0px 0px 0px 1px ${colors.border}`,
+    },
+    focused: {
+      outlineColor: colors.brandDeep,
+      outlineWidth: 2,
+      outlineOffset: 2,
+    },
+    shadow: {
+      boxShadow: `0px 4px 24px ${colors.shadow}`,
+    },
+    notice: {
+      flexDirection: 'row',
+      gap: 12,
+      padding: 16,
+      borderRadius: 24,
+      backgroundColor: colors.soft,
+      alignItems: 'flex-start',
+    },
+    input: {
+      fontFamily: fonts.regular,
+      backgroundColor: colors.surface,
+      boxShadow: `inset 0px 0px 0px 1px ${colors.border}`,
+      borderRadius: 16,
+      padding: 16,
+      minHeight: 56,
+      fontSize: 16,
+      lineHeight: 24,
+      color: colors.ink,
+    },
+    divider: { height: StyleSheet.hairlineWidth, backgroundColor: colors.line },
+  }),
+)
 
 export function UndoToast({
   message,
@@ -435,6 +427,9 @@ export function UndoToast({
   message: string
   onUndo: () => void
 }) {
+  const { colors } = useTheme()
+  const ui = useUI()
+
   return (
     <MotionView
       key={message}
@@ -451,7 +446,7 @@ export function UndoToast({
         borderRadius: 20,
       }}
     >
-      <Text style={[ui.body, ui.flex, { color: colors.surface }]}>
+      <Text style={[ui.body, ui.flex, { color: colors.onAction }]}>
         {message}
       </Text>
       <MotionPressable
@@ -469,12 +464,14 @@ export function UndoToast({
           pressed && { opacity: 0.8 },
         ]}
       >
-        <Text style={[ui.heading, { color: colors.selected }]}>Undo</Text>
+        <Text style={[ui.heading, { color: colors.onAction }]}>Undo</Text>
       </MotionPressable>
     </MotionView>
   )
 }
 export function LoadingRows() {
+  const { colors } = useTheme()
+
   return (
     <View
       accessibilityLabel="Loading parking"

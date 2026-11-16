@@ -10,12 +10,15 @@ import {
 } from 'react'
 import 'maplibre-gl/dist/maplibre-gl.css'
 
+import { useTheme } from '../theme-provider'
 import { config } from './config'
 import { mapTextFont } from './map-font'
 import { ncrMapSources } from './ncr-map-data'
 import type { NcrMapProps } from './ncr-map-data'
 
 function NcrMap(props: NcrMapProps) {
+  const theme = useTheme()
+  const initialTheme = useRef(theme)
   const container = useRef<HTMLDivElement>(null)
   const map = useRef<Map | null>(null)
   const [loaded, setLoaded] = useState(false)
@@ -39,6 +42,7 @@ function NcrMap(props: NcrMapProps) {
   )
   const [initialTarget] = useState(props.target)
   useEffect(() => {
+    const { colors, mapColors } = initialTheme.current
     if (!container.current) return
     setWorkerUrl('/maplibre/maplibre-gl-worker.mjs')
     let instance: Map
@@ -77,7 +81,12 @@ function NcrMap(props: NcrMapProps) {
         minzoom: 14,
         filter: ['==', ['geometry-type'], 'Polygon'],
         paint: {
-          'fill-color': ['case', ['get', 'restricted'], '#C23B3B', '#8A1060'],
+          'fill-color': [
+            'case',
+            ['get', 'restricted'],
+            colors.error,
+            colors.brand,
+          ],
           'fill-opacity': 0.2,
         },
       })
@@ -88,7 +97,12 @@ function NcrMap(props: NcrMapProps) {
         minzoom: 14,
         filter: ['==', ['geometry-type'], 'LineString'],
         paint: {
-          'line-color': ['case', ['get', 'restricted'], '#C23B3B', '#2E7F88'],
+          'line-color': [
+            'case',
+            ['get', 'restricted'],
+            colors.error,
+            mapColors.street,
+          ],
           'line-width': 4,
           'line-dasharray': [2, 1],
         },
@@ -102,15 +116,15 @@ function NcrMap(props: NcrMapProps) {
           'circle-color': [
             'case',
             ['get', 'restricted'],
-            '#C23B3B',
+            colors.error,
             [
               'match',
               ['get', 'featureType'],
               'entrance',
-              '#A85A06',
+              colors.amber,
               'space',
-              '#24666E',
-              '#8A1060',
+              mapColors.street,
+              colors.brand,
             ],
           ],
           'circle-radius': [
@@ -119,7 +133,7 @@ function NcrMap(props: NcrMapProps) {
             10,
             ['match', ['get', 'featureType'], 'entrance', 4, 'space', 4, 7],
           ],
-          'circle-stroke-color': '#FFFFFF',
+          'circle-stroke-color': mapColors.casing,
           'circle-stroke-width': 2,
         },
       })
@@ -142,8 +156,8 @@ function NcrMap(props: NcrMapProps) {
           'text-max-width': 16,
         },
         paint: {
-          'text-color': '#5A1643',
-          'text-halo-color': '#FFFFFF',
+          'text-color': mapColors.label,
+          'text-halo-color': mapColors.labelHalo,
           'text-halo-width': 2,
         },
       })
@@ -153,7 +167,7 @@ function NcrMap(props: NcrMapProps) {
         source: 'anchors',
         filter: ['has', 'point_count'],
         paint: {
-          'circle-color': '#8A1060',
+          'circle-color': colors.brand,
           'circle-radius': 18,
           'circle-opacity': 0.8,
         },
@@ -169,7 +183,7 @@ function NcrMap(props: NcrMapProps) {
           'text-font': mapTextFont,
           'text-size': 12,
         },
-        paint: { 'text-color': '#FFFFFF' },
+        paint: { 'text-color': mapColors.casing },
       })
       setLoaded(true)
       viewport()
@@ -248,6 +262,42 @@ function NcrMap(props: NcrMapProps) {
         zoom: props.target.zoom,
       })
   }, [loaded, props.target])
+  useEffect(() => {
+    const instance = map.current
+    if (!loaded || !instance) return
+    const { colors, mapColors } = theme
+    instance.setPaintProperty('ncr-areas', 'fill-color', [
+      'case',
+      ['get', 'restricted'],
+      colors.error,
+      colors.brand,
+    ])
+    instance.setPaintProperty('ncr-streets', 'line-color', [
+      'case',
+      ['get', 'restricted'],
+      colors.error,
+      mapColors.street,
+    ])
+    instance.setPaintProperty('ncr-anchors', 'circle-color', [
+      'case',
+      ['get', 'restricted'],
+      colors.error,
+      [
+        'match',
+        ['get', 'featureType'],
+        'entrance',
+        colors.amber,
+        'space',
+        mapColors.street,
+        colors.brand,
+      ],
+    ])
+    instance.setPaintProperty(
+      'ncr-destination-labels',
+      'text-color',
+      mapColors.label,
+    )
+  }, [loaded, theme])
   return (
     <div
       ref={container}

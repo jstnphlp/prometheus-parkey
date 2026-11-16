@@ -12,13 +12,15 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Svg, { Path } from 'react-native-svg'
 
+import { useTheme, createThemedStyles } from '../theme-provider'
+import { AppearanceButton } from '../components/appearance-button'
 import { FigmaAsset } from './figma-assets'
 import { arrivalTime } from './drive-math'
 import { routeDistance, routeDuration } from './routing'
 import type { DrivingStep } from './routing'
 import { createSheetDragGuard } from './sheet-state'
 import { fonts } from './typography'
-import { Button, Choice, colors, ui } from './ui'
+import { Button, Choice, useUI } from './ui'
 import type { DrivePhase } from './use-drive-navigation'
 import type { RouteState } from './use-route'
 
@@ -35,6 +37,10 @@ export function NavigationBanner({
   rerouting: boolean
   night?: boolean
 }) {
+  const { colors } = useTheme()
+  const ui = useUI()
+  const styles = useStyles()
+
   const path =
     step?.maneuver.includes('roundabout') || step?.maneuver === 'rotary'
       ? 'M12 21v-5a5 5 0 1 1 5-5M17 11V4m-4 4 4-4 4 4'
@@ -86,7 +92,7 @@ export function NavigationBanner({
           {then.modifier.includes('left') ? (
             <FigmaAsset name="nav-left" size={24} />
           ) : null}
-          <Text style={[ui.small, { color: colors.surface, flex: 1 }]}>
+          <Text style={[ui.small, { color: colors.onAction, flex: 1 }]}>
             {then.instruction}
           </Text>
         </View>
@@ -138,6 +144,10 @@ export function RouteDetails({
   onHeightChange: (height: number) => void
   night?: boolean
 }) {
+  const { colors } = useTheme()
+  const ui = useUI()
+  const styles = useStyles()
+
   const { height } = useWindowDimensions()
   const insets = useSafeAreaInsets()
   const [unsure, setUnsure] = useState(false)
@@ -183,12 +193,12 @@ export function RouteDetails({
     >
       {floating ? (
         <>
-          <View style={[ui.row, { gap: 12 }]}>
+          <View style={[ui.row, { gap: 8, flexWrap: 'wrap' }]}>
             <View style={ui.flex}>
               {duration !== undefined && distance !== undefined ? (
                 <>
                   <Text
-                    style={[styles.eta, night && { color: colors.surface }]}
+                    style={[styles.eta, night && { color: colors.onAction }]}
                   >
                     {routeDuration(duration)}
                   </Text>
@@ -199,11 +209,12 @@ export function RouteDetails({
                   </Text>
                 </>
               ) : (
-                <Text style={[ui.body, night && { color: colors.surface }]}>
+                <Text style={[ui.body, night && { color: colors.onAction }]}>
                   Calculating route…
                 </Text>
               )}
             </View>
+            <AppearanceButton />
             {onNext ? (
               <Pressable
                 accessibilityRole="button"
@@ -215,7 +226,7 @@ export function RouteDetails({
                 ]}
               >
                 <Text
-                  style={[styles.nextText, night && { color: colors.surface }]}
+                  style={[styles.nextText, night && { color: colors.onAction }]}
                 >
                   Next spot
                 </Text>
@@ -395,129 +406,131 @@ export function RouteDetails({
     </View>
   )
 }
-const styles = StyleSheet.create({
-  nightSurface: {
-    backgroundColor: colors.darkRaised,
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.12)',
-  },
-  sheet: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    maxWidth: 620,
-    marginHorizontal: 'auto',
-    borderTopLeftRadius: 28,
-    borderTopRightRadius: 28,
-    backgroundColor: colors.surface,
-    paddingHorizontal: 16,
-    paddingTop: 0,
-    gap: 0,
-  },
-  handleTouch: { height: 32, alignItems: 'center', justifyContent: 'center' },
-  handle: {
-    width: 40,
-    height: 5,
-    borderRadius: 3,
-    backgroundColor: colors.border,
-  },
-  banner: {
-    backgroundColor: colors.dark,
-    borderRadius: 28,
-    padding: 16,
-    gap: 14,
-  },
-  tripBar: {
-    left: 16,
-    right: 16,
-    borderRadius: 28,
-    paddingLeft: 24,
-    paddingRight: 16,
-    paddingTop: 16,
-    gap: 12,
-  },
-  turnBadge: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    backgroundColor: colors.brand,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  maneuverDistance: {
-    fontFamily: fonts.black,
-    fontSize: 40,
-    lineHeight: 40,
-    letterSpacing: -1.2,
-    color: colors.surface,
-  },
-  then: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    backgroundColor: colors.darkRaised,
-    borderRadius: 999,
-    paddingLeft: 14,
-    paddingRight: 16,
-    paddingVertical: 10,
-  },
-  thenLabel: {
-    fontFamily: fonts.bold,
-    fontSize: 12,
-    color: colors.onDarkMuted,
-  },
-  next: {
-    backgroundColor: colors.soft,
-    borderRadius: 999,
-    paddingHorizontal: 14,
-    minHeight: 49,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  nextText: { fontFamily: fonts.bold, fontSize: 15, color: colors.ink },
-  end: {
-    backgroundColor: colors.dangerSurface,
-    borderRadius: 999,
-    paddingHorizontal: 24,
-    minHeight: 49,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  endText: { fontFamily: fonts.semibold, fontSize: 17, color: colors.error },
-  warning: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-    backgroundColor: colors.warningSurface,
-    borderRadius: 20,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-  },
-  help: {
-    padding: 16,
-    borderRadius: 28,
-    backgroundColor: colors.selected,
-    gap: 14,
-  },
-  nextLink: {
-    minHeight: 44,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingTop: 4,
-  },
-  eta: {
-    fontFamily: fonts.bold,
-    fontSize: 28,
-    lineHeight: 31,
-    letterSpacing: -0.56,
-    color: colors.ink,
-  },
-  maneuver: {
-    fontFamily: fonts.regular,
-    fontSize: 15,
-    lineHeight: 22,
-    color: colors.onDarkMuted,
-    flexShrink: 1,
-  },
-})
+const useStyles = createThemedStyles(({ colors }) =>
+  StyleSheet.create({
+    nightSurface: {
+      backgroundColor: colors.darkRaised,
+      borderWidth: 1,
+      borderColor: 'rgba(255,255,255,0.12)',
+    },
+    sheet: {
+      position: 'absolute',
+      bottom: 0,
+      left: 0,
+      right: 0,
+      maxWidth: 620,
+      marginHorizontal: 'auto',
+      borderTopLeftRadius: 28,
+      borderTopRightRadius: 28,
+      backgroundColor: colors.surface,
+      paddingHorizontal: 16,
+      paddingTop: 0,
+      gap: 0,
+    },
+    handleTouch: { height: 32, alignItems: 'center', justifyContent: 'center' },
+    handle: {
+      width: 40,
+      height: 5,
+      borderRadius: 3,
+      backgroundColor: colors.border,
+    },
+    banner: {
+      backgroundColor: colors.dark,
+      borderRadius: 28,
+      padding: 16,
+      gap: 14,
+    },
+    tripBar: {
+      left: 16,
+      right: 16,
+      borderRadius: 28,
+      paddingLeft: 24,
+      paddingRight: 16,
+      paddingTop: 16,
+      gap: 12,
+    },
+    turnBadge: {
+      width: 64,
+      height: 64,
+      borderRadius: 32,
+      backgroundColor: colors.brand,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    maneuverDistance: {
+      fontFamily: fonts.black,
+      fontSize: 40,
+      lineHeight: 40,
+      letterSpacing: -1.2,
+      color: colors.onAction,
+    },
+    then: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+      backgroundColor: colors.darkRaised,
+      borderRadius: 999,
+      paddingLeft: 14,
+      paddingRight: 16,
+      paddingVertical: 10,
+    },
+    thenLabel: {
+      fontFamily: fonts.bold,
+      fontSize: 12,
+      color: colors.onDarkMuted,
+    },
+    next: {
+      backgroundColor: colors.soft,
+      borderRadius: 999,
+      paddingHorizontal: 14,
+      minHeight: 49,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    nextText: { fontFamily: fonts.bold, fontSize: 15, color: colors.ink },
+    end: {
+      backgroundColor: colors.dangerSurface,
+      borderRadius: 999,
+      paddingHorizontal: 24,
+      minHeight: 49,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    endText: { fontFamily: fonts.semibold, fontSize: 17, color: colors.error },
+    warning: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 10,
+      backgroundColor: colors.warningSurface,
+      borderRadius: 20,
+      paddingHorizontal: 16,
+      paddingVertical: 12,
+    },
+    help: {
+      padding: 16,
+      borderRadius: 28,
+      backgroundColor: colors.selected,
+      gap: 14,
+    },
+    nextLink: {
+      minHeight: 44,
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingTop: 4,
+    },
+    eta: {
+      fontFamily: fonts.bold,
+      fontSize: 28,
+      lineHeight: 31,
+      letterSpacing: -0.56,
+      color: colors.ink,
+    },
+    maneuver: {
+      fontFamily: fonts.regular,
+      fontSize: 15,
+      lineHeight: 22,
+      color: colors.onDarkMuted,
+      flexShrink: 1,
+    },
+  }),
+)

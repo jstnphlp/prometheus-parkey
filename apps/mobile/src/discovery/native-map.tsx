@@ -13,22 +13,20 @@ import type {
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { StyleSheet } from 'react-native'
 
+import { useTheme } from '../theme-provider'
 import parkingPinImage from '../../assets/figma/playful/mascot.png'
 import freePin from '../../assets/figma/playful/pin-free.png'
 import paidPin from '../../assets/figma/playful/pin-paid.png'
 import unknownPin from '../../assets/figma/playful/pin-unknown.png'
 import navUp from '../../assets/figma/playful/nav-up.png'
 import selectedParkingPinImage from '../../assets/figma/playful/mascot.png'
-
 import { placeFromFeature, placeLayer } from './places'
-
 import { config } from './config'
 import { createLocalMapBenchmark } from './local-map-benchmark'
 import { mapTextFont } from './map-font'
 import { routeBearing, splitRoute } from './drive-math'
 import { draftGeoJSON, parkingMapSources } from './map-data'
 import type { ParkingMapProps } from './map-types'
-import { mapColors, colors } from './palette'
 import {
   parkingLabelLayout,
   parkingLabelPaint,
@@ -47,6 +45,8 @@ const parkingImages = {
 }
 
 export default function NativeMap(props: ParkingMapProps) {
+  const { colors, mapColors } = useTheme()
+
   const [markMapReady] = useState(() => createLocalMapBenchmark())
   const map = useRef<MapRef>(null)
   const placeRequest = useRef(0)
@@ -346,7 +346,7 @@ export default function NativeMap(props: ParkingMapProps) {
               50,
               27,
             ],
-            'circle-color': colors.brandDeep,
+            'circle-color': colors.brand,
             'circle-blur': 0.5,
             'circle-opacity': 0.25,
             'circle-translate': [0, 2],
@@ -366,7 +366,7 @@ export default function NativeMap(props: ParkingMapProps) {
               50,
               24,
             ],
-            'circle-color': colors.brandDeep,
+            'circle-color': colors.brand,
             'circle-stroke-color': mapColors.casing,
             'circle-stroke-width': 3,
             'circle-opacity': 1,
@@ -438,7 +438,7 @@ export default function NativeMap(props: ParkingMapProps) {
           id="selected-name"
           type="symbol"
           layout={parkingLabelLayout()}
-          paint={parkingLabelPaint}
+          paint={parkingLabelPaint(colors)}
         />
       </GeoJSONSource>
       {props.userLocation ? (

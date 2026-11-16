@@ -1,6 +1,6 @@
 import Svg, { Circle, Path, Rect } from 'react-native-svg'
 
-import { colors } from '../theme'
+import { useTheme } from '../theme-provider'
 
 export type BrandIconName =
   | 'person'
@@ -18,12 +18,15 @@ export type BrandIconName =
 export function BrandIcon({
   name,
   size = 22,
-  color = colors.fieldIcon,
+  color: colorProp,
 }: {
   name: BrandIconName
   size?: number
   color?: string
 }) {
+  const { entryColors: colors } = useTheme()
+  const color = colorProp ?? colors.fieldIcon
+
   return (
     <Svg
       width={size}

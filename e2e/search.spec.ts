@@ -42,7 +42,7 @@ test('search selects a destination, persists recents, and supports clear and und
     .getByRole('button', { name: 'Close destination search', exact: true })
     .click()
   await expect(
-    page.getByRole('tab', { name: 'Map', exact: true }),
+    page.getByRole('tab', { name: 'Explore', exact: true }),
   ).toBeVisible()
 })
 

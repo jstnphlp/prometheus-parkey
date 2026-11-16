@@ -4,8 +4,9 @@ import { useState } from 'react'
 import { ScrollView, StyleSheet, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
+import { SettingsLinks } from '../settings/settings-screen'
+import { useTheme, createThemedStyles } from '../theme-provider'
 import { AccountEntry } from '../auth/account-entry'
-
 import { TAB_BAR_HEIGHT } from './bottom-navigation'
 import { FigmaAsset } from './figma-assets'
 import { MotionPressable, MotionView } from './motion'
@@ -13,7 +14,7 @@ import type { FigmaAssetName } from './figma-assets'
 import { dateLabel, kindLabels } from './model'
 import { diagnosticStatus } from './telemetry'
 import { fonts } from './typography'
-import { Button, colors, ui } from './ui'
+import { Button, useUI } from './ui'
 import type { useLocalState } from './use-local-state'
 
 export function ParkingPage({
@@ -27,6 +28,9 @@ export function ParkingPage({
   onClose: () => void
   children: ReactNode
 }) {
+  const ui = useUI()
+  const styles = useStyles()
+
   const insets = useSafeAreaInsets()
   return (
     <MotionView style={styles.page}>
@@ -73,6 +77,9 @@ export function ParkingTile({
   accent?: boolean
   disabled?: boolean
 }) {
+  const { colors } = useTheme()
+  const styles = useStyles()
+
   return (
     <MotionPressable
       accessibilityRole="button"
@@ -115,16 +122,21 @@ export function ParkingProfile({
   onInfo: () => void
   onClose: () => void
 }) {
+  const { colors } = useTheme()
+  const ui = useUI()
+  const styles = useStyles()
+
   const [deleting, setDeleting] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const ready = local.status === 'ready'
   return (
     <ParkingPage
-      title="You"
+      title="Profile"
       subtitle="No account needed to browse. Verify email to send a report."
       onClose={onClose}
     >
       <AccountEntry />
+      <SettingsLinks />
       <View style={ui.row}>
         {(
           [
@@ -296,6 +308,9 @@ function PrivacyRow({
   title: string
   body: string
 }) {
+  const ui = useUI()
+  const styles = useStyles()
+
   return (
     <View style={styles.privacyRow}>
       <View style={styles.badge}>
@@ -309,105 +324,117 @@ function PrivacyRow({
   )
 }
 
-const styles = StyleSheet.create({
-  page: {
-    position: 'absolute',
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: colors.canvas,
-  },
-  content: {
-    paddingHorizontal: 16,
-    gap: 14,
-    width: '100%',
-    maxWidth: 620,
-    alignSelf: 'center',
-  },
-  header: { paddingBottom: 0, gap: 2 },
-  section: {
-    backgroundColor: colors.surface,
-    borderWidth: 2,
-    borderColor: colors.border,
-    borderRadius: 28,
-    padding: 16,
-    gap: 12,
-  },
-  stat: {
-    flex: 1,
-    minWidth: 0,
-    backgroundColor: colors.surface,
-    borderWidth: 2,
-    borderColor: colors.border,
-    borderRadius: 20,
-    padding: 16,
-    gap: 2,
-  },
-  caption: {
-    fontFamily: fonts.bold,
-    fontSize: 12,
-    lineHeight: 16,
-    color: colors.muted,
-  },
-  notice: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: 10,
-    backgroundColor: colors.warningSurface,
-    padding: 12,
-    borderRadius: 16,
-  },
-  privacyRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 12 },
-  badge: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: colors.positiveSurface,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  reporting: {
-    fontFamily: fonts.bold,
-    fontSize: 12,
-    lineHeight: 16,
-    color: colors.muted,
-    backgroundColor: colors.soft,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 999,
-  },
-  creditRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  delete: {
-    minWidth: 48,
-    minHeight: 44,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  tile: {
-    flex: 1,
-    minWidth: 0,
-    minHeight: 140,
-    borderWidth: 2,
-    borderColor: colors.border,
-    backgroundColor: colors.surface,
-    padding: 16,
-    borderRadius: 28,
-    gap: 8,
-  },
-  addTile: {
-    backgroundColor: colors.canvas,
-    borderStyle: 'dashed',
-    borderColor: colors.brand,
-  },
-  tileIcon: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: colors.selected,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  tileTitle: { ...ui.sectionTitle },
-  tileSubtitle: { ...ui.small },
-})
+const useStyles = createThemedStyles(({ colors }) =>
+  StyleSheet.create({
+    page: {
+      position: 'absolute',
+      top: 0,
+      bottom: 0,
+      left: 0,
+      right: 0,
+      backgroundColor: colors.canvas,
+    },
+    content: {
+      paddingHorizontal: 16,
+      gap: 14,
+      width: '100%',
+      maxWidth: 620,
+      alignSelf: 'center',
+    },
+    header: { paddingBottom: 0, gap: 2 },
+    section: {
+      backgroundColor: colors.surface,
+      borderWidth: 2,
+      borderColor: colors.border,
+      borderRadius: 16,
+      padding: 16,
+      gap: 12,
+    },
+    stat: {
+      flex: 1,
+      minWidth: 0,
+      backgroundColor: colors.surface,
+      borderWidth: 2,
+      borderColor: colors.border,
+      borderRadius: 20,
+      padding: 16,
+      gap: 2,
+    },
+    caption: {
+      fontFamily: fonts.bold,
+      fontSize: 12,
+      lineHeight: 16,
+      color: colors.muted,
+    },
+    notice: {
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+      gap: 10,
+      backgroundColor: colors.warningSurface,
+      padding: 12,
+      borderRadius: 16,
+    },
+    privacyRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 12 },
+    badge: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      backgroundColor: colors.positiveSurface,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    reporting: {
+      fontFamily: fonts.bold,
+      fontSize: 12,
+      lineHeight: 16,
+      color: colors.muted,
+      backgroundColor: colors.soft,
+      paddingHorizontal: 12,
+      paddingVertical: 6,
+      borderRadius: 999,
+    },
+    creditRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+    delete: {
+      minWidth: 48,
+      minHeight: 44,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    tile: {
+      flex: 1,
+      minWidth: 0,
+      minHeight: 140,
+      borderWidth: 2,
+      borderColor: colors.border,
+      backgroundColor: colors.surface,
+      padding: 16,
+      borderRadius: 16,
+      gap: 8,
+    },
+    addTile: {
+      backgroundColor: colors.canvas,
+      borderStyle: 'dashed',
+      borderColor: colors.brand,
+    },
+    tileIcon: {
+      width: 44,
+      height: 44,
+      borderRadius: 22,
+      backgroundColor: colors.selected,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    tileTitle: {
+      fontFamily: fonts.black,
+      fontSize: 20,
+      lineHeight: 24,
+      color: colors.ink,
+    },
+    tileSubtitle: {
+      fontFamily: fonts.regular,
+      fontSize: 13,
+      lineHeight: 18,
+      color: colors.muted,
+    },
+  }),
+)

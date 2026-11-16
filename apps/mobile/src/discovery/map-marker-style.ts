@@ -1,7 +1,7 @@
 import type { SymbolLayerSpecification } from 'maplibre-gl'
 
 import { mapTextFont } from './map-font.ts'
-import { colors } from './palette.ts'
+import type { ParkeyTheme } from '../theme-colors.ts'
 
 /** Native images use physical pixels; web registers the same 3× files at pixelRatio 3. */
 export function parkingMarkerLayout(scale: number) {
@@ -43,9 +43,10 @@ export function parkingLabelLayout() {
   } satisfies NonNullable<SymbolLayerSpecification['layout']>
 }
 
-export const parkingLabelPaint = {
-  'text-color': colors.ink,
-  'text-halo-color': colors.surface,
-  'text-halo-width': 2,
-  'text-halo-blur': 0.5,
-} satisfies NonNullable<SymbolLayerSpecification['paint']>
+export const parkingLabelPaint = (colors: ParkeyTheme['colors']) =>
+  ({
+    'text-color': colors.ink,
+    'text-halo-color': colors.surface,
+    'text-halo-width': 2,
+    'text-halo-blur': 0.5,
+  }) satisfies NonNullable<SymbolLayerSpecification['paint']>

@@ -1,18 +1,11 @@
-import regular from '../../assets/fonts/Nunito_600SemiBold.ttf'
-import semibold from '../../assets/fonts/Nunito_700Bold.ttf'
-import bold from '../../assets/fonts/Nunito_800ExtraBold.ttf'
-import black from '../../assets/fonts/Nunito_900Black.ttf'
+import { fonts as outfit, fontSources } from '../theme'
+
+// All UI weights are local licensed Outfit assets loaded by the root layout.
 
 export const fonts = {
-  regular: 'NunitoSemiBold',
-  semibold: 'NunitoBold',
-  bold: 'NunitoExtraBold',
-  black: 'NunitoBlack',
+  regular: outfit.medium,
+  semibold: outfit.semibold,
+  bold: outfit.bold,
+  black: outfit.extraBold,
 }
-
-export const fontSources = {
-  [fonts.regular]: regular,
-  [fonts.semibold]: semibold,
-  [fonts.bold]: bold,
-  [fonts.black]: black,
-}
+export { fontSources }

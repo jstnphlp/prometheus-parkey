@@ -8,56 +8,66 @@ import {
 } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
+import type { ParkeyTheme } from '../theme-colors'
+import { useTheme, createThemedStyles } from '../theme-provider'
 import compare from '../../assets/figma/onboarding/phase3-compare.png'
 import discover from '../../assets/figma/onboarding/phase3-discover.png'
 import navigate from '../../assets/figma/onboarding/phase3-navigate.png'
 import { BrandButton } from '../components/brand-button'
 import { ScreenContainer } from '../components/screen-container'
-import { colors, typography } from '../theme'
-
+import { typography } from '../theme'
 import { BackButton } from './back-button'
 import { useCompletion } from './use-completion'
 
-const steps = {
-  discover: {
-    number: 1,
-    title: 'Accessible Parking Spots.',
-    copy: 'From street parking and shopping malls to restaurants, open parking lots, and hidden spots you never knew existed.',
-    background: colors.dark,
-    muted: colors.onPlumMuted,
-    button: 'cyan',
-    image: discover,
-    imageLabel: 'Static illustration: discovering parking with Parkey',
-    next: '/onboarding/compare',
-  },
-  compare: {
-    number: 2,
-    title: 'Know before\nyou park.',
-    copy: 'Compare parking details when\nreliable information is available.',
-    background: colors.teal,
-    muted: colors.onTealMuted,
-    button: 'plum',
-    image: compare,
-    imageLabel: 'Static preview: parking lot and garage information',
-    next: '/onboarding/navigate',
-  },
-  navigate: {
-    number: 3,
-    title: 'Your route. Your choice.',
-    copy: 'You can use your preferred navigation app to find your way to your parking spot.',
-    background: colors.plum,
-    muted: colors.onPlumMuted,
-    button: 'white',
-    image: navigate,
-    imageLabel: 'Static preview: directions to a parking entrance',
-    next: null,
-  },
-} as const
+const getSteps = (colors: ParkeyTheme['entryColors']) =>
+  ({
+    discover: {
+      number: 1,
+      title: 'Accessible Parking Spots.',
+      copy: 'From street parking and shopping malls to restaurants, open parking lots, and hidden spots you never knew existed.',
+      background: colors.canvas,
+      muted: colors.onPlumMuted,
+      button: 'plum',
+      image: discover,
+      imageLabel: 'Static illustration: discovering parking with Parkey',
+      next: '/onboarding/compare',
+    },
+    compare: {
+      number: 2,
+      title: 'Know before\nyou park.',
+      copy: 'Compare parking details when\nreliable information is available.',
+      background: colors.canvas,
+      muted: colors.onTealMuted,
+      button: 'plum',
+      image: compare,
+      imageLabel: 'Static preview: parking lot and garage information',
+      next: '/onboarding/navigate',
+    },
+    navigate: {
+      number: 3,
+      title: 'Your route. Your choice.',
+      copy: 'You can use your preferred navigation app to find your way to your parking spot.',
+      background: colors.canvas,
+      muted: colors.onPlumMuted,
+      button: 'plum',
+      image: navigate,
+      imageLabel: 'Static preview: directions to a parking entrance',
+      next: null,
+    },
+  }) as const
 
-export function OnboardingScreen({ step }: { step: keyof typeof steps }) {
+export function OnboardingScreen({
+  step,
+}: {
+  step: keyof ReturnType<typeof getSteps>
+}) {
+  const { entryColors: colors } = useTheme()
+  const steps = getSteps(colors)
+  const styles = useStyles()
+
   const page = steps[step]
   const router = useRouter()
-  const { finish, busy } = useCompletion('/register')
+  const { finish, busy } = useCompletion('/')
   const { width, height } = useWindowDimensions()
   const insets = useSafeAreaInsets()
   const artScale = Math.min(Math.min(width, 440) / 390, height / 844)
@@ -90,6 +100,7 @@ export function OnboardingScreen({ step }: { step: keyof typeof steps }) {
           accessibilityRole="image"
           accessibilityLabel={page.imageLabel}
           source={page.image}
+          fadeDuration={0}
           resizeMode="contain"
           style={{
             width: (step === 'navigate' ? 348 : 390) * artScale,
@@ -149,47 +160,49 @@ export function OnboardingScreen({ step }: { step: keyof typeof steps }) {
   )
 }
 
-const styles = StyleSheet.create({
-  content: { paddingHorizontal: 28 },
-  navigation: {
-    width: '100%',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingRight: 7,
-  },
-  back: { flex: 1 },
-  title: {
-    ...typography.title,
-    color: colors.white,
-    marginTop: 44,
-  },
-  copy: {
-    ...typography.body,
-    minHeight: 57,
-    marginTop: 20,
-    marginHorizontal: 3,
-  },
-  discoverCopy: { ...typography.welcomeBody },
-  artworkArea: { marginHorizontal: -28, alignItems: 'center' },
-  controls: {
-    flexGrow: 1,
-    minHeight: 5,
-    marginTop: 34,
-    justifyContent: 'flex-end',
-  },
-  progress: {
-    alignSelf: 'center',
-    flexDirection: 'row',
-    gap: 6,
-  },
-  segment: {
-    width: 5,
-    height: 5,
-    borderRadius: 3,
-    backgroundColor: colors.progressMuted,
-    opacity: 0.48,
-  },
-  activeSegment: { width: 23, backgroundColor: colors.white, opacity: 1 },
-  button: { marginTop: 25 },
-})
+const useStyles = createThemedStyles(({ entryColors: colors }) =>
+  StyleSheet.create({
+    content: { paddingHorizontal: 28 },
+    navigation: {
+      width: '100%',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingRight: 7,
+    },
+    back: { flex: 1 },
+    title: {
+      ...typography.title,
+      color: colors.text,
+      marginTop: 44,
+    },
+    copy: {
+      ...typography.body,
+      minHeight: 57,
+      marginTop: 20,
+      marginHorizontal: 3,
+    },
+    discoverCopy: { ...typography.welcomeBody },
+    artworkArea: { marginHorizontal: -28, alignItems: 'center' },
+    controls: {
+      flexGrow: 1,
+      minHeight: 5,
+      marginTop: 34,
+      justifyContent: 'flex-end',
+    },
+    progress: {
+      alignSelf: 'center',
+      flexDirection: 'row',
+      gap: 6,
+    },
+    segment: {
+      width: 5,
+      height: 5,
+      borderRadius: 3,
+      backgroundColor: colors.progressMuted,
+      opacity: 0.48,
+    },
+    activeSegment: { width: 23, backgroundColor: colors.card, opacity: 1 },
+    button: { marginTop: 25 },
+  }),
+)

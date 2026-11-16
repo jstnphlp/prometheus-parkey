@@ -72,7 +72,7 @@ test('Map Saved and You share discovery navigation and public favorites survive 
   await page.getByTestId('pilot-record-qa-Manila').click()
   await expect(page.getByTestId('pilot-directions')).toBeDisabled()
   await closeDetails(page)
-  await page.getByRole('tab', { name: 'You', exact: true }).click()
+  await page.getByRole('tab', { name: 'Profile', exact: true }).click()
   await expect(page.getByText('Map information', { exact: true })).toBeVisible()
   await expect(page.getByText(/Analytics collection is disabled/)).toBeVisible()
 })

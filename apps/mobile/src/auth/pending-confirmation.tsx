@@ -18,11 +18,11 @@ import {
 } from 'react-native'
 import type { TextInput } from 'react-native'
 
+import { useTheme, createThemedStyles } from '../theme-provider'
 import { BrandButton } from '../components/brand-button'
 import { BrandIcon } from '../components/brand-icon'
 import { usePopup } from '../components/popup-provider'
-import { colors, typography } from '../theme'
-
+import { typography } from '../theme'
 import { watchConfirmation } from './confirmation-watch'
 import { authErrorCode, authFeedback } from './feedback'
 import { FormField } from './form-field'
@@ -39,6 +39,9 @@ export function PendingConfirmation({
   setPassword: (password: string) => void
   resend: () => Promise<void>
 }) {
+  const { entryColors: colors } = useTheme()
+  const styles = useStyles()
+
   const auth = useAuth()
   const popup = usePopup()
   const focused = useIsFocused()
@@ -185,8 +188,10 @@ export function PendingConfirmation({
     </View>
   )
 }
-const styles = StyleSheet.create({
-  content: { marginTop: 32, gap: 20 },
-  body: { ...typography.body, color: colors.white },
-  status: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-})
+const useStyles = createThemedStyles(({ entryColors: colors }) =>
+  StyleSheet.create({
+    content: { marginTop: 32, gap: 20 },
+    body: { ...typography.body, color: colors.text },
+    status: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  }),
+)

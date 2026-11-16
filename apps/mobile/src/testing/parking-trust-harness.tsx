@@ -1,14 +1,16 @@
-/** Isolated Metro test entry. Never imported by the app or registered as a route. */
 import type { DiscoveryParking, ParkingPhoto } from '@parkey/shared-types'
 import { registerRootComponent } from 'expo'
 import { useFonts } from 'expo-font'
 import { useState } from 'react'
 import { Pressable, Text, View } from 'react-native'
 
+import { ThemeProvider } from '../theme-provider'
 import { ParkingDetails } from '../discovery/parking-details'
 import { ParkingGallery } from '../discovery/parking-photos'
 import { sampleParking } from '../discovery/sample-data'
 import { fontSources } from '../discovery/typography'
+
+/** Isolated Metro test entry. Never imported by the app or registered as a route. */
 
 if (!__DEV__ || process.env.PARKEY_RELEASE_BUILD === 'true')
   throw new Error('Native QA harness requires a development build.')
@@ -152,4 +154,11 @@ function Harness() {
   )
 }
 
-registerRootComponent(Harness)
+function ThemedHarness() {
+  return (
+    <ThemeProvider>
+      <Harness />
+    </ThemeProvider>
+  )
+}
+registerRootComponent(ThemedHarness)

@@ -1,0 +1,472 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "kind": "manually curated from Figma canonical journey node 283:3352 and 60-pair screen index",
+    "verifiedAt": "2026-11-16",
+    "warning": "This is a product-aware flow outline, not an exported Figma prototype reaction graph. Per-node reactions are exported by scripts/figma-snapshot.mjs where available."
+  },
+  "modes": [
+    "light-magenta",
+    "dark-magenta"
+  ],
+  "policy": {
+    "product": "Discovery-only V1; account-free exploration; data trust required",
+    "flags": [
+      "NO_BOOKING",
+      "NO_PAYMENTS",
+      "NO_LIVE_VACANCY",
+      "NO_FAKE_AUTH",
+      "NO_PRIVATE_RESEARCH_PUBLICATION"
+    ],
+    "statusDefinitions": {
+      "v1": "Allowed using approved existing capabilities",
+      "gated": "Requires separately approved backend/auth/data handling",
+      "illustrative": "Design state; translate to truthful existing V1 semantics"
+    }
+  },
+  "journeys": [
+    {
+      "id": "entry",
+      "status": "v1",
+      "screenIds": [
+        "1",
+        "1B",
+        "2",
+        "3",
+        "4",
+        "5",
+        "20",
+        "20A",
+        "21",
+        "22"
+      ],
+      "note": "Optional/skippable visual intro. Guest Browse always available. Location denied → manual search."
+    },
+    {
+      "id": "new-account",
+      "status": "gated",
+      "screenIds": [
+        "5",
+        "6",
+        "6A",
+        "7",
+        "7A",
+        "7B",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13"
+      ],
+      "note": "Must not become mandatory for browsing; verified-email reports are not full-app registration."
+    },
+    {
+      "id": "returning-account",
+      "status": "gated",
+      "screenIds": [
+        "5",
+        "17",
+        "17A",
+        "18",
+        "18A",
+        "18B",
+        "19"
+      ],
+      "note": "Requires real sign-in and password reset, no simulated responses."
+    },
+    {
+      "id": "discovery",
+      "status": "v1",
+      "screenIds": [
+        "21",
+        "22",
+        "22A",
+        "22B",
+        "22C",
+        "22R",
+        "23",
+        "24",
+        "25",
+        "26",
+        "26A",
+        "26B",
+        "27",
+        "28",
+        "29",
+        "30",
+        "30R",
+        "EXT"
+      ],
+      "note": "24 is illustrative; no claim of open parking slots."
+    },
+    {
+      "id": "settings",
+      "status": "v1",
+      "screenIds": [
+        "16",
+        "16A",
+        "77",
+        "78",
+        "78A",
+        "79",
+        "80",
+        "81",
+        "82",
+        "83",
+        "84",
+        "85",
+        "14",
+        "15",
+        "73",
+        "74",
+        "5P"
+      ],
+      "note": "Only Appearance/local settings can be enabled without missing account integrations; others gated as needed."
+    }
+  ],
+  "transitions": [
+    {
+      "from": "1",
+      "to": "1B",
+      "action": "splash-completes",
+      "status": "v1"
+    },
+    {
+      "from": "1B",
+      "to": "2",
+      "action": "view-walkthrough",
+      "status": "v1"
+    },
+    {
+      "from": "2",
+      "to": "3",
+      "action": "next",
+      "status": "v1"
+    },
+    {
+      "from": "3",
+      "to": "4",
+      "action": "next",
+      "status": "v1"
+    },
+    {
+      "from": "4",
+      "to": "5",
+      "action": "finish",
+      "status": "v1"
+    },
+    {
+      "from": "1B",
+      "to": "22",
+      "action": "skip-to-guest-discovery",
+      "status": "v1"
+    },
+    {
+      "from": "5",
+      "to": "22",
+      "action": "continue-as-guest",
+      "status": "v1"
+    },
+    {
+      "from": "5",
+      "to": "6",
+      "action": "create-account",
+      "status": "gated"
+    },
+    {
+      "from": "5",
+      "to": "17",
+      "action": "sign-in",
+      "status": "gated"
+    },
+    {
+      "from": "6",
+      "to": "6A",
+      "action": "validation-fails",
+      "status": "gated"
+    },
+    {
+      "from": "6",
+      "to": "7",
+      "action": "submit-registration",
+      "status": "gated"
+    },
+    {
+      "from": "7",
+      "to": "7A",
+      "action": "code-expired",
+      "status": "gated"
+    },
+    {
+      "from": "7",
+      "to": "7B",
+      "action": "verify-valid-code",
+      "status": "gated"
+    },
+    {
+      "from": "7B",
+      "to": "8",
+      "action": "profile-setup",
+      "status": "gated"
+    },
+    {
+      "from": "8",
+      "to": "9",
+      "action": "continue",
+      "status": "gated"
+    },
+    {
+      "from": "9",
+      "to": "10",
+      "action": "continue",
+      "status": "gated"
+    },
+    {
+      "from": "10",
+      "to": "11",
+      "action": "continue",
+      "status": "gated"
+    },
+    {
+      "from": "11",
+      "to": "12",
+      "action": "continue",
+      "status": "gated"
+    },
+    {
+      "from": "12",
+      "to": "13",
+      "action": "complete",
+      "status": "gated"
+    },
+    {
+      "from": "13",
+      "to": "20",
+      "action": "continue",
+      "status": "gated"
+    },
+    {
+      "from": "17",
+      "to": "17A",
+      "action": "invalid-credentials",
+      "status": "gated"
+    },
+    {
+      "from": "17",
+      "to": "19",
+      "action": "valid-credentials",
+      "status": "gated"
+    },
+    {
+      "from": "17",
+      "to": "18",
+      "action": "forgot-password",
+      "status": "gated"
+    },
+    {
+      "from": "18",
+      "to": "18A",
+      "action": "send-reset",
+      "status": "gated"
+    },
+    {
+      "from": "18A",
+      "to": "18B",
+      "action": "valid-reset-link",
+      "status": "gated"
+    },
+    {
+      "from": "19",
+      "to": "20",
+      "action": "continue",
+      "status": "gated"
+    },
+    {
+      "from": "20",
+      "to": "20A",
+      "action": "permission-denied",
+      "status": "v1"
+    },
+    {
+      "from": "20A",
+      "to": "22A",
+      "action": "search-manually",
+      "status": "v1"
+    },
+    {
+      "from": "20",
+      "to": "22",
+      "action": "continue",
+      "status": "v1"
+    },
+    {
+      "from": "21",
+      "to": "22",
+      "action": "toggle-map",
+      "status": "v1"
+    },
+    {
+      "from": "22",
+      "to": "21",
+      "action": "toggle-list",
+      "status": "v1"
+    },
+    {
+      "from": "22",
+      "to": "22A",
+      "action": "search",
+      "status": "v1"
+    },
+    {
+      "from": "22",
+      "to": "22B",
+      "action": "filters",
+      "status": "v1"
+    },
+    {
+      "from": "22A",
+      "to": "22C",
+      "action": "zero-known-matches",
+      "status": "v1"
+    },
+    {
+      "from": "22",
+      "to": "22R",
+      "action": "recenter",
+      "status": "v1"
+    },
+    {
+      "from": "22",
+      "to": "23",
+      "action": "select-unconfirmed-record",
+      "status": "v1"
+    },
+    {
+      "from": "22",
+      "to": "24",
+      "action": "select-illustrative-record-preview",
+      "status": "illustrative"
+    },
+    {
+      "from": "23",
+      "to": "25",
+      "action": "open-details",
+      "status": "v1"
+    },
+    {
+      "from": "24",
+      "to": "25",
+      "action": "open-truthful-details",
+      "status": "illustrative"
+    },
+    {
+      "from": "25",
+      "to": "26",
+      "action": "save-record",
+      "status": "v1"
+    },
+    {
+      "from": "26",
+      "to": "26B",
+      "action": "view-saved",
+      "status": "v1"
+    },
+    {
+      "from": "26B",
+      "to": "26A",
+      "action": "remove-last-saved",
+      "status": "v1"
+    },
+    {
+      "from": "25",
+      "to": "27",
+      "action": "share",
+      "status": "v1"
+    },
+    {
+      "from": "25",
+      "to": "28",
+      "action": "view-entrance-access",
+      "status": "v1"
+    },
+    {
+      "from": "28",
+      "to": "29",
+      "action": "get-directions",
+      "status": "v1"
+    },
+    {
+      "from": "29",
+      "to": "30",
+      "action": "begin-approved-navigation",
+      "status": "v1"
+    },
+    {
+      "from": "30",
+      "to": "30R",
+      "action": "recenter-route",
+      "status": "v1"
+    },
+    {
+      "from": "22",
+      "to": "16",
+      "action": "open-account-settings",
+      "status": "v1"
+    },
+    {
+      "from": "16",
+      "to": "16A",
+      "action": "appearance",
+      "status": "v1"
+    },
+    {
+      "from": "16",
+      "to": "14",
+      "action": "vehicles",
+      "status": "gated"
+    },
+    {
+      "from": "16",
+      "to": "77",
+      "action": "personal-info",
+      "status": "gated"
+    },
+    {
+      "from": "16",
+      "to": "78",
+      "action": "security",
+      "status": "gated"
+    },
+    {
+      "from": "16",
+      "to": "79",
+      "action": "language",
+      "status": "gated"
+    },
+    {
+      "from": "16",
+      "to": "80",
+      "action": "help",
+      "status": "gated"
+    },
+    {
+      "from": "16",
+      "to": "83",
+      "action": "privacy",
+      "status": "v1"
+    },
+    {
+      "from": "16",
+      "to": "84",
+      "action": "about",
+      "status": "v1"
+    },
+    {
+      "from": "16",
+      "to": "85",
+      "action": "logout",
+      "status": "gated"
+    }
+  ]
+}

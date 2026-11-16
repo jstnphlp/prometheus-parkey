@@ -6,10 +6,13 @@
  * Network: Figma REST API (NOT MCP). All API calls are opt-in via CLI.
  * No credentials or expiring Figma render URLs are written to disk.
  */
+import { Buffer } from 'node:buffer'
+import console from 'node:console'
 import { createHash } from 'node:crypto'
 import { readFile, writeFile, mkdir, rename, stat } from 'node:fs/promises'
 import { dirname, join, resolve, sep } from 'node:path'
-import { fileURLToPath } from 'node:url'
+import { URL, URLSearchParams, fileURLToPath } from 'node:url'
+import { setTimeout as delay } from 'node:timers/promises'
 import process from 'node:process'
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..')
@@ -17,6 +20,8 @@ const DESIGN = join(ROOT, 'design-reference')
 const MANIFEST = join(DESIGN, 'manifest.json')
 const INDEX = join(DESIGN, 'export-index.json')
 const API = 'https://api.figma.com/v1'
+const fetch = globalThis.fetch
+const AbortSignal = globalThis.AbortSignal
 const DEFAULT_DELAY_MS = 8000
 const BATCH_SIZE = 5
 const THEMES = ['light-magenta', 'dark-magenta']
@@ -145,7 +150,7 @@ async function save(path, bytes) {
   await writeFile(tmp, bytes)
   await rename(tmp, path)
 }
-const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
+const sleep = ms => delay(ms)
 
 class FigmaClient {
   constructor(token, delayMs) {

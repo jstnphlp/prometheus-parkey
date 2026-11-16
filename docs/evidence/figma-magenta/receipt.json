@@ -1,0 +1,146 @@
+{
+  "date": "2026-11-16",
+  "branch": "codex/figma-magenta-interactive",
+  "referenceExportsAvailable": false,
+  "mobileUnitTestsPassed": 327,
+  "browserDistinctCasesPassed": 84,
+  "nativeRuntime": "Android 15 API 35 x86_64 emulator-5556, development client + local Metro",
+  "iosVerified": false,
+  "screenshots": [
+    {
+      "path": "android/dark-magenta-16A.png",
+      "bytes": 150819,
+      "sha256": "1eeaa8a5c1fb1c358d09d1a810d3c1489cd3a0b1952051a18369320f8c5448b6"
+    },
+    {
+      "path": "android/light-magenta-16A-font130.png",
+      "bytes": 183958,
+      "sha256": "82207ad62d3dff4157e3e5789eeb2cfc6796aa32ec3b2aee2cf576302edd1d8e"
+    },
+    {
+      "path": "android/light-magenta-16A.png",
+      "bytes": 148104,
+      "sha256": "bd20cb47a9f2348574438a24e49744dafb95e71b51d305714776558602cdd3d4"
+    },
+    {
+      "path": "browser/desktop-chromium-dark-magenta-16.png",
+      "bytes": 26980,
+      "sha256": "fc007eac8b8a732b2396d77a44f83bc37b311157450858c821935c6256420529"
+    },
+    {
+      "path": "browser/desktop-chromium-dark-magenta-16A.png",
+      "bytes": 66124,
+      "sha256": "6fdbb047de42274d0dcb1942b49a9eb3b32351f27366344596db6591ba6b8d18"
+    },
+    {
+      "path": "browser/desktop-chromium-dark-magenta-17-long-email.png",
+      "bytes": 32160,
+      "sha256": "b83ee5315fc01d8b2d1266e890548bf880a52a68dfcb143606c6b2fb70d6032e"
+    },
+    {
+      "path": "browser/desktop-chromium-dark-magenta-22.png",
+      "bytes": 73626,
+      "sha256": "d567c6b06f2a167bed973c1562a2ae63c566a35e0d23c872b1744328fcff88ae"
+    },
+    {
+      "path": "browser/desktop-chromium-dark-magenta-23.png",
+      "bytes": 77146,
+      "sha256": "d844f03ab0e180b855839ea514a811a0cfcc7a16b305eb47067fcef59ae5855f"
+    },
+    {
+      "path": "browser/desktop-chromium-dark-magenta-30.png",
+      "bytes": 39434,
+      "sha256": "3b1e537e5cd0d49bdd31140288b4b01a93ed2c97046cf1a0a9241b01c2899721"
+    },
+    {
+      "path": "browser/desktop-chromium-light-magenta-16.png",
+      "bytes": 25267,
+      "sha256": "1ca6394721f476d3b89f8266b2360d7f3cc89d8c766995acf68ad8fa2a50b26e"
+    },
+    {
+      "path": "browser/desktop-chromium-light-magenta-16A.png",
+      "bytes": 65019,
+      "sha256": "abb1ae63d8bcc4b94fb6cbd648f605d0c7e9c747f8a2cafbcce461a2fa861583"
+    },
+    {
+      "path": "browser/desktop-chromium-light-magenta-17-long-email.png",
+      "bytes": 30849,
+      "sha256": "b8f2a0725a64d71c66564322ad28e8a94f811fe0a1195174cc2fadef2ef733af"
+    },
+    {
+      "path": "browser/desktop-chromium-light-magenta-22.png",
+      "bytes": 33682,
+      "sha256": "ff313f02465a0e85e11e5d66d0642284dff8028b08a0e73e184376967fc5ef4e"
+    },
+    {
+      "path": "browser/desktop-chromium-light-magenta-23.png",
+      "bytes": 76421,
+      "sha256": "7658656176e0cf26cdbb6e15f6a8aaf7055cd10e2b9fd4aadc934fbe8b3092bb"
+    },
+    {
+      "path": "browser/mobile-chromium-dark-magenta-16.png",
+      "bytes": 78253,
+      "sha256": "9c40c66b5ecee75c6ee8e76528a7cae0fd1a23577267d071c960e6cbda6c7c39"
+    },
+    {
+      "path": "browser/mobile-chromium-dark-magenta-16A.png",
+      "bytes": 143266,
+      "sha256": "65b72c3db9cdbd72cc2e94ecf559b2d0c65ebf92a7130150fe944572f5015e36"
+    },
+    {
+      "path": "browser/mobile-chromium-dark-magenta-17-long-email.png",
+      "bytes": 91403,
+      "sha256": "e3930cb30ffb1adc213eb6d9d4bdc6c32db36474c699902b4013263dd4209be1"
+    },
+    {
+      "path": "browser/mobile-chromium-dark-magenta-22.png",
+      "bytes": 172877,
+      "sha256": "7f0af4f9d36fa200feb1886245e87e78542ed426debd1ec242e1e2b6e9a05929"
+    },
+    {
+      "path": "browser/mobile-chromium-dark-magenta-23.png",
+      "bytes": 192353,
+      "sha256": "807ccb3ce709805ee4780885087e8880e0e693181b1b375ebe059205b8898037"
+    },
+    {
+      "path": "browser/mobile-chromium-dark-magenta-30.png",
+      "bytes": 97180,
+      "sha256": "52d6c2ca766340a9c1b08d3d661a8ff3b5fcd0379a2bcacad39baa7374bd7995"
+    },
+    {
+      "path": "browser/mobile-chromium-light-magenta-16.png",
+      "bytes": 71738,
+      "sha256": "6b8b44ff6a93afd2e3b1a3ef7055bd644b5b961470f5b5680cac7cf6803c8b1f"
+    },
+    {
+      "path": "browser/mobile-chromium-light-magenta-16A.png",
+      "bytes": 143091,
+      "sha256": "891b1ce78a1784c1f2c278d7c8475ccd26d95d6dffb4a77c85b533cbf5425d40"
+    },
+    {
+      "path": "browser/mobile-chromium-light-magenta-17-long-email.png",
+      "bytes": 84331,
+      "sha256": "1b73f7a407686f13eddd67fef2c5c5705233f1393804b446e5cf4b623ecd9461"
+    },
+    {
+      "path": "browser/mobile-chromium-light-magenta-22.png",
+      "bytes": 91853,
+      "sha256": "cf701f8789a92baaf40417ef9fbe1d56df85c712c3b44cd1b7d6db2bafe59173"
+    },
+    {
+      "path": "browser/mobile-chromium-light-magenta-23.png",
+      "bytes": 188773,
+      "sha256": "923eda9a029521306d9a5ec653884d6605c78c628599b190f33295c3ef82a2c2"
+    },
+    {
+      "path": "browser/pilot-desktop-light-magenta-25.png",
+      "bytes": 65286,
+      "sha256": "aa39c4fd0c7ee2fa5e2bd75c6b58dda4d16ca5487e5355ac039cade9a27c46a2"
+    },
+    {
+      "path": "browser/pilot-mobile-light-magenta-25.png",
+      "bytes": 146453,
+      "sha256": "4c0b7845f36543e5107853f371f6a9724e65133e7e639b26a1d52b3d8bb36728"
+    }
+  ]
+}

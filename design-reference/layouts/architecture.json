@@ -1,0 +1,27 @@
+{
+  "source": {
+    "tool": "Figma MCP get_metadata",
+    "fileKey": "UaU1KMJV2tMlwGB7Y1Co1g",
+    "nodeId": "244:2804",
+    "retrievedAt": "2026-11-17"
+  },
+  "kind": "Selected actual root records extracted from page metadata; not a complete node-tree export.",
+  "roots": [
+    {
+      "id": "244:2804",
+      "record": "<canvas id=\"244:2804\" name=\"Parkey – Interactive Architecture\" x=\"0\" y=\"0\" width=\"0\" height=\"0\">"
+    },
+    {
+      "id": "283:3352",
+      "record": "<frame id=\"283:3352\" name=\"ARCHITECTURE / CANONICAL INTERACTIVE JOURNEY\" x=\"4900\" y=\"-2070\" width=\"6026\" height=\"1100\">"
+    },
+    {
+      "id": "289:3698",
+      "record": "<frame id=\"289:3698\" name=\"ARCHITECTURE / EVPOINT COMPLETE ROUTES / Light + Magenta\" x=\"260\" y=\"13370\" width=\"6200\" height=\"11930\">"
+    },
+    {
+      "id": "289:3905",
+      "record": "<frame id=\"289:3905\" name=\"ARCHITECTURE / EVPOINT COMPLETE ROUTES / Dark + Magenta\" x=\"6640\" y=\"13370\" width=\"6200\" height=\"11930\">"
+    }
+  ]
+}

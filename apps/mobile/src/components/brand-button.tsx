@@ -1,16 +1,19 @@
 import { ActivityIndicator, Pressable, StyleSheet, Text } from 'react-native'
 import type { StyleProp, ViewStyle } from 'react-native'
 
-import { colors, layout, radius, spacing, typography } from '../theme'
+import type { ParkeyTheme } from '../theme-colors'
+import { useTheme } from '../theme-provider'
+import { layout, radius, spacing, typography } from '../theme'
 
-const variants = {
-  teal: { backgroundColor: colors.teal, color: colors.white },
-  cyan: { backgroundColor: colors.cyan, color: colors.white },
-  plum: { backgroundColor: colors.plum, color: colors.white },
-  white: { backgroundColor: colors.white, color: colors.plum },
-  text: { backgroundColor: 'transparent', color: colors.white },
-  plain: { backgroundColor: 'transparent', color: colors.plum },
-} as const
+const getVariants = (colors: ParkeyTheme['entryColors']) =>
+  ({
+    teal: { backgroundColor: colors.teal, color: colors.onAction },
+    cyan: { backgroundColor: colors.plum, color: colors.onAction },
+    plum: { backgroundColor: colors.plum, color: colors.onAction },
+    white: { backgroundColor: colors.accentSoft, color: colors.link },
+    text: { backgroundColor: 'transparent', color: colors.link },
+    plain: { backgroundColor: 'transparent', color: colors.link },
+  }) as const
 
 export function BrandButton({
   title,
@@ -22,11 +25,14 @@ export function BrandButton({
 }: {
   title: string
   onPress: () => void
-  variant?: keyof typeof variants
+  variant?: keyof ReturnType<typeof getVariants>
   busy?: boolean
   disabled?: boolean
   style?: StyleProp<ViewStyle>
 }) {
+  const { entryColors: colors } = useTheme()
+  const variants = getVariants(colors)
+
   const palette = variants[variant]
   return (
     <Pressable

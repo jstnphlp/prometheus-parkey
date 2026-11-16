@@ -1,6 +1,17 @@
 import type { Coordinate, DiscoveryParking } from '@parkey/shared-types'
-import { Linking, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { useState } from 'react'
+import {
+  Linking,
+  Platform,
+  ScrollView,
+  Share,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native'
 
+import { createThemedStyles } from '../theme-provider'
+import { AppearanceButton } from '../components/appearance-button'
 import { FigmaAsset } from './figma-assets'
 import { MotionPressable, MotionView } from './motion'
 import { parkingDetailData } from './parking-detail-data'
@@ -9,7 +20,7 @@ import { ParkingStatus } from './parking-status'
 import { parkingPhotos } from './photos'
 import { SpotThumbnail } from './spot-photo-view'
 import { fonts } from './typography'
-import { Button, colors, IconButton, ui } from './ui'
+import { Button, IconButton, useUI } from './ui'
 
 export function ParkingDetails({
   parking,
@@ -38,8 +49,32 @@ export function ParkingDetails({
   onContentHeightChange: (height: number) => void
   onScrollOffsetChange: (offset: number) => void
 }) {
+  const ui = useUI()
+  const styles = useStyles()
+  const [shareFeedback, setShareFeedback] = useState<string | null>(null)
+
   const details = parkingDetailData(parking, location, now)
   const photos = parkingPhotos(parking)
+  async function shareParking() {
+    const message = [
+      details.title,
+      parking.sourceUrl,
+      'Parking information only. No live availability or guaranteed access.',
+    ]
+      .filter(Boolean)
+      .join('\n')
+    setShareFeedback(null)
+    try {
+      if (Platform.OS === 'web' && typeof navigator.share !== 'function') {
+        await navigator.clipboard.writeText(message)
+        setShareFeedback('Parking information copied')
+      } else await Share.share({ title: details.title, message })
+    } catch {
+      setShareFeedback(
+        'Sharing is unavailable here. Open the source record below.',
+      )
+    }
+  }
   const hours = details.chips.find((chip) => /open|closed|hours/i.test(chip))
   const tiles = [
     {
@@ -87,6 +122,12 @@ export function ParkingDetails({
         onPress={onFavorite}
         style={styles.save}
       />
+      <IconButton
+        icon="share"
+        label="Share parking"
+        onPress={() => void shareParking()}
+      />
+      <AppearanceButton />
     </View>
   )
   return (
@@ -153,6 +194,14 @@ export function ParkingDetails({
           ))}
         </ScrollView>
         {!expanded ? actions : null}
+        {shareFeedback ? (
+          <Text
+            accessibilityLiveRegion="polite"
+            style={[ui.small, styles.inset]}
+          >
+            {shareFeedback}
+          </Text>
+        ) : null}
         {expanded ? (
           <>
             {photos.length ? (
@@ -272,107 +321,113 @@ export function ParkingDetails({
     </ScrollView>
   )
 }
-const styles = StyleSheet.create({
-  content: { gap: 14, paddingBottom: 2 },
-  sourceLink: { minHeight: 44, justifyContent: 'center' },
-  inset: { marginHorizontal: 16 },
-  summary: {
-    paddingHorizontal: 16,
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: 12,
-  },
-  title: {
-    fontFamily: fonts.bold,
-    fontSize: 20,
-    lineHeight: 24,
-    letterSpacing: -0.4,
-    color: colors.ink,
-  },
-  warning: {
-    marginHorizontal: 16,
-    padding: 12,
-    borderRadius: 16,
-    backgroundColor: colors.warningSurface,
-    color: colors.amber,
-  },
-  actions: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    gap: 12,
-  },
-  save: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: colors.surface,
-    borderWidth: 2,
-    borderColor: colors.border,
-  },
-  tiles: {
-    flexDirection: 'row',
-    alignItems: 'stretch',
-    gap: 10,
-    paddingHorizontal: 16,
-  },
-  tile: {
-    width: 132,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    gap: 4,
-    borderRadius: 16,
-    backgroundColor: colors.soft,
-  },
-  labelRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  label: {
-    fontFamily: fonts.bold,
-    fontSize: 12,
-    lineHeight: 15,
-    color: colors.muted,
-  },
-  photos: {
-    marginHorizontal: 16,
-    padding: 16,
-    borderRadius: 20,
-    backgroundColor: colors.soft,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 14,
-  },
-  photoBadge: {
-    width: 48,
-    height: 48,
-    borderRadius: 999,
-    backgroundColor: colors.surface,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  add: {
-    minHeight: 44,
-    paddingHorizontal: 16,
-    borderRadius: 999,
-    backgroundColor: colors.selected,
-    justifyContent: 'center',
-  },
-  source: {
-    marginHorizontal: 16,
-    borderRadius: 20,
-    backgroundColor: colors.soft,
-    overflow: 'hidden',
-  },
-  sourceRow: {
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  correction: { borderTopWidth: 1, borderColor: colors.border, minHeight: 52 },
-  detailRow: {
-    marginHorizontal: 16,
-    flexDirection: 'row',
-    gap: 12,
-    alignItems: 'flex-start',
-  },
-})
+const useStyles = createThemedStyles(({ colors }) =>
+  StyleSheet.create({
+    content: { gap: 14, paddingBottom: 2 },
+    sourceLink: { minHeight: 44, justifyContent: 'center' },
+    inset: { marginHorizontal: 16 },
+    summary: {
+      paddingHorizontal: 16,
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+      gap: 12,
+    },
+    title: {
+      fontFamily: fonts.bold,
+      fontSize: 20,
+      lineHeight: 24,
+      letterSpacing: -0.4,
+      color: colors.ink,
+    },
+    warning: {
+      marginHorizontal: 16,
+      padding: 12,
+      borderRadius: 16,
+      backgroundColor: colors.warningSurface,
+      color: colors.amber,
+    },
+    actions: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingHorizontal: 16,
+      gap: 12,
+    },
+    save: {
+      width: 56,
+      height: 56,
+      borderRadius: 16,
+      backgroundColor: colors.surface,
+      borderWidth: 2,
+      borderColor: colors.border,
+    },
+    tiles: {
+      flexDirection: 'row',
+      alignItems: 'stretch',
+      gap: 10,
+      paddingHorizontal: 16,
+    },
+    tile: {
+      width: 132,
+      paddingHorizontal: 14,
+      paddingVertical: 12,
+      gap: 4,
+      borderRadius: 16,
+      backgroundColor: colors.soft,
+    },
+    labelRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+    label: {
+      fontFamily: fonts.bold,
+      fontSize: 12,
+      lineHeight: 15,
+      color: colors.muted,
+    },
+    photos: {
+      marginHorizontal: 16,
+      padding: 16,
+      borderRadius: 20,
+      backgroundColor: colors.soft,
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 14,
+    },
+    photoBadge: {
+      width: 48,
+      height: 48,
+      borderRadius: 999,
+      backgroundColor: colors.surface,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    add: {
+      minHeight: 44,
+      paddingHorizontal: 16,
+      borderRadius: 999,
+      backgroundColor: colors.selected,
+      justifyContent: 'center',
+    },
+    source: {
+      marginHorizontal: 16,
+      borderRadius: 20,
+      backgroundColor: colors.soft,
+      overflow: 'hidden',
+    },
+    sourceRow: {
+      paddingHorizontal: 16,
+      paddingVertical: 14,
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 12,
+    },
+    correction: {
+      borderTopWidth: 1,
+      borderColor: colors.border,
+      minHeight: 52,
+    },
+    detailRow: {
+      marginHorizontal: 16,
+      flexDirection: 'row',
+      gap: 12,
+      alignItems: 'flex-start',
+    },
+  }),
+)

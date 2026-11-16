@@ -8,6 +8,7 @@ import { memo, useEffect, useMemo, useRef, useState } from 'react'
 import type { CameraRef } from '@maplibre/maplibre-react-native'
 import { StyleSheet } from 'react-native'
 
+import { useTheme } from '../theme-provider'
 import { config } from './config'
 import { createLocalMapBenchmark } from './local-map-benchmark'
 import { mapTextFont } from './map-font'
@@ -15,6 +16,7 @@ import { ncrMapSources } from './ncr-map-data'
 import type { NcrMapProps } from './ncr-map-data'
 
 function NcrMap(props: NcrMapProps) {
+  const { colors, mapColors } = useTheme()
   const [markMapReady] = useState(() => createLocalMapBenchmark())
   const camera = useRef<CameraRef>(null)
   const [loaded, setLoaded] = useState(false)
@@ -71,7 +73,12 @@ function NcrMap(props: NcrMapProps) {
           minzoom={14}
           layout={{ visibility }}
           paint={{
-            'fill-color': ['case', ['get', 'restricted'], '#C23B3B', '#8A1060'],
+            'fill-color': [
+              'case',
+              ['get', 'restricted'],
+              colors.error,
+              colors.brand,
+            ],
             'fill-opacity': 0.2,
           }}
         />
@@ -82,7 +89,12 @@ function NcrMap(props: NcrMapProps) {
           filter={['==', ['geometry-type'], 'LineString']}
           layout={{ visibility }}
           paint={{
-            'line-color': ['case', ['get', 'restricted'], '#C23B3B', '#2E7F88'],
+            'line-color': [
+              'case',
+              ['get', 'restricted'],
+              colors.error,
+              mapColors.street,
+            ],
             'line-width': 4,
           }}
         />
@@ -116,15 +128,15 @@ function NcrMap(props: NcrMapProps) {
             'circle-color': [
               'case',
               ['get', 'restricted'],
-              '#C23B3B',
+              colors.error,
               [
                 'match',
                 ['get', 'featureType'],
                 'entrance',
-                '#A85A06',
+                colors.amber,
                 'space',
-                '#24666E',
-                '#8A1060',
+                mapColors.street,
+                colors.brand,
               ],
             ],
             'circle-radius': [
@@ -133,7 +145,7 @@ function NcrMap(props: NcrMapProps) {
               10,
               ['match', ['get', 'featureType'], 'entrance', 4, 'space', 4, 7],
             ],
-            'circle-stroke-color': '#FFFFFF',
+            'circle-stroke-color': mapColors.casing,
             'circle-stroke-width': 2,
           }}
         />
@@ -156,8 +168,8 @@ function NcrMap(props: NcrMapProps) {
             'text-max-width': 16,
           }}
           paint={{
-            'text-color': '#5A1643',
-            'text-halo-color': '#FFFFFF',
+            'text-color': mapColors.label,
+            'text-halo-color': mapColors.labelHalo,
             'text-halo-width': 2,
           }}
         />
@@ -166,7 +178,7 @@ function NcrMap(props: NcrMapProps) {
           type="circle"
           filter={['has', 'point_count']}
           layout={{ visibility }}
-          paint={{ 'circle-color': '#8A1060', 'circle-radius': 18 }}
+          paint={{ 'circle-color': colors.brand, 'circle-radius': 18 }}
         />
         <Layer
           id="ncr-cluster-count"
@@ -178,7 +190,7 @@ function NcrMap(props: NcrMapProps) {
             'text-font': mapTextFont,
             'text-size': 12,
           }}
-          paint={{ 'text-color': '#FFFFFF' }}
+          paint={{ 'text-color': mapColors.casing }}
         />
       </GeoJSONSource>
     </Map>

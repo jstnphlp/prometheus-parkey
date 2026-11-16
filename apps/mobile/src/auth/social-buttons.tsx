@@ -1,9 +1,9 @@
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native'
 import Svg, { Path } from 'react-native-svg'
 
+import { createThemedStyles } from '../theme-provider'
 import googleG from '../../assets/auth/google-g.png'
-import { colors, fonts } from '../theme'
-
+import { fonts } from '../theme'
 import type { SocialProvider } from './oauth-policy'
 
 export function SocialButtons({
@@ -15,6 +15,8 @@ export function SocialButtons({
   disabled: boolean
   onPress: (provider: SocialProvider) => void
 }) {
+  const styles = useStyles()
+
   if (!providers.google && !providers.facebook) return null
   return (
     <View style={styles.group}>
@@ -62,48 +64,50 @@ export function SocialButtons({
   )
 }
 
-const styles = StyleSheet.create({
-  group: { gap: 12, marginTop: 24 },
-  separator: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    marginBottom: 8,
-  },
-  rule: {
-    height: 1,
-    flex: 1,
-    backgroundColor: colors.onDarkMuted,
-    opacity: 0.4,
-  },
-  or: {
-    color: colors.onDarkMuted,
-    fontFamily: fonts.bold,
-    fontSize: 13,
-    lineHeight: 18,
-  },
-  button: {
-    minHeight: 50,
-    borderRadius: 13,
-    backgroundColor: colors.white,
-    borderWidth: 1,
-    borderColor: colors.controlBorder,
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    gap: 10,
-  },
-  icon: { width: 20, height: 20, flexShrink: 0 },
-  google: { width: 20, height: 20, resizeMode: 'contain' },
-  label: {
-    fontFamily: fonts.bold,
-    fontSize: 14,
-    lineHeight: 20,
-    color: colors.fieldInk,
-    textAlign: 'center',
-    flex: 1,
-    minWidth: 0,
-  },
-  dimmed: { opacity: 0.65 },
-})
+const useStyles = createThemedStyles(({ entryColors: colors }) =>
+  StyleSheet.create({
+    group: { gap: 12, marginTop: 24 },
+    separator: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 12,
+      marginBottom: 8,
+    },
+    rule: {
+      height: 1,
+      flex: 1,
+      backgroundColor: colors.onDarkMuted,
+      opacity: 0.4,
+    },
+    or: {
+      color: colors.onDarkMuted,
+      fontFamily: fonts.bold,
+      fontSize: 13,
+      lineHeight: 18,
+    },
+    button: {
+      minHeight: 50,
+      borderRadius: 13,
+      backgroundColor: colors.card,
+      borderWidth: 1,
+      borderColor: colors.controlBorder,
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingHorizontal: 14,
+      paddingVertical: 12,
+      gap: 10,
+    },
+    icon: { width: 20, height: 20, flexShrink: 0 },
+    google: { width: 20, height: 20, resizeMode: 'contain' },
+    label: {
+      fontFamily: fonts.bold,
+      fontSize: 14,
+      lineHeight: 20,
+      color: colors.fieldInk,
+      textAlign: 'center',
+      flex: 1,
+      minWidth: 0,
+    },
+    dimmed: { opacity: 0.65 },
+  }),
+)

@@ -1,13 +1,14 @@
 import type { DiscoveryParking } from '@parkey/shared-types'
 import { StyleSheet, Text, View } from 'react-native'
 
+import { useTheme, createThemedStyles } from '../theme-provider'
 import type { ParkingReference } from './model'
 import { parkingDetailData } from './parking-detail-data'
 import { reviewedParkingEntrance } from './parking-navigation'
 import { parkingRowText } from './presentation'
 import { FigmaAsset } from './figma-assets'
 import { MotionPressable } from './motion'
-import { colors, IconButton, ui } from './ui'
+import { IconButton, useUI } from './ui'
 
 export const PARKING_ROW_HEIGHT = 96
 export function ParkingRow({
@@ -31,6 +32,10 @@ export function ParkingRow({
   compact?: boolean
   testID?: string | undefined
 }) {
+  const { colors } = useTheme()
+  const ui = useUI()
+  const styles = useStyles()
+
   const text = parkingDetailData(parking, null, now)
   const row = parkingRowText(parking, reference, now)
   const summary = [text.meta, `${row.distance} · straight-line`]
@@ -60,44 +65,45 @@ export function ParkingRow({
         icon="arrow"
         label={`Directions to ${text.title}`}
         disabled={!reviewedParkingEntrance(parking)}
-        color={colors.surface}
+        color={colors.onAction}
         onPress={onDirections}
         style={styles.directions}
       />
     </View>
   )
 }
-const styles = StyleSheet.create({
-  row: {
-    minHeight: 80,
-    height: PARKING_ROW_HEIGHT - 16,
-    marginBottom: 16,
-    padding: 12,
-    borderRadius: 28,
-    backgroundColor: colors.surface,
-    borderWidth: 2,
-    borderColor: colors.border,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  badge: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: colors.selected,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  content: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    minWidth: 0,
-    minHeight: 60,
-    gap: 8,
-    borderRadius: 12,
-  },
-  directions: { width: 44, height: 44, backgroundColor: colors.brand },
-  selected: { backgroundColor: colors.selected },
-})
+const useStyles = createThemedStyles(({ colors }) =>
+  StyleSheet.create({
+    row: {
+      minHeight: PARKING_ROW_HEIGHT - 16,
+      marginBottom: 16,
+      padding: 12,
+      borderRadius: 16,
+      backgroundColor: colors.surface,
+      borderWidth: 2,
+      borderColor: colors.border,
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+    },
+    badge: {
+      width: 56,
+      height: 56,
+      borderRadius: 16,
+      backgroundColor: colors.selected,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    content: {
+      flex: 1,
+      flexDirection: 'row',
+      alignItems: 'center',
+      minWidth: 0,
+      minHeight: 60,
+      gap: 8,
+      borderRadius: 12,
+    },
+    directions: { width: 44, height: 44, backgroundColor: colors.brand },
+    selected: { backgroundColor: colors.selected },
+  }),
+)

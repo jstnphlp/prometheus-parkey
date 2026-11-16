@@ -10,9 +10,11 @@ import {
 } from 'react-native'
 import type { TextInputProps } from 'react-native'
 
+import type { ParkeyTheme } from '../theme-colors'
+import { useTheme, createThemedStyles } from '../theme-provider'
 import { BrandIcon } from '../components/brand-icon'
 import type { BrandIconName } from '../components/brand-icon'
-import { colors, fonts, radius, typography } from '../theme'
+import { fonts, radius, typography } from '../theme'
 
 export function FormField({
   label,
@@ -28,6 +30,10 @@ export function FormField({
   password?: boolean
   inputRef?: Ref<ComponentRef<typeof TextInput>>
 }) {
+  const { entryColors: colors } = useTheme()
+  const fieldColors = getFieldColors(colors)
+  const styles = useStyles()
+
   const [visible, setVisible] = useState(false)
   const { fontScale } = useWindowDimensions()
   const fieldId = `auth-${label.toLowerCase().replaceAll(' ', '-')}`
@@ -89,7 +95,7 @@ export function FormField({
         <Text
           accessibilityRole="alert"
           accessibilityLiveRegion="polite"
-          style={styles.error}
+          style={[styles.error, { color: colors.error }]}
         >
           {error}
         </Text>
@@ -98,58 +104,63 @@ export function FormField({
   )
 }
 
-export const fieldColors = {
-  ink: colors.fieldInk,
-  icon: colors.fieldIcon,
-} as const
-const styles = StyleSheet.create({
-  group: { gap: 4, width: '100%', minWidth: 0 },
-  visibleLabel: { ...typography.accountBody, color: colors.white },
-  field: {
-    width: '100%',
-    minWidth: 0,
-    flexShrink: 0,
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingLeft: 16,
-    paddingRight: 6,
-    gap: 14,
-    borderRadius: radius.compactButton,
-    backgroundColor: colors.white,
-  },
-  icon: {
-    width: 22,
-    height: 22,
-    flexShrink: 0,
-  },
-  inputSlot: {
-    flexGrow: 1,
-    flexShrink: 1,
-    flexBasis: 0,
-    minWidth: 0,
-    height: '100%',
-    overflow: 'hidden',
-  },
-  input: {
-    flex: 1,
-    width: '100%',
-    maxWidth: '100%',
-    minWidth: 0,
-    height: '100%',
-    paddingVertical: 0,
-    paddingHorizontal: 0,
-    textAlignVertical: 'center',
-    color: fieldColors.ink,
-    fontFamily: fonts.medium,
-    fontSize: 13,
-    lineHeight: 18,
-  },
-  toggle: {
-    width: 44,
-    minHeight: 44,
-    flexShrink: 0,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  error: { ...typography.accountBody, color: colors.white },
-})
+const getFieldColors = (colors: ParkeyTheme['entryColors']) =>
+  ({
+    ink: colors.fieldInk,
+    icon: colors.fieldIcon,
+  }) as const
+const useStyles = createThemedStyles(({ entryColors: colors }) =>
+  StyleSheet.create({
+    group: { gap: 4, width: '100%', minWidth: 0 },
+    visibleLabel: { ...typography.accountBody, color: colors.text },
+    field: {
+      width: '100%',
+      minWidth: 0,
+      flexShrink: 0,
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingLeft: 16,
+      paddingRight: 6,
+      gap: 14,
+      borderRadius: radius.compactButton,
+      backgroundColor: colors.card,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    icon: {
+      width: 22,
+      height: 22,
+      flexShrink: 0,
+    },
+    inputSlot: {
+      flexGrow: 1,
+      flexShrink: 1,
+      flexBasis: 0,
+      minWidth: 0,
+      height: '100%',
+      overflow: 'hidden',
+    },
+    input: {
+      flex: 1,
+      width: '100%',
+      maxWidth: '100%',
+      minWidth: 0,
+      height: '100%',
+      paddingVertical: 0,
+      paddingHorizontal: 0,
+      textAlignVertical: 'center',
+      color: colors.fieldInk,
+      fontFamily: fonts.medium,
+      fontSize: 14,
+      lineHeight: 18,
+    },
+    toggle: {
+      width: 44,
+      minHeight: 44,
+      flexShrink: 0,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    error: { ...typography.accountBody, color: colors.text },
+  }),
+)

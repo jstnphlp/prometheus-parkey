@@ -10,6 +10,7 @@ import type { StyleProp, ViewStyle } from 'react-native'
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { StatusBar } from 'expo-status-bar'
 
+import { useTheme } from '../theme-provider'
 import { layout, spacing } from '../theme'
 
 export function ScreenContainer({
@@ -25,10 +26,11 @@ export function ScreenContainer({
   overlay?: ReactNode
   keyboardAware?: boolean
 }) {
+  const { dark } = useTheme()
   const insets = useSafeAreaInsets()
   return (
     <SafeAreaView style={[styles.screen, { backgroundColor }]}>
-      <StatusBar style="light" />
+      <StatusBar style={dark ? 'light' : 'dark'} />
       <KeyboardAvoidingView
         style={styles.keyboard}
         enabled={keyboardAware}

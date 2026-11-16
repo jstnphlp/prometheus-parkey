@@ -108,3 +108,7 @@ Read the [parking data preparation report](docs/parking-data-quality.md) for exa
 audit counts, candidate evidence, the unpublished review queue and validated
 offline refresh steps. `pnpm audit:data` checks generated data integrity;
 `pnpm data:refresh` regenerates local artifacts after review.
+
+## Interactive Architecture visual handoff (Light + Magenta / Dark + Magenta)
+
+The paired Figma design handoff is documented in [Interactive Architecture](docs/FIGMA_MAGENTA_INTERACTIVE_ARCHITECTURE.md), [60 paired screen references](docs/FIGMA_MAGENTA_SCREEN_INDEX.md), [exact semantic tokens and Outfit typography](docs/FIGMA_MAGENTA_DESIGN_TOKENS.md), and [Codex implementation phases and acceptance checklist](docs/FIGMA_MAGENTA_CODEX_PLAN.md). These are design/implementation references, not claims that the UI or account journeys are implemented. The new [offline Figma design-reference workflow](design-reference/README.md) includes a 60-pair manifest, verified design tokens, a flow graph, and an opt-in REST exporter for PNG screenshots and layout trees. The PNGs/layout trees **have not been exported yet** and require a local read-only Figma API token; no Figma credential belongs in this repository. The existing discovery-only V1 scope and production gates remain authoritative.

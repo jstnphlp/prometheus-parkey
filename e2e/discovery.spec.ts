@@ -11,9 +11,9 @@ test('loads mapped parking, opens details, and returns with browser Back', async
   page,
 }) => {
   await openMap(page)
-  await expect(page.getByRole('tab', { name: 'Map', exact: true })).toHaveText(
-    'Map',
-  )
+  await expect(
+    page.getByRole('tab', { name: 'Explore', exact: true }),
+  ).toHaveText('Explore')
   await expect(page.getByTestId('destination-query')).toBeVisible()
   await expandResults(page)
   const parking = page.getByRole('button', {
@@ -31,9 +31,9 @@ test('loads mapped parking, opens details, and returns with browser Back', async
   await expect(page).toHaveURL(/spot=osm%3Away%2F113539118/)
   await page.goBack()
   await expect(page.getByTestId('parking-detail-title')).toHaveCount(0)
-  await expect(page.getByRole('tab', { name: 'Map', exact: true })).toHaveText(
-    'Map',
-  )
+  await expect(
+    page.getByRole('tab', { name: 'Explore', exact: true }),
+  ).toHaveText('Explore')
 })
 
 for (const [label, filter, kind] of [
@@ -118,20 +118,20 @@ test('Map, Saved, and You tabs open the appropriate screens', async ({
   await expect(
     page.getByRole('tab', { name: 'Saved', exact: true }),
   ).toHaveText('Saved')
-  await page.getByRole('tab', { name: 'You', exact: true }).click()
+  await page.getByRole('tab', { name: 'Profile', exact: true }).click()
   await expect(
-    page.getByRole('heading', { name: 'You', exact: true }),
+    page.getByRole('heading', { name: 'Profile', exact: true }),
   ).toBeVisible()
-  await expect(page.getByRole('tab', { name: 'You', exact: true })).toHaveText(
-    'You',
-  )
+  await expect(
+    page.getByRole('tab', { name: 'Profile', exact: true }),
+  ).toHaveText('Profile')
   await page.getByRole('tab', { name: 'Saved', exact: true }).click()
   await expect(
     page.getByRole('heading', { name: 'Saved', exact: true }),
   ).toBeVisible()
-  await page.getByRole('tab', { name: 'Map', exact: true }).click()
+  await page.getByRole('tab', { name: 'Explore', exact: true }).click()
   await expect(page.getByTestId('destination-query')).toBeVisible()
-  await expect(page.getByRole('tab', { name: 'Map', exact: true })).toHaveText(
-    'Map',
-  )
+  await expect(
+    page.getByRole('tab', { name: 'Explore', exact: true }),
+  ).toHaveText('Explore')
 })

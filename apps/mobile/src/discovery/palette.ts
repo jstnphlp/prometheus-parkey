@@ -1,49 +1,5 @@
-// Discovery UI and both map renderers share these semantic color roles.
-export const colors = {
-  brand: '#8A1060',
-  brandDeep: '#62083F',
-  accent: '#2E7F88',
-  action: '#2E7F88',
-  actionPressed: '#24666E',
-  ink: '#1E1B38',
-  muted: '#66647A',
-  disabled: '#9A98A8',
-  surface: '#FFFFFF',
-  canvas: '#F1EEEA',
-  soft: '#F5F3F0',
-  selected: '#F8E6F0',
-  selectedPressed: '#F0CEE2',
-  positiveSurface: '#E1F0F1',
-  disabledSurface: '#E9E6E2',
-  border: '#E4DFD8',
-  line: '#E4DFD8',
-  amber: '#A85A06',
-  warningSurface: '#FFF0D9',
-  error: '#C23B3B',
-  dark: '#17141A',
-  darkRaised: '#26222B',
-  onDarkMuted: '#B9B5C4',
-  success: '#1F8A5B',
-  successSurface: '#E1F3EA',
-  dangerSurface: '#FBE7E7',
-  backdrop: 'rgba(30, 27, 56, 0.28)',
-  shadow: 'rgba(30, 27, 56, 0.12)',
-}
+import { themes } from '../theme-colors'
 
-export const mapColors = {
-  casing: colors.surface,
-  facility: colors.brand,
-  facilityOutline: colors.surface,
-  facilityLabel: colors.surface,
-  facilitySelected: colors.brandDeep,
-  facilitySelectedOutline: colors.surface,
-  facilitySelectedLabel: colors.surface,
-  street: colors.action,
-  streetSelected: colors.brand,
-  route: colors.action,
-  user: colors.action,
-  userHalo: colors.accent,
-  destination: colors.brand,
-  draft: colors.amber,
-  parked: colors.ink,
-}
+// Compatibility for pure map helpers; UI consumes useTheme().
+
+export const { colors, mapColors } = themes['light-magenta']

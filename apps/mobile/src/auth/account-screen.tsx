@@ -1,15 +1,19 @@
 import { useRouter } from 'expo-router'
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native'
 
+import { SettingsLinks } from '../settings/settings-screen'
+import { useTheme, createThemedStyles } from '../theme-provider'
 import { BrandButton } from '../components/brand-button'
 import { BrandIcon } from '../components/brand-icon'
 import { usePopup } from '../components/popup-provider'
-import { colors, typography } from '../theme'
-
+import { typography } from '../theme'
 import { AuthShell } from './auth-shell'
 import { useAuth } from './provider'
 
 export function AccountScreen() {
+  const { entryColors: colors } = useTheme()
+  const styles = useStyles()
+
   const auth = useAuth()
   const router = useRouter()
   const popup = usePopup()
@@ -41,6 +45,7 @@ export function AccountScreen() {
   return (
     <AuthShell title="Your account" subtitle="Your Parkey account">
       <View style={styles.content}>
+        <SettingsLinks />
         {auth.state.status === 'checking' ? (
           <ActivityIndicator
             color={colors.cyan}
@@ -56,7 +61,20 @@ export function AccountScreen() {
             <BrandButton
               title="Sign out"
               busy={auth.busy}
-              onPress={() => void signOut()}
+              onPress={() =>
+                popup.show({
+                  tone: 'warning',
+                  title: 'Sign out?',
+                  message:
+                    'Your saved parking and appearance stay on this device.',
+                  primary: {
+                    title: 'Sign out',
+                    onPress: () => void signOut(),
+                    restoreFocus: false,
+                  },
+                  secondary: { title: 'Stay signed in' },
+                })
+              }
             />
           </>
         ) : auth.state.status === 'recovery' ? (
@@ -111,7 +129,9 @@ export function AccountScreen() {
     </AuthShell>
   )
 }
-const styles = StyleSheet.create({
-  content: { marginTop: 32, gap: 16 },
-  body: { ...typography.body, color: colors.white },
-})
+const useStyles = createThemedStyles(({ entryColors: colors }) =>
+  StyleSheet.create({
+    content: { marginTop: 32, gap: 16 },
+    body: { ...typography.body, color: colors.text },
+  }),
+)

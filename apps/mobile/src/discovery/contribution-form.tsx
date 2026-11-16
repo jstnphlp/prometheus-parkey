@@ -13,9 +13,10 @@ import {
   View,
 } from 'react-native'
 
+import { useTheme, createThemedStyles } from '../theme-provider'
 import { anchor, kindLabels } from './model'
 import { ModalSheet } from './sheets'
-import { Button, Choice, colors, ui } from './ui'
+import { Button, Choice, useUI } from './ui'
 
 export function ContributionForm({
   draft,
@@ -28,6 +29,9 @@ export function ContributionForm({
   onAdjust: (draft: ParkingContribution) => void
   onSave: (draft: ParkingContribution) => Promise<string | null>
 }) {
+  const ui = useUI()
+  const styles = useStyles()
+
   const [form, setForm] = useState(draft)
   const [error, setError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
@@ -214,6 +218,9 @@ function Field({
   multiline?: boolean
   maxLength?: number
 }) {
+  const { colors } = useTheme()
+  const ui = useUI()
+
   const [focused, setFocused] = useState(false)
   return (
     <View style={{ gap: 7 }}>
@@ -238,13 +245,15 @@ function Field({
     </View>
   )
 }
-const styles = StyleSheet.create({
-  content: { paddingHorizontal: 24, paddingBottom: 24, gap: 24 },
-  link: { minHeight: 44, justifyContent: 'center', borderRadius: 12 },
-  photo: {
-    height: 150,
-    width: '100%',
-    backgroundColor: colors.soft,
-    borderRadius: 14,
-  },
-})
+const useStyles = createThemedStyles(({ colors }) =>
+  StyleSheet.create({
+    content: { paddingHorizontal: 24, paddingBottom: 24, gap: 24 },
+    link: { minHeight: 44, justifyContent: 'center', borderRadius: 12 },
+    photo: {
+      height: 150,
+      width: '100%',
+      backgroundColor: colors.soft,
+      borderRadius: 14,
+    },
+  }),
+)

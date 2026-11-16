@@ -1,13 +1,15 @@
 import Constants, { ExecutionEnvironment } from 'expo-constants'
-import { lazy, Suspense } from 'react'
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
 
+import { createThemedStyles } from '../theme-provider'
 import type { ParkingMapProps } from './map-types'
-import { colors, ui } from './ui'
-
-const NativeMap = lazy(() => import('./native-map'))
+import NativeMap from './native-map'
+import { useUI } from './ui'
 
 export default function ParkingMap(props: ParkingMapProps) {
+  const ui = useUI()
+  const styles = useStyles()
+
   if (Constants.executionEnvironment === ExecutionEnvironment.StoreClient) {
     return (
       <View style={styles.unavailable}>
@@ -19,25 +21,18 @@ export default function ParkingMap(props: ParkingMapProps) {
       </View>
     )
   }
-  return (
-    <Suspense
-      fallback={
-        <ActivityIndicator
-          style={StyleSheet.absoluteFill}
-          color={colors.accent}
-        />
-      }
-    >
-      <NativeMap {...props} />
-    </Suspense>
-  )
+  // MapLibre is already in the main graph through the pilot renderer. Avoid a
+  // separate development chunk fetch/eval while retaining the Expo Go notice.
+  return <NativeMap {...props} />
 }
-const styles = StyleSheet.create({
-  unavailable: {
-    flex: 1,
-    padding: 28,
-    justifyContent: 'center',
-    gap: 12,
-    backgroundColor: colors.canvas,
-  },
-})
+const useStyles = createThemedStyles(({ colors }) =>
+  StyleSheet.create({
+    unavailable: {
+      flex: 1,
+      padding: 28,
+      justifyContent: 'center',
+      gap: 12,
+      backgroundColor: colors.canvas,
+    },
+  }),
+)

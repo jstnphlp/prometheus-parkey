@@ -23,6 +23,7 @@ import {
 import { StatusBar } from 'expo-status-bar'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
+import { useTheme, createThemedStyles } from '../theme-provider'
 import { discoveryState } from './discovery-state'
 import { StateCard } from './state-card'
 import { useConnectivity } from './use-connectivity'
@@ -86,12 +87,11 @@ import { fonts } from './typography'
 import {
   Button,
   Choice,
-  colors,
   detailsPeekHeight,
   IconButton,
   LoadingRows,
   UndoToast,
-  ui,
+  useUI,
 } from './ui'
 import { useGrantedLocation } from './use-granted-location'
 import { useDirectDirections } from './use-direct-directions'
@@ -113,6 +113,10 @@ function sameNavigationContext(
 }
 
 export default function Explore() {
+  const { colors, dark } = useTheme()
+  const ui = useUI()
+  const styles = useStyles()
+
   const [reviewDraft, setReviewDraft] = useState<ParkingContribution | null>(
     null,
   )
@@ -1196,7 +1200,7 @@ export default function Explore() {
       testID={mapStatus === 'ready' ? 'discovery-map-ready' : 'discovery-map'}
       style={styles.screen}
     >
-      <StatusBar style="dark" />
+      <StatusBar style={dark ? 'light' : 'dark'} />
       {entranceCheck || entranceError ? (
         <View
           accessibilityLiveRegion="polite"
@@ -2219,6 +2223,9 @@ function StatusMessage({
   message: string
   onRetry: () => void
 }) {
+  const ui = useUI()
+  const styles = useStyles()
+
   return (
     <View style={styles.status}>
       <Text style={[ui.small, ui.flex]}>{message}</Text>
@@ -2232,174 +2239,176 @@ function StatusMessage({
     </View>
   )
 }
-const styles = StyleSheet.create({
-  offlineBanner: {
-    backgroundColor: colors.surface,
-    borderRadius: 24,
-    padding: 14,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-  },
-  offlineBadge: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: colors.warningSurface,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  loadingToast: {
-    alignSelf: 'center',
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    backgroundColor: colors.surface,
-    borderRadius: 999,
-  },
-  loadingDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: colors.brand,
-  },
-  screen: { flex: 1, backgroundColor: colors.canvas },
-  mapNotices: {
-    width: '100%',
-    maxWidth: 620,
-    alignSelf: 'center',
-    paddingHorizontal: 16,
-    gap: 8,
-  },
-  resume: {
-    backgroundColor: colors.surface,
-    borderRadius: 20,
-    padding: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-  },
-  carChip: { alignSelf: 'flex-start', maxWidth: '100%' },
-  top: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    gap: 12,
-  },
-  searchOverlay: {
-    width: '100%',
-    paddingHorizontal: 16,
-    maxWidth: 620,
-    alignSelf: 'center',
-  },
-  mapHeader: { flexDirection: 'row', justifyContent: 'space-between' },
-  sheetContent: { gap: 24, paddingTop: 8, paddingBottom: 16 },
-  resultsHeading: { gap: 6, paddingHorizontal: 24 },
-  resultRow: { paddingHorizontal: 24 },
-  menu: { paddingHorizontal: 24, paddingBottom: 16 },
-  menuItem: { minHeight: 56, justifyContent: 'center' },
-  filterOverlay: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    maxWidth: 620,
-    marginHorizontal: 'auto',
-  },
-  nearbyStrip: {
-    paddingHorizontal: 16,
-    paddingBottom: 14,
-    gap: 12,
-    alignItems: 'flex-start',
-  },
-  nearbyEmpty: {
-    width: 300,
-    minHeight: 110,
-    padding: 16,
-    gap: 6,
-    borderRadius: 24,
-    backgroundColor: colors.soft,
-  },
-  filterStrip: { flexGrow: 0, flexShrink: 0 },
-  filters: { gap: 8, paddingHorizontal: 16 },
-  addParking: {
-    minWidth: 96,
-    minHeight: 48,
-    paddingHorizontal: 20,
-    borderRadius: 24,
-    backgroundColor: colors.positiveSurface,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-  },
-  addParkingText: { color: colors.action, fontSize: 14, lineHeight: 20 },
-  peek: { flex: 1, paddingHorizontal: 24, overflow: 'hidden' },
-  unknownFees: { paddingTop: 16, fontFamily: fonts.semibold },
-  mapInfo: { position: 'absolute', left: 16 },
-  controls: {
-    position: 'absolute',
-    right: 16,
-    gap: 12,
-    alignItems: 'flex-end',
-  },
-  bottom: {
-    position: 'absolute',
-    left: 16,
-    right: 16,
-    gap: 8,
-    maxWidth: 584,
-    marginHorizontal: 'auto',
-  },
-  status: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-    paddingHorizontal: 14,
-    borderRadius: 16,
-    backgroundColor: colors.surface,
-    boxShadow: `inset 0px 0px 0px 1px ${colors.border}`,
-  },
-  retry: {
-    borderRadius: 12,
-    minWidth: 54,
-    minHeight: 48,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  warning: {
-    backgroundColor: colors.warningSurface,
-    padding: 10,
-    borderRadius: 12,
-  },
-  warningText: {
-    fontFamily: fonts.semibold,
-    fontSize: 12,
-    lineHeight: 18,
-    color: colors.amber,
-  },
-  drawHeader: {
-    flexDirection: 'row',
-    gap: 8,
-    alignItems: 'center',
-    borderRadius: 24,
-    backgroundColor: colors.surface,
-    padding: 16,
-  },
-  drawingPanel: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    padding: 24,
-    gap: 16,
-    backgroundColor: colors.surface,
-    borderTopLeftRadius: 32,
-    borderTopRightRadius: 32,
-  },
-  panelContent: { paddingHorizontal: 24, paddingBottom: 24 },
-})
+const useStyles = createThemedStyles(({ colors }) =>
+  StyleSheet.create({
+    offlineBanner: {
+      backgroundColor: colors.surface,
+      borderRadius: 24,
+      padding: 14,
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 10,
+    },
+    offlineBadge: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      backgroundColor: colors.warningSurface,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    loadingToast: {
+      alignSelf: 'center',
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+      paddingHorizontal: 16,
+      paddingVertical: 12,
+      backgroundColor: colors.surface,
+      borderRadius: 999,
+    },
+    loadingDot: {
+      width: 8,
+      height: 8,
+      borderRadius: 4,
+      backgroundColor: colors.brand,
+    },
+    screen: { flex: 1, backgroundColor: colors.canvas },
+    mapNotices: {
+      width: '100%',
+      maxWidth: 620,
+      alignSelf: 'center',
+      paddingHorizontal: 16,
+      gap: 8,
+    },
+    resume: {
+      backgroundColor: colors.surface,
+      borderRadius: 20,
+      padding: 12,
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 12,
+      flexWrap: 'wrap',
+      justifyContent: 'space-between',
+    },
+    carChip: { alignSelf: 'flex-start', maxWidth: '100%' },
+    top: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      gap: 12,
+    },
+    searchOverlay: {
+      width: '100%',
+      paddingHorizontal: 16,
+      maxWidth: 620,
+      alignSelf: 'center',
+    },
+    mapHeader: { flexDirection: 'row', justifyContent: 'space-between' },
+    sheetContent: { gap: 24, paddingTop: 8, paddingBottom: 16 },
+    resultsHeading: { gap: 6, paddingHorizontal: 24 },
+    resultRow: { paddingHorizontal: 24 },
+    menu: { paddingHorizontal: 24, paddingBottom: 16 },
+    menuItem: { minHeight: 56, justifyContent: 'center' },
+    filterOverlay: {
+      position: 'absolute',
+      left: 0,
+      right: 0,
+      maxWidth: 620,
+      marginHorizontal: 'auto',
+    },
+    nearbyStrip: {
+      paddingHorizontal: 16,
+      paddingBottom: 14,
+      gap: 12,
+      alignItems: 'flex-start',
+    },
+    nearbyEmpty: {
+      width: 300,
+      minHeight: 110,
+      padding: 16,
+      gap: 6,
+      borderRadius: 24,
+      backgroundColor: colors.soft,
+    },
+    filterStrip: { flexGrow: 0, flexShrink: 0 },
+    filters: { gap: 8, paddingHorizontal: 16 },
+    addParking: {
+      minWidth: 96,
+      minHeight: 48,
+      paddingHorizontal: 20,
+      borderRadius: 24,
+      backgroundColor: colors.positiveSurface,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 8,
+    },
+    addParkingText: { color: colors.action, fontSize: 14, lineHeight: 20 },
+    peek: { flex: 1, paddingHorizontal: 24, overflow: 'hidden' },
+    unknownFees: { paddingTop: 16, fontFamily: fonts.semibold },
+    mapInfo: { position: 'absolute', left: 16 },
+    controls: {
+      position: 'absolute',
+      right: 16,
+      gap: 12,
+      alignItems: 'flex-end',
+    },
+    bottom: {
+      position: 'absolute',
+      left: 16,
+      right: 16,
+      gap: 8,
+      maxWidth: 584,
+      marginHorizontal: 'auto',
+    },
+    status: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 10,
+      paddingHorizontal: 14,
+      borderRadius: 16,
+      backgroundColor: colors.surface,
+      boxShadow: `inset 0px 0px 0px 1px ${colors.border}`,
+    },
+    retry: {
+      borderRadius: 12,
+      minWidth: 54,
+      minHeight: 48,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    warning: {
+      backgroundColor: colors.warningSurface,
+      padding: 10,
+      borderRadius: 12,
+    },
+    warningText: {
+      fontFamily: fonts.semibold,
+      fontSize: 12,
+      lineHeight: 18,
+      color: colors.amber,
+    },
+    drawHeader: {
+      flexDirection: 'row',
+      gap: 8,
+      alignItems: 'center',
+      borderRadius: 24,
+      backgroundColor: colors.surface,
+      padding: 16,
+    },
+    drawingPanel: {
+      position: 'absolute',
+      bottom: 0,
+      left: 0,
+      right: 0,
+      padding: 24,
+      gap: 16,
+      backgroundColor: colors.surface,
+      borderTopLeftRadius: 32,
+      borderTopRightRadius: 32,
+    },
+    panelContent: { paddingHorizontal: 24, paddingBottom: 24 },
+  }),
+)

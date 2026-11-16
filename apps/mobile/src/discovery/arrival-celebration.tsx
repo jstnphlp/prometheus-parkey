@@ -1,10 +1,12 @@
 import { StyleSheet, useWindowDimensions, View } from 'react-native'
 
+import { useTheme } from '../theme-provider'
 import { FigmaAsset } from './figma-assets'
-import { colors } from './palette'
 
 // Decorative exports from the arrival frame. Real map and route data remain underneath.
 export function ArrivalCelebration() {
+  const { colors } = useTheme()
+
   const { width } = useWindowDimensions()
   return (
     <View

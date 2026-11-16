@@ -2,9 +2,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useRef, useState } from 'react'
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native'
 
+import { createThemedStyles } from '../theme-provider'
 import { createRoutingConsent } from './routing-consent'
 import { FigmaAsset } from './figma-assets'
-import { Button, colors, ui } from './ui'
+import { Button, useUI } from './ui'
 
 const consent = createRoutingConsent(AsyncStorage)
 export function useDirectionsConsent(
@@ -12,6 +13,9 @@ export function useDirectionsConsent(
   onOpen: () => void,
   onClose: () => void,
 ) {
+  const ui = useUI()
+  const styles = useStyles()
+
   const pending = useRef<(() => void) | null>(null)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -107,28 +111,30 @@ export function useDirectionsConsent(
     ) : null,
   }
 }
-const styles = StyleSheet.create({
-  backdrop: {
-    flex: 1,
-    justifyContent: 'center',
-    padding: 16,
-    backgroundColor: colors.backdrop,
-  },
-  dialog: {
-    alignSelf: 'center',
-    width: '100%',
-    maxWidth: 358,
-    padding: 24,
-    gap: 16,
-    borderRadius: 28,
-    backgroundColor: colors.surface,
-  },
-  badge: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: colors.positiveSurface,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-})
+const useStyles = createThemedStyles(({ colors }) =>
+  StyleSheet.create({
+    backdrop: {
+      flex: 1,
+      justifyContent: 'center',
+      padding: 16,
+      backgroundColor: colors.backdrop,
+    },
+    dialog: {
+      alignSelf: 'center',
+      width: '100%',
+      maxWidth: 358,
+      padding: 24,
+      gap: 16,
+      borderRadius: 28,
+      backgroundColor: colors.surface,
+    },
+    badge: {
+      width: 56,
+      height: 56,
+      borderRadius: 28,
+      backgroundColor: colors.positiveSurface,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+  }),
+)

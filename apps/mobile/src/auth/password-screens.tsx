@@ -4,11 +4,11 @@ import { useFocusEffect, useRouter } from 'expo-router'
 import { BackHandler, Keyboard, StyleSheet, Text, View } from 'react-native'
 import type { TextInput } from 'react-native'
 
+import { useTheme, createThemedStyles } from '../theme-provider'
 import { BrandButton } from '../components/brand-button'
 import { BrandIcon } from '../components/brand-icon'
 import { usePopup } from '../components/popup-provider'
-import { colors, typography } from '../theme'
-
+import { typography } from '../theme'
 import { AuthShell } from './auth-shell'
 import { authFeedback } from './feedback'
 import { FormField } from './form-field'
@@ -18,6 +18,8 @@ import { SignedInRedirect } from './signed-in-redirect'
 import { emailProblem, passwordGuidance, passwordProblem } from './validation'
 
 export function ForgotPasswordScreen() {
+  const styles = useStyles()
+
   const auth = useAuth()
   const popup = usePopup()
   const emailInput = useRef<ComponentRef<typeof TextInput>>(null)
@@ -110,6 +112,9 @@ export function ForgotPasswordScreen() {
 }
 
 export function ResetPasswordScreen() {
+  const { entryColors: colors } = useTheme()
+  const styles = useStyles()
+
   const auth = useAuth()
   const { busy, signOut } = auth
   const router = useRouter()
@@ -282,7 +287,9 @@ export function ResetPasswordScreen() {
   )
 }
 
-const styles = StyleSheet.create({
-  form: { marginTop: 32, gap: 16 },
-  body: { ...typography.body, color: colors.white },
-})
+const useStyles = createThemedStyles(({ entryColors: colors }) =>
+  StyleSheet.create({
+    form: { marginTop: 32, gap: 16 },
+    body: { ...typography.body, color: colors.text },
+  }),
+)

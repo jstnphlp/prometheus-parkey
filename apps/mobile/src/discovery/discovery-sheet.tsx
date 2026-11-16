@@ -17,6 +17,7 @@ import type {
   PanResponderGestureState,
 } from 'react-native'
 
+import { useTheme, createThemedStyles } from '../theme-provider'
 import {
   createSheetDragGuard,
   sheetHeights,
@@ -29,7 +30,7 @@ import {
   initialSheetWheel,
   wheelPixels,
 } from './sheet-wheel'
-import { colors, IconButton, ui } from './ui'
+import { IconButton, useUI } from './ui'
 import { useReducedMotion } from './use-reduced-motion'
 
 function createSheetPans({
@@ -162,6 +163,9 @@ export function DiscoverySheet({
   onClose: () => void
   children: ReactNode
 }) {
+  const ui = useUI()
+  const styles = useStyles()
+
   const { height, fontScale } = useWindowDimensions()
   const insets = useSafeAreaInsets()
   const [headerHeight, setHeaderHeight] = useState(112)
@@ -483,35 +487,41 @@ export function DiscoverySheet({
     </Animated.View>
   )
 }
-const styles = StyleSheet.create({
-  sheet: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    maxWidth: 620,
-    marginHorizontal: 'auto',
-    backgroundColor: colors.surface,
-    borderTopLeftRadius: 28,
-    borderTopRightRadius: 28,
-    overflow: 'hidden',
-  },
-  top: { height: 32, alignItems: 'center', justifyContent: 'center' },
-  gripTouch: {
-    minHeight: 44,
-    width: 120,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  grip: {
-    width: 40,
-    height: 5,
-    borderRadius: 2,
-    backgroundColor: colors.disabledSurface,
-  },
-  header: { paddingHorizontal: 24, gap: 6, paddingBottom: 20, minHeight: 64 },
-})
+const useStyles = createThemedStyles(({ colors }) =>
+  StyleSheet.create({
+    sheet: {
+      position: 'absolute',
+      bottom: 0,
+      left: 0,
+      right: 0,
+      maxWidth: 620,
+      marginHorizontal: 'auto',
+      backgroundColor: colors.surface,
+      borderTopLeftRadius: 28,
+      borderTopRightRadius: 28,
+      overflow: 'hidden',
+    },
+    top: { height: 32, alignItems: 'center', justifyContent: 'center' },
+    gripTouch: {
+      minHeight: 44,
+      width: 120,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    grip: {
+      width: 40,
+      height: 5,
+      borderRadius: 2,
+      backgroundColor: colors.disabledSurface,
+    },
+    header: { paddingHorizontal: 24, gap: 6, paddingBottom: 20, minHeight: 64 },
+  }),
+)
 export function MapAttribution({ onPress }: { onPress: () => void }) {
+  const { colors } = useTheme()
+  const ui = useUI()
+  const attributionStyles = useAttributionStyles()
+
   return (
     <IconButton
       icon="info"
@@ -522,13 +532,15 @@ export function MapAttribution({ onPress }: { onPress: () => void }) {
     />
   )
 }
-const attributionStyles = StyleSheet.create({
-  touch: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: colors.surface,
-  },
-})
+const useAttributionStyles = createThemedStyles(({ colors }) =>
+  StyleSheet.create({
+    touch: {
+      width: 44,
+      height: 44,
+      borderRadius: 22,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: colors.surface,
+    },
+  }),
+)

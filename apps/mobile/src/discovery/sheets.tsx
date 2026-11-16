@@ -2,7 +2,8 @@ import type { ReactNode } from 'react'
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-import { colors, IconButton, ui } from './ui'
+import { createThemedStyles } from '../theme-provider'
+import { IconButton, useUI } from './ui'
 import { useReducedMotion } from './use-reduced-motion'
 
 export function ModalSheet({
@@ -14,6 +15,9 @@ export function ModalSheet({
   children: ReactNode
   onClose: () => void
 }) {
+  const ui = useUI()
+  const styles = useStyles()
+
   const insets = useSafeAreaInsets()
   const reduced = useReducedMotion()
   return (
@@ -55,32 +59,34 @@ export function ModalSheet({
   )
 }
 
-const styles = StyleSheet.create({
-  backdrop: {
-    flex: 1,
-    backgroundColor: colors.backdrop,
-    justifyContent: 'flex-end',
-  },
-  modal: {
-    backgroundColor: colors.surface,
-    borderTopLeftRadius: 32,
-    borderTopRightRadius: 32,
-    width: '100%',
-    maxWidth: 620,
-    alignSelf: 'center',
-    overflow: 'hidden',
-  },
-  grip: {
-    alignSelf: 'center',
-    width: 36,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: colors.disabledSurface,
-    marginTop: 12,
-  },
-  header: {
-    paddingHorizontal: 24,
-    paddingTop: 16,
-    paddingBottom: 24,
-  },
-})
+const useStyles = createThemedStyles(({ colors }) =>
+  StyleSheet.create({
+    backdrop: {
+      flex: 1,
+      backgroundColor: colors.backdrop,
+      justifyContent: 'flex-end',
+    },
+    modal: {
+      backgroundColor: colors.surface,
+      borderTopLeftRadius: 32,
+      borderTopRightRadius: 32,
+      width: '100%',
+      maxWidth: 620,
+      alignSelf: 'center',
+      overflow: 'hidden',
+    },
+    grip: {
+      alignSelf: 'center',
+      width: 36,
+      height: 4,
+      borderRadius: 2,
+      backgroundColor: colors.disabledSurface,
+      marginTop: 12,
+    },
+    header: {
+      paddingHorizontal: 24,
+      paddingTop: 16,
+      paddingBottom: 24,
+    },
+  }),
+)

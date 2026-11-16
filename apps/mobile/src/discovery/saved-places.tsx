@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 import type { Coordinate, DiscoveryParking } from '@parkey/shared-types'
 
+import { useTheme, createThemedStyles } from '../theme-provider'
 import { dateLabel, PILOT_CENTER } from './model'
 import { fonts } from './typography'
 import { parkingTitle } from './presentation'
@@ -14,7 +15,7 @@ import { useSavedAddresses } from './saved-addresses'
 import type { AddressKind } from './saved-addresses'
 import { FigmaAsset } from './figma-assets'
 import { MotionPressable, MotionView } from './motion'
-import { Button, Choice, colors, Notice, UndoToast, ui } from './ui'
+import { Button, Choice, Notice, UndoToast, useUI } from './ui'
 import type { useLocalState } from './use-local-state'
 
 export function SavedPlaces({
@@ -42,6 +43,10 @@ export function SavedPlaces({
   onLocateAddress: () => Promise<Coordinate | null>
   onClose: () => void
 }) {
+  const { colors } = useTheme()
+  const ui = useUI()
+  const styles = useStyles()
+
   const [showAddresses, setShowAddresses] = useState(false)
   const [tab, setTab] = useState<'favorites' | 'recents'>('favorites')
   const savedAddresses = useSavedAddresses()
@@ -437,73 +442,75 @@ export function SavedPlaces({
   )
 }
 
-const styles = StyleSheet.create({
-  carCard: {
-    backgroundColor: colors.brand,
-    padding: 16,
-    borderRadius: 28,
-    gap: 14,
-  },
-  carBadge: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
-    backgroundColor: '#FFF9F0',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  onBrand: { color: colors.surface },
-  carAction: {
-    minHeight: 44,
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    borderRadius: 999,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-  },
-  walk: { backgroundColor: colors.surface, flexGrow: 1 },
-  showMap: { backgroundColor: 'rgba(255,255,255,0.22)', flexGrow: 1 },
-  actionText: {
-    fontFamily: fonts.semibold,
-    fontSize: 17,
-    lineHeight: 20,
-    letterSpacing: -0.34,
-  },
-  carLink: { minHeight: 44, justifyContent: 'center' },
-  linkText: { fontFamily: fonts.bold, fontSize: 12, lineHeight: 16 },
-  content: { paddingBottom: 24, gap: 16 },
-  savedRow: {
-    padding: 12,
-    borderRadius: 28,
-    backgroundColor: colors.surface,
-    borderWidth: 2,
-    borderColor: colors.border,
-    gap: 8,
-  },
-  badge: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: colors.selected,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  savedAction: {
-    flex: 1,
-    minHeight: 56,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    paddingVertical: 0,
-    borderRadius: 12,
-  },
-  remove: {
-    minHeight: 44,
-    alignSelf: 'flex-end',
-    justifyContent: 'center',
-    paddingHorizontal: 8,
-    borderRadius: 24,
-  },
-})
+const useStyles = createThemedStyles(({ colors }) =>
+  StyleSheet.create({
+    carCard: {
+      backgroundColor: colors.brand,
+      padding: 16,
+      borderRadius: 28,
+      gap: 14,
+    },
+    carBadge: {
+      width: 52,
+      height: 52,
+      borderRadius: 26,
+      backgroundColor: '#FFF9F0',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    onBrand: { color: colors.onAction },
+    carAction: {
+      minHeight: 44,
+      paddingHorizontal: 20,
+      paddingVertical: 12,
+      borderRadius: 999,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 8,
+    },
+    walk: { backgroundColor: colors.surface, flexGrow: 1 },
+    showMap: { backgroundColor: 'rgba(255,255,255,0.22)', flexGrow: 1 },
+    actionText: {
+      fontFamily: fonts.semibold,
+      fontSize: 17,
+      lineHeight: 20,
+      letterSpacing: -0.34,
+    },
+    carLink: { minHeight: 44, justifyContent: 'center' },
+    linkText: { fontFamily: fonts.bold, fontSize: 12, lineHeight: 16 },
+    content: { paddingBottom: 24, gap: 16 },
+    savedRow: {
+      padding: 12,
+      borderRadius: 28,
+      backgroundColor: colors.surface,
+      borderWidth: 2,
+      borderColor: colors.border,
+      gap: 8,
+    },
+    badge: {
+      width: 48,
+      height: 48,
+      borderRadius: 24,
+      backgroundColor: colors.selected,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    savedAction: {
+      flex: 1,
+      minHeight: 56,
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 12,
+      paddingVertical: 0,
+      borderRadius: 12,
+    },
+    remove: {
+      minHeight: 44,
+      alignSelf: 'flex-end',
+      justifyContent: 'center',
+      paddingHorizontal: 8,
+      borderRadius: 24,
+    },
+  }),
+)

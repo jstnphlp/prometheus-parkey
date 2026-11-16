@@ -11,13 +11,13 @@ import {
   View,
 } from 'react-native'
 
+import { useTheme, createThemedStyles } from '../theme-provider'
 import { clearContributions, writeContributions } from './contributions'
 import { dateLabel } from './model'
 import { developmentSamplesEnabled } from './presentation'
 import { diagnosticStatus } from './telemetry'
-import { mapColors } from './palette'
 import { ModalSheet } from './sheets'
-import { Button, colors, Notice, ParkingPinIcon, UndoToast, ui } from './ui'
+import { Button, Notice, ParkingPinIcon, UndoToast, useUI } from './ui'
 
 export function MapInformation({
   samples,
@@ -36,6 +36,10 @@ export function MapInformation({
   onStorageReady: () => void
   onClose: () => void
 }) {
+  const { colors } = useTheme()
+  const ui = useUI()
+  const styles = useStyles()
+
   const development = developmentSamplesEnabled(true, process.env.NODE_ENV)
   const [error, setError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
@@ -285,13 +289,15 @@ export function MapInformation({
     </ModalSheet>
   )
 }
-const styles = StyleSheet.create({
-  content: { paddingHorizontal: 24, paddingBottom: 24, gap: 16 },
-  link: { minHeight: 44, justifyContent: 'center', borderRadius: 12 },
-  legendLine: {
-    width: 24,
-    height: 5,
-    backgroundColor: mapColors.street,
-    borderRadius: 3,
-  },
-})
+const useStyles = createThemedStyles(({ mapColors }) =>
+  StyleSheet.create({
+    content: { paddingHorizontal: 24, paddingBottom: 24, gap: 16 },
+    link: { minHeight: 44, justifyContent: 'center', borderRadius: 12 },
+    legendLine: {
+      width: 24,
+      height: 5,
+      backgroundColor: mapColors.street,
+      borderRadius: 3,
+    },
+  }),
+)

@@ -8,10 +8,9 @@ import {
 import { useIsFocused } from 'expo-router/react-navigation'
 import { ActivityIndicator, StyleSheet, View } from 'react-native'
 
+import { useTheme } from '../theme-provider'
 import { BrandButton } from '../components/brand-button'
 import { usePopup } from '../components/popup-provider'
-import { colors } from '../theme'
-
 import { AuthShell } from './auth-shell'
 import { authFeedback } from './feedback'
 import { callbackCode } from './links'
@@ -19,6 +18,8 @@ import { useAuth } from './provider'
 import { SignedInRedirect } from './signed-in-redirect'
 
 export function OAuthCallbackScreen() {
+  const { entryColors: colors } = useTheme()
+
   const auth = useAuth()
   const params = useLocalSearchParams()
   const router = useRouter()

@@ -48,6 +48,9 @@ async function selectParkingFromMap(page: Page) {
     .getByRole('button', { name: /^1210\..*Open parking details$/ })
     .click()
   await expect(page.getByTestId('parking-detail-title')).toHaveText(spot.name)
+  await page
+    .getByRole('button', { name: 'View Parking Details', exact: true })
+    .click()
 }
 
 function routingRequests(page: Page) {
@@ -72,6 +75,9 @@ async function interceptHandoffs(page: Page) {
 
 async function acceptDirections(page: Page) {
   await page.getByTestId('parking-get-directions').click()
+  await page
+    .getByRole('button', { name: 'Navigate with Parkey', exact: true })
+    .click()
   await page
     .getByRole('alertdialog', { name: 'Directions privacy' })
     .getByRole('button', { name: 'Continue', exact: true })
@@ -125,7 +131,7 @@ test('Back cancels a delayed external entrance refresh even when the same parkin
   await expect.poll(() => refreshStarted).toBe(true)
   await page.goBack()
   await expect(page.getByTestId('route-panel')).toHaveCount(0)
-  await expect(page.getByTestId('parking-detail-title')).toHaveText(spot.name)
+  await expect(page.getByTestId('directions-choice')).toBeVisible()
   expect(new URL(page.url()).searchParams.get('spot')).toBe(spot.id)
   release()
   await finished
@@ -188,7 +194,8 @@ test('late GPS after Back cannot start or rearm navigation, and a new explicit r
   expect(requests).toEqual([])
   await page.goBack()
   await expect(page.getByTestId('route-panel')).toHaveCount(0)
-  await expect(page.getByTestId('parking-detail-title')).toHaveText(spot.name)
+  await expect(page.getByTestId('directions-choice')).toBeVisible()
+  expect(new URL(page.url()).searchParams.get('spot')).toBe(spot.id)
   await page.evaluate(() =>
     window.dispatchEvent(new Event('parkey-release-race-gps')),
   )
@@ -206,7 +213,9 @@ test('late GPS after Back cannot start or rearm navigation, and a new explicit r
   expect(requests).toEqual([])
   await expect(page.getByTestId('route-panel')).toHaveCount(0)
   await expect(page.getByTestId('navigation-banner')).toHaveCount(0)
-  await page.getByTestId('parking-get-directions').click()
+  await page
+    .getByRole('button', { name: 'Navigate with Parkey', exact: true })
+    .click()
   await expect(page.getByTestId('navigation-banner')).toBeVisible()
   expect(requests).toHaveLength(1)
 })
@@ -254,11 +263,17 @@ test('closing a selected spot while persisted consent is pending cannot authoriz
       entranceReads++
   })
   await page.getByTestId('parking-get-directions').click()
+  await page
+    .getByRole('button', { name: 'Navigate with Parkey', exact: true })
+    .click()
   await expect
     .poll(() =>
       page.evaluate(() => Reflect.get(window, 'parkeyRaceConsentWaiting')),
     )
     .toBe(true)
+  await page.goBack()
+  await page.goBack()
+  await expect(page.getByTestId('parking-preview')).toBeVisible()
   await page.goBack()
   await expect(page.getByTestId('parking-detail-title')).toHaveCount(0)
   await page.evaluate(() =>
@@ -366,6 +381,9 @@ test('Back during a pending consent save prevents the completed write from start
     })
   })
   await page.getByTestId('parking-get-directions').click()
+  await page
+    .getByRole('button', { name: 'Navigate with Parkey', exact: true })
+    .click()
   const consent = page.getByRole('alertdialog', { name: 'Directions privacy' })
   await expect(consent).toBeVisible()
   await consent.getByRole('button', { name: 'Continue', exact: true }).click()
@@ -376,7 +394,8 @@ test('Back during a pending consent save prevents the completed write from start
     .toBe(true)
   await page.goBack()
   await expect(consent).toHaveCount(0)
-  await expect(page.getByTestId('parking-detail-title')).toHaveText(spot.name)
+  await expect(page.getByTestId('directions-choice')).toBeVisible()
+  expect(new URL(page.url()).searchParams.get('spot')).toBe(spot.id)
   await page.evaluate(() =>
     window.dispatchEvent(new Event('parkey-release-race-consent-write')),
   )

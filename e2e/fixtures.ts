@@ -181,16 +181,23 @@ export async function openMap(page: Page, path = '/') {
   })
 }
 
-export async function openSpot(page: Page) {
+export async function openSpot(page: Page, details = true) {
   await openMap(page, spotPath)
   await expect(page.getByTestId('parking-detail-title')).toHaveText(spot.name)
+  if (details) {
+    await page
+      .getByRole('button', { name: 'View Parking Details', exact: true })
+      .click()
+    await expect(page.getByTestId('parking-details-page')).toBeVisible()
+  }
 }
 
 export async function expandResults(page: Page) {
-  const handle = page.getByTestId('parking-sheet-handle')
-  await handle.click()
-  await handle.click()
-  await expect(handle).toHaveAccessibleName(/Parking sheet: full/)
+  await page
+    .getByRole('button', { name: 'Show parking list', exact: true })
+    .first()
+    .click()
+  await expect(page.getByTestId('parking-list-page')).toBeVisible()
 }
 
 export async function installNavigationSensor(page: Page) {

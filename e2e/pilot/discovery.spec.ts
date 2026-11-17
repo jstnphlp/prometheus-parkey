@@ -16,6 +16,9 @@ test('main pilot map scopes results and clears details when changing city', asyn
   await openResults(page)
   await expect(page.getByTestId('pilot-record-qa-Manila')).toBeVisible()
   await page.getByTestId('pilot-record-qa-Manila').click()
+  await page
+    .getByRole('button', { name: 'View Parking Details', exact: true })
+    .click()
   await expect(page.getByTestId('pilot-details')).toContainText(
     'Parking near Manila Test Museum',
   )
@@ -39,6 +42,9 @@ test('destination search focuses the active city without granting parking naviga
   await openResults(page)
   await expect(page.getByTestId('pilot-record-qa-Manila')).toBeVisible()
   await page.getByTestId('pilot-record-qa-Manila').click()
+  await page
+    .getByRole('button', { name: 'View Parking Details', exact: true })
+    .click()
   await expect(page.getByTestId('pilot-directions')).toBeDisabled()
   await expect(page.getByTestId('pilot-details')).toContainText('ODbL-1.0')
 })
@@ -49,8 +55,11 @@ test('Map Saved and You share discovery navigation and public favorites survive 
   await openPilot(page)
   await openResults(page)
   await page.getByTestId('pilot-record-qa-Manila').click()
+  await page
+    .getByRole('button', { name: 'View Parking Details', exact: true })
+    .click()
   await page.getByTestId('pilot-favorite').click()
-  await expect(page.getByTestId('pilot-favorite')).toHaveText(
+  await expect(page.getByTestId('pilot-favorite')).toHaveAccessibleName(
     'Remove saved parking',
   )
   await closeDetails(page)
@@ -70,9 +79,18 @@ test('Map Saved and You share discovery navigation and public favorites survive 
   await expect(page.getByTestId('pilot-details')).toHaveCount(0)
   await openResults(page)
   await page.getByTestId('pilot-record-qa-Manila').click()
+  await page
+    .getByRole('button', { name: 'View Parking Details', exact: true })
+    .click()
   await expect(page.getByTestId('pilot-directions')).toBeDisabled()
   await closeDetails(page)
   await page.getByRole('tab', { name: 'Profile', exact: true }).click()
+  await expect(
+    page.getByRole('heading', { name: 'Account', exact: true }),
+  ).toBeVisible()
+  await page
+    .getByRole('button', { name: 'Device drafts and map tools', exact: true })
+    .click()
   await expect(page.getByText('Map information', { exact: true })).toBeVisible()
   await expect(page.getByText(/Analytics collection is disabled/)).toBeVisible()
 })
@@ -136,26 +154,55 @@ test('destination ranking and price filters preserve unknown fees and original t
     'data-testid',
     'pilot-record-near-free',
   )
-  await expect(
-    page.getByText(
-      'Straight-line distance to Manila Test Museum. This is not a walking route.',
-      { exact: true },
-    ),
-  ).toBeVisible()
+  await expect(rows.first()).toContainText(
+    'straight-line to Manila Test Museum',
+  )
+  await page
+    .getByRole('button', { name: 'Show parking map', exact: true })
+    .click()
+  await page
+    .getByRole('button', { name: 'Filter parking', exact: true })
+    .click()
   await page.getByTestId('pilot-fees-paid').click()
+  await page.getByRole('button', { name: 'Apply Filters', exact: true }).click()
+  await openResults(page)
   await expect(rows).toHaveCount(1)
   await expect(page.getByTestId('pilot-record-far-paid')).toBeVisible()
+  await page
+    .getByRole('button', { name: 'Show parking map', exact: true })
+    .click()
+  await page
+    .getByRole('button', { name: 'Filter parking', exact: true })
+    .click()
   await expect(
     page.getByText(
       '1 loaded records have unknown fees and are excluded by this filter.',
       { exact: true },
     ),
   ).toBeVisible()
+  await page.getByRole('button', { name: 'Apply Filters', exact: true }).click()
+  await openResults(page)
+  await page
+    .getByRole('button', { name: 'Show parking map', exact: true })
+    .click()
+  await page
+    .getByRole('button', { name: 'Filter parking', exact: true })
+    .click()
   await page.getByTestId('pilot-fees-free').click()
+  await page.getByRole('button', { name: 'Apply Filters', exact: true }).click()
+  await openResults(page)
   await expect(rows).toHaveCount(1)
   await expect(page.getByTestId('pilot-record-near-free')).toBeVisible()
+  await page
+    .getByRole('button', { name: 'Show parking map', exact: true })
+    .click()
+  await page
+    .getByRole('button', { name: 'Filter parking', exact: true })
+    .click()
   await page.getByTestId('pilot-fees-all').click()
   await page.getByRole('button', { name: 'Unclassified', exact: true }).click()
+  await page.getByRole('button', { name: 'Apply Filters', exact: true }).click()
+  await openResults(page)
   await expect(rows).toHaveCount(1)
   await expect(page.getByTestId('pilot-record-unknown-fee')).toContainText(
     'Unclassified parking',
@@ -205,6 +252,9 @@ test('damaged parked-car storage offers recovery without losing public favorites
       exact: true,
     })
     .click()
+  await page
+    .getByRole('button', { name: 'Saved places and car tools', exact: true })
+    .click()
   await expect(
     page.getByRole('button', { name: 'Save where I parked', exact: true }),
   ).toBeEnabled()
@@ -238,7 +288,7 @@ test('public viewport cache survives a failed refresh without retaining navigati
   await openResults(page)
   await expect(page.getByTestId('pilot-record-qa-Manila')).toBeVisible()
   await page
-    .getByRole('button', { name: 'Close Manila parking in view', exact: true })
+    .getByRole('button', { name: 'Show parking map', exact: true })
     .click()
   await expect
     .poll(() =>
@@ -269,6 +319,9 @@ test('public viewport cache survives a failed refresh without retaining navigati
   )
   await openResults(page)
   await page.getByTestId('pilot-record-qa-Manila').click()
+  await page
+    .getByRole('button', { name: 'View Parking Details', exact: true })
+    .click()
   await expect(page.getByTestId('pilot-directions')).toBeDisabled()
   await expect(
     page.getByText(/Saved public copies never authorize navigation/),
@@ -282,7 +335,7 @@ test('public authorization refusal invalidates cached copies instead of reviving
   await openResults(page)
   await expect(page.getByTestId('pilot-record-qa-Manila')).toBeVisible()
   await page
-    .getByRole('button', { name: 'Close Manila parking in view', exact: true })
+    .getByRole('button', { name: 'Show parking map', exact: true })
     .click()
   await expect
     .poll(() =>
@@ -314,6 +367,10 @@ test('going offline closes private research and never writes candidate bodies to
   context,
 }) => {
   await openPilot(page)
+  await page.getByRole('tab', { name: 'Profile', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Device drafts and map tools', exact: true })
+    .click()
   await page.getByTestId('pilot-mode-candidate').click()
   await page.getByTestId('pilot-reviewer-token').fill(reviewerToken)
   await page.getByTestId('pilot-reviewer-connect').click()
@@ -369,6 +426,10 @@ test('candidate session is explicit, memory only and cleared before public resul
   page,
 }) => {
   await openPilot(page)
+  await page.getByRole('tab', { name: 'Profile', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Device drafts and map tools', exact: true })
+    .click()
   await page.getByTestId('pilot-mode-candidate').click()
   await expect(page.getByTestId('pilot-record-qa-Manila')).toHaveCount(0)
   await page.getByTestId('pilot-reviewer-token').fill(reviewerToken)
@@ -379,6 +440,9 @@ test('candidate session is explicit, memory only and cleared before public resul
     page.getByTestId('pilot-record-qa-candidate-Manila'),
   ).toBeVisible()
   await page.getByTestId('pilot-record-qa-candidate-Manila').click()
+  await page
+    .getByRole('button', { name: 'View Parking Details', exact: true })
+    .click()
   await expect(page.getByTestId('pilot-directions')).toBeDisabled()
   await expect(page.getByTestId('pilot-favorite')).toHaveCount(0)
   const stored = await page.evaluate(() =>
@@ -387,6 +451,10 @@ test('candidate session is explicit, memory only and cleared before public resul
   expect(stored).not.toContain(reviewerToken)
   expect(stored).not.toContain('qa-candidate-Manila')
   await closeDetails(page)
+  await page.getByRole('tab', { name: 'Profile', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Device drafts and map tools', exact: true })
+    .click()
   await page.getByTestId('pilot-mode-public').click()
   await expect(page.getByTestId('pilot-candidate-warning')).toHaveCount(0)
   await expect(page.getByTestId('pilot-details')).toHaveCount(0)
@@ -401,6 +469,10 @@ test('candidate session is explicit, memory only and cleared before public resul
 
 test('server rejection cannot expose candidate records', async ({ page }) => {
   await openPilot(page)
+  await page.getByRole('tab', { name: 'Profile', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Device drafts and map tools', exact: true })
+    .click()
   await page.getByTestId('pilot-mode-candidate').click()
   await page
     .getByTestId('pilot-reviewer-token')
@@ -519,6 +591,9 @@ test('navigation rechecks approval and uses the reviewed entrance coordinate', a
   await openPilot(page)
   await openResults(page)
   await page.getByTestId('pilot-record-qa-Manila').click()
+  await page
+    .getByRole('button', { name: 'View Parking Details', exact: true })
+    .click()
   await expect(page.getByTestId('pilot-directions')).toBeEnabled()
   await page.getByTestId('pilot-directions').click()
   await expect
@@ -561,6 +636,9 @@ test('revoked entrance permission prevents external navigation', async ({
   await openPilot(page)
   await openResults(page)
   await page.getByTestId('pilot-record-qa-Manila').click()
+  await page
+    .getByRole('button', { name: 'View Parking Details', exact: true })
+    .click()
   await expect(page.getByTestId('pilot-directions')).toBeEnabled()
   await page.getByTestId('pilot-directions').click()
   await expect(page.getByTestId('pilot-details')).toHaveCount(0)

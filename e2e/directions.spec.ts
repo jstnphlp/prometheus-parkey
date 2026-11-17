@@ -22,6 +22,9 @@ test('directions require consent, start navigation, and return to the map', asyn
   await installNavigationSensor(page)
   await openSpot(page)
   await page.getByTestId('parking-get-directions').click()
+  await page
+    .getByRole('button', { name: 'Navigate with Parkey', exact: true })
+    .click()
   const consent = page.getByRole('alertdialog', { name: 'Directions privacy' })
   await expect(consent).toBeVisible()
   await expect(page.getByTestId('route-panel')).toHaveCount(0)
@@ -29,7 +32,9 @@ test('directions require consent, start navigation, and return to the map', asyn
   await consent.getByRole('button', { name: 'Cancel', exact: true }).click()
   await expect(consent).toHaveCount(0)
   expect(requests).toHaveLength(0)
-  await page.getByTestId('parking-get-directions').click()
+  await page
+    .getByRole('button', { name: 'Navigate with Parkey', exact: true })
+    .click()
   await consent.getByRole('button', { name: 'Continue', exact: true }).click()
   const panel = page.getByTestId('route-panel')
   await expect(page.getByTestId('navigation-banner')).toBeVisible()
@@ -45,7 +50,13 @@ test('directions require consent, start navigation, and return to the map', asyn
     page.getByRole('tab', { name: 'Explore', exact: true }),
   ).toBeVisible()
   await page.goto(spotPath)
+  await page
+    .getByRole('button', { name: 'View Parking Details', exact: true })
+    .click()
   await page.getByTestId('parking-get-directions').click()
+  await page
+    .getByRole('button', { name: 'Navigate with Parkey', exact: true })
+    .click()
   await context.setGeolocation({
     longitude: 121.0308001,
     latitude: 14.5653,
@@ -67,6 +78,9 @@ test('routing failure offers external maps and retry recovers', async ({
   await installNavigationSensor(page)
   await openSpot(page)
   await page.getByTestId('parking-get-directions').click()
+  await page
+    .getByRole('button', { name: 'Navigate with Parkey', exact: true })
+    .click()
   await page
     .getByRole('alertdialog', { name: 'Directions privacy' })
     .getByRole('button', { name: 'Continue', exact: true })
@@ -93,6 +107,9 @@ test('arriving allows parking confirmation and saves the car location', async ({
   await installNavigationSensor(page)
   await openSpot(page)
   await page.getByTestId('parking-get-directions').click()
+  await page
+    .getByRole('button', { name: 'Navigate with Parkey', exact: true })
+    .click()
   await page
     .getByRole('alertdialog', { name: 'Directions privacy' })
     .getByRole('button', { name: 'Continue', exact: true })
@@ -148,6 +165,9 @@ test('arriving allows parking confirmation and saves the car location', async ({
     panel.getByRole('button', { name: 'Parked here', exact: true }),
   ).toBeVisible()
   await page.goto('/?panel=saved')
+  await page
+    .getByRole('button', { name: 'Saved places and car tools', exact: true })
+    .click()
   await expect(
     page.getByRole('button', { name: 'Show on map', exact: true }),
   ).toBeVisible()

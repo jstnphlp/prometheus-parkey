@@ -9,7 +9,7 @@ import {
   installNavigationSensor,
 } from './fixtures'
 
-const evidence = 'docs/evidence/figma-magenta/browser'
+const evidence = 'docs/evidence/figma-exact/browser/interaction'
 for (const mode of ['light-magenta', 'dark-magenta'] as const) {
   test(`${mode}: theme changes preserve selected parking, saved data and map instance`, async ({
     page,
@@ -52,9 +52,7 @@ for (const mode of ['light-magenta', 'dark-magenta'] as const) {
     await page.screenshot({
       path: `${evidence}/${info.project.name}-${opposite}-16A.png`,
     })
-    await page
-      .getByRole('button', { name: 'Close Appearance', exact: true })
-      .click()
+    await page.getByRole('button', { name: 'Back', exact: true }).click()
     await expect(page).toHaveURL(url)
     await expect(page.getByTestId('parking-detail-title')).toHaveText(spot.name)
     await expect(
@@ -83,25 +81,28 @@ for (const mode of ['light-magenta', 'dark-magenta'] as const) {
         localStorage.setItem('parkey.appearance.v1', value)
     }, mode)
     await openMap(page)
-    await page.getByTestId('destination-query').fill('Poblacion')
     await page
-      .getByRole('button', { name: 'Appearance', exact: true })
-      .filter({ visible: true })
-      .last()
+      .getByRole('button', { name: 'Search parking or landmark', exact: true })
       .click()
+    await page.getByTestId('destination-query').fill('Poblacion')
+    await page.getByRole('button', { name: 'Back', exact: true }).click()
+    await page.getByRole('tab', { name: 'Profile', exact: true }).click()
+    await page.getByRole('button', { name: 'Appearance', exact: true }).click()
+    await page.getByRole('button', { name: 'Back', exact: true }).click()
+    await page.getByRole('tab', { name: 'Explore', exact: true }).click()
     await page
-      .getByRole('button', { name: 'Close Appearance', exact: true })
+      .getByRole('button', { name: 'Search parking or landmark', exact: true })
       .click()
     await expect(page.getByTestId('destination-query')).toHaveValue('Poblacion')
     await page.goto('/settings')
     await expect(
-      page.getByRole('heading', { name: 'Profile & Settings', exact: true }),
+      page.getByRole('heading', { name: 'Account', exact: true }),
     ).toBeVisible()
     await mkdir(evidence, { recursive: true })
     await page.screenshot({
       path: `${evidence}/${info.project.name}-${mode}-16.png`,
     })
-    await page.getByRole('button', { name: 'My vehicles', exact: true }).click()
+    await page.getByRole('button', { name: 'My Vehicles', exact: true }).click()
     await expect(
       page.getByText('Vehicle management is not available yet'),
     ).toBeVisible()
@@ -203,6 +204,9 @@ test.describe('active navigation appearance', () => {
     await openSpot(page)
     await page.getByTestId('parking-get-directions').click()
     await page
+      .getByRole('button', { name: 'Navigate with Parkey', exact: true })
+      .click()
+    await page
       .getByRole('alertdialog', { name: 'Directions privacy' })
       .getByRole('button', { name: 'Continue', exact: true })
       .click()
@@ -215,9 +219,7 @@ test.describe('active navigation appearance', () => {
     await page
       .getByRole('radio', { name: 'Dark + Magenta', exact: true })
       .click()
-    await page
-      .getByRole('button', { name: 'Close Appearance', exact: true })
-      .click()
+    await page.getByRole('button', { name: 'Back', exact: true }).click()
     await expect(page.getByTestId('navigation-banner')).toContainText(
       'Turn left onto Test Street',
     )

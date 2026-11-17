@@ -19,7 +19,7 @@ export function AccountMenu({
 }: {
   onSaved: () => void
   onPreferences: () => void
-  onTools: () => void
+  onTools?: () => void
   hasDeviceDrafts?: boolean
 }) {
   const styles = useStyles()
@@ -60,8 +60,16 @@ export function AccountMenu({
         action: () => section('privacy'),
       },
       { title: 'About Parkey', icon: 'info', action: () => section('about') },
-      ...(hasDeviceDrafts
-        ? [{ title: 'Device drafts', icon: 'info' as const, action: onTools }]
+      ...(onTools
+        ? [
+            {
+              title: hasDeviceDrafts
+                ? 'Device drafts'
+                : 'Add parking information',
+              icon: 'info' as const,
+              action: onTools,
+            },
+          ]
         : []),
     ],
   ]

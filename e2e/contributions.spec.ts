@@ -15,7 +15,7 @@ test('adding a private parking draft survives reload and updates the profile', a
   await openMap(page)
   await page.getByRole('tab', { name: 'Profile', exact: true }).click()
   await page
-    .getByRole('button', { name: 'Device drafts and map tools', exact: true })
+    .getByRole('button', { name: 'Add parking information', exact: true })
     .click()
   await page.getByRole('button', { name: 'Add a spot', exact: true }).click()
   await expect(
@@ -45,9 +45,7 @@ test('adding a private parking draft survives reload and updates the profile', a
   // Exercise the user's navigation after verifying persistence across reload.
   await page.keyboard.press('Escape')
   await page.getByRole('tab', { name: 'Profile', exact: true }).click()
-  await page
-    .getByRole('button', { name: 'Device drafts and map tools', exact: true })
-    .click()
+  await page.getByRole('button', { name: 'Device drafts', exact: true }).click()
   await expect(page.getByTestId('private-drafts')).toContainText(
     'E2E private parking',
   )

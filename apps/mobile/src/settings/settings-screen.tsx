@@ -1,6 +1,5 @@
 import { useRouter } from 'expo-router'
 import type { ReactNode } from 'react'
-import { useState } from 'react'
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 
 import { AboutParkey } from './about-parkey'
@@ -106,8 +105,6 @@ export function SettingsScreen() {
   const router = useRouter()
   const styles = useStyles()
   const insets = useArchitectureInsets()
-  const [tools, setTools] = useState(false)
-  const ui = useUI()
   return (
     <View style={styles.screen}>
       <ScrollView
@@ -120,13 +117,7 @@ export function SettingsScreen() {
         <AccountMenu
           onSaved={() => router.replace('/?panel=saved')}
           onPreferences={() => router.replace('/?panel=filters')}
-          onTools={() => setTools((value) => !value)}
         />
-        {tools ? (
-          <Text style={ui.body}>
-            Open Explore to access private device drafts and map tools.
-          </Text>
-        ) : null}
       </ScrollView>
       <BottomNavigation
         selected="you"

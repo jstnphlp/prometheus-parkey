@@ -1,4 +1,5 @@
 import Svg, { Circle, Path, Rect } from 'react-native-svg'
+import { Platform } from 'react-native'
 
 import { useTheme } from '../theme-provider'
 
@@ -37,8 +38,12 @@ export function BrandIcon({
       strokeWidth={2}
       strokeLinecap="round"
       strokeLinejoin="round"
-      accessible={false}
-      importantForAccessibility="no-hide-descendants"
+      {...(Platform.OS === 'web'
+        ? { 'aria-hidden': true, focusable: false }
+        : {
+            accessible: false,
+            importantForAccessibility: 'no-hide-descendants' as const,
+          })}
     >
       {name === 'person' ? (
         <>

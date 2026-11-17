@@ -4,9 +4,9 @@ import { useState } from 'react'
 import { ScrollView, StyleSheet, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-import { SettingsLinks } from '../settings/settings-screen'
+import { AccountMenu } from '../settings/account-menu'
+import { useArchitectureInsets } from '../components/architecture-page'
 import { useTheme, createThemedStyles } from '../theme-provider'
-import { AccountEntry } from '../auth/account-entry'
 import { TAB_BAR_HEIGHT } from './bottom-navigation'
 import { FigmaAsset } from './figma-assets'
 import { MotionPressable, MotionView } from './motion'
@@ -113,7 +113,13 @@ export function ParkingProfile({
   onReviewDraft,
   onInfo,
   onClose,
+  onSaved,
+  onPreferences,
+  onAdd,
 }: {
+  onAdd: () => void
+  onSaved: () => void
+  onPreferences: () => void
   local: ReturnType<typeof useLocalState>
   drafts: ParkingContribution[]
   storage: 'loading' | 'ready' | 'error'
@@ -128,174 +134,174 @@ export function ParkingProfile({
 
   const [deleting, setDeleting] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const ready = local.status === 'ready'
+  const [toolsOpen, setToolsOpen] = useState(false)
+  const insets = useArchitectureInsets()
   return (
-    <ParkingPage
-      title="Profile"
-      subtitle="No account needed to browse. Verify email to send a report."
-      onClose={onClose}
-    >
-      <AccountEntry />
-      <SettingsLinks />
-      <View style={ui.row}>
-        {(
-          [
-            {
-              label: 'Saved',
-              icon: 'bookmark',
-              count: ready ? local.state.favorites.length : null,
-            },
-            {
-              label: 'Viewed',
-              icon: 'viewed-brand',
-              count: ready ? local.state.recents.length : null,
-            },
-            {
-              label: 'Draft',
-              icon: 'draft-brand',
-              count: storage === 'ready' ? drafts.length : null,
-            },
-          ] as const
-        ).map((stat) => (
-          <View key={stat.label} style={styles.stat}>
-            <FigmaAsset name={stat.icon} size={24} />
-            <Text style={ui.title}>{stat.count ?? '—'}</Text>
-            <Text style={styles.caption}>{stat.label}</Text>
-          </View>
-        ))}
-      </View>
-      <View style={styles.section} testID="private-drafts">
-        <View style={ui.row}>
-          <Text accessibilityRole="header" style={[ui.heading, ui.flex]}>
-            Drafts on this device
-          </Text>
-          <Text style={ui.muted}>
-            {storage === 'ready' ? drafts.length : '—'}
-          </Text>
-        </View>
-        <View style={styles.notice}>
-          <FigmaAsset name="info-warning" size={20} />
-          <Text style={[ui.small, ui.flex, { color: colors.ink }]}>
-            Drafts stay here unless you choose Send for review. Sent copies
-            enter a private queue; sending does not publish or verify parking.
-            Deleting a local copy does not withdraw a sent report. Withdraw it
-            first if you want to remove the private queue copy.
-          </Text>
-        </View>
-        {drafts.map((draft) => (
-          <View key={draft.id} style={ui.row}>
-            <View style={ui.flex}>
-              <Text style={ui.heading}>
-                {draft.name.trim() || kindLabels[draft.kind]}
-              </Text>
-              <Text style={ui.small}>
-                {draft.intent === 'add' ? 'Missing parking' : 'Correction'} ·
-                saved {dateLabel(draft.createdAt)}
-              </Text>
-              <Text style={ui.small}>
-                {draft.submission?.state === 'received'
-                  ? 'Sent for private review'
-                  : draft.submission?.state === 'withdrawn'
-                    ? 'Sent report withdrawn'
-                    : draft.submissionAttemptedAt
-                      ? 'Delivery not confirmed'
-                      : 'Local only'}
-              </Text>
-              <Button secondary onPress={() => onReviewDraft(draft)}>
-                Review report
-              </Button>
+    <View style={styles.page}>
+      <ScrollView
+        contentContainerStyle={{
+          paddingHorizontal: 23,
+          paddingTop: insets.top + 6,
+          paddingBottom: insets.bottom + TAB_BAR_HEIGHT + 24,
+        }}
+      >
+        <AccountMenu
+          onSaved={onSaved}
+          onPreferences={onPreferences}
+          onTools={() => setToolsOpen((value) => !value)}
+        />
+        {toolsOpen ? (
+          <>
+            <Button secondary onPress={onAdd}>
+              Add a spot
+            </Button>
+            <Button secondary onPress={onClose}>
+              Back to map
+            </Button>
+            <View style={styles.section} testID="private-drafts">
+              <View style={ui.row}>
+                <Text accessibilityRole="header" style={[ui.heading, ui.flex]}>
+                  Drafts on this device
+                </Text>
+                <Text style={ui.muted}>
+                  {storage === 'ready' ? drafts.length : '—'}
+                </Text>
+              </View>
+              <View style={styles.notice}>
+                <FigmaAsset name="info-warning" size={20} />
+                <Text style={[ui.small, ui.flex, { color: colors.ink }]}>
+                  Drafts stay here unless you choose Send for review. Sent
+                  copies enter a private queue; sending does not publish or
+                  verify parking. Deleting a local copy does not withdraw a sent
+                  report. Withdraw it first if you want to remove the private
+                  queue copy.
+                </Text>
+              </View>
+              {drafts.map((draft) => (
+                <View key={draft.id} style={ui.row}>
+                  <View style={ui.flex}>
+                    <Text style={ui.heading}>
+                      {draft.name.trim() || kindLabels[draft.kind]}
+                    </Text>
+                    <Text style={ui.small}>
+                      {draft.intent === 'add'
+                        ? 'Missing parking'
+                        : 'Correction'}{' '}
+                      · saved {dateLabel(draft.createdAt)}
+                    </Text>
+                    <Text style={ui.small}>
+                      {draft.submission?.state === 'received'
+                        ? 'Sent for private review'
+                        : draft.submission?.state === 'withdrawn'
+                          ? 'Sent report withdrawn'
+                          : draft.submissionAttemptedAt
+                            ? 'Delivery not confirmed'
+                            : 'Local only'}
+                    </Text>
+                    <Button secondary onPress={() => onReviewDraft(draft)}>
+                      Review report
+                    </Button>
+                  </View>
+                  <MotionPressable
+                    accessibilityRole="button"
+                    accessibilityLabel={`Delete device draft ${draft.name.trim() || kindLabels[draft.kind]}`}
+                    accessibilityState={{ disabled: deleting !== null }}
+                    disabled={deleting !== null}
+                    style={styles.delete}
+                    onPress={() => {
+                      setDeleting(draft.id)
+                      setError(null)
+                      void onDeleteDraft(draft.id)
+                        .then((ok) => {
+                          if (!ok)
+                            setError(
+                              'The draft could not be deleted. Try again.',
+                            )
+                        })
+                        .catch(() =>
+                          setError(
+                            'The draft could not be deleted. Try again.',
+                          ),
+                        )
+                        .finally(() => setDeleting(null))
+                    }}
+                  >
+                    <Text style={[styles.caption, { color: colors.error }]}>
+                      {deleting === draft.id
+                        ? 'Deleting…'
+                        : draft.submission?.state === 'received'
+                          ? 'Delete local copy'
+                          : 'Delete'}
+                    </Text>
+                  </MotionPressable>
+                </View>
+              ))}
+              {storage === 'loading' ? (
+                <Text style={ui.small}>Loading device drafts…</Text>
+              ) : null}
+              {storage === 'ready' && !drafts.length ? (
+                <Text style={ui.small}>No drafts on this device yet.</Text>
+              ) : null}
+              {storage === 'error' ? (
+                <Button secondary onPress={onInfo}>
+                  Try loading drafts again
+                </Button>
+              ) : null}
+              {error ? (
+                <Text accessibilityRole="alert" style={[ui.small, ui.error]}>
+                  {error}
+                </Text>
+              ) : null}
+            </View>
+            <View style={styles.section}>
+              <PrivacyRow
+                icon="lock-teal"
+                title="Private by default"
+                body="Saved places, recent searches and drafts stay on this device unless you explicitly send a report."
+              />
+              <PrivacyRow
+                icon="shield-teal"
+                title="Shared only when you ask"
+                body="Search text and map area go to Photon. Directions send start and destination to the routing provider."
+              />
+              <View style={[ui.row, { flexWrap: 'wrap', gap: 8 }]}>
+                <Text style={styles.reporting}>
+                  Usage reporting {diagnosticStatus.analytics ? 'on' : 'off'}
+                </Text>
+                <Text style={styles.reporting}>
+                  Error reporting {diagnosticStatus.crashes ? 'on' : 'off'}
+                </Text>
+              </View>
             </View>
             <MotionPressable
               accessibilityRole="button"
-              accessibilityLabel={`Delete device draft ${draft.name.trim() || kindLabels[draft.kind]}`}
-              accessibilityState={{ disabled: deleting !== null }}
-              disabled={deleting !== null}
-              style={styles.delete}
-              onPress={() => {
-                setDeleting(draft.id)
-                setError(null)
-                void onDeleteDraft(draft.id)
-                  .then((ok) => {
-                    if (!ok)
-                      setError('The draft could not be deleted. Try again.')
-                  })
-                  .catch(() =>
-                    setError('The draft could not be deleted. Try again.'),
-                  )
-                  .finally(() => setDeleting(null))
-              }}
+              onPress={onInfo}
+              style={({ pressed }) => [
+                styles.section,
+                styles.creditRow,
+                pressed && ui.pressed,
+              ]}
             >
-              <Text style={[styles.caption, { color: colors.error }]}>
-                {deleting === draft.id
-                  ? 'Deleting…'
-                  : draft.submission?.state === 'received'
-                    ? 'Delete local copy'
-                    : 'Delete'}
-              </Text>
+              <View
+                style={[styles.badge, { backgroundColor: colors.selected }]}
+              >
+                <FigmaAsset name="info-brand" size={20} />
+              </View>
+              <View style={ui.flex}>
+                <Text style={ui.heading}>Map data & credits</Text>
+                <Text style={ui.small}>OpenStreetMap contributors</Text>
+              </View>
+              <FigmaAsset name="chevron-right" size={20} />
             </MotionPressable>
-          </View>
-        ))}
-        {storage === 'loading' ? (
-          <Text style={ui.small}>Loading device drafts…</Text>
+            {local.error ? (
+              <Text accessibilityRole="alert" style={[ui.small, ui.error]}>
+                {local.error}
+              </Text>
+            ) : null}
+          </>
         ) : null}
-        {storage === 'ready' && !drafts.length ? (
-          <Text style={ui.small}>No drafts on this device yet.</Text>
-        ) : null}
-        {storage === 'error' ? (
-          <Button secondary onPress={onInfo}>
-            Try loading drafts again
-          </Button>
-        ) : null}
-        {error ? (
-          <Text accessibilityRole="alert" style={[ui.small, ui.error]}>
-            {error}
-          </Text>
-        ) : null}
-      </View>
-      <View style={styles.section}>
-        <PrivacyRow
-          icon="lock-teal"
-          title="Private by default"
-          body="Saved places, recent searches and drafts stay on this device unless you explicitly send a report."
-        />
-        <PrivacyRow
-          icon="shield-teal"
-          title="Shared only when you ask"
-          body="Search text and map area go to Photon. Directions send start and destination to the routing provider."
-        />
-        <View style={[ui.row, { flexWrap: 'wrap', gap: 8 }]}>
-          <Text style={styles.reporting}>
-            Usage reporting {diagnosticStatus.analytics ? 'on' : 'off'}
-          </Text>
-          <Text style={styles.reporting}>
-            Error reporting {diagnosticStatus.crashes ? 'on' : 'off'}
-          </Text>
-        </View>
-      </View>
-      <MotionPressable
-        accessibilityRole="button"
-        onPress={onInfo}
-        style={({ pressed }) => [
-          styles.section,
-          styles.creditRow,
-          pressed && ui.pressed,
-        ]}
-      >
-        <View style={[styles.badge, { backgroundColor: colors.selected }]}>
-          <FigmaAsset name="info-brand" size={20} />
-        </View>
-        <View style={ui.flex}>
-          <Text style={ui.heading}>Map data & credits</Text>
-          <Text style={ui.small}>OpenStreetMap contributors</Text>
-        </View>
-        <FigmaAsset name="chevron-right" size={20} />
-      </MotionPressable>
-      {local.error ? (
-        <Text accessibilityRole="alert" style={[ui.small, ui.error]}>
-          {local.error}
-        </Text>
-      ) : null}
-    </ParkingPage>
+      </ScrollView>
+    </View>
   )
 }
 

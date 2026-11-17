@@ -7,6 +7,7 @@ import type { DrivingRoute } from './routing'
 
 export type CameraTarget = { coordinate: Coordinate; revision: number }
 export type ParkingMapProps = {
+  accessibilityHidden?: boolean
   night?: boolean
   records: DiscoveryParking[]
   selectedId: string | null

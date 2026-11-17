@@ -19,6 +19,7 @@ import { emailProblem, passwordGuidance, passwordProblem } from './validation'
 
 export function ForgotPasswordScreen() {
   const styles = useStyles()
+  const router = useRouter()
 
   const auth = useAuth()
   const popup = usePopup()
@@ -67,14 +68,15 @@ export function ForgotPasswordScreen() {
   if (auth.state.status === 'signed-in') return <SignedInRedirect />
   return (
     <AuthShell
-      title={requested ? 'Check your email' : 'Reset password'}
+      recovery
+      title={requested ? 'Check your email' : 'Forgot your\npassword?'}
       subtitle={
         requested
           ? 'Open the latest reset link on this device'
-          : 'Enter the email address for your Parkey account'
+          : 'Enter the email linked to your account and we’ll send a reset link.'
       }
     >
-      <View style={styles.form}>
+      <View style={[styles.form, styles.forgotForm]}>
         {requested ? (
           <Text style={styles.body}>
             If an account exists, check your inbox and spam. Open the latest
@@ -97,15 +99,38 @@ export function ForgotPasswordScreen() {
           editable={!auth.busy}
           onSubmitEditing={() => void send()}
         />
+        <Text style={[styles.body, { marginTop: 44 }]}>
+          Check that the email address is correct before continuing.
+        </Text>
         <BrandButton
-          title={requested ? 'Send another reset email' : 'Send reset email'}
+          title={requested ? 'Send another reset email' : 'Send Reset Link'}
           busy={auth.busy}
           disabled={
             auth.state.status === 'checking' ||
             auth.state.status === 'unavailable'
           }
           onPress={() => void send()}
+          style={{ marginTop: 52, minHeight: 58, borderRadius: 15 }}
         />
+        <BrandButton
+          title="Back to Sign In"
+          variant="text"
+          onPress={() => router.replace('/login')}
+          style={{ marginTop: 36, minHeight: 52 }}
+        />
+        <Text
+          style={[
+            styles.body,
+            {
+              marginTop: 32,
+              fontSize: 12,
+              lineHeight: 18,
+              textAlign: 'center',
+            },
+          ]}
+        >
+          For privacy, Parkey does not reveal whether an account exists.
+        </Text>
       </View>
     </AuthShell>
   )
@@ -290,6 +315,7 @@ export function ResetPasswordScreen() {
 const useStyles = createThemedStyles(({ entryColors: colors }) =>
   StyleSheet.create({
     form: { marginTop: 32, gap: 16 },
+    forgotForm: { marginTop: 80, gap: 0 },
     body: { ...typography.body, color: colors.text },
   }),
 )

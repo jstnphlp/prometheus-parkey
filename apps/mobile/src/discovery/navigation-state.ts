@@ -1,10 +1,17 @@
 import type { Coordinate } from '@parkey/shared-types'
 
 import type { DiscoveryFilter, FeeFilter } from './filters.ts'
+import { parkingFeatures } from './filters.ts'
+import type { ParkingFeature } from './filters.ts'
 import { isCoordinate, PILOT_CENTER } from './model.ts'
 import type { SheetPosition } from './sheet-state.ts'
 
 export type NavigationState = {
+  view: 'map' | 'list'
+  details: boolean
+  directions: boolean
+  detailTab: 'Info' | 'Rates' | 'Amenities' | 'Entrance'
+  features: ParkingFeature[]
   selectedId: string | null
   filter: DiscoveryFilter
   fees: FeeFilter
@@ -13,12 +20,26 @@ export type NavigationState = {
   searchPoint: Coordinate | null
   searchCredit: { label: string; url: string } | null
   searching: boolean
-  panel: 'saved' | 'info' | 'add' | 'you' | null
+  panel:
+    | 'saved'
+    | 'info'
+    | 'add'
+    | 'you'
+    | 'appearance'
+    | 'filters'
+    | 'empty'
+    | 'location'
+    | null
   route: boolean
   consent: boolean
   center: Coordinate
 }
 export const navigationDefaults: NavigationState = {
+  view: 'map',
+  details: false,
+  directions: false,
+  detailTab: 'Info',
+  features: [],
   selectedId: null,
   filter: 'all',
   fees: 'all',
@@ -47,6 +68,19 @@ export function parseNavigation(
 ): NavigationState {
   const params = new URLSearchParams(search)
   const state = { ...navigationDefaults, ...preferences }
+  state.view = params.get('view') === 'list' ? 'list' : 'map'
+  state.details = params.get('details') === '1'
+  state.directions = params.get('directions') === '1'
+  const detailTab = params.get('tab')
+  state.detailTab =
+    detailTab === 'Rates' ||
+    detailTab === 'Amenities' ||
+    detailTab === 'Entrance'
+      ? detailTab
+      : 'Info'
+  state.features = parkingFeatures.filter((feature) =>
+    params.get('features')?.split(',').includes(feature),
+  )
   const filter = params.get('filter')
   if (filter && filters.includes(filter)) {
     if (
@@ -73,6 +107,11 @@ export function parseNavigation(
           ? 'applies'
           : 'all'
   state.selectedId = params.get('spot')?.slice(0, 200) || null
+  if (!state.selectedId) {
+    state.details = false
+    state.directions = false
+    state.detailTab = 'Info'
+  }
   state.query = (params.get('q') ?? '').slice(0, 180)
   state.searchPoint = null
   if (state.query && params.has('searchLng') && params.has('searchLat')) {
@@ -103,7 +142,14 @@ export function parseNavigation(
   state.searching = params.get('search') === '1'
   const panel = params.get('panel')
   state.panel =
-    panel === 'saved' || panel === 'info' || panel === 'add' || panel === 'you'
+    panel === 'saved' ||
+    panel === 'info' ||
+    panel === 'add' ||
+    panel === 'you' ||
+    panel === 'appearance' ||
+    panel === 'filters' ||
+    panel === 'location' ||
+    panel === 'empty'
       ? panel
       : null
   state.route = params.get('route') === '1'
@@ -119,6 +165,12 @@ export function navigationSearch(state: NavigationState): string {
     filter: state.filter,
     sheet: state.position,
   })
+  if (state.view === 'list') params.set('view', 'list')
+  if (state.features.length) params.set('features', state.features.join(','))
+  if (state.details && state.selectedId) params.set('details', '1')
+  if (state.directions && state.selectedId) params.set('directions', '1')
+  if (state.details && state.selectedId && state.detailTab !== 'Info')
+    params.set('tab', state.detailTab)
   if (state.fees !== 'all') params.set('fees', state.fees)
   if (state.selectedId) params.set('spot', state.selectedId)
   if (state.query) params.set('q', state.query)
@@ -182,16 +234,25 @@ export function navigationLayers(state: NavigationState): NavigationState[] {
     route: false,
     consent: false,
     position: 'compact',
+    view: 'map',
+    details: false,
+    directions: false,
+    detailTab: 'Info',
   }
   const layers = [current]
   const add = (patch: Partial<NavigationState>) => {
     current = { ...current, ...patch }
     layers.push(current)
   }
+  if (state.view === 'list') add({ view: 'list' })
   if (state.position !== 'compact') add({ position: 'medium' })
   if (state.position === 'expanded') add({ position: 'expanded' })
   if (state.selectedId) add({ selectedId: state.selectedId })
+  if (state.details && state.selectedId) add({ details: true })
+  if (state.details && state.selectedId && state.detailTab !== 'Info')
+    add({ detailTab: state.detailTab })
   if (state.searching) add({ searching: true })
+  if (state.directions && state.selectedId) add({ directions: true })
   if (state.panel) add({ panel: state.panel })
   if (state.route) add({ route: true })
   if (state.consent) add({ consent: true })

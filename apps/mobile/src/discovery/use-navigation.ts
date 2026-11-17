@@ -46,6 +46,11 @@ export function useNavigation(onRouteExit?: () => void) {
   const update = useCallback(
     (patch: Partial<NavigationState>, mode: 'push' | 'replace' = 'push') => {
       const next = { ...current.current, ...patch }
+      if (!next.selectedId) {
+        next.details = false
+        next.directions = false
+        next.detailTab = 'Info'
+      }
       const cameraCommand =
         patch.center !== undefined && patch.center !== current.current.center
       if (

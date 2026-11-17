@@ -20,6 +20,10 @@ function NcrMap(props: NcrMapProps) {
   const theme = useTheme()
   const initialTheme = useRef(theme)
   const container = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    if (container.current)
+      container.current.inert = props.accessibilityHidden ?? false
+  }, [props.accessibilityHidden])
   const map = useRef<Map | null>(null)
   const [loaded, setLoaded] = useState(false)
   const sources = useMemo(() => ncrMapSources(props.data, null), [props.data])
@@ -301,6 +305,7 @@ function NcrMap(props: NcrMapProps) {
   return (
     <div
       ref={container}
+      aria-hidden={props.accessibilityHidden}
       data-testid={loaded ? 'ncr-map-ready' : 'ncr-map-loading'}
       aria-label={
         props.data?.mode === 'research_preview'

@@ -9,7 +9,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   AppState,
   BackHandler,
-  FlatList,
   Linking,
   Keyboard,
   Platform,
@@ -20,8 +19,23 @@ import {
   useWindowDimensions,
   View,
 } from 'react-native'
+import type { FlatList } from 'react-native'
 import { StatusBar } from 'expo-status-bar'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { AppearanceNavigation } from '../components/appearance-navigation'
+import {
+  ArchitecturePage,
+  useArchitectureInsets,
+} from '../components/architecture-page'
+import { AppearanceScreen } from '../settings/settings-screen'
+import {
+  DiscoveryHeader,
+  DiscoveryMapActions,
+  DiscoveryLegend,
+  ParkingListPage,
+  ParkingPreview,
+  SEARCH_HEADER_HEIGHT,
+  MAP_LEGEND_HEIGHT,
+} from './architecture-discovery'
 
 import { useTheme, createThemedStyles } from '../theme-provider'
 import { discoveryState } from './discovery-state'
@@ -29,7 +43,6 @@ import { StateCard } from './state-card'
 import { useConnectivity } from './use-connectivity'
 import { ArrivalCelebration } from './arrival-celebration'
 import { BottomNavigation, TAB_BAR_HEIGHT } from './bottom-navigation'
-import { NearbyCard, NearbyLoading } from './nearby-card'
 import { ParkingProfile } from './parking-profile'
 import { ReportSubmission } from './report-submission'
 import { createLocalDraftId } from './local-draft-id'
@@ -40,9 +53,8 @@ import { parkingNearDestination } from './places'
 import { draftParking } from './draft-parking'
 import { useNavigation } from './use-navigation'
 import { useDirectionsConsent } from './use-directions-consent'
-import { DiscoverySheet, MapAttribution } from './discovery-sheet'
+import { MapAttribution } from './discovery-sheet'
 import { partitionParking } from './filters'
-import type { DiscoveryFilter, FeeFilter } from './filters'
 import { MapInformation } from './information'
 import { recordKey } from './local-state'
 import { SavedPlaces } from './saved-places'
@@ -68,7 +80,11 @@ import ParkingMap from './parking-map'
 import type { CameraTarget } from './map-types'
 import { parkingDestination } from './parking-detail-data'
 import { ParkingDetails } from './parking-details'
-import { ParkingRow } from './parking-row'
+import { FavoriteFeedback } from './favorite-feedback'
+import { EmptyResultsPage } from './empty-pages'
+import { DirectionsChoice } from './directions-choice'
+import { LocationPage } from './location-page'
+import { ParkingFiltersPage } from './parking-filters-page'
 import {
   developmentSamplesEnabled,
   millisecondsToNextMinute,
@@ -81,8 +97,7 @@ import { sampleParking } from './sample-data'
 import { DestinationSearch } from './search'
 import { FigmaAsset } from './figma-assets'
 import { ModalSheet } from './sheets'
-import { discoveryCameraPadding, stepSheet } from './sheet-state'
-import type { SheetPosition } from './sheet-state'
+import { discoveryCameraPadding } from './sheet-state'
 import { fonts } from './typography'
 import {
   Button,
@@ -108,7 +123,8 @@ function sameNavigationContext(
     before.selectedId === after.selectedId &&
     before.panel === after.panel &&
     before.searching === after.searching &&
-    before.route === after.route
+    before.route === after.route &&
+    before.directions === after.directions
   )
 }
 
@@ -127,7 +143,7 @@ export default function Explore() {
     window.addEventListener('popstate', dismiss)
     return () => window.removeEventListener('popstate', dismiss)
   }, [selectedPlace])
-  const insets = useSafeAreaInsets()
+  const insets = useArchitectureInsets()
   const connectivity = useConnectivity()
   const [locationSettingsOpen, setLocationSettingsOpen] = useState(false)
   const { height: screenHeight } = useWindowDimensions()
@@ -153,7 +169,6 @@ export default function Explore() {
   )
   const filter = nav.filter
   const feeFilter = nav.fees
-  const setFeeFilter = (fees: FeeFilter) => updateNavigation({ fees })
   const [now, setNow] = useState(() => new Date())
 
   const setSelected = useCallback(
@@ -161,34 +176,23 @@ export default function Explore() {
       if (record)
         updateNavigation({
           selectedId: record.id,
+          details: false,
+          view: 'map',
           center: anchor(record.geometry),
         })
       else if (nav.selectedId)
-        closeNavigation({ selectedId: null, center: nav.center })
+        closeNavigation({
+          selectedId: null,
+          details: false,
+          center: nav.center,
+        })
     },
     [updateNavigation, closeNavigation, nav.center, nav.selectedId],
-  )
-  const changeSheetPosition = useCallback(
-    (position: SheetPosition) => {
-      if (position === 'compact') {
-        Keyboard.dismiss()
-        updateNavigation({ position, searching: false })
-      } else updateNavigation({ position })
-    },
-    [updateNavigation],
   )
   const list = useRef<FlatList<DiscoveryParking>>(null)
   const browseScrollOffset = useRef(0)
   const parkingScrollOffset = useRef(0)
-  const getBrowseScrollOffset = useCallback(
-    () => browseScrollOffset.current,
-    [],
-  )
-  const getParkingScrollOffset = useCallback(
-    () => parkingScrollOffset.current,
-    [],
-  )
-  const [sheetContent, setSheetContent] = useState<{
+  const [, setSheetContent] = useState<{
     id: string
     height: number
   } | null>(null)
@@ -196,6 +200,7 @@ export default function Explore() {
     parkingScrollOffset.current = 0
   }, [nav.selectedId])
   const [toast, setToast] = useState<{
+    favoriteAdded?: boolean
     message: string
     undo: () => void
   } | null>(null)
@@ -214,8 +219,8 @@ export default function Explore() {
       closeNavigation({ consent: false })
     },
   )
-  const [sheetHeight, setSheetHeight] = useState(116 + insets.bottom)
-  const [menuOpen, setMenuOpen] = useState(false)
+  const [previewHeight, setPreviewHeight] = useState(258)
+  const [sheetHeight] = useState(116 + insets.bottom)
   const [drawingPanelHeight, setDrawingPanelHeight] = useState(0)
   const [topOverlayHeight, setTopOverlayHeight] = useState(0)
   const [routeTarget, setRouteTarget] = useState<{
@@ -235,14 +240,36 @@ export default function Explore() {
     updateNavigation({ searchPoint: null, query: '' }, 'replace')
   const searchActive = nav.searching
   const panel = nav.panel
-  const fullPageActive = panel === 'saved' || panel === 'you'
+  const appearanceReturn = useRef(nav.panel)
+  const directionsReturn = useRef(nav.panel)
+  const openAppearance = () => {
+    appearanceReturn.current = nav.panel
+    updateNavigation({ panel: 'appearance' })
+  }
+  const fullPageActive =
+    panel === 'saved' ||
+    panel === 'you' ||
+    panel === 'appearance' ||
+    panel === 'filters' ||
+    panel === 'location' ||
+    panel === 'empty'
   const mapInterface = useRef<ComponentRef<typeof View>>(null)
   useEffect(() => {
     const element = mapInterface.current
     if (Platform.OS === 'web' && element instanceof HTMLElement)
       element.inert = fullPageActive
   }, [fullPageActive])
-  const setPanel = (value: 'info' | 'saved' | 'you' | null) =>
+  const setPanel = (
+    value:
+      | 'info'
+      | 'saved'
+      | 'you'
+      | 'appearance'
+      | 'filters'
+      | 'location'
+      | 'empty'
+      | null,
+  ) =>
     value
       ? updateNavigation({ panel: value })
       : closeNavigation({ panel: null })
@@ -416,7 +443,6 @@ export default function Explore() {
       ...previews,
       ...(samples ? sampleParking : []),
     ].find((record) => record.id === nav.selectedId) ?? null
-  const sheet = { position: nav.position }
   useEffect(() => {
     if (
       storage === 'ready' &&
@@ -453,8 +479,8 @@ export default function Explore() {
     [samples, viewport, parking.records, previews],
   )
   const partitions = useMemo(
-    () => partitionParking(records, filter, feeFilter),
-    [records, filter, feeFilter],
+    () => partitionParking(records, filter, feeFilter, nav.features),
+    [records, filter, feeFilter, nav.features],
   )
   const visible = useMemo(
     () =>
@@ -492,9 +518,53 @@ export default function Explore() {
     loading:
       !samples &&
       (parking.status === 'loading' ||
+        (!parking.settled && parking.status !== 'error') ||
         (mapStatus === 'loading' && !records.length)),
     count: visible.length,
   })
+  const emptyContext = JSON.stringify([
+    nav.query,
+    nav.searchPoint,
+    filter,
+    feeFilter,
+    nav.features,
+  ])
+  const lastEmptyContext = useRef<string | null>(null)
+  const hasFilters =
+    filter !== 'all' || feeFilter !== 'all' || nav.features.length > 0
+  useEffect(() => {
+    if (browseState !== 'empty' && browseState !== 'filtered') {
+      lastEmptyContext.current = null
+      return
+    }
+    if (
+      !parking.settled ||
+      parking.status !== 'idle' ||
+      nav.panel ||
+      nav.searching ||
+      nav.selectedId ||
+      nav.route ||
+      nav.directions ||
+      (!hasFilters && !nav.searchPoint) ||
+      lastEmptyContext.current === emptyContext
+    )
+      return
+    lastEmptyContext.current = emptyContext
+    updateNavigation({ panel: 'empty' })
+  }, [
+    browseState,
+    parking.status,
+    parking.settled,
+    nav.panel,
+    nav.searching,
+    nav.selectedId,
+    nav.route,
+    nav.directions,
+    nav.searchPoint,
+    hasFilters,
+    emptyContext,
+    updateNavigation,
+  ])
   const stateCard =
     browseState === 'zoomed-out' ? (
       <StateCard
@@ -526,14 +596,12 @@ export default function Explore() {
     ) : browseState === 'filtered' ? (
       <StateCard
         icon="filter-brand"
-        title={
-          feeFilter === 'free'
-            ? 'No free spots in view'
-            : `No ${filter === 'garage' ? 'garages' : 'street spots'} in view`
-        }
-        body={`The ${feeFilter === 'free' ? 'Free' : filter === 'garage' ? 'Garage' : 'Street'} filter is hiding other mapped spots nearby.`}
+        title="No parking matches these filters"
+        body="Your filters are hiding other mapped parking in this area."
         action="Show all spots"
-        onAction={() => updateNavigation({ filter: 'all', fees: 'all' })}
+        onAction={() =>
+          updateNavigation({ filter: 'all', fees: 'all', features: [] })
+        }
       />
     ) : browseState === 'empty' ? (
       <StateCard
@@ -600,11 +668,21 @@ export default function Explore() {
       })
     else if (nav.panel) {
       setDrawing(false)
-      closeNavigation({ panel: null })
+      closeNavigation({
+        panel:
+          nav.panel === 'appearance' &&
+          appearanceReturn.current !== 'appearance'
+            ? appearanceReturn.current
+            : null,
+      })
     } else if (nav.route) endNavigation()
+    else if (nav.directions)
+      closeNavigation({ directions: false, panel: directionsReturn.current })
+    else if (nav.details && nav.detailTab === 'Entrance')
+      closeNavigation({ detailTab: 'Info' })
+    else if (nav.details) closeNavigation({ details: false })
     else if (nav.selectedId) setSelected(null)
-    else if (nav.position !== 'compact')
-      closeNavigation({ position: stepSheet(nav.position, -1) })
+    else if (nav.view === 'list') closeNavigation({ view: 'map' })
     else return false
     return true
   }
@@ -666,6 +744,19 @@ export default function Explore() {
     updateNavigation({ center: coordinate }, 'replace')
   }
   function startDirections(record: DiscoveryParking) {
+    const coordinate = parkingDestination(record, currentLocation)
+    if (!coordinate) return
+    directionsReturn.current = nav.panel
+    setRouteTarget({ name: parkingTitle(record), coordinate, parking: record })
+    updateNavigation({
+      directions: true,
+      selectedId: record.id,
+      panel: null,
+      view: 'map',
+      center: anchor(record.geometry),
+    })
+  }
+  function startInAppDirections(record: DiscoveryParking) {
     if (!parkingDestination(record, currentLocation)) return
     const generation = ++navigationActionGeneration.current
     const context = getNavigationState()
@@ -735,6 +826,8 @@ export default function Explore() {
     updateNavigation(
       {
         route: true,
+        directions: false,
+        details: false,
         consent: false,
         searching: false,
         panel: null,
@@ -769,7 +862,16 @@ export default function Explore() {
     )
   }
   async function externalRoute(provider: 'google' | 'apple' | 'waze') {
-    if (!routeTarget) return
+    const externalTarget =
+      routeTarget ??
+      (nav.directions && selected
+        ? {
+            name: parkingTitle(selected),
+            coordinate: anchor(selected.geometry),
+            parking: selected,
+          }
+        : null)
+    if (!externalTarget) return
     entranceRequest.current?.abort()
     const request = new AbortController()
     entranceRequest.current = request
@@ -777,9 +879,9 @@ export default function Explore() {
     setEntranceCheck(true)
     setEntranceError(null)
     try {
-      const current = routeTarget.parking
+      const current = externalTarget.parking
         ? await refreshReviewedParking(
-            routeTarget.parking,
+            externalTarget.parking,
             { url: config.supabaseUrl, publicKey: config.supabaseKey },
             request.signal,
           )
@@ -791,7 +893,7 @@ export default function Explore() {
         return
       const coordinate = current
         ? parkingDestination(current, null)
-        : routeTarget.coordinate
+        : externalTarget.coordinate
       if (!coordinate)
         throw new Error(
           'Current entrance approval is unavailable. No Maps handoff was made.',
@@ -832,6 +934,7 @@ export default function Explore() {
       .then((saved) => {
         if (saved)
           setToast({
+            favoriteAdded: adding,
             message: adding ? 'Parking saved' : 'Parking removed',
             undo: () => {
               void local.favorite(record)
@@ -863,24 +966,14 @@ export default function Explore() {
     if (!record) return
     clearRoute()
     setRouteTarget(null)
-    if (selected?.id === id) {
+    if (selected?.id === id && nav.view === 'map') {
       setSelected(null)
       return
     }
     setSelected(record)
     viewed(record)
   }
-  function changeFilter(next: DiscoveryFilter) {
-    track({ name: 'filter_used', filter: 'kind', value: next })
-    clearRoute()
-    setRouteTarget(null)
-    updateNavigation({
-      filter: next === filter ? 'all' : next,
-      fees: 'all',
-      selectedId: null,
-      route: false,
-    })
-  }
+
   function startContribution(record?: DiscoveryParking, restrictions = '') {
     if (nav.route) drive.stop(false)
     clearRoute()
@@ -1063,8 +1156,8 @@ export default function Explore() {
         ? 'Couldn’t get your location. Check location services and try again.'
         : null
 
-  const discoveryVisible = !drawing && !nav.route && panel === null
-  const controlsVisible = screenHeight - sheetHeight > topOverlayHeight + 122
+  const discoveryVisible =
+    !drawing && !nav.route && !nav.directions && panel === null
   const cameraBottom =
     routeTarget && nav.route
       ? routeHeight
@@ -1099,14 +1192,12 @@ export default function Explore() {
   const searchHeader = (
     <View
       style={{
-        paddingHorizontal: 16,
+        paddingHorizontal: 0,
         paddingBottom: 14,
-        flex: searchActive ? 1 : undefined,
       }}
     >
       <DestinationSearch
-        layout="sheet"
-        fillSheet
+        layout="page"
         placeholder="Search parking or landmark"
         onSaved={() => setPanel('saved')}
         query={nav.query}
@@ -1153,655 +1244,746 @@ export default function Explore() {
           setSelectedPlace(found)
         }}
       />
-      {!searchActive && sheet.position === 'expanded' ? (
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Show parking map"
-          onPress={() => changeSheetPosition('compact')}
-          style={styles.mapReturn}
-        >
-          <Text style={styles.mapReturnText}>Map</Text>
-        </Pressable>
-      ) : null}
     </View>
   )
-  const filterStrip = (
-    <ScrollView
-      horizontal
-      style={styles.filterStrip}
-      testID="parking-filters"
-      showsHorizontalScrollIndicator={false}
-      contentContainerStyle={styles.filters}
-    >
-      <Choice
-        selected={filter === 'all' && feeFilter === 'all'}
-        onPress={() => {
-          changeFilter('all')
-          setFeeFilter('all')
-        }}
-      >
-        All
-      </Choice>
-      <Choice
-        selected={feeFilter === 'free'}
-        onPress={() => {
-          changeFilter('all')
-          setFeeFilter('free')
-        }}
-      >
-        Free
-      </Choice>
-      <Choice
-        selected={filter === 'street'}
-        onPress={() => changeFilter('street')}
-      >
-        Street
-      </Choice>
-      <Choice
-        selected={filter === 'garage'}
-        onPress={() => changeFilter('garage')}
-      >
-        Garage
-      </Choice>
-    </ScrollView>
-  )
   return (
-    <View
-      testID={mapStatus === 'ready' ? 'discovery-map-ready' : 'discovery-map'}
-      style={styles.screen}
-    >
-      <StatusBar style={dark ? 'light' : 'dark'} />
-      {entranceCheck || entranceError ? (
-        <View
-          accessibilityLiveRegion="polite"
-          style={{
-            position: 'absolute',
-            top: insets.top + 8,
-            left: 12,
-            right: 12,
-            zIndex: 30,
-            padding: 12,
-            borderRadius: 12,
-            backgroundColor: colors.surface,
-          }}
-        >
-          <Text
-            accessibilityRole={entranceError ? 'alert' : 'text'}
-            testID="parking-entrance-check"
-            style={ui.body}
-          >
-            {entranceError || 'Checking current entrance and visitor access…'}
-          </Text>
-          {entranceError ? (
-            <Button secondary onPress={() => setEntranceError(null)}>
-              Dismiss entrance notice
-            </Button>
-          ) : null}
-        </View>
-      ) : null}
+    <AppearanceNavigation value={openAppearance}>
       <View
-        ref={mapInterface}
-        testID="map-interface"
-        style={StyleSheet.absoluteFill}
-        aria-hidden={fullPageActive}
-        {...(Platform.OS === 'web'
-          ? {}
-          : {
-              importantForAccessibility: fullPageActive
-                ? ('no-hide-descendants' as const)
-                : ('auto' as const),
-            })}
-        pointerEvents={fullPageActive ? 'none' : 'box-none'}
+        testID={mapStatus === 'ready' ? 'discovery-map-ready' : 'discovery-map'}
+        style={styles.screen}
       >
-        {topOverlayHeight > 0 ? (
-          <ParkingMap
-            key={mapRevision}
-            records={parking.canQuery ? visible : []}
-            featuredId={
-              parking.canQuery && currentLocation
-                ? (ranked[0]?.id ?? null)
-                : null
-            }
-            selectedId={
-              (nav.route ? routeTarget?.parking?.id : null) ??
-              selected?.id ??
-              null
-            }
-            route={routeState.route}
-            target={target}
-            cameraPadding={cameraPadding}
-            parkedLocation={local.state.parked?.coordinate ?? null}
-            navigation={mapNavigation}
-            userLocation={
-              nav.route ? (drive.position ?? currentLocation) : currentLocation
-            }
-            destination={
-              routeTarget && nav.route
-                ? routeTarget.coordinate
-                : (destination?.coordinate ?? null)
-            }
-            draftPoints={drawing ? points : EMPTY_POINTS}
-            drawing={drawing}
-            searching={searchActive}
-            onSelect={(id) => {
-              if (!nav.route) select(id)
+        <StatusBar style={dark ? 'light' : 'dark'} />
+        {entranceCheck || entranceError ? (
+          <View
+            accessibilityLiveRegion="polite"
+            style={{
+              position: 'absolute',
+              top: insets.top + 8,
+              left: 12,
+              right: 12,
+              zIndex: 30,
+              padding: 12,
+              borderRadius: 12,
+              backgroundColor: colors.surface,
             }}
-            onPlaceSelect={
-              nav.route || drawing || panel !== null
-                ? undefined
-                : setSelectedPlace
-            }
-            onMapPress={(point) => {
-              if (nav.route) return
-              if (searchActive) {
-                closeNavigation({
-                  searching: false,
-                  query: nav.query,
-                  searchPoint: nav.searchPoint,
-                })
-                Keyboard.dismiss()
-                return
-              }
-              if (drawing && isCoordinate(point))
-                setPoints((current) =>
-                  kind === 'street'
-                    ? [...current, point].slice(0, 12)
-                    : [point],
-                )
-              else if (nav.selectedId) setSelected(null)
-              else if (nav.route) endNavigation()
-            }}
-            onPan={() => {
-              if (!nav.route) navigationViewportPrivate.current = false
-            }}
-            onViewport={(next) => {
-              if (!nav.route && !navigationViewportPrivate.current)
-                updateViewport(next)
-            }}
-            onStatus={setMapStatus}
-          />
-        ) : null}
-
-        <View
-          pointerEvents="box-none"
-          onLayout={(event) =>
-            setTopOverlayHeight(event.nativeEvent.layout.height)
-          }
-          style={[styles.top, { paddingTop: insets.top + 10 }]}
-        >
-          <View pointerEvents="box-none" style={styles.searchOverlay}>
-            {navigating ? (
-              <NavigationBanner
-                step={drive.progress?.next}
-                then={
-                  drive.progress?.next
-                    ? routeState.route?.steps[
-                        (routeState.route?.steps.indexOf(drive.progress.next) ??
-                          -2) + 1
-                      ]
-                    : undefined
-                }
-                distance={drive.progress?.maneuverDistance ?? 0}
-                rerouting={drive.rerouting}
-              />
-            ) : nav.route || selected || panel !== null ? null : drawing ? (
-              <View style={[styles.drawHeader, ui.shadow]}>
-                <View style={ui.flex}>
-                  <Text style={ui.heading}>Mark the parking location</Text>
-                  <Text style={ui.small}>
-                    {kind === 'street'
-                      ? 'Tap along the street, in order. Up to 12 points.'
-                      : 'Tap the map to place a pin.'}
-                  </Text>
-                </View>
-                <IconButton
-                  icon="close"
-                  label="Cancel adding parking"
-                  onPress={() => {
-                    setDrawing(false)
-                    setPoints([])
-                    setAdjusted(null)
-                  }}
-                />
-              </View>
+          >
+            <Text
+              accessibilityRole={entranceError ? 'alert' : 'text'}
+              testID="parking-entrance-check"
+              style={ui.body}
+            >
+              {entranceError || 'Checking current entrance and visitor access…'}
+            </Text>
+            {entranceError ? (
+              <Button secondary onPress={() => setEntranceError(null)}>
+                Dismiss entrance notice
+              </Button>
             ) : null}
           </View>
-          {connectivity.offline &&
-          discoveryVisible &&
-          !selected &&
-          !searchActive ? (
-            <View
-              accessibilityLiveRegion="polite"
-              style={[styles.offlineBanner, ui.shadow]}
-            >
-              <View style={styles.offlineBadge}>
-                <FigmaAsset name="offline" size={20} />
-              </View>
-              <View style={ui.flex}>
-                <Text style={ui.heading}>You’re offline</Text>
-                <Text style={ui.small}>
-                  Saved places and your car are still available.
-                </Text>
-              </View>
-              <Pressable
-                accessibilityRole="button"
-                onPress={() => {
-                  void connectivity.recheck().then((online) => {
-                    if (online) {
-                      setRevision((value) => value + 1)
-                      setMapRevision((value) => value + 1)
+        ) : null}
+        <View
+          ref={mapInterface}
+          testID="map-interface"
+          style={StyleSheet.absoluteFill}
+          aria-hidden={fullPageActive}
+          {...(Platform.OS === 'web'
+            ? {}
+            : {
+                importantForAccessibility: fullPageActive
+                  ? ('no-hide-descendants' as const)
+                  : ('auto' as const),
+              })}
+          pointerEvents={fullPageActive ? 'none' : 'box-none'}
+        >
+          <View
+            style={[
+              StyleSheet.absoluteFill,
+              Platform.OS !== 'web' &&
+                (fullPageActive ||
+                  nav.view === 'list' ||
+                  nav.details ||
+                  searchActive) && { display: 'none' },
+              !nav.route &&
+                !drawing && {
+                  top:
+                    insets.top + (nav.directions ? 74 : SEARCH_HEADER_HEIGHT),
+                  bottom: nav.directions
+                    ? insets.bottom + 118
+                    : TAB_BAR_HEIGHT +
+                      insets.bottom +
+                      (selected ? 0 : MAP_LEGEND_HEIGHT),
+                },
+            ]}
+          >
+            <ParkingMap
+              accessibilityHidden={
+                fullPageActive ||
+                nav.view === 'list' ||
+                nav.details ||
+                searchActive
+              }
+              key={mapRevision}
+              records={parking.canQuery ? visible : []}
+              featuredId={
+                parking.canQuery && currentLocation
+                  ? (ranked[0]?.id ?? null)
+                  : null
+              }
+              selectedId={
+                (nav.route ? routeTarget?.parking?.id : null) ??
+                selected?.id ??
+                null
+              }
+              route={routeState.route}
+              target={target}
+              cameraPadding={
+                nav.route || drawing
+                  ? cameraPadding
+                  : {
+                      top: 20,
+                      bottom:
+                        selected && !nav.directions ? previewHeight + 42 : 20,
                     }
+              }
+              parkedLocation={local.state.parked?.coordinate ?? null}
+              navigation={mapNavigation}
+              userLocation={
+                nav.route
+                  ? (drive.position ?? currentLocation)
+                  : currentLocation
+              }
+              destination={
+                routeTarget && nav.route
+                  ? routeTarget.coordinate
+                  : (destination?.coordinate ?? null)
+              }
+              draftPoints={drawing ? points : EMPTY_POINTS}
+              drawing={drawing}
+              searching={searchActive}
+              onSelect={(id) => {
+                if (!nav.route) select(id)
+              }}
+              onPlaceSelect={
+                nav.route || drawing || panel !== null
+                  ? undefined
+                  : setSelectedPlace
+              }
+              onMapPress={(point) => {
+                if (nav.route) return
+                if (searchActive) {
+                  closeNavigation({
+                    searching: false,
+                    query: nav.query,
+                    searchPoint: nav.searchPoint,
                   })
-                }}
-                style={{ minHeight: 44, justifyContent: 'center' }}
-              >
-                <Text style={[ui.small, ui.link]}>Try again</Text>
-              </Pressable>
+                  Keyboard.dismiss()
+                  return
+                }
+                if (drawing && isCoordinate(point))
+                  setPoints((current) =>
+                    kind === 'street'
+                      ? [...current, point].slice(0, 12)
+                      : [point],
+                  )
+                else if (nav.details) closeNavigation({ details: false })
+                else if (nav.selectedId) setSelected(null)
+                else if (nav.route) endNavigation()
+              }}
+              onPan={() => {
+                if (!nav.route) navigationViewportPrivate.current = false
+              }}
+              onViewport={(next) => {
+                if (
+                  !nav.route &&
+                  !fullPageActive &&
+                  nav.view === 'map' &&
+                  !nav.details &&
+                  !searchActive &&
+                  !navigationViewportPrivate.current
+                )
+                  updateViewport(next)
+              }}
+              onStatus={setMapStatus}
+            />
+          </View>
+
+          <View
+            pointerEvents="box-none"
+            onLayout={(event) =>
+              setTopOverlayHeight(event.nativeEvent.layout.height)
+            }
+            style={[
+              styles.top,
+              {
+                paddingTop:
+                  insets.top +
+                  (nav.route || drawing ? 10 : SEARCH_HEADER_HEIGHT + 10),
+              },
+            ]}
+          >
+            <View pointerEvents="box-none" style={styles.searchOverlay}>
+              {navigating ? (
+                <NavigationBanner
+                  step={drive.progress?.next}
+                  then={
+                    drive.progress?.next
+                      ? routeState.route?.steps[
+                          (routeState.route?.steps.indexOf(
+                            drive.progress.next,
+                          ) ?? -2) + 1
+                        ]
+                      : undefined
+                  }
+                  distance={drive.progress?.maneuverDistance ?? 0}
+                  rerouting={drive.rerouting}
+                />
+              ) : nav.route || selected || panel !== null ? null : drawing ? (
+                <View style={[styles.drawHeader, ui.shadow]}>
+                  <View style={ui.flex}>
+                    <Text style={ui.heading}>Mark the parking location</Text>
+                    <Text style={ui.small}>
+                      {kind === 'street'
+                        ? 'Tap along the street, in order. Up to 12 points.'
+                        : 'Tap the map to place a pin.'}
+                    </Text>
+                  </View>
+                  <IconButton
+                    icon="close"
+                    label="Cancel adding parking"
+                    onPress={() => {
+                      setDrawing(false)
+                      setPoints([])
+                      setAdjusted(null)
+                    }}
+                  />
+                </View>
+              ) : null}
             </View>
-          ) : browseState === 'loading' &&
+            {connectivity.offline &&
             discoveryVisible &&
             !selected &&
             !searchActive ? (
-            <View
-              accessibilityLiveRegion="polite"
-              style={[styles.loadingToast, ui.shadow]}
-            >
-              <View style={styles.loadingDot} />
-              <Text style={ui.small}>Finding spots near you…</Text>
-            </View>
-          ) : null}
-          {samples ? (
-            <View style={styles.warning}>
-              <Text style={styles.warningText}>
-                SAMPLE PARKING · Not real parking locations
-              </Text>
-            </View>
-          ) : null}
-          {discoveryVisible && !selected && sheet.position !== 'expanded' ? (
-            <View pointerEvents="box-none" style={styles.mapNotices}>
-              {drive.resumable && resumeTarget ? (
-                <View
-                  accessibilityLiveRegion="polite"
-                  style={[styles.resume, ui.shadow]}
-                >
-                  <Text style={[ui.body, { flexShrink: 1 }]}>
-                    Navigation ended
+              <View
+                accessibilityLiveRegion="polite"
+                style={[styles.offlineBanner, ui.shadow]}
+              >
+                <View style={styles.offlineBadge}>
+                  <FigmaAsset name="offline" size={20} />
+                </View>
+                <View style={ui.flex}>
+                  <Text style={ui.heading}>You’re offline</Text>
+                  <Text style={ui.small}>
+                    Saved places and your car are still available.
                   </Text>
-                  <Button
-                    secondary
-                    onPress={() => {
-                      if (resumeTarget.parking) {
-                        void beginDirections(resumeTarget.parking, false)
-                        return
-                      }
-                      setRouteTarget(resumeTarget)
-                      updateNavigation({
-                        route: true,
-                        selectedId: null,
-                      })
-                      void loadRoute(
-                        resumeTarget.coordinate,
-                        location.locate,
-                      ).then((route) => {
-                        if (route) drive.start()
-                      })
-                    }}
-                  >
-                    Resume
-                  </Button>
                 </View>
-              ) : null}
-              {discoveryVisible && local.state.parked ? (
-                <View style={styles.carChip}>
-                  <Button
-                    secondary
-                    onPress={() => {
-                      const parked = local.state.parked
-                      if (parked)
-                        void Linking.openURL(
-                          `https://www.google.com/maps/dir/?api=1&destination=${parked.coordinate[1]},${parked.coordinate[0]}&travelmode=walking`,
-                        )
-                    }}
-                  >
-                    Your car ·{' '}
-                    {Math.floor(
-                      (now.getTime() - Date.parse(local.state.parked.savedAt)) /
-                        3600000,
-                    ) > 0
-                      ? `${Math.floor((now.getTime() - Date.parse(local.state.parked.savedAt)) / 3600000)} h ago`
-                      : Math.floor(
-                            (now.getTime() -
-                              Date.parse(local.state.parked.savedAt)) /
-                              60000,
-                          ) > 0
-                        ? `${Math.floor((now.getTime() - Date.parse(local.state.parked.savedAt)) / 60000)} min ago`
-                        : 'Just now'}{' '}
-                    · Directions
-                  </Button>
-                </View>
-              ) : null}
-            </View>
-          ) : null}
-        </View>
-
-        {discoveryVisible &&
-        !selected &&
-        !searchActive &&
-        sheet.position !== 'expanded' ? (
-          <View style={[styles.filterOverlay, { bottom: sheetHeight + 12 }]}>
-            {filterStrip}
-          </View>
-        ) : null}
-        {discoveryVisible && !searchActive && sheet.position !== 'expanded' ? (
-          <>
-            {controlsVisible ? (
-              <View
-                style={[
-                  styles.controls,
-                  !selected && styles.mapActions,
-                  { bottom: sheetHeight + (selected ? 12 : 72) },
-                ]}
-              >
-                {!selected ? (
-                  <IconButton
-                    icon="list"
-                    label="Show parking list"
-                    color={colors.ink}
-                    onPress={() => changeSheetPosition('expanded')}
-                    style={[ui.shadow, styles.mapListAction]}
-                  />
-                ) : null}
-                <IconButton
-                  style={[
-                    ui.shadow,
-                    {
-                      backgroundColor: colors.surface,
-                      width: 56,
-                      height: 56,
-                      borderWidth: 2,
-                      borderColor: colors.border,
-                    },
-                  ]}
-                  icon="locate"
-                  color={colors.ink}
-                  label="Center on my location"
-                  disabled={location.status === 'locating'}
-                  onPress={centerOnMyLocation}
-                />
-              </View>
-            ) : null}
-            {!selected && sheet.position === 'compact' ? (
-              <View
-                style={[
-                  styles.bottom,
-                  {
-                    bottom: sheetHeight + 140,
-                    right: 16,
-                  },
-                ]}
-              >
-                {mapStatus === 'error' && !connectivity.offline ? (
-                  <StatusMessage
-                    message="The map couldn’t load. Check your connection."
-                    onRetry={() => {
-                      setMapStatus('loading')
-                      setMapRevision((current) => current + 1)
-                    }}
-                  />
-                ) : null}
-                {parking.status === 'error' &&
-                !samples &&
-                !connectivity.offline ? (
-                  <StatusMessage
-                    message={parkingError}
-                    onRetry={() => setRevision((current) => current + 1)}
-                  />
-                ) : null}
-              </View>
-            ) : null}
-          </>
-        ) : null}
-
-        {drawing ? (
-          <View
-            onLayout={(event) =>
-              setDrawingPanelHeight(event.nativeEvent.layout.height)
-            }
-            style={[
-              styles.drawingPanel,
-              ui.shadow,
-              { paddingBottom: Math.max(insets.bottom, 18) },
-            ]}
-          >
-            <Text style={ui.eyebrow}>WHAT KIND OF PARKING?</Text>
-            <View style={[ui.row, { flexWrap: 'wrap', gap: 6 }]}>
-              {(['street', 'lot', 'garage'] as const).map((value) => (
-                <Choice
-                  key={value}
-                  selected={kind === value}
+                <Pressable
+                  accessibilityRole="button"
                   onPress={() => {
-                    setKind(value)
-                    setPoints([])
+                    void connectivity.recheck().then((online) => {
+                      if (online) {
+                        setRevision((value) => value + 1)
+                        setMapRevision((value) => value + 1)
+                      }
+                    })
                   }}
+                  style={{ minHeight: 44, justifyContent: 'center' }}
                 >
-                  {kindLabels[value]}
-                </Choice>
-              ))}
-            </View>
-            <View style={ui.row}>
-              <Text style={[ui.small, ui.flex]}>
-                {kind === 'street'
-                  ? `${points.length} points · minimum 2`
-                  : points.length
-                    ? 'Pin placed. Tap again to move it.'
-                    : 'Tap the location on the map.'}
-              </Text>
-              <IconButton
-                icon="undo"
-                label="Undo last map point"
-                disabled={!points.length}
-                onPress={() => setPoints((current) => current.slice(0, -1))}
+                  <Text style={[ui.small, ui.link]}>Try again</Text>
+                </Pressable>
+              </View>
+            ) : browseState === 'loading' &&
+              discoveryVisible &&
+              !selected &&
+              !searchActive ? (
+              <View
+                accessibilityLiveRegion="polite"
+                style={[styles.loadingToast, ui.shadow]}
+              >
+                <View style={styles.loadingDot} />
+                <Text style={ui.small}>Finding spots near you…</Text>
+              </View>
+            ) : null}
+            {samples ? (
+              <View style={styles.warning}>
+                <Text style={styles.warningText}>
+                  SAMPLE PARKING · Not real parking locations
+                </Text>
+              </View>
+            ) : null}
+            {discoveryVisible && !selected && nav.view === 'map' ? (
+              <View pointerEvents="box-none" style={styles.mapNotices}>
+                {drive.resumable && resumeTarget ? (
+                  <View
+                    accessibilityLiveRegion="polite"
+                    style={[styles.resume, ui.shadow]}
+                  >
+                    <Text style={[ui.body, { flexShrink: 1 }]}>
+                      Navigation ended
+                    </Text>
+                    <Button
+                      secondary
+                      onPress={() => {
+                        if (resumeTarget.parking) {
+                          void beginDirections(resumeTarget.parking, false)
+                          return
+                        }
+                        setRouteTarget(resumeTarget)
+                        updateNavigation({
+                          route: true,
+                          selectedId: null,
+                        })
+                        void loadRoute(
+                          resumeTarget.coordinate,
+                          location.locate,
+                        ).then((route) => {
+                          if (route) drive.start()
+                        })
+                      }}
+                    >
+                      Resume
+                    </Button>
+                  </View>
+                ) : null}
+                {discoveryVisible && local.state.parked ? (
+                  <View style={styles.carChip}>
+                    <Button
+                      secondary
+                      onPress={() => {
+                        const parked = local.state.parked
+                        if (parked)
+                          void Linking.openURL(
+                            `https://www.google.com/maps/dir/?api=1&destination=${parked.coordinate[1]},${parked.coordinate[0]}&travelmode=walking`,
+                          )
+                      }}
+                    >
+                      Your car ·{' '}
+                      {Math.floor(
+                        (now.getTime() -
+                          Date.parse(local.state.parked.savedAt)) /
+                          3600000,
+                      ) > 0
+                        ? `${Math.floor((now.getTime() - Date.parse(local.state.parked.savedAt)) / 3600000)} h ago`
+                        : Math.floor(
+                              (now.getTime() -
+                                Date.parse(local.state.parked.savedAt)) /
+                                60000,
+                            ) > 0
+                          ? `${Math.floor((now.getTime() - Date.parse(local.state.parked.savedAt)) / 60000)} min ago`
+                          : 'Just now'}{' '}
+                      · Directions
+                    </Button>
+                  </View>
+                ) : null}
+              </View>
+            ) : null}
+          </View>
+
+          {discoveryVisible &&
+          nav.view === 'map' &&
+          !selected &&
+          !searchActive &&
+          !connectivity.offline &&
+          (mapStatus === 'error' || parking.status === 'error') ? (
+            <View
+              style={{
+                position: 'absolute',
+                top: insets.top + SEARCH_HEADER_HEIGHT + 12,
+                left: 16,
+                right: 16,
+                zIndex: 5,
+              }}
+            >
+              <StatusMessage
+                message={
+                  mapStatus === 'error'
+                    ? 'The map could not load. You can still open the parking list.'
+                    : parkingError
+                }
+                onRetry={() => {
+                  if (mapStatus === 'error') {
+                    setMapStatus('loading')
+                    setMapRevision((value) => value + 1)
+                  }
+                  setRevision((value) => value + 1)
+                }}
               />
             </View>
-            <Button
-              disabled={points.length < (kind === 'street' ? 2 : 1)}
-              onPress={continueContribution}
-            >
-              Add information
-            </Button>
-          </View>
-        ) : null}
-        {nav.route && drive.phase === 'arrived' ? <ArrivalCelebration /> : null}
-        {navigating && !drive.following ? (
-          <View style={[styles.controls, { bottom: routeHeight + 40 }]}>
-            <IconButton
-              icon="locate"
-              label="Re-center map"
-              onPress={drive.recenter}
-              style={ui.shadow}
+          ) : null}
+          {discoveryVisible && !searchActive && !(nav.details && selected) ? (
+            <>
+              <DiscoveryHeader
+                top={insets.top}
+                query={nav.query}
+                onSearch={() => updateNavigation({ searching: true })}
+                onList={() =>
+                  updateNavigation({
+                    view: 'list',
+                    details: false,
+                  })
+                }
+              />
+              {nav.view === 'map' ? (
+                <>
+                  <DiscoveryMapActions
+                    bottom={
+                      TAB_BAR_HEIGHT +
+                      insets.bottom +
+                      (selected ? previewHeight + 34 : MAP_LEGEND_HEIGHT + 20)
+                    }
+                    selected={!!selected}
+                    locating={location.status === 'locating'}
+                    onList={() =>
+                      updateNavigation({
+                        view: 'list',
+                        details: false,
+                      })
+                    }
+                    onFilters={() => setPanel('filters')}
+                    onLocate={() =>
+                      currentLocation
+                        ? centerOnMyLocation()
+                        : setPanel('location')
+                    }
+                  />
+                  {!selected ? (
+                    <DiscoveryLegend
+                      bottom={TAB_BAR_HEIGHT + insets.bottom}
+                      onInfo={() => setPanel('info')}
+                    />
+                  ) : null}
+                  {selected ? (
+                    <ParkingPreview
+                      parking={selected}
+                      onHeightChange={setPreviewHeight}
+                      maxHeight={Math.max(
+                        200,
+                        screenHeight -
+                          insets.top -
+                          SEARCH_HEADER_HEIGHT -
+                          TAB_BAR_HEIGHT -
+                          insets.bottom -
+                          110,
+                      )}
+                      bottom={TAB_BAR_HEIGHT + insets.bottom + 14}
+                      now={now}
+                      favorite={local.state.favorites.some(
+                        (item) => item.key === recordKey(selected),
+                      )}
+                      disabled={
+                        local.status !== 'ready' ||
+                        selected.sourceKind === 'sample'
+                      }
+                      onSave={() => favorite(selected)}
+                      onDetails={() =>
+                        updateNavigation({ details: true, detailTab: 'Info' })
+                      }
+                      onDirections={() => startDirections(selected)}
+                    />
+                  ) : null}
+                </>
+              ) : null}
+              {nav.view === 'list' ? (
+                <ParkingListPage
+                  top={insets.top + SEARCH_HEADER_HEIGHT}
+                  bottom={TAB_BAR_HEIGHT + insets.bottom}
+                  records={ranked}
+                  reference={reference}
+                  listRef={list}
+                  scrollOffset={browseScrollOffset.current}
+                  title={resultsTitle}
+                  notice={
+                    parking.status === 'error' ? (
+                      <StatusMessage
+                        message={parkingError}
+                        onRetry={() => setRevision((value) => value + 1)}
+                      />
+                    ) : browseState === 'location-off' ? (
+                      stateCard
+                    ) : null
+                  }
+                  empty={
+                    browseState === 'loading' ? <LoadingRows /> : stateCard
+                  }
+                  onSelect={select}
+                  onMap={() => updateNavigation({ view: 'map' })}
+                  onOffset={(offset) => {
+                    browseScrollOffset.current = offset
+                  }}
+                />
+              ) : null}
+            </>
+          ) : null}
+
+          {nav.directions && selected && panel === null ? (
+            <DirectionsChoice
+              top={insets.top}
+              bottom={insets.bottom}
+              busy={
+                entranceCheck || !parkingDestination(selected, currentLocation)
+              }
+              onBack={() =>
+                closeNavigation({
+                  directions: false,
+                  panel: directionsReturn.current,
+                })
+              }
+              onChoose={(provider) => {
+                if (provider === 'parkey') {
+                  startInAppDirections(selected)
+                  return
+                }
+                const generation = ++navigationActionGeneration.current
+                const context = getNavigationState()
+                const isCurrent = () =>
+                  generation === navigationActionGeneration.current &&
+                  sameNavigationContext(context, getNavigationState())
+                void consent.request(() => {
+                  if (!isCurrent()) return
+                  updateNavigation({ consent: false }, 'replace')
+                  void externalRoute(provider)
+                }, isCurrent)
+              }}
             />
-          </View>
-        ) : null}
-        {routeTarget && nav.route ? (
-          <RouteDetails
-            key={routeTarget.parking?.id ?? 'car'}
-            destinationName={routeTarget.name}
-            onExternal={(provider) => {
-              void externalRoute(provider)
-            }}
-            checkingEntrance={entranceCheck}
-            state={routeState}
-            phase={drive.phase}
-            starting={drive.starting}
-            denied={drive.denied}
-            message={
-              navigationMessage ??
-              drive.message ??
-              (drive.phase === 'arrived' ? local.error : null)
-            }
-            remainingDistance={drive.progress?.remainingDistance}
-            remainingDuration={drive.progress?.remainingDuration}
-            saving={local.busy || location.status === 'locating'}
-            parked={parkedHere}
-            onAnswer={
-              routeTarget.parking
-                ? (answer) => {
-                    const record = routeTarget.parking
-                    if (record)
-                      startContribution(
-                        record,
-                        `Maximum stay: ${answer === 'No limit' ? 'No time limit' : answer}`,
-                      )
-                  }
-                : null
-            }
-            onStart={() => {
-              setNavigationMessage(null)
-              navigationViewportPrivate.current = true
-              if (routeTarget.parking)
-                void beginDirections(routeTarget.parking, false)
-              else drive.start()
-            }}
-            onPark={() => {
-              if (saving.current || parkedHere) return
-              saving.current = true
-              setNavigationMessage(null)
-              void location
-                .locate()
-                .then(async (point) => {
-                  if (!point) {
-                    setNavigationMessage(
-                      'Your car location could not be saved. Check location access and try again.',
-                    )
-                    return
-                  }
-                  const previous = local.state.parked
-                  if (await local.park(point)) {
-                    setParkedHere(true)
-                    track({ name: 'parked_spot_saved' })
-                    setToast({
-                      message: 'Saved where you parked',
-                      undo: () => {
-                        void local.restoreParked(previous).then((saved) => {
-                          if (saved) {
-                            setParkedHere(false)
-                            setToast(null)
-                          }
-                        })
-                      },
-                    })
-                  }
-                })
-                .finally(() => {
-                  saving.current = false
-                })
-            }}
-            onNext={
-              routeTarget.parking &&
-              nextParking(
-                parking.knownRecords,
-                routeTarget.parking,
-                drive.position ?? routeTarget.coordinate,
-                rejected,
-              )
-                ? () => {
-                    const current = routeTarget.parking
-                    if (!current) return
-                    setParkedHere(false)
-                    setRejected(new Set([...rejected, current.id]))
-                    const next = nextParking(
-                      parking.knownRecords,
-                      current,
-                      drive.position ?? routeTarget.coordinate,
-                      rejected,
-                    )
-                    if (!next) {
+          ) : null}
+          {drawing ? (
+            <View
+              onLayout={(event) =>
+                setDrawingPanelHeight(event.nativeEvent.layout.height)
+              }
+              style={[
+                styles.drawingPanel,
+                ui.shadow,
+                { paddingBottom: Math.max(insets.bottom, 18) },
+              ]}
+            >
+              <Text style={ui.eyebrow}>WHAT KIND OF PARKING?</Text>
+              <View style={[ui.row, { flexWrap: 'wrap', gap: 6 }]}>
+                {(['street', 'lot', 'garage'] as const).map((value) => (
+                  <Choice
+                    key={value}
+                    selected={kind === value}
+                    onPress={() => {
+                      setKind(value)
+                      setPoints([])
+                    }}
+                  >
+                    {kindLabels[value]}
+                  </Choice>
+                ))}
+              </View>
+              <View style={ui.row}>
+                <Text style={[ui.small, ui.flex]}>
+                  {kind === 'street'
+                    ? `${points.length} points · minimum 2`
+                    : points.length
+                      ? 'Pin placed. Tap again to move it.'
+                      : 'Tap the location on the map.'}
+                </Text>
+                <IconButton
+                  icon="undo"
+                  label="Undo last map point"
+                  disabled={!points.length}
+                  onPress={() => setPoints((current) => current.slice(0, -1))}
+                />
+              </View>
+              <Button
+                disabled={points.length < (kind === 'street' ? 2 : 1)}
+                onPress={continueContribution}
+              >
+                Add information
+              </Button>
+            </View>
+          ) : null}
+          {nav.route && drive.phase === 'arrived' ? (
+            <ArrivalCelebration />
+          ) : null}
+          {navigating && !drive.following ? (
+            <View style={[styles.controls, { bottom: routeHeight + 40 }]}>
+              <IconButton
+                icon="locate"
+                label="Re-center map"
+                onPress={drive.recenter}
+                style={ui.shadow}
+              />
+            </View>
+          ) : null}
+          {routeTarget && nav.route ? (
+            <RouteDetails
+              key={routeTarget.parking?.id ?? 'car'}
+              destinationName={routeTarget.name}
+              onExternal={(provider) => {
+                void externalRoute(provider)
+              }}
+              checkingEntrance={entranceCheck}
+              state={routeState}
+              phase={drive.phase}
+              starting={drive.starting}
+              denied={drive.denied}
+              message={
+                navigationMessage ??
+                drive.message ??
+                (drive.phase === 'arrived' ? local.error : null)
+              }
+              remainingDistance={drive.progress?.remainingDistance}
+              remainingDuration={drive.progress?.remainingDuration}
+              saving={local.busy || location.status === 'locating'}
+              parked={parkedHere}
+              onAnswer={
+                routeTarget.parking
+                  ? (answer) => {
+                      const record = routeTarget.parking
+                      if (record)
+                        startContribution(
+                          record,
+                          `Maximum stay: ${answer === 'No limit' ? 'No time limit' : answer}`,
+                        )
+                    }
+                  : null
+              }
+              onStart={() => {
+                setNavigationMessage(null)
+                navigationViewportPrivate.current = true
+                if (routeTarget.parking)
+                  void beginDirections(routeTarget.parking, false)
+                else drive.start()
+              }}
+              onPark={() => {
+                if (saving.current || parkedHere) return
+                saving.current = true
+                setNavigationMessage(null)
+                void location
+                  .locate()
+                  .then(async (point) => {
+                    if (!point) {
                       setNavigationMessage(
-                        'No other mapped parking of this type nearby.',
+                        'Your car location could not be saved. Check location access and try again.',
                       )
                       return
                     }
-                    drive.stop(false)
-                    void beginDirections(next, false)
-                  }
-                : null
-            }
-            onHeightChange={setRouteHeight}
-            onClose={endNavigation}
-            onRetry={() =>
-              routeTarget.parking
-                ? void beginDirections(routeTarget.parking, false)
-                : void loadRoute(routeTarget.coordinate, location.locate)
-            }
-          />
-        ) : null}
-        {panel === 'add' && !drawing ? (
-          <ContributionForm
-            draft={
-              form ?? {
-                id: createLocalDraftId(),
-                intent: 'add',
-                targetId: null,
-                kind: 'lot',
-                geometry: { type: 'Point', coordinates: nav.center },
-                side: 'unknown',
-                name: '',
-                restrictions: '',
-                hours: '',
-                fees: '',
-                photoUri: null,
-                createdAt: new Date().toISOString(),
-                status: 'local_pending_review',
+                    const previous = local.state.parked
+                    if (await local.park(point)) {
+                      setParkedHere(true)
+                      track({ name: 'parked_spot_saved' })
+                      setToast({
+                        message: 'Saved where you parked',
+                        undo: () => {
+                          void local.restoreParked(previous).then((saved) => {
+                            if (saved) {
+                              setParkedHere(false)
+                              setToast(null)
+                            }
+                          })
+                        },
+                      })
+                    }
+                  })
+                  .finally(() => {
+                    saving.current = false
+                  })
+              }}
+              onNext={
+                routeTarget.parking &&
+                nextParking(
+                  parking.knownRecords,
+                  routeTarget.parking,
+                  drive.position ?? routeTarget.coordinate,
+                  rejected,
+                )
+                  ? () => {
+                      const current = routeTarget.parking
+                      if (!current) return
+                      setParkedHere(false)
+                      setRejected(new Set([...rejected, current.id]))
+                      const next = nextParking(
+                        parking.knownRecords,
+                        current,
+                        drive.position ?? routeTarget.coordinate,
+                        rejected,
+                      )
+                      if (!next) {
+                        setNavigationMessage(
+                          'No other mapped parking of this type nearby.',
+                        )
+                        return
+                      }
+                      drive.stop(false)
+                      void beginDirections(next, false)
+                    }
+                  : null
               }
-            }
-            onSave={save}
-            onClose={() => {
-              setPoints([])
-              setAdjusted(null)
-              closeNavigation({ panel: null })
-            }}
-            onAdjust={(current) => {
-              setAdjusted(current)
-              setKind(current.kind)
-              setPoints(
-                current.geometry.type === 'Point'
-                  ? [current.geometry.coordinates]
-                  : current.geometry.coordinates,
-              )
-              setForm(null)
-              setDrawing(true)
-            }}
-          />
-        ) : null}
-        {discoveryVisible ? (
-          <DiscoverySheet
-            position={sheet.position}
-            getScrollOffset={
-              selected ? getParkingScrollOffset : getBrowseScrollOffset
-            }
-            contentHeight={
-              selected && sheetContent?.id === selected.id
-                ? sheetContent.height
-                : 0
-            }
-            keyboardAware={searchActive}
-            bottom={!selected && !searchActive ? TAB_BAR_HEIGHT + 12 : 0}
-            previewHeight={
-              !selected && !searchActive ? (stateCard ? 180 : 124) : 0
-            }
-            header={!selected ? searchHeader : undefined}
-            overlayHeight={topOverlayHeight}
-            selected={!!selected}
-            title={selected ? parkingTitle(selected) : resultsTitle}
-            summary={`${visible.length} mapped ${visible.length === 1 ? 'location' : 'locations'} · ${filter === 'all' ? 'all parking' : filter === 'facilities' ? 'lots & garages' : filter === 'lot' ? 'lots' : filter === 'garage' ? 'garages' : 'street parking'}`}
-            onPositionChange={changeSheetPosition}
-            onHeightChange={setSheetHeight}
-            onClose={() =>
-              selected ? setSelected(null) : changeSheetPosition('compact')
-            }
-          >
-            {selected ? (
+              onHeightChange={setRouteHeight}
+              onClose={endNavigation}
+              onRetry={() =>
+                routeTarget.parking
+                  ? void beginDirections(routeTarget.parking, false)
+                  : void loadRoute(routeTarget.coordinate, location.locate)
+              }
+            />
+          ) : null}
+          {panel === 'add' && !drawing ? (
+            <ContributionForm
+              draft={
+                form ?? {
+                  id: createLocalDraftId(),
+                  intent: 'add',
+                  targetId: null,
+                  kind: 'lot',
+                  geometry: { type: 'Point', coordinates: nav.center },
+                  side: 'unknown',
+                  name: '',
+                  restrictions: '',
+                  hours: '',
+                  fees: '',
+                  photoUri: null,
+                  createdAt: new Date().toISOString(),
+                  status: 'local_pending_review',
+                }
+              }
+              onSave={save}
+              onClose={() => {
+                setPoints([])
+                setAdjusted(null)
+                closeNavigation({ panel: null })
+              }}
+              onAdjust={(current) => {
+                setAdjusted(current)
+                setKind(current.kind)
+                setPoints(
+                  current.geometry.type === 'Point'
+                    ? [current.geometry.coordinates]
+                    : current.geometry.coordinates,
+                )
+                setForm(null)
+                setDrawing(true)
+              }}
+            />
+          ) : null}
+          {(discoveryVisible || panel === 'appearance') &&
+          selected &&
+          nav.details ? (
+            <View
+              testID="parking-details-page"
+              style={[
+                StyleSheet.absoluteFill,
+                {
+                  backgroundColor: colors.canvas,
+                  paddingTop: insets.top,
+                  paddingBottom: insets.bottom,
+                },
+              ]}
+            >
               <ParkingDetails
+                onViewSaved={() => setPanel('saved')}
+                detailTab={nav.detailTab}
+                onTabChange={(detailTab) =>
+                  nav.detailTab === 'Entrance'
+                    ? closeNavigation({ detailTab })
+                    : updateNavigation(
+                        { detailTab },
+                        detailTab === 'Entrance' ? 'push' : 'replace',
+                      )
+                }
+                onBack={() => closeNavigation({ details: false })}
                 key={selected.id}
                 parking={selected}
                 onContentHeightChange={(height) =>
@@ -1823,420 +2005,372 @@ export default function Explore() {
                 onFavorite={() => favorite(selected)}
                 favoriteDisabled={local.status !== 'ready'}
                 storageError={local.error}
-                expanded={sheet.position === 'expanded'}
+                expanded
                 onDirections={() => startDirections(selected)}
               />
-            ) : null}
-            {!selected && !searchActive && sheet.position !== 'expanded' ? (
-              browseState === 'loading' ? (
-                <NearbyLoading />
-              ) : stateCard ? (
-                <ScrollView
-                  style={ui.sheetScroll}
-                  contentContainerStyle={{
-                    paddingHorizontal: 16,
-                    paddingBottom: 8,
-                  }}
-                >
-                  {stateCard}
-                </ScrollView>
-              ) : (
-                <FlatList
-                  horizontal
-                  data={ranked}
-                  keyExtractor={(record) => record.id}
-                  showsHorizontalScrollIndicator={false}
-                  contentContainerStyle={styles.nearbyStrip}
-                  renderItem={({ item: record }) => (
-                    <NearbyCard
-                      parking={record}
-                      reference={reference}
-                      now={now}
-                      onPress={() => select(record.id)}
-                      onGo={() => startDirections(record)}
-                    />
-                  )}
-                />
-              )
-            ) : null}
-            <View
-              style={[
-                ui.flex,
-                (selected || searchActive || sheet.position !== 'expanded') && {
-                  display: 'none',
-                },
-              ]}
-              onFocus={(event) => {
-                if (
-                  Platform.OS !== 'web' ||
-                  nav.position === 'expanded' ||
-                  !(event.target instanceof HTMLElement) ||
-                  !(event.currentTarget instanceof HTMLElement)
-                )
-                  return
-                if (
-                  event.target.getBoundingClientRect().bottom >
-                  event.currentTarget.getBoundingClientRect().bottom
-                )
-                  changeSheetPosition('expanded')
-              }}
-            >
-              <FlatList
-                ref={list}
-                onScroll={({ nativeEvent }) => {
-                  browseScrollOffset.current = nativeEvent.contentOffset.y
-                }}
-                scrollEventThrottle={16}
-                nestedScrollEnabled
-                data={ranked}
-                keyExtractor={(record) => record.id}
-                onScrollToIndexFailed={({ averageItemLength, index }) =>
-                  list.current?.scrollToOffset({
-                    offset: averageItemLength * index,
-                    animated: false,
+            </View>
+          ) : null}
+          {discoveryVisible && searchActive ? (
+            <View style={StyleSheet.absoluteFill}>
+              <ArchitecturePage
+                title="Search parking"
+                subtitle="Find parking near your destination."
+                onBack={() =>
+                  closeNavigation({
+                    searching: false,
+                    query: nav.query,
+                    searchPoint: nav.searchPoint,
+                    searchCredit: nav.searchCredit,
                   })
                 }
-                style={[ui.sheetScroll, ui.flex]}
-                scrollEnabled={sheet.position !== 'compact'}
-                keyboardShouldPersistTaps="handled"
-                contentContainerStyle={{ paddingBottom: 16 }}
-                ListHeaderComponent={
-                  <View style={styles.sheetContent}>
-                    <View style={styles.resultsHeading}>
-                      <Text accessibilityRole="header" style={ui.sectionTitle}>
-                        {resultsTitle}
-                      </Text>
-                      <Text style={ui.small}>
-                        {visible.length} mapped{' '}
-                        {visible.length === 1 ? 'location' : 'locations'}
-                      </Text>
-                    </View>
-                    {browseState === 'location-off' && ranked.length > 0
-                      ? stateCard
-                      : null}
-                    {location.status === 'error' ||
-                    (!connectivity.offline &&
-                      (mapStatus === 'error' ||
-                        (parking.status === 'error' && !samples))) ? (
-                      <StatusMessage
-                        message={
-                          location.status === 'error'
-                            ? (locationMessage ?? 'Couldn’t get your location.')
-                            : mapStatus === 'error'
-                              ? 'The map couldn’t load.'
-                              : parkingError
-                        }
-                        onRetry={() => {
-                          if (locationMessage) {
-                            centerOnMyLocation()
-                            return
-                          }
-                          setRevision((current) => current + 1)
-                          setMapRevision((current) => current + 1)
-                        }}
-                      />
-                    ) : undefined}
-                  </View>
-                }
-                renderItem={({ item: record }) => (
-                  <View style={styles.resultRow}>
-                    <ParkingRow
-                      parking={record}
-                      reference={reference}
-                      onPress={() => select(record.id)}
-                      onDirections={() => startDirections(record)}
-                      onFavorite={() => favorite(record)}
-                      favorite={local.state.favorites.some(
-                        (item) => item.key === recordKey(record),
-                      )}
-                      disabled={local.status !== 'ready'}
-                      selected={selected?.id === record.id}
-                      testID={`parking-row-${record.id}`}
-                    />
-                  </View>
-                )}
-                ListEmptyComponent={
-                  browseState === 'loading' ? (
-                    <LoadingRows />
-                  ) : (
-                    <View style={{ padding: 16 }}>{stateCard}</View>
-                  )
-                }
-              />
+              >
+                {searchHeader}
+              </ArchitecturePage>
             </View>
-          </DiscoverySheet>
-        ) : null}
-        {toast ? (
-          <View
-            style={{
-              position: 'absolute',
-              top: insets.top + 12,
-              left: 16,
-              right: 16,
-              zIndex: 20,
-            }}
-          >
-            <UndoToast message={toast.message} onUndo={toast.undo} />
-          </View>
-        ) : null}
-        {areaRefresh &&
-        farFromCenter &&
-        discoveryVisible &&
-        !selected &&
-        sheet.position !== 'expanded' ? (
-          <View
-            style={{
-              position: 'absolute',
-              bottom: sheetHeight + 76,
-              alignSelf: 'center',
-            }}
-          >
-            <Button
-              secondary
-              onPress={() => {
-                searchedCenter.current = [
-                  (viewport.west + viewport.east) / 2,
-                  (viewport.south + viewport.north) / 2,
-                ]
-                setAreaRefresh(false)
-                setRevision((current) => current + 1)
+          ) : null}
+          {toast ? (
+            <View
+              style={{
+                position: 'absolute',
+                top: insets.top + (toast.favoriteAdded !== undefined ? 86 : 12),
+                left: 16,
+                right: 16,
+                zIndex: 20,
               }}
             >
-              Search this area
-            </Button>
+              {toast.favoriteAdded !== undefined ? (
+                <FavoriteFeedback
+                  added={toast.favoriteAdded}
+                  onUndo={toast.undo}
+                />
+              ) : (
+                <UndoToast message={toast.message} onUndo={toast.undo} />
+              )}
+            </View>
+          ) : null}
+          {areaRefresh &&
+          farFromCenter &&
+          discoveryVisible &&
+          !selected &&
+          nav.view === 'map' ? (
+            <View
+              style={{
+                position: 'absolute',
+                bottom: sheetHeight + 76,
+                alignSelf: 'center',
+              }}
+            >
+              <Button
+                secondary
+                onPress={() => {
+                  searchedCenter.current = [
+                    (viewport.west + viewport.east) / 2,
+                    (viewport.south + viewport.north) / 2,
+                  ]
+                  setAreaRefresh(false)
+                  setRevision((current) => current + 1)
+                }}
+              >
+                Search this area
+              </Button>
+            </View>
+          ) : null}
+          {consent.confirmation}
+          {(nav.route || drawing) && !searchActive ? (
+            <View
+              style={[
+                styles.mapInfo,
+                {
+                  bottom:
+                    Math.max(cameraBottom, insets.bottom) +
+                    (discoveryVisible && !selected
+                      ? TAB_BAR_HEIGHT + insets.bottom + MAP_LEGEND_HEIGHT
+                      : 12),
+                },
+              ]}
+            >
+              <MapAttribution onPress={() => setPanel('info')} />
+            </View>
+          ) : null}
+        </View>
+        {selectedPlace ? (
+          <ModalSheet
+            title={selectedPlace.name}
+            onClose={() => setSelectedPlace(null)}
+          >
+            <ScrollView
+              contentContainerStyle={{
+                paddingHorizontal: 24,
+                paddingBottom: 24,
+                gap: 16,
+              }}
+            >
+              <Text style={ui.body}>
+                {selectedPlace.address || 'Address unavailable'}
+              </Text>
+              <Text style={ui.small}>
+                Mapped place; this does not confirm parking or visitor access.
+              </Text>
+              <Button
+                onPress={() => {
+                  clearRoute()
+                  setRouteTarget(null)
+                  navigationViewportPrivate.current = false
+                  updateNavigation(parkingNearDestination(selectedPlace))
+                  setAreaRefresh(false)
+                  setRevision((current) => current + 1)
+                  setSelectedPlace(null)
+                }}
+              >
+                Find Parking Nearby
+              </Button>
+            </ScrollView>
+          </ModalSheet>
+        ) : null}
+        {locationSettingsOpen ? (
+          <ModalSheet
+            title="Location settings"
+            onClose={() => setLocationSettingsOpen(false)}
+          >
+            <View style={{ padding: 24, gap: 16 }}>
+              <Text style={ui.body}>
+                {Platform.OS === 'web'
+                  ? 'Open your browser’s site settings, allow location for Parkey, then try again.'
+                  : 'Enable location access for Parkey in your device settings, then try again.'}
+              </Text>
+              <Button
+                onPress={() => {
+                  setLocationSettingsOpen(false)
+                  centerOnMyLocation()
+                }}
+              >
+                Try location again
+              </Button>
+            </View>
+          </ModalSheet>
+        ) : null}
+        {nav.selectedId &&
+        !selected &&
+        parking.settled &&
+        storage === 'ready' &&
+        !panel ? (
+          <View style={StyleSheet.absoluteFill}>
+            <ArchitecturePage
+              title="Parking unavailable"
+              subtitle="This record is not in the current published map data. It may have changed or been removed."
+              onBack={() => updateNavigation({ selectedId: null }, 'replace')}
+            >
+              <Button
+                onPress={() =>
+                  updateNavigation({ selectedId: null }, 'replace')
+                }
+              >
+                Explore Parking
+              </Button>
+            </ArchitecturePage>
           </View>
         ) : null}
-        {consent.confirmation}
-        {(!discoveryVisible ||
-          selected ||
-          (controlsVisible && sheet.position !== 'expanded')) &&
-        !searchActive ? (
-          <View
-            style={[
-              styles.mapInfo,
-              {
-                bottom:
-                  Math.max(cameraBottom, insets.bottom) +
-                  (discoveryVisible && !selected ? 72 : 12),
-              },
-            ]}
-          >
-            <MapAttribution onPress={() => setPanel('info')} />
+        {panel === 'empty' ? (
+          <View style={StyleSheet.absoluteFill}>
+            <EmptyResultsPage
+              summary={[
+                nav.query || 'Current map area',
+                hasFilters ? 'Selected filters' : 'All parking',
+              ].join(' - ')}
+              filtered={hasFilters}
+              onBack={() => closeNavigation({ panel: null })}
+              onClear={() =>
+                updateNavigation(
+                  { panel: null, filter: 'all', fees: 'all', features: [] },
+                  'replace',
+                )
+              }
+              onSearch={() =>
+                updateNavigation({ panel: null, searching: true }, 'replace')
+              }
+            />
           </View>
+        ) : null}
+        {panel === 'location' ? (
+          <View style={StyleSheet.absoluteFill}>
+            <LocationPage
+              status={location.status}
+              onBack={() => closeNavigation({ panel: null })}
+              onLocate={centerOnMyLocation}
+              onSearch={() =>
+                updateNavigation({ panel: null, searching: true }, 'replace')
+              }
+              onWebSettings={() => setLocationSettingsOpen(true)}
+            />
+          </View>
+        ) : null}
+        {panel === 'filters' ? (
+          <View style={StyleSheet.absoluteFill}>
+            <ParkingFiltersPage
+              kind={filter}
+              fees={feeFilter}
+              selectedFeatures={nav.features}
+              onBack={() => closeNavigation({ panel: null })}
+              onApply={(filter, fees, features) => {
+                updateNavigation(
+                  { filter, fees, features, panel: null },
+                  'replace',
+                )
+              }}
+            />
+          </View>
+        ) : null}
+        {panel === 'appearance' ? (
+          <View style={StyleSheet.absoluteFill}>
+            <AppearanceScreen
+              onBack={() =>
+                closeNavigation({
+                  panel:
+                    appearanceReturn.current === 'appearance'
+                      ? null
+                      : appearanceReturn.current,
+                })
+              }
+            />
+          </View>
+        ) : null}
+        {panel === 'saved' ? (
+          <SavedPlaces
+            local={local}
+            onParkingDirections={startDirections}
+            onLocateAddress={location.locate}
+            onClose={() => setPanel(null)}
+            onAddPlace={() =>
+              updateNavigation({
+                panel: null,
+                selectedId: null,
+                searching: true,
+                position: 'expanded',
+              })
+            }
+            records={[...parking.knownRecords, ...previews]}
+            locating={location.status === 'locating'}
+            locationError={saveLocationError ?? locationMessage}
+            onSaveParked={() => {
+              setSaveLocationError(null)
+              void location.locate().then(async (point) => {
+                if (!point) {
+                  setSaveLocationError(
+                    'Your location could not be saved. Check location access and try again.',
+                  )
+                  return
+                }
+                if (await local.park(point)) {
+                  center(point)
+                  track({ name: 'parked_spot_saved' })
+                }
+              })
+            }}
+            onCenter={(point) => {
+              updateNavigation(
+                { panel: null, selectedId: null, center: point, route: false },
+                'replace',
+              )
+            }}
+            onDirections={() => {
+              const parked = local.state.parked
+              if (parked)
+                void Linking.openURL(
+                  `https://www.google.com/maps/dir/?api=1&destination=${parked.coordinate[1]},${parked.coordinate[0]}&travelmode=walking`,
+                )
+            }}
+            onSelect={(record) => {
+              clearRoute()
+              setRouteTarget(null)
+              updateNavigation(
+                {
+                  panel: null,
+                  selectedId: record.id,
+                  view: 'map',
+                  details: true,
+                  center: anchor(record.geometry),
+                  route: false,
+                },
+                'replace',
+              )
+              viewed(record)
+            }}
+          />
+        ) : null}
+        {panel === 'you' ? (
+          <ParkingProfile
+            onAdd={() => startContribution()}
+            onSaved={() => updateNavigation({ panel: 'saved' })}
+            onPreferences={() => updateNavigation({ panel: 'filters' })}
+            onClose={() => setPanel(null)}
+            local={local}
+            drafts={drafts}
+            storage={storage}
+            onReviewDraft={setReviewDraft}
+            onInfo={() => setPanel('info')}
+            onDeleteDraft={async (id) => {
+              if (saving.current || storage !== 'ready') return false
+              saving.current = true
+              try {
+                const next = drafts.filter((draft) => draft.id !== id)
+                await writeContributions(next)
+                setDrafts(next)
+                return true
+              } catch {
+                return false
+              } finally {
+                saving.current = false
+              }
+            }}
+          />
+        ) : null}
+        {reviewDraft ? (
+          <ReportSubmission
+            key={reviewDraft.id}
+            draft={reviewDraft}
+            onClose={() => setReviewDraft(null)}
+            onAttempt={() =>
+              updateReportDraft(reviewDraft.id, {
+                submissionAttemptedAt: new Date().toISOString(),
+              })
+            }
+            onReceipt={(receipt) =>
+              updateReportDraft(reviewDraft.id, { submission: receipt })
+            }
+          />
+        ) : null}
+        {panel === 'info' ? (
+          <MapInformation
+            samples={samples}
+            onSamples={(enabled) => {
+              clearRoute()
+              setRouteTarget(null)
+              setSamples(
+                developmentSamplesEnabled(enabled, process.env.NODE_ENV),
+              )
+              setSelected(null)
+              if (enabled) center(PILOT_CENTER)
+            }}
+            drafts={drafts}
+            setDrafts={setDrafts}
+            storage={storage}
+            onStorageReady={() => setStorage('ready')}
+            onClose={() => setPanel(null)}
+          />
+        ) : null}
+        {(discoveryVisible && !searchActive && !(nav.details && selected)) ||
+        (panel === 'saved' && local.state.favorites.length > 0) ||
+        panel === 'you' ? (
+          <BottomNavigation
+            selected={
+              panel === 'saved' ? 'saved' : panel === 'you' ? 'you' : 'map'
+            }
+            bottom={insets.bottom}
+            onSelect={(tab) => setPanel(tab === 'map' ? null : tab)}
+          />
         ) : null}
       </View>
-      {selectedPlace ? (
-        <ModalSheet
-          title={selectedPlace.name}
-          onClose={() => setSelectedPlace(null)}
-        >
-          <ScrollView
-            contentContainerStyle={{
-              paddingHorizontal: 24,
-              paddingBottom: 24,
-              gap: 16,
-            }}
-          >
-            <Text style={ui.body}>
-              {selectedPlace.address || 'Address unavailable'}
-            </Text>
-            <Text style={ui.small}>
-              Mapped place; this does not confirm parking or visitor access.
-            </Text>
-            <Button
-              onPress={() => {
-                clearRoute()
-                setRouteTarget(null)
-                navigationViewportPrivate.current = false
-                updateNavigation(parkingNearDestination(selectedPlace))
-                setAreaRefresh(false)
-                setRevision((current) => current + 1)
-                setSelectedPlace(null)
-              }}
-            >
-              Find Parking Nearby
-            </Button>
-          </ScrollView>
-        </ModalSheet>
-      ) : null}
-      {locationSettingsOpen ? (
-        <ModalSheet
-          title="Location settings"
-          onClose={() => setLocationSettingsOpen(false)}
-        >
-          <View style={{ padding: 24, gap: 16 }}>
-            <Text style={ui.body}>
-              {Platform.OS === 'web'
-                ? 'Open your browser’s site settings, allow location for Parkey, then try again.'
-                : 'Enable location access for Parkey in your device settings, then try again.'}
-            </Text>
-            <Button
-              onPress={() => {
-                setLocationSettingsOpen(false)
-                centerOnMyLocation()
-              }}
-            >
-              Try location again
-            </Button>
-          </View>
-        </ModalSheet>
-      ) : null}
-      {panel === 'saved' ? (
-        <SavedPlaces
-          local={local}
-          onLocateAddress={location.locate}
-          onClose={() => setPanel(null)}
-          onAddPlace={() =>
-            updateNavigation({
-              panel: null,
-              selectedId: null,
-              searching: true,
-              position: 'expanded',
-            })
-          }
-          records={[...parking.knownRecords, ...previews]}
-          locating={location.status === 'locating'}
-          locationError={saveLocationError ?? locationMessage}
-          onSaveParked={() => {
-            setSaveLocationError(null)
-            void location.locate().then(async (point) => {
-              if (!point) {
-                setSaveLocationError(
-                  'Your location could not be saved. Check location access and try again.',
-                )
-                return
-              }
-              if (await local.park(point)) {
-                center(point)
-                track({ name: 'parked_spot_saved' })
-              }
-            })
-          }}
-          onCenter={(point) => {
-            updateNavigation(
-              { panel: null, selectedId: null, center: point, route: false },
-              'replace',
-            )
-          }}
-          onDirections={() => {
-            const parked = local.state.parked
-            if (parked)
-              void Linking.openURL(
-                `https://www.google.com/maps/dir/?api=1&destination=${parked.coordinate[1]},${parked.coordinate[0]}&travelmode=walking`,
-              )
-          }}
-          onSelect={(record) => {
-            clearRoute()
-            setRouteTarget(null)
-            updateNavigation(
-              {
-                panel: null,
-                selectedId: record.id,
-                center: anchor(record.geometry),
-                route: false,
-              },
-              'replace',
-            )
-            viewed(record)
-          }}
-        />
-      ) : null}
-      {panel === 'you' ? (
-        <ParkingProfile
-          onClose={() => setPanel(null)}
-          local={local}
-          drafts={drafts}
-          storage={storage}
-          onReviewDraft={setReviewDraft}
-          onInfo={() => setPanel('info')}
-          onDeleteDraft={async (id) => {
-            if (saving.current || storage !== 'ready') return false
-            saving.current = true
-            try {
-              const next = drafts.filter((draft) => draft.id !== id)
-              await writeContributions(next)
-              setDrafts(next)
-              return true
-            } catch {
-              return false
-            } finally {
-              saving.current = false
-            }
-          }}
-        />
-      ) : null}
-      {reviewDraft ? (
-        <ReportSubmission
-          key={reviewDraft.id}
-          draft={reviewDraft}
-          onClose={() => setReviewDraft(null)}
-          onAttempt={() =>
-            updateReportDraft(reviewDraft.id, {
-              submissionAttemptedAt: new Date().toISOString(),
-            })
-          }
-          onReceipt={(receipt) =>
-            updateReportDraft(reviewDraft.id, { submission: receipt })
-          }
-        />
-      ) : null}
-      {menuOpen ? (
-        <ModalSheet title="parkey" onClose={() => setMenuOpen(false)}>
-          <View style={styles.menu}>
-            {(
-              [
-                { label: 'Saved places', action: () => setPanel('saved') },
-                { label: 'Add parking', action: () => startContribution() },
-                { label: 'Your parking', action: () => setPanel('you') },
-                { label: 'Map information', action: () => setPanel('info') },
-              ] as const
-            ).map((item) => (
-              <Pressable
-                key={item.label}
-                accessibilityRole="button"
-                onPress={() => {
-                  setMenuOpen(false)
-                  item.action()
-                }}
-                style={({ pressed }) => [
-                  styles.menuItem,
-                  pressed && ui.pressed,
-                ]}
-              >
-                <Text style={ui.heading}>{item.label}</Text>
-              </Pressable>
-            ))}
-          </View>
-        </ModalSheet>
-      ) : null}
-      {panel === 'info' ? (
-        <MapInformation
-          samples={samples}
-          onSamples={(enabled) => {
-            clearRoute()
-            setRouteTarget(null)
-            setSamples(developmentSamplesEnabled(enabled, process.env.NODE_ENV))
-            setSelected(null)
-            if (enabled) center(PILOT_CENTER)
-          }}
-          drafts={drafts}
-          setDrafts={setDrafts}
-          storage={storage}
-          onStorageReady={() => setStorage('ready')}
-          onClose={() => setPanel(null)}
-        />
-      ) : null}
-      {(discoveryVisible && !selected && !searchActive) || fullPageActive ? (
-        <BottomNavigation
-          selected={
-            panel === 'saved' ? 'saved' : panel === 'you' ? 'you' : 'map'
-          }
-          bottom={insets.bottom}
-          onAdd={() => startContribution()}
-          onSelect={(tab) => setPanel(tab === 'map' ? null : tab)}
-        />
-      ) : null}
-    </View>
+    </AppearanceNavigation>
   )
 }
 
@@ -2329,90 +2463,12 @@ const useStyles = createThemedStyles(({ colors }) =>
       maxWidth: 620,
       alignSelf: 'center',
     },
-    mapHeader: { flexDirection: 'row', justifyContent: 'space-between' },
-    sheetContent: { gap: 24, paddingTop: 8, paddingBottom: 16 },
-    resultsHeading: { gap: 6, paddingHorizontal: 24 },
-    resultRow: { paddingHorizontal: 24 },
-    menu: { paddingHorizontal: 24, paddingBottom: 16 },
-    menuItem: { minHeight: 56, justifyContent: 'center' },
-    filterOverlay: {
-      position: 'absolute',
-      left: 0,
-      right: 0,
-      maxWidth: 620,
-      marginHorizontal: 'auto',
-    },
-    nearbyStrip: {
-      paddingHorizontal: 16,
-      paddingBottom: 14,
-      gap: 12,
-      alignItems: 'flex-start',
-    },
-    nearbyEmpty: {
-      width: 300,
-      minHeight: 110,
-      padding: 16,
-      gap: 6,
-      borderRadius: 24,
-      backgroundColor: colors.soft,
-    },
-    filterStrip: { flexGrow: 0, flexShrink: 0 },
-    filters: { gap: 8, paddingHorizontal: 16 },
-    addParking: {
-      minWidth: 96,
-      minHeight: 48,
-      paddingHorizontal: 20,
-      borderRadius: 24,
-      backgroundColor: colors.positiveSurface,
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center',
-      gap: 8,
-    },
-    addParkingText: { color: colors.action, fontSize: 14, lineHeight: 20 },
-    peek: { flex: 1, paddingHorizontal: 24, overflow: 'hidden' },
-    unknownFees: { paddingTop: 16, fontFamily: fonts.semibold },
     mapInfo: { position: 'absolute', left: 16 },
     controls: {
       position: 'absolute',
       right: 16,
       gap: 12,
       alignItems: 'flex-end',
-    },
-    mapActions: { flexDirection: 'row', alignItems: 'center' },
-    mapListAction: {
-      width: 56,
-      height: 56,
-      backgroundColor: colors.surface,
-      borderWidth: 2,
-      borderColor: colors.border,
-    },
-    mapReturn: {
-      alignSelf: 'center',
-      minHeight: 44,
-      minWidth: 112,
-      paddingHorizontal: 20,
-      alignItems: 'center',
-      justifyContent: 'center',
-      marginTop: 8,
-      borderRadius: 24,
-      backgroundColor: colors.selected,
-      borderWidth: 1,
-      borderColor: colors.border,
-    },
-    mapReturnText: {
-      fontFamily: fonts.semibold,
-      fontSize: 15,
-      lineHeight: 20,
-      color: colors.brandDeep,
-    },
-    bottom: {
-      position: 'absolute',
-      left: 16,
-      right: 16,
-      gap: 8,
-      maxWidth: 584,
-      marginHorizontal: 'auto',
     },
     status: {
       flexDirection: 'row',
@@ -2460,6 +2516,5 @@ const useStyles = createThemedStyles(({ colors }) =>
       borderTopLeftRadius: 32,
       borderTopRightRadius: 32,
     },
-    panelContent: { paddingHorizontal: 24, paddingBottom: 24 },
   }),
 )

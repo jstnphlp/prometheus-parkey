@@ -1,14 +1,12 @@
 import { Image } from 'react-native'
 import type { ImageStyle, StyleProp } from 'react-native'
 
-import account from '../../assets/figma/onboarding/account-logo.png'
-import splash from '../../assets/figma/onboarding/splash-logo.png'
-import welcome from '../../assets/figma/onboarding/welcome-logo.png'
+import official from '../../assets/figma/interactive/official-parkey-p.png'
 
 const logos = {
-  splash: { source: splash, width: 176, height: 192.574 },
-  welcome: { source: welcome, width: 96, height: 106 },
-  account: { source: account, width: 66, height: 72.2152 },
+  splash: { source: official, width: 176, height: 192.574 },
+  welcome: { source: official, width: 96, height: 106 },
+  account: { source: official, width: 66, height: 72.2152 },
 } as const
 
 export function BrandLogo({

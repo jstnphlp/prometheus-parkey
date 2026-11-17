@@ -30,6 +30,11 @@ function NcrMap(props: NcrMapProps) {
   }, [props.target])
   return (
     <Map
+      accessible={!props.accessibilityHidden}
+      accessibilityElementsHidden={props.accessibilityHidden}
+      importantForAccessibility={
+        props.accessibilityHidden ? 'no-hide-descendants' : 'auto'
+      }
       style={styles.map}
       accessibilityLabel={
         props.data?.mode === 'research_preview'

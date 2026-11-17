@@ -3,11 +3,56 @@ import { readFileSync } from 'node:fs'
 import test from 'node:test'
 import { URL } from 'node:url'
 
-import { partitionParking } from './filters.ts'
+import { hasParkingFeature, partitionParking } from './filters.ts'
 
 const records = JSON.parse(
   readFileSync(new URL('./osm-pilot.json', import.meta.url)),
 )
+
+test('feature filters require explicit facts and reject conflicting hours and malformed counts', () => {
+  const record = { ...records[0], hours: null, osmTags: {} }
+  for (const feature of ['covered', '24h', 'ev', 'accessible'])
+    assert.equal(hasParkingFeature(record, feature), false)
+  const affirmative = {
+    ...record,
+    osmTags: {
+      covered: 'yes',
+      opening_hours: '24/7',
+      'capacity:charging': '2',
+      wheelchair: 'yes',
+    },
+  }
+  for (const feature of ['covered', '24h', 'ev', 'accessible'])
+    assert.equal(hasParkingFeature(affirmative, feature), true)
+  assert.equal(
+    hasParkingFeature({ ...affirmative, hours: 'Mo-Fr 08:00-17:00' }, '24h'),
+    false,
+  )
+  assert.equal(
+    hasParkingFeature(
+      {
+        ...record,
+        hours: '24/7',
+        osmTags: { opening_hours: 'Mo-Fr 08:00-17:00' },
+      },
+      '24h',
+    ),
+    false,
+  )
+  for (const count of ['unknown', '-1', '2.5', '0', '99999999999999999999999'])
+    assert.equal(
+      hasParkingFeature(
+        { ...record, osmTags: { 'capacity:charging': count } },
+        'ev',
+      ),
+      false,
+    )
+  assert.deepEqual(
+    partitionParking([record, affirmative], 'all', 'all', ['covered', 'ev'])
+      .matched,
+    [affirmative],
+  )
+})
 
 test('type filters reflect the real snapshot and do not conflate lots with garages', () => {
   for (const [kind, count] of [

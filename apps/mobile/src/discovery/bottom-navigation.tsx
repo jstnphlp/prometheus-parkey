@@ -6,10 +6,10 @@ import { Icon } from './ui'
 import { fonts } from './typography'
 
 export type DiscoveryTab = 'map' | 'saved' | 'you'
-export const TAB_BAR_HEIGHT = 64
+export const TAB_BAR_HEIGHT = 72
 const tabs = [
   { id: 'map', label: 'Explore', icon: 'locate' },
-  { id: 'saved', label: 'Saved', icon: 'bookmark' },
+  { id: 'saved', label: 'Saved', icon: 'heart' },
   { id: 'you', label: 'Profile', icon: 'person' },
 ] as const
 
@@ -45,6 +45,7 @@ export function BottomNavigation({
               accessibilityRole="tab"
               accessibilityLabel={tab.label}
               accessibilityState={{ selected: active }}
+              aria-selected={active}
               onPress={() => onSelect(tab.id)}
               style={({ pressed }) => [
                 styles.tab,
@@ -54,13 +55,10 @@ export function BottomNavigation({
               <Icon
                 name={tab.icon}
                 color={color}
-                size={23}
+                size={24}
                 filled={active && tab.id === 'saved'}
               />
               <Text style={[styles.label, { color }]}>{tab.label}</Text>
-              {active ? (
-                <View style={[styles.activeLine, { backgroundColor: color }]} />
-              ) : null}
             </MotionPressable>
           )
         })}
@@ -85,7 +83,7 @@ const useStyles = createThemedStyles(({ colors }) =>
       left: 0,
       right: 0,
       bottom: 0,
-      paddingTop: 8,
+      paddingTop: 10,
       paddingHorizontal: 16,
       flexDirection: 'row',
       alignItems: 'center',
@@ -102,7 +100,7 @@ const useStyles = createThemedStyles(({ colors }) =>
     },
     tab: {
       flex: 1,
-      minHeight: 56,
+      minHeight: 60,
       alignItems: 'center',
       justifyContent: 'center',
       gap: 4,
@@ -110,7 +108,7 @@ const useStyles = createThemedStyles(({ colors }) =>
     },
     label: {
       fontFamily: fonts.semibold,
-      fontSize: 12,
+      fontSize: 13,
       lineHeight: 18,
       textAlign: 'center',
     },

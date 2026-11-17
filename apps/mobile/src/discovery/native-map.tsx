@@ -14,12 +14,9 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { StyleSheet } from 'react-native'
 
 import { useTheme } from '../theme-provider'
-import parkingPinImage from '../../assets/figma/playful/mascot.png'
-import freePin from '../../assets/figma/playful/pin-free.png'
-import paidPin from '../../assets/figma/playful/pin-paid.png'
-import unknownPin from '../../assets/figma/playful/pin-unknown.png'
+import parkingPinImage from '../../assets/figma/interactive/parking-marker.png'
 import navUp from '../../assets/figma/playful/nav-up.png'
-import selectedParkingPinImage from '../../assets/figma/playful/mascot.png'
+import selectedParkingPinImage from '../../assets/figma/interactive/parking-marker-selected.png'
 import { placeFromFeature, placeLayer } from './places'
 import { config } from './config'
 import { createLocalMapBenchmark } from './local-map-benchmark'
@@ -37,9 +34,6 @@ import { useReducedMotion } from './use-reduced-motion'
 
 const parkingImages = {
   'parking-pin': parkingPinImage,
-  'pin-free': freePin,
-  'pin-paid': paidPin,
-  'pin-unknown': unknownPin,
   'nav-up': navUp,
   'parking-pin-selected': selectedParkingPinImage,
 }
@@ -148,6 +142,11 @@ export default function NativeMap(props: ParkingMapProps) {
 
   return (
     <Map
+      accessible={!props.accessibilityHidden}
+      accessibilityElementsHidden={props.accessibilityHidden}
+      importantForAccessibility={
+        props.accessibilityHidden ? 'no-hide-descendants' : 'auto'
+      }
       ref={map}
       style={StyleSheet.absoluteFill}
       mapStyle={props.night ? config.nightMapStyle : config.mapStyle}

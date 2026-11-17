@@ -1,208 +1,180 @@
 import { useRouter } from 'expo-router'
 import {
   Image,
+  ScrollView,
   StyleSheet,
   Text,
-  View,
   useWindowDimensions,
+  View,
 } from 'react-native'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-import type { ParkeyTheme } from '../theme-colors'
-import { useTheme, createThemedStyles } from '../theme-provider'
-import compare from '../../assets/figma/onboarding/phase3-compare.png'
-import discover from '../../assets/figma/onboarding/phase3-discover.png'
-import navigate from '../../assets/figma/onboarding/phase3-navigate.png'
+import compare from '../../assets/figma/interactive/compare.png'
+import discover from '../../assets/figma/interactive/discover.png'
+import navigate from '../../assets/figma/interactive/navigate.png'
+import { useArchitectureInsets } from '../components/architecture-page'
 import { BrandButton } from '../components/brand-button'
-import { ScreenContainer } from '../components/screen-container'
-import { typography } from '../theme'
-import { BackButton } from './back-button'
+import { fonts } from '../theme'
+import { createThemedStyles } from '../theme-provider'
 import { useCompletion } from './use-completion'
 
-const getSteps = (colors: ParkeyTheme['entryColors']) =>
-  ({
-    discover: {
-      number: 1,
-      title: 'Accessible Parking Spots.',
-      copy: 'From street parking and shopping malls to restaurants, open parking lots, and hidden spots you never knew existed.',
-      background: colors.canvas,
-      muted: colors.onPlumMuted,
-      button: 'plum',
-      image: discover,
-      imageLabel: 'Static illustration: discovering parking with Parkey',
-      next: '/onboarding/compare',
-    },
-    compare: {
-      number: 2,
-      title: 'Know before\nyou park.',
-      copy: 'Compare parking details when\nreliable information is available.',
-      background: colors.canvas,
-      muted: colors.onTealMuted,
-      button: 'plum',
-      image: compare,
-      imageLabel: 'Static preview: parking lot and garage information',
-      next: '/onboarding/navigate',
-    },
-    navigate: {
-      number: 3,
-      title: 'Your route. Your choice.',
-      copy: 'You can use your preferred navigation app to find your way to your parking spot.',
-      background: colors.canvas,
-      muted: colors.onPlumMuted,
-      button: 'plum',
-      image: navigate,
-      imageLabel: 'Static preview: directions to a parking entrance',
-      next: null,
-    },
-  }) as const
+const steps = {
+  discover: {
+    number: 1,
+    title: 'Accessible Parking\nSpots.',
+    copy: 'Find street parking, commercial lots and hidden spots near your destination.',
+    image: discover,
+    next: '/onboarding/compare',
+  },
+  compare: {
+    number: 2,
+    title: 'Know before\nyou park.',
+    copy: 'Compare parking rates, hours and useful details when reliable data is available.',
+    image: compare,
+    next: '/onboarding/navigate',
+  },
+  navigate: {
+    number: 3,
+    title: 'Your route. Your\nchoice.',
+    copy: 'Use your preferred navigation app to find your way to your parking spot.',
+    image: navigate,
+    next: null,
+  },
+} as const
 
-export function OnboardingScreen({
-  step,
-}: {
-  step: keyof ReturnType<typeof getSteps>
-}) {
-  const { entryColors: colors } = useTheme()
-  const steps = getSteps(colors)
+export function OnboardingScreen({ step }: { step: keyof typeof steps }) {
   const styles = useStyles()
-
-  const page = steps[step]
   const router = useRouter()
-  const { finish, busy } = useCompletion('/')
+  const insets = useArchitectureInsets()
   const { width, height } = useWindowDimensions()
-  const insets = useSafeAreaInsets()
-  const artScale = Math.min(Math.min(width, 440) / 390, height / 844)
+  const scale = Math.min(width / 430, 1.15)
+  const page = steps[step]
+  const { finish, busy } = useCompletion('/')
   return (
-    <ScreenContainer
-      backgroundColor={page.background}
-      contentStyle={[
-        styles.content,
-        {
-          paddingTop: Math.max(64, 97 - insets.top),
-          paddingBottom: Math.max(24, 65 - insets.bottom),
-        },
-      ]}
-      overlay={
-        <View style={styles.navigation}>
-          <View style={styles.back}>
-            <BackButton backgroundColor={page.background} />
-          </View>
-          <BrandButton
-            title="Skip"
-            variant="text"
-            onPress={finish}
-            disabled={busy}
-          />
-        </View>
-      }
-    >
-      <View style={[styles.artworkArea, { height: 351 * artScale }]}>
-        <Image
-          accessibilityRole="image"
-          accessibilityLabel={page.imageLabel}
-          source={page.image}
-          fadeDuration={0}
-          resizeMode="contain"
-          style={{
-            width: (step === 'navigate' ? 348 : 390) * artScale,
-            height:
-              (step === 'compare' ? 251 : step === 'navigate' ? 348 : 351) *
-              artScale,
-            marginTop:
-              (step === 'compare' ? 74 : step === 'navigate' ? 6 : 0) *
-              artScale,
-          }}
-        />
-      </View>
-      <Text
-        accessibilityRole="header"
-        accessibilityLabel={`Step ${page.number} of 3. ${page.title.replace('\n', ' ')}`}
-        style={styles.title}
-      >
-        {page.title}
-      </Text>
-      <Text
-        style={[
-          styles.copy,
-          step === 'discover' && styles.discoverCopy,
-          { color: page.muted },
+    <View style={styles.screen}>
+      <ScrollView
+        contentContainerStyle={[
+          styles.content,
+          {
+            minHeight: height,
+            paddingTop: insets.top,
+            paddingBottom: insets.bottom + 16,
+          },
         ]}
       >
-        {page.copy}
-      </Text>
-      <View style={styles.controls}>
-        <View
-          accessible={false}
-          importantForAccessibility="no-hide-descendants"
-          style={styles.progress}
-        >
-          {[1, 2, 3].map((number) => (
-            <View
-              key={number}
-              style={[
-                styles.segment,
-                number === page.number && styles.activeSegment,
-              ]}
-            />
-          ))}
+        <View style={[styles.artArea, { height: 478 * scale }]}>
+          <Image
+            source={page.image}
+            accessibilityLabel={`Illustration only: ${step === 'compare' ? 'example parking details, rates and distances' : step === 'discover' ? 'a parking facility' : 'navigation app choices'}`}
+            resizeMode="contain"
+            fadeDuration={0}
+            style={[
+              styles.art,
+              step === 'discover'
+                ? { width: 458 * scale, height: 344 * scale, top: 94 * scale }
+                : step === 'compare'
+                  ? {
+                      width: 420 * scale,
+                      height: 260 * scale,
+                      top: 140 * scale,
+                    }
+                  : {
+                      width: 380 * scale,
+                      height: 380 * scale,
+                      top: 70 * scale,
+                    },
+            ]}
+          />
         </View>
-      </View>
-      <BrandButton
-        title="Continue"
-        variant={page.button}
-        busy={busy}
-        onPress={() => {
-          if (page.next) router.push(page.next)
-          else void finish()
-        }}
-        style={styles.button}
-      />
-    </ScreenContainer>
+        <View style={styles.text}>
+          <Text
+            accessibilityRole="header"
+            accessibilityLabel={`Step ${page.number} of 3. ${page.title.replace('\n', ' ')}`}
+            style={styles.title}
+          >
+            {page.title}
+          </Text>
+          <Text style={styles.copy}>{page.copy}</Text>
+          {step === 'compare' ? (
+            <Text style={styles.disclosure}>
+              Illustration only{' \u00b7 '}example rates and distances
+            </Text>
+          ) : null}
+        </View>
+        <View style={styles.footer}>
+          <View accessible={false} style={styles.progress}>
+            {[1, 2, 3].map((number) => (
+              <View
+                key={number}
+                style={[styles.dot, page.number === number && styles.activeDot]}
+              />
+            ))}
+          </View>
+          <View style={styles.actions}>
+            <BrandButton
+              title="Skip"
+              variant="white"
+              disabled={busy}
+              onPress={() => void finish()}
+              style={styles.skip}
+            />
+            <BrandButton
+              title={page.next ? 'Next' : 'Continue'}
+              busy={busy}
+              onPress={() =>
+                page.next ? router.push(page.next) : void finish()
+              }
+              style={styles.next}
+            />
+          </View>
+        </View>
+      </ScrollView>
+    </View>
   )
 }
 
-const useStyles = createThemedStyles(({ entryColors: colors }) =>
+const useStyles = createThemedStyles(({ colors }) =>
   StyleSheet.create({
-    content: { paddingHorizontal: 28 },
-    navigation: {
-      width: '100%',
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      paddingRight: 7,
-    },
-    back: { flex: 1 },
+    screen: { flex: 1, backgroundColor: colors.canvas },
+    content: { flexGrow: 1, width: '100%', maxWidth: 540, alignSelf: 'center' },
+    artArea: { overflow: 'hidden', alignItems: 'center', flexShrink: 0 },
+    art: { position: 'absolute' },
+    text: { paddingHorizontal: 30, paddingTop: 48 },
     title: {
-      ...typography.title,
-      color: colors.text,
-      marginTop: 44,
+      fontFamily: fonts.black,
+      fontSize: 37,
+      lineHeight: 44,
+      color: colors.ink,
     },
     copy: {
-      ...typography.body,
-      minHeight: 57,
-      marginTop: 20,
-      marginHorizontal: 3,
+      fontFamily: fonts.regular,
+      fontSize: 16,
+      lineHeight: 20,
+      color: colors.muted,
+      marginTop: 48,
     },
-    discoverCopy: { ...typography.welcomeBody },
-    artworkArea: { marginHorizontal: -28, alignItems: 'center' },
-    controls: {
-      flexGrow: 1,
-      minHeight: 5,
-      marginTop: 34,
-      justifyContent: 'flex-end',
+    disclosure: {
+      fontFamily: fonts.medium,
+      fontSize: 11,
+      lineHeight: 16,
+      color: colors.muted,
+      marginTop: 8,
     },
+    footer: { marginTop: 'auto', paddingTop: 36, paddingHorizontal: 25 },
     progress: {
       alignSelf: 'center',
       flexDirection: 'row',
-      gap: 6,
+      gap: 10,
+      marginBottom: 32,
     },
-    segment: {
-      width: 5,
-      height: 5,
+    dot: {
+      width: 12,
+      height: 6,
       borderRadius: 3,
-      backgroundColor: colors.progressMuted,
-      opacity: 0.48,
+      backgroundColor: colors.border,
     },
-    activeSegment: { width: 23, backgroundColor: colors.card, opacity: 1 },
-    button: { marginTop: 25 },
+    activeDot: { width: 28, backgroundColor: colors.brand },
+    actions: { flexDirection: 'row', gap: 13 },
+    skip: { flex: 0.6, minHeight: 58, borderRadius: 17 },
+    next: { flex: 1, minHeight: 58, borderRadius: 17 },
   }),
 )

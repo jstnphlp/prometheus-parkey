@@ -1,12 +1,11 @@
 import type { ReactNode } from 'react'
-import { StyleSheet, Text } from 'react-native'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { Platform, StyleSheet, Text } from 'react-native'
 
 import { useTheme, createThemedStyles } from '../theme-provider'
 import { BrandLogo } from '../components/brand-logo'
 import { ScreenContainer } from '../components/screen-container'
 import { BackButton } from '../onboarding/back-button'
-import { typography } from '../theme'
+import { fonts, typography } from '../theme'
 import { useAuthSystemPopup } from './use-system-popup'
 
 export function AuthShell({
@@ -15,17 +14,18 @@ export function AuthShell({
   subtitle,
   children,
   onBack,
+  recovery = false,
 }: {
   registering?: boolean
   title: ReactNode
   subtitle: string
   children: ReactNode
   onBack?: () => void
+  recovery?: boolean
 }) {
   const { entryColors: colors } = useTheme()
   const styles = useStyles()
 
-  const insets = useSafeAreaInsets()
   useAuthSystemPopup()
   const background = colors.canvas
   return (
@@ -34,7 +34,7 @@ export function AuthShell({
       keyboardAware
       contentStyle={[
         styles.content,
-        { paddingTop: Math.max(20, 65 - insets.top) },
+        { paddingTop: Platform.OS === 'web' ? 77 : 33 },
       ]}
       overlay={
         <BackButton
@@ -43,13 +43,14 @@ export function AuthShell({
         />
       }
     >
-      <BrandLogo variant="account" />
+      <BrandLogo variant="account" style={{ width: 42, height: 47 }} />
       <Text
         accessibilityRole="header"
         style={[
           styles.title,
-          registering ? typography.accountTitle : typography.loginTitle,
+          registering ? typography.accountTitle : styles.signInTitle,
           !registering && styles.loginTitle,
+          recovery && { marginTop: 78 },
         ]}
       >
         {title}
@@ -59,6 +60,7 @@ export function AuthShell({
           styles.subtitle,
           { color: registering ? colors.onPlumMuted : colors.onDarkMuted },
           !registering && styles.loginSubtitle,
+          recovery && { marginTop: 18, lineHeight: 21 },
         ]}
       >
         {subtitle}
@@ -70,10 +72,16 @@ export function AuthShell({
 
 const useStyles = createThemedStyles(({ entryColors: colors }) =>
   StyleSheet.create({
-    content: { paddingHorizontal: 32, paddingBottom: 28 },
+    content: { paddingHorizontal: 30, paddingBottom: 44 },
+    signInTitle: { fontFamily: fonts.extraBold, fontSize: 32, lineHeight: 38 },
     title: { color: colors.text, marginTop: 17 },
-    loginTitle: { marginTop: 19 },
-    subtitle: { ...typography.accountBody, marginTop: 6 },
-    loginSubtitle: { marginTop: 14 },
+    loginTitle: { marginTop: 34 },
+    subtitle: { ...typography.accountBody, marginTop: 18 },
+    loginSubtitle: {
+      marginTop: 30,
+      fontFamily: fonts.regular,
+      fontSize: 16,
+      lineHeight: 24,
+    },
   }),
 )

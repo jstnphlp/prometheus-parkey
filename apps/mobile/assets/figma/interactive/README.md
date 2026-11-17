@@ -24,3 +24,11 @@ inset and an Outfit ExtraBold P. Geometry is from frame `249:3020`, marker
 `249:3040`; the selected variant adds a white outline for map contrast. These
 are UI symbols, not replacements for the official Parkey logo. All parking
 uses the same marker; a source fee never becomes a vacancy indicator.
+
+The official P is the unmodified approved vector from About frame `249:4563`
+(asset layer `8581e.svg`), rasterized locally for native and web. Its original
+magenta and teal fills stay fixed across themes. The welcome wordmark follows
+frame `249:4141`: Baloo 2 ExtraBold, magenta arkey lettering beside that P.
+`Baloo2-variable.ttf` comes from google/fonts `ofl/baloo2`, with its bundled
+SIL Open Font License; it generates this static wordmark, not application UI text.
+All application UI typography remains Outfit.

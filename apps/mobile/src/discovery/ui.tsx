@@ -12,6 +12,18 @@ import { fonts } from './typography'
 export const detailsPeekHeight = 420
 
 const paths = {
+  link: 'M10 13a5 5 0 0 0 7 .1l3-3a5 5 0 0 0-7-7l-2 2M14 11a5 5 0 0 0-7-.1l-3 3a5 5 0 0 0 7 7l2-2',
+  phone: 'M7 2h10v20H7V2ZM10 18h4',
+  heart:
+    'M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 22l8.8-9.6a5.5 5.5 0 0 0 0-7.8Z',
+  more: 'M5 12h.01M12 12h.01M19 12h.01',
+  help: 'M9 9a3 3 0 1 1 5 2c-2 1-2 2-2 3M12 17h.01M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0',
+  lock: 'M5 10h14v11H5V10ZM8 10V6a4 4 0 0 1 8 0v4',
+  logout: 'M10 3H4v18h6M8 12h13m-5-5 5 5-5 5',
+  language:
+    'M3 5h12M9 2v3M6 5c1 6 4 9 8 11M13 5c-1 6-4 9-9 12M13 22l4-11 4 11M15 18h4',
+  filter: 'M4 6h16M4 12h16M4 18h16M8 3v6M16 9v6M10 15v6',
+  car: 'm5 7 2-4h10l2 4M3 10l2-3h14l2 3v8H3v-8ZM6 18v3M18 18v3M6 12h2M16 12h2',
   share: 'M12 16V2m-5 5 5-5 5 5M5 10H3v12h18V10h-2',
   appearance: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18ZM12 3v18',
   person: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM4 22v-2a8 8 0 0 1 16 0v2',
@@ -49,7 +61,7 @@ export function ParkingPinIcon({ size = 28 }: { size?: number }) {
         d={parkingPin.outline}
         fill={colors.surface}
         stroke={colors.brand}
-        strokeWidth={2}
+        strokeWidth={1.75}
         strokeLinejoin="round"
       />
       <Path d={parkingPin.letter} fill={colors.brand} fillRule="evenodd" />
@@ -87,7 +99,9 @@ export function Icon({
       <Path
         d={paths[name]}
         fill={
-          (name === 'star' || name === 'bookmark') && filled ? color : 'none'
+          (name === 'star' || name === 'bookmark' || name === 'heart') && filled
+            ? color
+            : 'none'
         }
       />
     </Svg>
@@ -95,6 +109,7 @@ export function Icon({
 }
 
 export function IconButton({
+  testID,
   icon,
   label,
   onPress,
@@ -103,6 +118,7 @@ export function IconButton({
   selected = false,
   color,
 }: {
+  testID?: string | undefined
   icon: IconName
   label: string
   onPress: () => void
@@ -122,6 +138,7 @@ export function IconButton({
   }, [label])
   return (
     <MotionPressable
+      testID={testID}
       ref={target}
       accessibilityRole="button"
       accessibilityLabel={label}
@@ -345,15 +362,17 @@ export const useUI = createThemedStyles(({ colors }) =>
       gap: 10,
     },
     buttonText: {
-      fontFamily: fonts.bold,
+      fontFamily: fonts.semibold,
       flexShrink: 1,
-      fontSize: 17,
+      fontSize: 16,
       lineHeight: 24,
       color: colors.onAction,
       textAlign: 'center',
     },
     secondary: {
-      backgroundColor: colors.selected,
+      backgroundColor: colors.canvas,
+      borderWidth: 1,
+      borderColor: colors.navigationActive,
     },
     choice: {
       minHeight: 44,

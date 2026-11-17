@@ -12,6 +12,28 @@ import { stepSheet } from './sheet-state.ts'
 import { draftParking } from './draft-parking.ts'
 import { validateContribution } from './model.ts'
 
+test('dedicated list, details, feature filters and Appearance have stable URL and Back layers', () => {
+  const state = {
+    ...navigationDefaults,
+    view: 'list',
+    details: true,
+    selectedId: 'osm:test',
+    features: ['covered', 'ev'],
+    panel: 'appearance',
+  }
+  assert.deepEqual(parseNavigation(navigationSearch(state)), state)
+  const layers = navigationLayers(state)
+  assert.equal(layers[0].view, 'map')
+  assert.equal(layers[1].view, 'list')
+  assert.equal(layers[2].selectedId, 'osm:test')
+  assert.equal(layers[3].details, true)
+  assert.equal(layers[4].panel, 'appearance')
+  assert.deepEqual(
+    parseNavigation('?features=vacancy,covered,covered').features,
+    ['covered'],
+  )
+})
+
 test('URL round trip preserves a selected spot, query, filter, sheet, layer and map center', () => {
   const state = {
     ...navigationDefaults,
@@ -26,6 +48,10 @@ test('URL round trip preserves a selected spot, query, filter, sheet, layer and 
   assert.deepEqual(parseNavigation(navigationSearch(state)), state)
 })
 test('invalid links and preferences cannot create unsupported filters, layers or coordinates', () => {
+  assert.deepEqual(
+    parseNavigation('?details=1&directions=1&tab=Entrance'),
+    navigationDefaults,
+  )
   const state = parseNavigation(
     '?filter=invalid&sheet=invalid&panel=other&lng=999&lat=999',
     parsePreferences('{bad JSON'),

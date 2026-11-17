@@ -12,7 +12,6 @@ import {
 } from 'react-native'
 import type { Coordinate } from '@parkey/shared-types'
 
-import { AppearanceButton } from '../components/appearance-button'
 import { useTheme, createThemedStyles } from '../theme-provider'
 import { config } from './config'
 import {
@@ -54,7 +53,7 @@ export function DestinationSearch({
   onLocate: () => void
   onActive: (active: boolean) => void
   onSaved: () => void
-  layout?: 'overlay' | 'sheet'
+  layout?: 'overlay' | 'sheet' | 'page'
   fillSheet?: boolean
   placeholder?: string
 }) {
@@ -260,6 +259,7 @@ export function DestinationSearch({
           : {
               maxHeight: Math.max(0, (visibleBottom ?? height) - cardTop - 64),
             },
+        layout === 'page' && styles.pageContainer,
         layout === 'overlay' && ui.shadow,
         !active &&
           layout === 'sheet' && { padding: 0, backgroundColor: 'transparent' },
@@ -285,9 +285,10 @@ export function DestinationSearch({
           styles.bar,
           layout === 'sheet' && styles.sheetBar,
           focused && styles.focusedBar,
+          layout === 'page' && styles.pageBar,
         ]}
       >
-        {active && fillSheet ? (
+        {active && fillSheet && layout !== 'page' ? (
           <IconButton
             icon="back"
             label="Close destination search"
@@ -324,9 +325,13 @@ export function DestinationSearch({
           onSubmitEditing={() => void search()}
           submitBehavior="submit"
           returnKeyType="search"
-          style={[styles.input, layout === 'sheet' && styles.sheetInput]}
+          style={[
+            styles.input,
+            layout === 'sheet' && styles.sheetInput,
+            layout === 'page' && styles.pageInput,
+          ]}
         />
-        <AppearanceButton />
+
         {query ? (
           <IconButton
             icon="close"
@@ -335,6 +340,13 @@ export function DestinationSearch({
           />
         ) : null}
       </View>
+      {active && layout === 'page' ? (
+        <Text style={styles.suggestionsLabel}>
+          {query.trim().length >= 3
+            ? 'SUGGESTED DESTINATIONS'
+            : 'RECENT DESTINATIONS'}
+        </Text>
+      ) : null}
       {active ? (
         <ScrollView
           testID="destination-results"
@@ -344,6 +356,7 @@ export function DestinationSearch({
             ui.sheetScroll,
             styles.results,
             fillSheet && { flex: 1, maxHeight: undefined },
+            layout === 'page' && { maxHeight: undefined, marginTop: 0 },
           ]}
           contentContainerStyle={styles.resultsContent}
         >
@@ -473,7 +486,8 @@ export function DestinationSearch({
                   onPress={() => select(destination)}
                 />
               ))}
-              {hasSearchProvider && (notice || layout === 'sheet') ? (
+              {hasSearchProvider &&
+              (notice || layout === 'sheet' || layout === 'page') ? (
                 <Text style={[ui.small, styles.message]}>
                   Searching shares your text with Parkey and its search
                   provider. Map-area bias is sent only when using the legacy
@@ -528,6 +542,34 @@ function DestinationRow({
 
 const useStyles = createThemedStyles(({ colors }) =>
   StyleSheet.create({
+    pageContainer: {
+      padding: 0,
+      backgroundColor: colors.canvas,
+      borderRadius: 0,
+      maxHeight: undefined,
+    },
+    pageBar: {
+      minHeight: 63,
+      borderRadius: 14,
+      borderWidth: 1,
+      borderColor: colors.brand,
+      paddingHorizontal: 20,
+      backgroundColor: colors.surface,
+    },
+    pageInput: {
+      fontFamily: fonts.semibold,
+      fontSize: 16,
+      lineHeight: 24,
+      paddingVertical: 16,
+    },
+    suggestionsLabel: {
+      fontFamily: fonts.semibold,
+      fontSize: 14,
+      lineHeight: 20,
+      color: colors.muted,
+      marginTop: 40,
+      marginBottom: 20,
+    },
     searchButton: {
       width: 40,
       height: 40,
@@ -609,15 +651,20 @@ const useStyles = createThemedStyles(({ colors }) =>
     results: { flexShrink: 1, minHeight: 0, maxHeight: 360, marginTop: 8 },
     resultsContent: { paddingBottom: 4 },
     result: {
-      minHeight: 64,
+      minHeight: 84,
+      borderWidth: 1,
+      borderColor: colors.border,
+      borderRadius: 14,
+      paddingHorizontal: 16,
+      marginBottom: 15,
       flexDirection: 'row',
       alignItems: 'center',
       gap: 12,
       paddingVertical: 12,
     },
     resultName: {
-      fontFamily: fonts.bold,
-      fontSize: 17,
+      fontFamily: fonts.semibold,
+      fontSize: 18,
       lineHeight: 22,
       color: colors.ink,
     },

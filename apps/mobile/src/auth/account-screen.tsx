@@ -9,6 +9,7 @@ import { usePopup } from '../components/popup-provider'
 import { typography } from '../theme'
 import { AuthShell } from './auth-shell'
 import { useAuth } from './provider'
+import { AuthChoices } from './auth-choices'
 
 export function AccountScreen() {
   const { entryColors: colors } = useTheme()
@@ -42,6 +43,8 @@ export function AccountScreen() {
       })
     }
   }
+  if (auth.state.status === 'signed-out' || auth.state.status === 'unavailable')
+    return <AuthChoices />
   return (
     <AuthShell title="Your account" subtitle="Your Parkey account">
       <View style={styles.content}>

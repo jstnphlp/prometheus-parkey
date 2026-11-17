@@ -1,14 +1,18 @@
-import Constants from 'expo-constants'
 import { useRouter } from 'expo-router'
 import type { ReactNode } from 'react'
 import { useState } from 'react'
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { AccountEntry } from '../auth/account-entry'
 import { useAuth } from '../auth/provider'
-import { BrandLogo } from '../components/brand-logo'
-import { Icon, useUI } from '../discovery/ui'
+import { AboutParkey } from './about-parkey'
+import { AccountMenu } from './account-menu'
+import { HelpCenter } from './help-center'
+import { BottomNavigation } from '../discovery/bottom-navigation'
+import { useArchitectureInsets } from '../components/architecture-page'
+import { ArchitecturePage } from '../components/architecture-page'
+import { useOpenAppearance } from '../components/appearance-navigation'
+import { Icon, IconButton, useUI } from '../discovery/ui'
 import { diagnosticStatus } from '../discovery/telemetry'
 import { fonts } from '../theme'
 import { createThemedStyles, useTheme } from '../theme-provider'
@@ -35,31 +39,34 @@ export function SettingsPage({
 }) {
   const router = useRouter()
   const styles = useStyles()
-  const ui = useUI()
   const { colors } = useTheme()
+  const insets = useArchitectureInsets()
   return (
-    <SafeAreaView style={styles.screen}>
+    <View style={styles.screen}>
       <ScrollView
-        contentContainerStyle={styles.content}
+        contentContainerStyle={[
+          styles.content,
+          { paddingTop: insets.top + 6, paddingBottom: insets.bottom + 24 },
+        ]}
         keyboardShouldPersistTaps="handled"
       >
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Back"
-          style={styles.back}
-          onPress={() =>
-            router.canGoBack() ? router.back() : router.replace('/')
-          }
-        >
-          <Icon name="back" color={colors.back} size={24} />
-        </Pressable>
-        <Text accessibilityRole="header" style={styles.title}>
-          {title}
-        </Text>
+        <View style={styles.detailHeader}>
+          <IconButton
+            icon="back"
+            label="Back"
+            color={colors.back}
+            onPress={() =>
+              router.canGoBack() ? router.back() : router.replace('/')
+            }
+            style={{ backgroundColor: 'transparent' }}
+          />
+          <Text accessibilityRole="header" style={styles.detailTitle}>
+            {title}
+          </Text>
+        </View>
         {children}
-        <Text style={ui.small}>Explore parking without an account.</Text>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   )
 }
 
@@ -68,12 +75,13 @@ export function SettingsLinks() {
   const ui = useUI()
   const styles = useStyles()
   const { colors, mode } = useTheme()
+  const openAppearance = useOpenAppearance()
   return (
     <View style={styles.group}>
       <Pressable
         accessibilityRole="button"
         style={({ pressed }) => [styles.row, pressed && ui.pressed]}
-        onPress={() => router.push('/appearance')}
+        onPress={openAppearance}
       >
         <View style={ui.flex}>
           <Text style={ui.heading}>Appearance</Text>
@@ -97,53 +105,53 @@ export function SettingsLinks() {
 
 export function SettingsScreen() {
   const router = useRouter()
-  const ui = useUI()
   const styles = useStyles()
-  const { colors } = useTheme()
+  const insets = useArchitectureInsets()
+  const [tools, setTools] = useState(false)
+  const ui = useUI()
   return (
-    <SettingsPage title="Profile & Settings">
-      <BrandLogo
-        variant="account"
-        style={{ width: 42, height: 47, alignSelf: 'flex-start' }}
-      />
-      <AccountEntry />
-      <Pressable
-        accessibilityRole="button"
-        onPress={() => router.push('/appearance')}
-        style={({ pressed }) => [styles.row, pressed && ui.pressed]}
+    <View style={styles.screen}>
+      <ScrollView
+        contentContainerStyle={{
+          paddingHorizontal: 23,
+          paddingTop: insets.top + 6,
+          paddingBottom: insets.bottom + 96,
+        }}
       >
-        <Text style={[ui.heading, ui.flex]}>Appearance</Text>
-        <Icon name="chevronRight" color={colors.navigationActive} />
-      </Pressable>
-      {sections.map(([id, title]) => (
-        <Pressable
-          key={id}
-          accessibilityRole="button"
-          onPress={() =>
-            router.push({
-              pathname: '/settings/[section]',
-              params: { section: id },
-            })
-          }
-          style={({ pressed }) => [styles.row, pressed && ui.pressed]}
-        >
-          <Text style={[ui.heading, ui.flex]}>{title}</Text>
-          <Icon name="chevronRight" color={colors.navigationInactive} />
-        </Pressable>
-      ))}
-    </SettingsPage>
+        <AccountMenu
+          onSaved={() => router.replace('/?panel=saved')}
+          onPreferences={() => router.replace('/?panel=filters')}
+          onTools={() => setTools((value) => !value)}
+        />
+        {tools ? (
+          <Text style={ui.body}>
+            Open Explore to access private device drafts and map tools.
+          </Text>
+        ) : null}
+      </ScrollView>
+      <BottomNavigation
+        selected="you"
+        bottom={insets.bottom}
+        onSelect={(tab) =>
+          router.replace(
+            tab === 'map'
+              ? '/'
+              : tab === 'saved'
+                ? '/?panel=saved'
+                : '/settings',
+          )
+        }
+      />
+    </View>
   )
 }
 
 export function AppearanceChoices() {
-  const { mode, setMode, saving, error } = useTheme()
+  const { mode, setMode, saving, error, colors } = useTheme()
   const styles = useStyles()
   const ui = useUI()
   return (
     <View style={styles.group}>
-      <Text style={ui.body}>
-        Choose your Parkey colors. Your places and progress stay the same.
-      </Text>
       <View
         accessibilityRole="radiogroup"
         accessibilityLabel="Parkey appearance"
@@ -165,7 +173,6 @@ export function AppearanceChoices() {
                 onPress={() => void setMode(choice)}
                 style={({ pressed }) => [
                   styles.option,
-                  selected && styles.selected,
                   pressed && { opacity: 0.75 },
                 ]}
               >
@@ -193,29 +200,27 @@ export function AppearanceChoices() {
                   />
                 </View>
                 <View style={ui.flex}>
-                  <Text style={ui.heading}>{title}</Text>
-                  <Text style={ui.small}>
+                  <Text style={styles.optionTitle}>{title}</Text>
+                  <Text style={styles.optionSubtitle}>
                     {preview.dark ? 'Dark' : 'White'} background · magenta
                     actions
                   </Text>
-                  {selected ? (
-                    <Text style={[ui.small, { color: preview.tokens.pending }]}>
-                      Selected
-                    </Text>
-                  ) : null}
                 </View>
+                <Icon
+                  name={selected ? 'check' : 'chevronRight'}
+                  size={18}
+                  color={colors.navigationActive}
+                />
               </Pressable>
             )
           },
         )}
       </View>
-      <Text accessibilityLiveRegion="polite" style={ui.muted}>
-        {saving
-          ? 'Saving appearance…'
-          : error
-            ? 'You can retry saving by choosing a theme.'
-            : 'Saved on this device. You can change it anytime.'}
-      </Text>
+      {saving ? (
+        <Text accessibilityLiveRegion="polite" style={ui.small}>
+          Saving appearance...
+        </Text>
+      ) : null}
       {error ? (
         <Text accessibilityRole="alert" style={[ui.body, ui.error]}>
           {error}
@@ -225,65 +230,46 @@ export function AppearanceChoices() {
   )
 }
 
-export function AppearanceScreen() {
+export function AppearanceScreen({ onBack }: { onBack?: () => void }) {
+  const { error, saving } = useTheme()
+  const router = useRouter()
+  const styles = useStyles()
   return (
-    <SettingsPage title="Appearance">
+    <ArchitecturePage
+      title="Appearance"
+      subtitle="Select your preferred visual theme. You can change this any time."
+      onBack={
+        onBack ??
+        (() => (router.canGoBack() ? router.back() : router.replace('/')))
+      }
+      footer={
+        <View style={styles.appearanceNote}>
+          <Text style={styles.optionSubtitle}>
+            {saving
+              ? 'Saving your appearance...'
+              : error
+                ? 'Appearance is active for this session. Select it again to retry saving on this device.'
+                : 'Your appearance is saved on this device. You can change it anytime.'}
+          </Text>
+        </View>
+      }
+    >
       <AppearanceChoices />
-    </SettingsPage>
+    </ArchitecturePage>
   )
 }
-
-const help = [
-  [
-    'Do I need an account?',
-    'No. Explore, search, saved parking and directions are available without registration.',
-  ],
-  [
-    'Does Parkey show free spaces?',
-    'Parkey shows known parking records, not live vacancy. Check signs, access rules and conditions when you arrive.',
-  ],
-  [
-    'Can I search without location access?',
-    'Yes. Open Search and enter a destination. Location is optional; enable it only when you want to recenter or navigate.',
-  ],
-  [
-    'How do saved places work?',
-    'Saved parking stays on this device. A saved label is a reminder, not confirmation of current access or availability.',
-  ],
-  [
-    'How do I report a correction?',
-    'Open parking details and save a local correction draft. Sending for private review requires the separately enabled report service and explicit consent. A report never publishes a record automatically.',
-  ],
-  [
-    'Why are directions unavailable?',
-    'Parking directions need a current reviewed entrance and the configured provider. If either is missing, Parkey explains the limitation instead of routing to an unverified entrance.',
-  ],
-] as const
 
 export function SettingsDetailScreen({ section }: { section: string }) {
   const ui = useUI()
   const styles = useStyles()
   const router = useRouter()
   const { state } = useAuth()
-  const [expanded, setExpanded] = useState<number | null>(null)
   const match = sections.find(([id]) => id === section)
   const id: SettingsSection | undefined = match?.[0]
   return (
     <SettingsPage title={match?.[1] ?? 'Settings'}>
       {id === 'help' ? (
-        help.map(([question, answer], index) => (
-          <View key={question} style={styles.group}>
-            <Pressable
-              accessibilityRole="button"
-              accessibilityState={{ expanded: expanded === index }}
-              onPress={() => setExpanded(expanded === index ? null : index)}
-              style={styles.row}
-            >
-              <Text style={ui.heading}>{question}</Text>
-            </Pressable>
-            {expanded === index ? <Text style={ui.body}>{answer}</Text> : null}
-          </View>
-        ))
+        <HelpCenter />
       ) : id === 'privacy' ? (
         <>
           <Text style={ui.heading}>Local by default</Text>
@@ -310,28 +296,40 @@ export function SettingsDetailScreen({ section }: { section: string }) {
           </Text>
         </>
       ) : id === 'about' ? (
-        <>
-          <BrandLogo variant="account" />
-          <Text style={ui.heading}>
-            Parkey · {Constants.expoConfig?.version ?? 'Version unavailable'}
-          </Text>
-          <Text style={ui.body}>
-            Discover parking, compare sourced information and find directions.
-            No bookings or guaranteed spaces.
-          </Text>
-          <Text style={ui.muted}>
-            MapLibre renders the map. Map and parking data include ©
-            OpenStreetMap contributors. See Map information in Explore for the
-            sources used by that experience.
-          </Text>
-        </>
+        <AboutParkey />
       ) : id === 'language' ? (
         <>
-          <Text style={ui.heading}>English</Text>
-          <Text style={ui.body}>
-            English is the currently supported language. Additional translations
-            are not available yet.
+          <Text style={ui.heading}>Suggested</Text>
+          <View style={styles.languageRow}>
+            <Text style={[ui.body, ui.flex]}>English (US)</Text>
+            <Icon name="check" />
+          </View>
+          <Text style={ui.small}>
+            Additional translations are not available yet.
           </Text>
+          <View style={styles.divider} />
+          <Text style={ui.heading}>Language</Text>
+          {[
+            'English (UK)',
+            'Filipino (PH)',
+            'Mandarin',
+            'Spanish',
+            'French',
+            'Arabic',
+            'Bengali',
+            'Russian',
+            'Japanese',
+            'Korean',
+            'Indonesian',
+          ].map((language) => (
+            <View
+              key={language}
+              accessibilityState={{ disabled: true }}
+              style={styles.languageRow}
+            >
+              <Text style={[ui.body, { opacity: 0.65 }]}>{language}</Text>
+            </View>
+          ))}
         </>
       ) : id === 'vehicles' ? (
         <>
@@ -394,6 +392,27 @@ export function SettingsDetailScreen({ section }: { section: string }) {
 const useStyles = createThemedStyles(({ colors }) =>
   StyleSheet.create({
     screen: { flex: 1, backgroundColor: colors.canvas },
+    detailHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 9,
+      marginLeft: -13,
+      marginBottom: 8,
+    },
+    detailTitle: {
+      fontFamily: fonts.semibold,
+      fontSize: 24,
+      lineHeight: 32,
+      color: colors.ink,
+      flex: 1,
+    },
+    languageRow: {
+      minHeight: 40,
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 12,
+    },
+    divider: { height: 1, backgroundColor: colors.border },
     content: {
       width: '100%',
       maxWidth: 540,
@@ -431,14 +450,34 @@ const useStyles = createThemedStyles(({ colors }) =>
       gap: 16,
       borderWidth: 1,
       borderColor: colors.border,
-      borderRadius: 16,
+      borderRadius: 14,
       backgroundColor: colors.surface,
-      padding: 16,
+      padding: 14,
       minHeight: 100,
     },
-    selected: { borderColor: colors.navigationActive, borderWidth: 2 },
+    optionTitle: {
+      fontFamily: fonts.semibold,
+      fontSize: 18,
+      lineHeight: 24,
+      color: colors.ink,
+    },
+    optionSubtitle: {
+      fontFamily: fonts.medium,
+      fontSize: 12,
+      lineHeight: 18,
+      color: colors.muted,
+    },
+    appearanceNote: {
+      minHeight: 75,
+      borderRadius: 13,
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.border,
+      justifyContent: 'center',
+      padding: 18,
+    },
     preview: {
-      width: 74,
+      width: 84,
       height: 66,
       borderWidth: 1,
       borderRadius: 12,

@@ -11,6 +11,7 @@ import {
   parkingLoadReducer,
   scheduleParkingRefresh,
 } from './parking-results'
+import type { ParkingLoadState } from './parking-results'
 
 const rawSnapshot: unknown = snapshot
 const pilotRecords: DiscoveryParking[] = Array.isArray(rawSnapshot)
@@ -18,11 +19,20 @@ const pilotRecords: DiscoveryParking[] = Array.isArray(rawSnapshot)
   : []
 
 export function useParking(viewport: Viewport, revision: number) {
-  const [remote, dispatch] = useReducer(parkingLoadReducer, {
-    records: [],
-    truncated: false,
-    status: 'idle',
-  })
+  const [remote, dispatch] = useReducer(
+    (
+      state: ParkingLoadState & { viewport: Viewport | null },
+      action: {
+        event: Parameters<typeof parkingLoadReducer>[1]
+        viewport: Viewport
+      },
+    ) => ({
+      ...parkingLoadReducer(state, action.event),
+      viewport:
+        action.event.type === 'success' ? action.viewport : state.viewport,
+    }),
+    { records: [], truncated: false, status: 'idle', viewport: null },
+  )
   const canQuery = queryableViewport(viewport)
 
   useEffect(() => {
@@ -30,7 +40,7 @@ export function useParking(viewport: Viewport, revision: number) {
     return scheduleParkingRefresh(
       (signal) =>
         fetchParking(config.supabaseUrl, config.supabaseKey, viewport, signal),
-      dispatch,
+      (event) => dispatch({ event, viewport }),
     )
   }, [viewport, revision])
 
@@ -63,6 +73,9 @@ export function useParking(viewport: Viewport, revision: number) {
     status: canQuery ? remote.status : 'idle',
     truncated: canQuery && remote.truncated,
     canQuery,
+    settled:
+      !hasDiscoveryBackend ||
+      (remote.viewport === viewport && remote.status === 'idle'),
     snapshotCount: hasDiscoveryBackend ? 0 : pilotRecords.length,
   }
 }

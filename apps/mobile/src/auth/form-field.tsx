@@ -22,12 +22,14 @@ export function FormField({
   error,
   password = false,
   inputRef,
+  compact = false,
   ...props
 }: TextInputProps & {
   label: string
   icon: BrandIconName
   error?: string | null
   password?: boolean
+  compact?: boolean
   inputRef?: Ref<ComponentRef<typeof TextInput>>
 }) {
   const { entryColors: colors } = useTheme()
@@ -38,27 +40,32 @@ export function FormField({
   const { fontScale } = useWindowDimensions()
   const fieldId = `auth-${label.toLowerCase().replaceAll(' ', '-')}`
   return (
-    <View style={styles.group}>
-      {fontScale >= 1.3 ? (
-        <Text
-          accessible={false}
-          importantForAccessibility="no"
-          accessibilityElementsHidden
-          style={styles.visibleLabel}
-        >
-          {label}
-        </Text>
-      ) : null}
+    <View style={[styles.group, compact && { gap: 4 }]}>
+      <Text
+        accessible={false}
+        importantForAccessibility="no"
+        accessibilityElementsHidden
+        style={[
+          styles.visibleLabel,
+          compact && { fontSize: 12, lineHeight: 16 },
+        ]}
+      >
+        {label}
+      </Text>
       <View
         testID={`${fieldId}-container`}
         style={[
           styles.field,
-          { height: Math.max(50, Math.ceil(18 * fontScale + 28)) },
+          {
+            height: Math.max(compact ? 47 : 57, Math.ceil(18 * fontScale + 28)),
+          },
         ]}
       >
-        <View testID={`${fieldId}-icon`} style={styles.icon}>
-          <BrandIcon name={icon} />
-        </View>
+        {!password && !compact ? (
+          <View testID={`${fieldId}-icon`} style={styles.icon}>
+            <BrandIcon name={icon} />
+          </View>
+        ) : null}
         <View style={styles.inputSlot}>
           <TextInput
             {...props}
@@ -111,8 +118,13 @@ const getFieldColors = (colors: ParkeyTheme['entryColors']) =>
   }) as const
 const useStyles = createThemedStyles(({ entryColors: colors }) =>
   StyleSheet.create({
-    group: { gap: 4, width: '100%', minWidth: 0 },
-    visibleLabel: { ...typography.accountBody, color: colors.text },
+    group: { gap: 8, width: '100%', minWidth: 0 },
+    visibleLabel: {
+      fontFamily: fonts.semibold,
+      fontSize: 14,
+      lineHeight: 20,
+      color: colors.text,
+    },
     field: {
       width: '100%',
       minWidth: 0,
@@ -151,8 +163,8 @@ const useStyles = createThemedStyles(({ entryColors: colors }) =>
       textAlignVertical: 'center',
       color: colors.fieldInk,
       fontFamily: fonts.medium,
-      fontSize: 14,
-      lineHeight: 18,
+      fontSize: 15,
+      lineHeight: 20,
     },
     toggle: {
       width: 44,

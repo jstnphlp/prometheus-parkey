@@ -5,10 +5,8 @@ import { useEffect, useEffectEvent, useMemo, useRef, useState } from 'react'
 import 'maplibre-gl/dist/maplibre-gl.css'
 
 import { useTheme } from '../theme-provider'
-import selectedSpot from '../../assets/figma/playful/mascot.png'
-import freePin from '../../assets/figma/playful/pin-free.png'
-import paidPin from '../../assets/figma/playful/pin-paid.png'
-import unknownPin from '../../assets/figma/playful/pin-unknown.png'
+import parkingMarker from '../../assets/figma/interactive/parking-marker.png'
+import selectedSpot from '../../assets/figma/interactive/parking-marker-selected.png'
 import navUp from '../../assets/figma/playful/nav-up.png'
 import { placeFromFeature, placeLayer } from './places'
 import { config } from './config'
@@ -30,6 +28,10 @@ export default function ParkingMap(props: ParkingMapProps) {
 
   const container = useRef<HTMLDivElement>(null)
   const map = useRef<Map | null>(null)
+  useEffect(() => {
+    if (container.current)
+      container.current.inert = props.accessibilityHidden ?? false
+  }, [props.accessibilityHidden])
   const previousTarget = useRef(props.target)
   const focusUntil = useRef(0)
   const [initialCamera] = useState(() => ({
@@ -174,11 +176,8 @@ export default function ParkingMap(props: ParkingMapProps) {
     instance.jumpTo(initialCamera)
     map.current = instance
     const markerAssets = new globalThis.Map<string, number>([
-      ['parking-pin', selectedSpot],
+      ['parking-pin', parkingMarker],
       ['parking-pin-selected', selectedSpot],
-      ['pin-free', freePin],
-      ['pin-paid', paidPin],
-      ['pin-unknown', unknownPin],
       ['nav-up', navUp],
     ])
     // MapLibre awaits this resolver before treating an image as missing.

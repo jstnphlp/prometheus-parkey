@@ -194,22 +194,18 @@ export function AccountForm({ mode }: { mode: 'register' | 'login' }) {
     <AuthShell
       registering={registering}
       title={
-        pending ? (
-          'Check your email'
-        ) : registering ? (
-          'Create an Account'
-        ) : (
-          <>
-            <Text style={styles.cyan}>Sign in</Text> to your{'\n'}Account
-          </>
-        )
+        pending
+          ? 'Check your email'
+          : registering
+            ? 'Create an Account'
+            : 'Sign in to your\naccount'
       }
       subtitle={
         pending
           ? 'Confirm your email to finish creating your account'
           : registering
             ? 'Start discovering parking with Parkey'
-            : 'Enter your email and password to log in'
+            : 'Use your email and password to get back to parking.'
       }
     >
       {pending ? (
@@ -224,6 +220,7 @@ export function AccountForm({ mode }: { mode: 'register' | 'login' }) {
           <View style={[styles.fields, !registering && styles.loginFields]}>
             {registering ? (
               <FormField
+                compact={registering}
                 label="Full name"
                 icon="person"
                 value={name}
@@ -240,6 +237,7 @@ export function AccountForm({ mode }: { mode: 'register' | 'login' }) {
               />
             ) : null}
             <FormField
+              compact={registering}
               label="Email address"
               placeholder={registering ? 'Email address' : 'you@example.com'}
               icon="mail"
@@ -256,6 +254,7 @@ export function AccountForm({ mode }: { mode: 'register' | 'login' }) {
               error={attempted ? errors.email : null}
             />
             <FormField
+              compact={registering}
               label="Password"
               icon="lock"
               password
@@ -288,9 +287,12 @@ export function AccountForm({ mode }: { mode: 'register' | 'login' }) {
                   : null
               }
             />
-            {registering ? <PasswordRequirements password={password} /> : null}
+            {registering && (password || attempted) ? (
+              <PasswordRequirements password={password} />
+            ) : null}
             {registering ? (
               <FormField
+                compact={registering}
                 label="Confirm password"
                 icon="shield-check"
                 password
@@ -358,7 +360,7 @@ export function AccountForm({ mode }: { mode: 'register' | 'login' }) {
       )}
       <View style={styles.footer}>
         <Text style={[styles.optionText, registering && styles.plumMuted]}>
-          {registering ? 'Already have an account?' : "Don't have an account?"}
+          {registering ? 'Already have an account?' : 'New to Parkey?'}
         </Text>
         <Pressable
           accessibilityRole="link"
@@ -367,7 +369,7 @@ export function AccountForm({ mode }: { mode: 'register' | 'login' }) {
           style={styles.alternate}
         >
           <Text style={[styles.alternateText, !registering && styles.cyan]}>
-            {registering ? 'Log In' : 'Sign Up'}
+            {registering ? 'Log In' : 'Create an account'}
           </Text>
         </Pressable>
       </View>
@@ -378,13 +380,13 @@ export function AccountForm({ mode }: { mode: 'register' | 'login' }) {
 const useStyles = createThemedStyles(({ entryColors: colors }) =>
   StyleSheet.create({
     fields: { marginTop: 33, gap: 6 },
-    loginFields: { marginTop: 19 },
+    loginFields: { marginTop: 39, gap: 16 },
     primary: { marginTop: 24, minHeight: 50, borderRadius: 13 },
-    loginPrimary: { marginTop: 23 },
+    loginPrimary: { marginTop: 23, minHeight: 58, borderRadius: 15 },
     cyan: { color: colors.cyan },
     plumMuted: { color: colors.onPlumMuted },
     options: {
-      marginTop: 4,
+      marginTop: 12,
       flexDirection: 'row',
       flexWrap: 'wrap',
       justifyContent: 'space-between',
@@ -397,8 +399,8 @@ const useStyles = createThemedStyles(({ entryColors: colors }) =>
       paddingRight: 8,
     },
     checkbox: {
-      width: 14,
-      height: 14,
+      width: 22,
+      height: 22,
       borderWidth: 1,
       borderColor: colors.controlBorder,
       borderRadius: 3,
@@ -409,8 +411,8 @@ const useStyles = createThemedStyles(({ entryColors: colors }) =>
     forgot: { minHeight: 44, justifyContent: 'center' },
     optionText: {
       fontFamily: fonts.medium,
-      fontSize: 12,
-      lineHeight: 16,
+      fontSize: 14,
+      lineHeight: 20,
       color: colors.onDarkMuted,
     },
     footer: {

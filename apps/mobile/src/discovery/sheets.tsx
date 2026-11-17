@@ -10,10 +10,12 @@ export function ModalSheet({
   title,
   children,
   onClose,
+  centeredHeader = false,
 }: {
   title: string
   children: ReactNode
   onClose: () => void
+  centeredHeader?: boolean
 }) {
   const ui = useUI()
   const styles = useStyles()
@@ -43,14 +45,23 @@ export function ModalSheet({
         >
           <View style={styles.grip} />
           <View style={[ui.row, styles.header]}>
-            <Text accessibilityRole="header" style={[ui.sectionTitle, ui.flex]}>
+            <Text
+              accessibilityRole="header"
+              style={[
+                ui.sectionTitle,
+                ui.flex,
+                centeredHeader && { textAlign: 'center' },
+              ]}
+            >
               {title}
             </Text>
-            <IconButton
-              icon="close"
-              label={`Close ${title}`}
-              onPress={onClose}
-            />
+            {!centeredHeader ? (
+              <IconButton
+                icon="close"
+                label={`Close ${title}`}
+                onPress={onClose}
+              />
+            ) : null}
           </View>
           {children}
         </View>
@@ -68,8 +79,8 @@ const useStyles = createThemedStyles(({ colors }) =>
     },
     modal: {
       backgroundColor: colors.surface,
-      borderTopLeftRadius: 32,
-      borderTopRightRadius: 32,
+      borderTopLeftRadius: 22,
+      borderTopRightRadius: 22,
       width: '100%',
       maxWidth: 620,
       alignSelf: 'center',

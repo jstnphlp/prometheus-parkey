@@ -4,7 +4,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { useCompletion } from './use-completion'
 import { useTheme, createThemedStyles } from '../theme-provider'
-import wordmark from '../../assets/figma/onboarding/phase3-welcome-wordmark.png'
+import wordmark from '../../assets/figma/interactive/welcome-wordmark.png'
 import { BrandButton } from '../components/brand-button'
 import { BrandLogo } from '../components/brand-logo'
 import { ScreenContainer } from '../components/screen-container'
@@ -23,19 +23,10 @@ export function WelcomeScreen() {
       contentStyle={[
         styles.content,
         {
-          paddingTop: Math.max(24, 61 - insets.top),
-          paddingBottom: Math.max(24, 65 - insets.bottom),
+          paddingTop: Math.max(24, 88 - insets.top),
+          paddingBottom: Math.max(24, 67 - insets.bottom),
         },
       ]}
-      overlay={
-        <View style={styles.loginBackdrop}>
-          <BrandButton
-            title="Log In"
-            variant="text"
-            onPress={() => router.push('/login')}
-          />
-        </View>
-      }
     >
       <Text accessibilityRole="header" style={styles.heading}>
         Welcome
@@ -58,12 +49,13 @@ export function WelcomeScreen() {
       </View>
       <BrandButton
         title="Explore parking"
+        variant="text"
         onPress={() => void finish()}
         busy={busy}
-        style={styles.button}
+        style={[styles.button, styles.guest]}
       />
       <BrandButton
-        title="Show me around"
+        title="Get Started"
         onPress={() => router.push('/onboarding/discover')}
         style={styles.button}
       />
@@ -74,21 +66,25 @@ export function WelcomeScreen() {
 const useStyles = createThemedStyles(({ entryColors: colors }) =>
   StyleSheet.create({
     content: { paddingHorizontal: 29 },
+    guest: { position: 'absolute', bottom: 124, left: 29, right: 29 },
     heading: {
       ...typography.subtitle,
       color: colors.text,
       textAlign: 'center',
     },
-    hero: { flexGrow: 1, minHeight: 240, justifyContent: 'center' },
+    hero: {
+      flexGrow: 1,
+      minHeight: 240,
+      justifyContent: 'center',
+      paddingBottom: 20,
+    },
     lockup: {
-      backgroundColor: colors.primary,
       borderRadius: 24,
-      paddingVertical: 28,
+      paddingVertical: 0,
       flexDirection: 'row',
       alignItems: 'flex-start',
       justifyContent: 'center',
       gap: 3,
-      transform: [{ translateX: 7 }],
     },
     logo: { width: 42, height: 47, alignSelf: 'flex-start' },
     loginBackdrop: { backgroundColor: colors.canvas },
@@ -106,7 +102,7 @@ const useStyles = createThemedStyles(({ entryColors: colors }) =>
       marginLeft: 4,
     },
     button: {
-      minHeight: 50,
+      minHeight: 56,
       borderRadius: radius.compactButton,
     },
   }),

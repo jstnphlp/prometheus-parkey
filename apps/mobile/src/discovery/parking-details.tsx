@@ -3,6 +3,7 @@ import { useState } from 'react'
 import {
   Linking,
   Platform,
+  Pressable,
   ScrollView,
   Share,
   StyleSheet,
@@ -10,17 +11,21 @@ import {
   View,
 } from 'react-native'
 
-import { createThemedStyles } from '../theme-provider'
+import {
+  ArchitecturePage,
+  useArchitectureInsets,
+} from '../components/architecture-page'
 import { AppearanceButton } from '../components/appearance-button'
-import { FigmaAsset } from './figma-assets'
-import { MotionPressable, MotionView } from './motion'
+import { fonts } from '../theme'
+import { createThemedStyles, useTheme } from '../theme-provider'
+import { ParkingShareSheet } from './parking-share-sheet'
 import { parkingDetailData } from './parking-detail-data'
 import { reviewedParkingEntrance } from './parking-navigation'
-import { ParkingStatus } from './parking-status'
 import { parkingPhotos } from './photos'
+import { ParkingImage } from './parking-photos'
 import { SpotThumbnail } from './spot-photo-view'
-import { fonts } from './typography'
-import { Button, IconButton, useUI } from './ui'
+import ParkingMap from './parking-map'
+import { Button, Icon, IconButton, useUI } from './ui'
 
 export function ParkingDetails({
   parking,
@@ -35,6 +40,10 @@ export function ParkingDetails({
   storageError,
   onContentHeightChange,
   onScrollOffsetChange,
+  onBack,
+  detailTab,
+  onTabChange,
+  onViewSaved,
 }: {
   parking: DiscoveryParking
   now: Date
@@ -48,14 +57,26 @@ export function ParkingDetails({
   storageError: string | null
   onContentHeightChange: (height: number) => void
   onScrollOffsetChange: (offset: number) => void
+  onBack?: () => void
+  detailTab?: 'Info' | 'Rates' | 'Amenities' | 'Entrance'
+  onTabChange?: (tab: 'Info' | 'Rates' | 'Amenities' | 'Entrance') => void
+  onViewSaved?: () => void
 }) {
   const ui = useUI()
   const styles = useStyles()
+  const insets = useArchitectureInsets()
+  const { colors } = useTheme()
+  const [localTab, setLocalTab] = useState<
+    'Info' | 'Rates' | 'Amenities' | 'Entrance'
+  >('Info')
+  const tab = detailTab ?? localTab
+  const setTab = onTabChange ?? setLocalTab
+  const [shareOpen, setShareOpen] = useState(false)
   const [shareFeedback, setShareFeedback] = useState<string | null>(null)
-
   const details = parkingDetailData(parking, location, now)
   const photos = parkingPhotos(parking)
-  async function shareParking() {
+  const entrance = reviewedParkingEntrance(parking, now.getTime())
+  async function shareParking(copy = false) {
     const message = [
       details.title,
       parking.sourceUrl,
@@ -65,7 +86,10 @@ export function ParkingDetails({
       .join('\n')
     setShareFeedback(null)
     try {
-      if (Platform.OS === 'web' && typeof navigator.share !== 'function') {
+      if (
+        Platform.OS === 'web' &&
+        (copy || typeof navigator.share !== 'function')
+      ) {
         await navigator.clipboard.writeText(message)
         setShareFeedback('Parking information copied')
       } else await Share.share({ title: details.title, message })
@@ -75,359 +99,484 @@ export function ParkingDetails({
       )
     }
   }
-  const hours = details.chips.find((chip) => /open|closed|hours/i.test(chip))
-  const tiles = [
-    {
-      label: 'Hours',
-      value: hours === 'Open 24 hours' ? 'Open 24h' : (hours ?? 'Not recorded'),
-      icon: 'clock',
-    },
-    {
-      label: 'Fee',
-      value:
-        details.fee === 'Free'
-          ? 'Recorded no fee'
-          : (details.fee ?? 'Fee unknown'),
-      icon: 'fees',
-    },
-    {
-      label: 'Access',
-      value: details.access?.replaceAll('_', ' ') ?? 'Not recorded',
-      icon: 'access',
-    },
-  ] as const
-  const actions = (
-    <View style={styles.actions}>
-      <View style={ui.flex}>
-        <Button
-          testID="parking-get-directions"
-          icon="arrow"
-          disabled={!reviewedParkingEntrance(parking, now.getTime())}
-          onPress={onDirections}
-        >
-          Go
-        </Button>
-        {!reviewedParkingEntrance(parking, now.getTime()) ? (
-          <Text testID="parking-navigation-warning" style={ui.small}>
-            Navigation requires a confirmed entrance, visitor access and
-            operator authorization.
-          </Text>
-        ) : null}
-      </View>
-      <IconButton
-        icon="bookmark"
-        label={favorite ? 'Remove from favorites' : 'Save parking'}
-        selected={favorite}
-        disabled={favoriteDisabled || parking.sourceKind === 'sample'}
-        onPress={onFavorite}
-        style={styles.save}
-      />
-      <IconButton
-        icon="share"
-        label="Share parking"
-        onPress={() => void shareParking()}
-      />
-      <AppearanceButton />
-    </View>
+  const rows = details.rows.filter(
+    (row) =>
+      tab === 'Info' ||
+      (tab === 'Rates'
+        ? /fee|charge|hours|payment|stay|mon|tue|wed|thu|fri|sat|sun/i.test(
+            row.label,
+          )
+        : /covered|lit|supervised|accessible|charging|vehicles|height|surface/i.test(
+            row.label,
+          )),
   )
-  return (
-    <ScrollView
-      testID={expanded ? 'parking-details-expanded' : 'parking-preview'}
-      style={[ui.sheetScroll, ui.flex]}
-      nestedScrollEnabled
-      scrollEventThrottle={16}
-      onScroll={({ nativeEvent }) =>
-        onScrollOffsetChange(nativeEvent.contentOffset.y)
-      }
-    >
-      <MotionView
-        style={styles.content}
-        transitionKey={parking.id}
-        onLayout={({ nativeEvent }) =>
-          onContentHeightChange(nativeEvent.layout.height)
-        }
+  if (tab === 'Entrance')
+    return (
+      <ArchitecturePage
+        title="Entrance & Access"
+        subtitle="Locate the correct vehicle entrance."
+        onBack={() => setTab('Info')}
       >
-        <View style={styles.summary}>
-          <View style={ui.flex}>
-            <Text
-              testID="parking-detail-title"
-              accessibilityRole="header"
-              style={styles.title}
-            >
-              {details.title}
-            </Text>
-            {details.meta ? <Text style={ui.small}>{details.meta}</Text> : null}
-          </View>
-          <ParkingStatus details={details} />
+        <View style={styles.entranceMap}>
+          {entrance ? (
+            <ParkingMap
+              route={null}
+              records={[parking]}
+              selectedId={parking.id}
+              featuredId={null}
+              target={{ coordinate: entrance, revision: 0 }}
+              cameraPadding={{ top: 30, bottom: 30 }}
+              userLocation={null}
+              parkedLocation={null}
+              destination={entrance}
+              draftPoints={[]}
+              drawing={false}
+              searching={false}
+              onSelect={() => {}}
+              onMapPress={() => {}}
+              onViewport={() => {}}
+              onPan={() => {}}
+              onStatus={() => {}}
+            />
+          ) : (
+            <View style={styles.unknownEntrance}>
+              <Icon name="pin" size={40} color={colors.muted} />
+              <Text style={styles.body}>No reviewed vehicle entrance</Text>
+            </View>
+          )}
         </View>
-        <Text testID="parking-verification" style={[ui.small, styles.inset]}>
-          {details.verification}. No live availability
-        </Text>
-        <Text style={[ui.small, styles.inset]}>{details.geometryNote}</Text>
-        {details.warning ? (
-          <Text accessibilityRole="alert" style={[ui.small, styles.warning]}>
-            {details.warning}
+        <View style={styles.entranceNote}>
+          <Text style={styles.body}>
+            {entrance
+              ? 'Reviewed vehicle entrance. Confirm current signs and access on arrival.'
+              : 'Directions require a confirmed entrance, visitor access and operator authorization.'}
           </Text>
-        ) : null}
-        {storageError ? (
+        </View>
+        <Button disabled={!entrance} onPress={onDirections}>
+          Get Directions
+        </Button>
+      </ArchitecturePage>
+    )
+  return (
+    <>
+      {shareOpen ? (
+        <ParkingShareSheet
+          title={details.title}
+          onClose={() => setShareOpen(false)}
+          onShare={() => void shareParking()}
+          onCopy={() => void shareParking(true)}
+          feedback={shareFeedback}
+        />
+      ) : null}
+      <ScrollView
+        testID={expanded ? 'parking-details-expanded' : 'parking-preview'}
+        style={ui.flex}
+        contentContainerStyle={{
+          paddingBottom:
+            favorite && onViewSaved ? 100 + insets.bottom : insets.bottom,
+        }}
+        onScroll={({ nativeEvent }) =>
+          onScrollOffsetChange(nativeEvent.contentOffset.y)
+        }
+        scrollEventThrottle={16}
+        onContentSizeChange={(_, height) => onContentHeightChange(height)}
+      >
+        <View style={styles.hero}>
+          <ParkingImage
+            photo={photos[0]}
+            identityKey={parking.sourceUrl ?? parking.id}
+          />
+          <View style={styles.heroBack}>
+            {onBack ? (
+              <IconButton
+                icon="back"
+                label="Back to parking preview"
+                onPress={onBack}
+                color={colors.back}
+                style={styles.heroButton}
+              />
+            ) : null}
+          </View>
+          <View style={styles.heroActions}>
+            <IconButton
+              icon="heart"
+              color={colors.navigationActive}
+              label={favorite ? 'Remove from favorites' : 'Save parking'}
+              selected={favorite}
+              disabled={favoriteDisabled || parking.sourceKind === 'sample'}
+              onPress={onFavorite}
+              style={styles.heroButton}
+            />
+            <IconButton
+              icon="arrow"
+              label="Directions to parking"
+              disabled={!entrance}
+              onPress={onDirections}
+              style={styles.heroButton}
+            />
+          </View>
+        </View>
+        <View style={styles.summary}>
           <Text
-            accessibilityRole="alert"
-            style={[ui.small, ui.error, styles.inset]}
+            testID="parking-detail-title"
+            accessibilityRole="header"
+            style={styles.title}
           >
-            {storageError}
+            {details.title}
           </Text>
-        ) : null}
-        {expanded ? actions : null}
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.tiles}
-        >
-          {tiles.map((tile) => (
-            <View key={tile.label} style={styles.tile}>
-              <View style={styles.labelRow}>
-                <FigmaAsset name={tile.icon} size={24} />
-                <Text style={styles.label}>{tile.label}</Text>
-              </View>
-              <Text style={ui.heading}>{tile.value}</Text>
+          <Text style={styles.body}>
+            {parking.address || 'Address not recorded'}
+          </Text>
+          <Text testID="parking-verification" style={styles.body}>
+            {details.verification}. No live availability
+          </Text>
+          <View style={styles.statusRow}>
+            <View style={styles.status}>
+              <Text style={styles.statusText}>
+                {'\u25cf'} Availability unconfirmed
+              </Text>
             </View>
-          ))}
-        </ScrollView>
-        {!expanded ? actions : null}
-        {shareFeedback ? (
-          <Text
-            accessibilityLiveRegion="polite"
-            style={[ui.small, styles.inset]}
-          >
-            {shareFeedback}
-          </Text>
-        ) : null}
-        {expanded ? (
-          <>
-            {photos.length ? (
-              <SpotThumbnail parking={parking} name={details.title} strip />
-            ) : (
-              <View style={styles.photos}>
-                <View style={styles.photoBadge}>
-                  <FigmaAsset name="camera-brand" size={24} />
-                </View>
-                <View style={ui.flex}>
-                  <Text style={ui.heading}>No photos yet</Text>
-                  <Text style={ui.small}>
-                    Save a photo in a private device draft
-                  </Text>
-                </View>
-                <MotionPressable
-                  accessibilityRole="button"
-                  accessibilityLabel="Add a parking photo"
-                  onPress={onAddDetails}
-                  style={({ pressed }) => [styles.add, pressed && ui.pressed]}
-                >
-                  <Text style={[ui.heading, ui.link]}>Add</Text>
-                </MotionPressable>
-              </View>
-            )}
-            <View style={styles.source}>
-              <View style={styles.sourceRow}>
-                <FigmaAsset name="info-brand" size={24} />
-                <View style={ui.flex}>
-                  <Text style={ui.heading}>Source</Text>
-                  <Text style={ui.small}>
-                    {parking.sourceLabel} · {details.verification}
-                  </Text>
-                  <Text style={ui.small}>{details.sourceDate}</Text>
-                  <Text style={ui.small}>
-                    Source dates do not confirm current fees, hours or access.
-                  </Text>
-                  {details.freshness ? (
-                    <Text style={[ui.small, ui.error]}>
-                      {details.freshness}
-                    </Text>
-                  ) : null}
-                  {parking.sourceUrl ? (
-                    <MotionPressable
-                      accessibilityRole="link"
-                      onPress={() => {
-                        if (parking.sourceUrl)
-                          void Linking.openURL(parking.sourceUrl).catch(
-                            () => undefined,
-                          )
-                      }}
-                      style={styles.sourceLink}
-                    >
-                      <Text style={[ui.small, ui.link]}>
-                        View source record
-                      </Text>
-                    </MotionPressable>
-                  ) : null}
-                  {details.updated ? (
-                    <Text style={ui.small}>{details.updated}</Text>
-                  ) : null}
-                </View>
-              </View>
-              <MotionPressable
-                accessibilityRole="button"
-                accessibilityLabel="Suggest a correction"
-                onPress={onAddDetails}
-                style={({ pressed }) => [
-                  styles.sourceRow,
-                  styles.correction,
-                  pressed && ui.pressed,
-                ]}
+            <Text style={styles.distance}>
+              {details.meta || 'Travel time unavailable'}
+            </Text>
+          </View>
+          <View style={styles.actions}>
+            <View style={ui.flex}>
+              <Button
+                testID="parking-get-directions"
+                icon="arrow"
+                disabled={!entrance}
+                onPress={onDirections}
               >
-                <FigmaAsset name="pencil-brand" size={24} />
-                <View style={ui.flex}>
-                  <Text style={ui.heading}>Suggest a correction</Text>
-                  <Text style={ui.small}>
-                    Saved on this device only; not sent for review
-                  </Text>
-                </View>
-              </MotionPressable>
+                Get Direction
+              </Button>
             </View>
-            {details.rows
-              .filter(
-                (row) =>
-                  !['Fee', 'Spaces', 'Access'].includes(row.label) &&
-                  !(
-                    hours === 'Open 24 hours' &&
-                    details.week?.some((day) => day.day === row.label)
-                  ),
-              )
-              .map((row) => (
-                <MotionPressable
-                  key={`${row.label}:${row.value}`}
-                  disabled={!row.url}
-                  accessibilityRole={row.url ? 'link' : undefined}
-                  accessibilityLabel={`${row.label}: ${row.value}`}
-                  onPress={() => {
-                    if (row.url)
-                      void Linking.openURL(row.url).catch(() => undefined)
-                  }}
-                  style={styles.detailRow}
+            <View style={ui.flex}>
+              <Button
+                secondary
+                onPress={() => {
+                  setShareFeedback(null)
+                  setShareOpen(true)
+                }}
+              >
+                Share
+              </Button>
+            </View>
+          </View>
+          {details.warning ? (
+            <Text accessibilityRole="alert" style={[ui.small, styles.warning]}>
+              {details.warning}
+            </Text>
+          ) : null}
+          {storageError ? (
+            <Text accessibilityRole="alert" style={[ui.small, ui.error]}>
+              {storageError}
+            </Text>
+          ) : null}
+          {shareFeedback ? (
+            <Text accessibilityLiveRegion="polite" style={ui.small}>
+              {shareFeedback}
+            </Text>
+          ) : null}
+        </View>
+        <View
+          accessibilityRole="tablist"
+          accessibilityLabel="Parking information"
+          style={styles.tabs}
+        >
+          {(['Info', 'Rates', 'Amenities', 'Entrance'] as const).map(
+            (value) => (
+              <Pressable
+                key={value}
+                accessibilityRole="tab"
+                accessibilityLabel={value}
+                accessibilityState={{ selected: value === tab }}
+                aria-selected={value === tab}
+                onPress={() => setTab(value)}
+                style={[styles.tab, value === tab && styles.activeTab]}
+              >
+                <Text
+                  style={[
+                    styles.tabText,
+                    value === tab && { color: colors.navigationActive },
+                  ]}
                 >
-                  <Text style={[styles.label, { minWidth: 80 }]}>
-                    {row.label}
-                  </Text>
-                  <Text
-                    style={[ui.body, { flexShrink: 1 }, row.url && ui.link]}
-                  >
-                    {row.value}
-                  </Text>
-                </MotionPressable>
-              ))}
-          </>
-        ) : null}
-      </MotionView>
-    </ScrollView>
+                  {value}
+                </Text>
+              </Pressable>
+            ),
+          )}
+        </View>
+        <View style={styles.content}>
+          <Text accessibilityRole="header" style={styles.sectionTitle}>
+            {tab === 'Info' ? 'About' : tab}
+          </Text>
+          {!entrance ? (
+            <Text testID="parking-navigation-warning" style={ui.small}>
+              Navigation requires a confirmed entrance, visitor access and
+              operator authorization.
+            </Text>
+          ) : null}
+          {tab === 'Info' ? (
+            <>
+              <Text style={styles.body}>
+                Sourced parking information for your journey. Confirm posted
+                restrictions, fees and access before parking.
+              </Text>
+              <Text accessibilityRole="header" style={styles.sectionTitle}>
+                Parking
+              </Text>
+              <View style={styles.factCard}>
+                <Text style={styles.body}>{details.geometryNote}</Text>
+                <Text style={styles.body}>
+                  {details.chips
+                    .find((chip) => /open|closed|hours/i.test(chip))
+                    ?.replace('Open 24 hours', 'Open 24h') ||
+                    'Hours not recorded'}
+                </Text>
+                <Text style={styles.body}>{details.fee || 'Fee unknown'}</Text>
+                <Text style={styles.body}>
+                  {entrance
+                    ? 'Reviewed vehicle entrance'
+                    : 'Entrance not reviewed'}
+                </Text>
+              </View>
+            </>
+          ) : null}
+          {rows.length ? (
+            rows.map((row, index) => (
+              <Pressable
+                key={`${index}:${row.label}`}
+                disabled={!row.url}
+                accessibilityRole={row.url ? 'link' : undefined}
+                accessibilityLabel={`${row.label}: ${row.value}`}
+                onPress={() => {
+                  if (row.url)
+                    void Linking.openURL(row.url).catch(() => undefined)
+                }}
+                style={styles.factRow}
+              >
+                <Text style={styles.factLabel}>{row.label}</Text>
+                <Text style={[styles.body, { flex: 1 }, row.url && ui.link]}>
+                  {row.value}
+                </Text>
+              </Pressable>
+            ))
+          ) : (
+            <Text style={styles.body}>
+              No {tab.toLowerCase()} recorded by this source.
+            </Text>
+          )}
+          <Text accessibilityRole="header" style={styles.sectionTitle}>
+            Source information
+          </Text>
+          <View style={styles.factCard}>
+            <Text style={styles.body}>
+              {parking.sourceLabel}
+              {' \u00b7 '}
+              {details.verification}
+            </Text>
+            <Text style={styles.body}>{details.sourceDate}</Text>
+            <Text style={styles.body}>
+              Source dates do not confirm current fees, hours or access.
+            </Text>
+            {details.freshness ? (
+              <Text style={[ui.small, ui.error]}>{details.freshness}</Text>
+            ) : null}
+            {details.updated ? (
+              <Text style={styles.body}>{details.updated}</Text>
+            ) : null}
+            {parking.sourceUrl ? (
+              <Pressable
+                accessibilityRole="link"
+                onPress={() => {
+                  if (parking.sourceUrl)
+                    void Linking.openURL(parking.sourceUrl).catch(
+                      () => undefined,
+                    )
+                }}
+                style={styles.link}
+              >
+                <Text style={ui.link}>View source record</Text>
+              </Pressable>
+            ) : null}
+          </View>
+          {photos.length ? (
+            <SpotThumbnail parking={parking} name={details.title} strip />
+          ) : null}
+          <Button secondary onPress={onAddDetails}>
+            Suggest a correction
+          </Button>
+          <Text style={ui.small}>
+            Saved on this device only; not sent for review.
+          </Text>
+          <View style={styles.appearance}>
+            <Text style={styles.body}>Appearance</Text>
+            <AppearanceButton />
+          </View>
+        </View>
+      </ScrollView>
+      {favorite && onViewSaved ? (
+        <View
+          style={{
+            position: 'absolute',
+            bottom: insets.bottom + 14,
+            left: 26,
+            right: 26,
+          }}
+        >
+          <Button onPress={onViewSaved}>View Saved Parking</Button>
+        </View>
+      ) : null}
+    </>
   )
 }
+
 const useStyles = createThemedStyles(({ colors }) =>
   StyleSheet.create({
-    content: { gap: 14, paddingBottom: 2 },
-    sourceLink: { minHeight: 44, justifyContent: 'center' },
-    inset: { marginHorizontal: 16 },
-    summary: {
-      paddingHorizontal: 16,
+    hero: { height: 264, backgroundColor: colors.surface, overflow: 'hidden' },
+    heroBack: { position: 'absolute', top: 12, left: 15 },
+    heroActions: {
+      position: 'absolute',
+      top: 20,
+      right: 20,
       flexDirection: 'row',
-      alignItems: 'flex-start',
-      gap: 12,
+      gap: 8,
     },
-    title: {
-      fontFamily: fonts.bold,
-      fontSize: 20,
-      lineHeight: 24,
-      letterSpacing: -0.4,
-      color: colors.ink,
-    },
-    warning: {
-      marginHorizontal: 16,
-      padding: 12,
-      borderRadius: 16,
-      backgroundColor: colors.warningSurface,
-      color: colors.amber,
-    },
-    actions: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      paddingHorizontal: 16,
-      gap: 12,
-    },
-    save: {
-      width: 56,
-      height: 56,
-      borderRadius: 16,
-      backgroundColor: colors.surface,
-      borderWidth: 2,
-      borderColor: colors.border,
-    },
-    tiles: {
-      flexDirection: 'row',
-      alignItems: 'stretch',
-      gap: 10,
-      paddingHorizontal: 16,
-    },
-    tile: {
-      width: 132,
-      paddingHorizontal: 14,
-      paddingVertical: 12,
-      gap: 4,
-      borderRadius: 16,
-      backgroundColor: colors.soft,
-    },
-    labelRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-    label: {
-      fontFamily: fonts.bold,
-      fontSize: 12,
-      lineHeight: 15,
-      color: colors.muted,
-    },
-    photos: {
-      marginHorizontal: 16,
-      padding: 16,
-      borderRadius: 20,
-      backgroundColor: colors.soft,
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: 14,
-    },
-    photoBadge: {
+    heroButton: {
       width: 48,
       height: 48,
-      borderRadius: 999,
+      borderWidth: 0,
+      backgroundColor: colors.canvas,
+    },
+    summary: { paddingHorizontal: 26, paddingTop: 30, gap: 16 },
+    title: {
+      fontFamily: fonts.extraBold,
+      fontSize: 32,
+      lineHeight: 40,
+      color: colors.ink,
+    },
+    body: {
+      fontFamily: fonts.medium,
+      fontSize: 14,
+      lineHeight: 20,
+      color: colors.muted,
+    },
+    statusRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 16,
+      flexWrap: 'wrap',
+    },
+    status: {
+      minHeight: 36,
+      paddingHorizontal: 16,
+      paddingVertical: 8,
+      borderRadius: 12,
       backgroundColor: colors.surface,
-      alignItems: 'center',
-      justifyContent: 'center',
     },
-    add: {
-      minHeight: 44,
-      paddingHorizontal: 16,
-      borderRadius: 999,
-      backgroundColor: colors.selected,
-      justifyContent: 'center',
+    statusText: {
+      fontFamily: fonts.semibold,
+      fontSize: 12,
+      lineHeight: 18,
+      color: colors.navigationActive,
     },
-    source: {
-      marginHorizontal: 16,
-      borderRadius: 20,
-      backgroundColor: colors.soft,
-      overflow: 'hidden',
+    distance: {
+      flex: 1,
+      minWidth: 100,
+      fontFamily: fonts.regular,
+      fontSize: 11,
+      lineHeight: 16,
+      color: colors.muted,
     },
-    sourceRow: {
-      paddingHorizontal: 16,
-      paddingVertical: 14,
+    actions: { flexDirection: 'row', alignItems: 'center', gap: 16 },
+    warning: {
+      padding: 12,
+      borderRadius: 12,
+      color: colors.amber,
+      backgroundColor: colors.warningSurface,
+    },
+    tabs: {
       flexDirection: 'row',
-      alignItems: 'center',
-      gap: 12,
+      marginTop: 20,
+      paddingHorizontal: 24,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border,
     },
-    correction: {
-      borderTopWidth: 1,
+    tab: {
+      flex: 1,
+      minHeight: 56,
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderBottomWidth: 3,
+      borderBottomColor: 'transparent',
+    },
+    activeTab: { borderBottomColor: colors.navigationActive },
+    tabText: {
+      fontFamily: fonts.semibold,
+      fontSize: 14,
+      lineHeight: 20,
+      color: colors.muted,
+    },
+    content: {
+      paddingHorizontal: 26,
+      paddingTop: 32,
+      paddingBottom: 24,
+      gap: 18,
+    },
+    sectionTitle: {
+      fontFamily: fonts.extraBold,
+      fontSize: 23,
+      lineHeight: 30,
+      color: colors.ink,
+      marginTop: 4,
+    },
+    factCard: {
+      borderWidth: 1,
       borderColor: colors.border,
-      minHeight: 52,
-    },
-    detailRow: {
-      marginHorizontal: 16,
-      flexDirection: 'row',
+      borderRadius: 14,
+      padding: 18,
       gap: 12,
-      alignItems: 'flex-start',
+    },
+    factRow: {
+      flexDirection: 'row',
+      gap: 16,
+      paddingVertical: 14,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border,
+    },
+    factLabel: {
+      width: 100,
+      fontFamily: fonts.semibold,
+      fontSize: 14,
+      lineHeight: 20,
+      color: colors.ink,
+    },
+    link: { minHeight: 44, justifyContent: 'center' },
+    appearance: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+    entranceMap: {
+      height: 412,
+      marginHorizontal: -8,
+      borderRadius: 24,
+      overflow: 'hidden',
+      backgroundColor: colors.surface,
+    },
+    unknownEntrance: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 16,
+      padding: 24,
+    },
+    entranceNote: {
+      padding: 22,
+      borderRadius: 13,
+      backgroundColor: colors.surface,
+      marginVertical: 24,
     },
   }),
 )

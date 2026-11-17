@@ -1160,6 +1160,7 @@ export default function PilotDiscovery({
                 onSaved={() => setSheet('saved')}
                 onPreferences={() => setSheet('filters')}
                 onTools={() => setSheet('sources')}
+                toolsLabel="Map information"
               />
             </ScrollView>
           </View>

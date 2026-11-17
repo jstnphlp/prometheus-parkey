@@ -89,7 +89,7 @@ test('Map Saved and You share discovery navigation and public favorites survive 
     page.getByRole('heading', { name: 'Account', exact: true }),
   ).toBeVisible()
   await page
-    .getByRole('button', { name: 'Device drafts and map tools', exact: true })
+    .getByRole('button', { name: 'Map information', exact: true })
     .click()
   await expect(page.getByText('Map information', { exact: true })).toBeVisible()
   await expect(page.getByText(/Analytics collection is disabled/)).toBeVisible()
@@ -369,7 +369,7 @@ test('going offline closes private research and never writes candidate bodies to
   await openPilot(page)
   await page.getByRole('tab', { name: 'Profile', exact: true }).click()
   await page
-    .getByRole('button', { name: 'Device drafts and map tools', exact: true })
+    .getByRole('button', { name: 'Map information', exact: true })
     .click()
   await page.getByTestId('pilot-mode-candidate').click()
   await page.getByTestId('pilot-reviewer-token').fill(reviewerToken)
@@ -428,7 +428,7 @@ test('candidate session is explicit, memory only and cleared before public resul
   await openPilot(page)
   await page.getByRole('tab', { name: 'Profile', exact: true }).click()
   await page
-    .getByRole('button', { name: 'Device drafts and map tools', exact: true })
+    .getByRole('button', { name: 'Map information', exact: true })
     .click()
   await page.getByTestId('pilot-mode-candidate').click()
   await expect(page.getByTestId('pilot-record-qa-Manila')).toHaveCount(0)
@@ -453,7 +453,7 @@ test('candidate session is explicit, memory only and cleared before public resul
   await closeDetails(page)
   await page.getByRole('tab', { name: 'Profile', exact: true }).click()
   await page
-    .getByRole('button', { name: 'Device drafts and map tools', exact: true })
+    .getByRole('button', { name: 'Map information', exact: true })
     .click()
   await page.getByTestId('pilot-mode-public').click()
   await expect(page.getByTestId('pilot-candidate-warning')).toHaveCount(0)
@@ -471,7 +471,7 @@ test('server rejection cannot expose candidate records', async ({ page }) => {
   await openPilot(page)
   await page.getByRole('tab', { name: 'Profile', exact: true }).click()
   await page
-    .getByRole('button', { name: 'Device drafts and map tools', exact: true })
+    .getByRole('button', { name: 'Map information', exact: true })
     .click()
   await page.getByTestId('pilot-mode-candidate').click()
   await page

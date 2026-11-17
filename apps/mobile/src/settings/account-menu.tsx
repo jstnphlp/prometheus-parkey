@@ -16,11 +16,13 @@ export function AccountMenu({
   onPreferences,
   onTools,
   hasDeviceDrafts = false,
+  toolsLabel = 'Add parking information',
 }: {
   onSaved: () => void
   onPreferences: () => void
   onTools?: () => void
   hasDeviceDrafts?: boolean
+  toolsLabel?: string
 }) {
   const styles = useStyles()
   const { colors } = useTheme()
@@ -63,9 +65,7 @@ export function AccountMenu({
       ...(onTools
         ? [
             {
-              title: hasDeviceDrafts
-                ? 'Device drafts'
-                : 'Add parking information',
+              title: hasDeviceDrafts ? 'Device drafts' : toolsLabel,
               icon: 'info' as const,
               action: onTools,
             },

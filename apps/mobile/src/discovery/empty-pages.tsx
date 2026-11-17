@@ -112,12 +112,19 @@ export function EmptySavedPage({
           styles.content,
           {
             minHeight: height,
-            paddingTop: insets.top + 12,
+            paddingTop: insets.top + 6,
             paddingBottom: insets.bottom + 64,
           },
         ]}
       >
-        <View style={styles.savedHeader}>
+        <IconButton
+          icon="back"
+          label="Back to map"
+          color={colors.back}
+          onPress={onExplore}
+          style={styles.back}
+        />
+        <View style={[styles.savedHeader, { marginTop: 40 }]}>
           <Text accessibilityRole="header" style={styles.title}>
             Saved parking
           </Text>
@@ -246,7 +253,7 @@ const useStyles = createThemedStyles(({ colors }) =>
       alignSelf: 'center',
       alignItems: 'center',
       justifyContent: 'center',
-      marginTop: 186,
+      marginTop: 103,
       marginBottom: 26,
     },
   }),

@@ -1,7 +1,10 @@
 import { useState } from 'react'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
 
-import { ArchitecturePage } from '../components/architecture-page'
+import {
+  ArchitecturePage,
+  useArchitectureInsets,
+} from '../components/architecture-page'
 import { fonts } from '../theme'
 import { createThemedStyles, useTheme } from '../theme-provider'
 import type { DiscoveryFilter, FeeFilter, ParkingFeature } from './filters'
@@ -32,116 +35,131 @@ export function ParkingFiltersPage({
   ) => void
 }) {
   const styles = useStyles()
+  const insets = useArchitectureInsets()
   const ui = useUI()
   const { colors } = useTheme()
   const [draftKind, setKind] = useState(kind)
   const [draftFees, setFees] = useState(fees)
   const [draftFeatures, setFeatures] = useState(selectedFeatures)
   return (
-    <ArchitecturePage
-      title="Parking filters"
-      subtitle="Find parking that fits your needs."
-      onBack={onBack}
-    >
-      <Text style={styles.label}>PARKING FEATURES</Text>
-      <View style={styles.features}>
-        {features.map(([id, title]) => {
-          const checked = draftFeatures.includes(id)
-          return (
-            <Pressable
-              key={id}
-              accessibilityRole="checkbox"
-              accessibilityLabel={title}
-              accessibilityState={{ checked }}
-              aria-checked={checked}
-              onPress={() =>
-                setFeatures(
-                  checked
-                    ? draftFeatures.filter((feature) => feature !== id)
-                    : [...draftFeatures, id],
-                )
-              }
-              style={styles.feature}
-            >
-              <Text style={styles.featureText}>{title}</Text>
-              <View
-                style={[
-                  styles.checkbox,
-                  checked && {
-                    backgroundColor: colors.brand,
-                    borderColor: colors.brand,
-                  },
-                ]}
-              >
-                {checked ? (
-                  <Icon name="check" size={19} color={colors.onAction} />
-                ) : null}
-              </View>
-            </Pressable>
-          )
-        })}
-      </View>
-      <Text style={styles.label}>PARKING TYPE</Text>
-      <View style={styles.choices}>
-        {(
-          [
-            ['all', 'Any'],
-            ['garage', 'Garage'],
-            ['lot', 'Open lot'],
-            ['street', 'Street'],
-          ] as const
-        ).map(([id, title]) => (
-          <Choice
-            key={id}
-            selected={draftKind === id}
-            onPress={() => setKind(id)}
-          >
-            {title}
-          </Choice>
-        ))}
-      </View>
-      <Text style={styles.label}>RECORDED FEES</Text>
-      <View style={styles.choices}>
-        {(
-          [
-            ['all', 'Any'],
-            ['free', 'No fee'],
-            ['applies', 'Fee applies'],
-          ] as const
-        ).map(([id, title]) => (
-          <Choice
-            key={id}
-            selected={draftFees === id}
-            onPress={() => setFees(id)}
-          >
-            {title}
-          </Choice>
-        ))}
-      </View>
-      <Text style={[ui.small, { marginBottom: 24 }]}>
-        Filters use recorded source facts. Locations with unknown features are
-        excluded from selected feature filters.
-      </Text>
-      <Button onPress={() => onApply(draftKind, draftFees, draftFeatures)}>
-        Apply Filters
-      </Button>
-      <Pressable
-        accessibilityRole="button"
-        onPress={() => {
-          setKind('all')
-          setFees('all')
-          setFeatures([])
-        }}
-        style={styles.clear}
+    <View style={{ flex: 1 }}>
+      <ArchitecturePage
+        title="Filter parking"
+        subtitle="Choose what matters most to you."
+        onBack={onBack}
       >
-        <Text style={[ui.link, styles.featureText]}>Clear All Filters</Text>
-      </Pressable>
-    </ArchitecturePage>
+        <Text style={styles.label}>PARKING FEATURES</Text>
+        <View style={styles.features}>
+          {features.map(([id, title]) => {
+            const checked = draftFeatures.includes(id)
+            return (
+              <Pressable
+                key={id}
+                accessibilityRole="checkbox"
+                accessibilityLabel={title}
+                accessibilityState={{ checked }}
+                aria-checked={checked}
+                onPress={() =>
+                  setFeatures(
+                    checked
+                      ? draftFeatures.filter((feature) => feature !== id)
+                      : [...draftFeatures, id],
+                  )
+                }
+                style={styles.feature}
+              >
+                <Text style={styles.featureText}>{title}</Text>
+                <View
+                  style={[
+                    styles.checkbox,
+                    checked && {
+                      backgroundColor: colors.brand,
+                      borderColor: colors.brand,
+                    },
+                  ]}
+                >
+                  {checked ? (
+                    <Icon name="check" size={19} color={colors.onAction} />
+                  ) : null}
+                </View>
+              </Pressable>
+            )
+          })}
+        </View>
+        <Text style={styles.label}>PARKING TYPE</Text>
+        <View style={styles.choices}>
+          {(
+            [
+              ['all', 'Any'],
+              ['garage', 'Garage'],
+              ['lot', 'Open lot'],
+              ['street', 'Street'],
+            ] as const
+          ).map(([id, title]) => (
+            <Choice
+              key={id}
+              selected={draftKind === id}
+              onPress={() => setKind(id)}
+            >
+              {title}
+            </Choice>
+          ))}
+        </View>
+        <Text style={styles.label}>RECORDED FEES</Text>
+        <View style={styles.choices}>
+          {(
+            [
+              ['all', 'Any'],
+              ['free', 'No fee'],
+              ['applies', 'Fee applies'],
+            ] as const
+          ).map(([id, title]) => (
+            <Choice
+              key={id}
+              selected={draftFees === id}
+              onPress={() => setFees(id)}
+            >
+              {title}
+            </Choice>
+          ))}
+        </View>
+        <Text style={[ui.small, { marginBottom: 24 }]}>
+          Filters use recorded source facts. Locations with unknown features are
+          excluded from selected feature filters.
+        </Text>
+        <View style={{ height: 130 }} />
+      </ArchitecturePage>
+      <View style={[styles.footer, { paddingBottom: insets.bottom + 8 }]}>
+        <Button onPress={() => onApply(draftKind, draftFees, draftFeatures)}>
+          Apply Filters
+        </Button>
+        <Pressable
+          accessibilityRole="button"
+          onPress={() => {
+            setKind('all')
+            setFees('all')
+            setFeatures([])
+          }}
+          style={styles.clear}
+        >
+          <Text style={[ui.link, styles.featureText]}>Clear All Filters</Text>
+        </Pressable>
+      </View>
+    </View>
   )
 }
 
 const useStyles = createThemedStyles(({ colors }) =>
   StyleSheet.create({
+    footer: {
+      position: 'absolute',
+      bottom: 0,
+      left: 0,
+      right: 0,
+      paddingHorizontal: 28,
+      paddingTop: 12,
+      backgroundColor: colors.canvas,
+    },
     label: {
       fontFamily: fonts.semibold,
       fontSize: 14,
@@ -185,10 +203,10 @@ const useStyles = createThemedStyles(({ colors }) =>
       marginBottom: 24,
     },
     clear: {
-      minHeight: 56,
+      minHeight: 44,
       justifyContent: 'center',
       alignItems: 'center',
-      marginTop: 16,
+      marginTop: 8,
     },
   }),
 )

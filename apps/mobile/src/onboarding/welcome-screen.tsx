@@ -5,13 +5,14 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useCompletion } from './use-completion'
 import { useTheme, createThemedStyles } from '../theme-provider'
 import wordmark from '../../assets/figma/interactive/welcome-wordmark.png'
+import darkWordmark from '../../assets/figma/interactive/welcome-wordmark-dark.png'
 import { BrandButton } from '../components/brand-button'
 import { BrandLogo } from '../components/brand-logo'
 import { ScreenContainer } from '../components/screen-container'
 import { radius, typography } from '../theme'
 
 export function WelcomeScreen() {
-  const { entryColors: colors } = useTheme()
+  const { entryColors: colors, dark } = useTheme()
   const styles = useStyles()
 
   const { finish, busy } = useCompletion('/')
@@ -40,7 +41,7 @@ export function WelcomeScreen() {
         >
           <BrandLogo variant="welcome" style={styles.logo} />
           <Image
-            source={wordmark}
+            source={dark ? darkWordmark : wordmark}
             resizeMode="contain"
             style={styles.wordmark}
           />

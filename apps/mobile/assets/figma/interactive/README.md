@@ -32,3 +32,8 @@ frame `249:4141`: Baloo 2 ExtraBold, magenta arkey lettering beside that P.
 `Baloo2-variable.ttf` comes from google/fonts `ofl/baloo2`, with its bundled
 SIL Open Font License; it generates this static wordmark, not application UI text.
 All application UI typography remains Outfit.
+
+Dark entry screens select the original white/teal P supplied by Figma frame
+`249:7580` (asset `b2941.svg`); their wordmark uses its supplied white lettering.
+Profile/Saved/About retain the fixed magenta/teal approved P in both modes,
+as shown by their paired frames. No tint or runtime recoloring is applied.

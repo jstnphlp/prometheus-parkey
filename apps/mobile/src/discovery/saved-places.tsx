@@ -203,7 +203,11 @@ export function SavedPlaces({
         }}
       >
         <View style={styles.pageHeader}>
-          <BrandLogo variant="account" style={{ width: 32, height: 36 }} />
+          <BrandLogo
+            artwork="magenta"
+            variant="account"
+            style={{ width: 32, height: 36 }}
+          />
           <Text accessibilityRole="header" style={styles.pageTitle}>
             Saved
           </Text>

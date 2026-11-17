@@ -2,6 +2,8 @@ import { Image } from 'react-native'
 import type { ImageStyle, StyleProp } from 'react-native'
 
 import official from '../../assets/figma/interactive/official-parkey-p.png'
+import darkOfficial from '../../assets/figma/interactive/official-parkey-p-dark.png'
+import { useTheme } from '../theme-provider'
 
 const logos = {
   splash: { source: official, width: 176, height: 192.574 },
@@ -12,14 +14,17 @@ const logos = {
 export function BrandLogo({
   variant,
   style,
+  artwork = 'entry',
 }: {
   variant: keyof typeof logos
   style?: StyleProp<ImageStyle>
+  artwork?: 'entry' | 'magenta'
 }) {
   const logo = logos[variant]
+  const { dark } = useTheme()
   return (
     <Image
-      source={logo.source}
+      source={dark && artwork === 'entry' ? darkOfficial : logo.source}
       accessibilityLabel="Parkey"
       accessibilityRole="image"
       resizeMode="contain"

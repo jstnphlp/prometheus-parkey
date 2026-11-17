@@ -54,7 +54,11 @@ export function AboutParkey() {
   return (
     <View>
       <View style={styles.hero}>
-        <BrandLogo variant="account" style={{ width: 108, height: 118 }} />
+        <BrandLogo
+          artwork="magenta"
+          variant="account"
+          style={{ width: 108, height: 118 }}
+        />
         <Text style={styles.brand}>Parkey</Text>
         <Text style={styles.version}>
           Version {Constants.expoConfig?.version ?? 'unavailable'}

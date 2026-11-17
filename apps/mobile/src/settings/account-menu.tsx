@@ -56,7 +56,11 @@ export function AccountMenu({
   return (
     <View>
       <View style={styles.header}>
-        <BrandLogo variant="account" style={{ width: 32, height: 36 }} />
+        <BrandLogo
+          artwork="magenta"
+          variant="account"
+          style={{ width: 32, height: 36 }}
+        />
         <Text accessibilityRole="header" style={styles.title}>
           Account
         </Text>

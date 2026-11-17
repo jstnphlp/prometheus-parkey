@@ -66,13 +66,18 @@ export function authErrorMessage(error: unknown): string {
     case 'over_email_send_rate_limit':
       return 'Too many attempts. Wait a few minutes and try again.'
     case 'otp_expired':
+      return 'This code is invalid or expired. Request a new code.'
+    case 'invalid_otp':
+      return 'Enter the 6-digit code from your email.'
+    case 'verification_session_pending':
+      return 'Your code was accepted. Reconnect and tap Verify & Continue again.'
     case 'flow_state_expired':
     case 'flow_state_not_found':
     case 'bad_code_verifier':
     case 'pkce_code_verifier_not_found':
       return 'This link expired or belongs to another device. Request a new link here.'
     case 'verification_request_missing':
-      return 'Start registration on this device to request a new confirmation link.'
+      return 'Enter your email and request a new verification code.'
     case 'email_address_not_authorized':
       return 'Email delivery is not configured for this address. Please try later.'
     case 'email_address_not_valid':

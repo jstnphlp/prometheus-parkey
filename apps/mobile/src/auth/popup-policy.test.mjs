@@ -65,7 +65,7 @@ test('delivery, resend and callback failures remain safe and actionable', () => 
   )
   assert.match(
     authErrorMessage({ code: 'verification_request_missing' }),
-    /Start registration on this device/,
+    /request a new verification code/,
   )
   assert.match(authErrorMessage({ code: 'over_email_send_rate_limit' }), /Wait/)
   assert.match(

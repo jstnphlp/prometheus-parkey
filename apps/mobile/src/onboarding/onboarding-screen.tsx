@@ -12,6 +12,7 @@ import compare from '../../assets/figma/interactive/compare.png'
 import discover from '../../assets/figma/interactive/discover.png'
 import navigate from '../../assets/figma/interactive/navigate.png'
 import { useArchitectureInsets } from '../components/architecture-page'
+import { useFormLayout } from '../components/form-layout'
 import { BrandButton } from '../components/brand-button'
 import { fonts } from '../theme'
 import { createThemedStyles } from '../theme-provider'
@@ -46,7 +47,15 @@ export function OnboardingScreen({ step }: { step: keyof typeof steps }) {
   const router = useRouter()
   const insets = useArchitectureInsets()
   const { width, height } = useWindowDimensions()
-  const scale = Math.min(width / 430, 1.15)
+  const { space } = useFormLayout()
+  const scale = Math.max(
+    0.5,
+    Math.min(
+      width / 430,
+      1.15,
+      (height - insets.top - insets.bottom - 370) / 478,
+    ),
+  )
   const page = steps[step]
   const { finish, busy } = useCompletion('/login')
   return (
@@ -85,7 +94,7 @@ export function OnboardingScreen({ step }: { step: keyof typeof steps }) {
             ]}
           />
         </View>
-        <View style={styles.text}>
+        <View style={[styles.text, { paddingTop: space(48) }]}>
           <Text
             accessibilityRole="header"
             accessibilityLabel={`Step ${page.number} of 3. ${page.title.replace('\n', ' ')}`}
@@ -93,15 +102,20 @@ export function OnboardingScreen({ step }: { step: keyof typeof steps }) {
           >
             {page.title}
           </Text>
-          <Text style={styles.copy}>{page.copy}</Text>
+          <Text style={[styles.copy, { marginTop: space(48) }]}>
+            {page.copy}
+          </Text>
           {step === 'compare' ? (
             <Text style={styles.disclosure}>
               Illustration only{' \u00b7 '}example rates and distances
             </Text>
           ) : null}
         </View>
-        <View style={styles.footer}>
-          <View accessible={false} style={styles.progress}>
+        <View style={[styles.footer, { paddingTop: space(36) }]}>
+          <View
+            accessible={false}
+            style={[styles.progress, { marginBottom: space(32) }]}
+          >
             {[1, 2, 3].map((number) => (
               <View
                 key={number}

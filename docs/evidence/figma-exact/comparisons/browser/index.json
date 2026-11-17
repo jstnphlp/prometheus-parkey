@@ -6,27 +6,10 @@
     "appCapture": "docs/evidence/figma-exact/browser/light-magenta-16.png",
     "comparison": "docs/evidence/figma-exact/comparisons/browser/light-magenta-16.jpg",
     "maskedOsRegions": [
-      [
-        0,
-        0,
-        430,
-        44
-      ],
-      [
-        0,
-        898,
-        430,
-        932
-      ]
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
     ],
-    "maskedDataRegions": [
-      [
-        113,
-        117,
-        404,
-        182
-      ]
-    ],
+    "maskedDataRegions": [[113, 117, 404, 182]],
     "retainedMapControls": []
   },
   {
@@ -36,27 +19,10 @@
     "appCapture": "docs/evidence/figma-exact/browser/dark-magenta-16.png",
     "comparison": "docs/evidence/figma-exact/comparisons/browser/dark-magenta-16.jpg",
     "maskedOsRegions": [
-      [
-        0,
-        0,
-        430,
-        44
-      ],
-      [
-        0,
-        898,
-        430,
-        932
-      ]
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
     ],
-    "maskedDataRegions": [
-      [
-        113,
-        117,
-        404,
-        182
-      ]
-    ],
+    "maskedDataRegions": [[113, 117, 404, 182]],
     "retainedMapControls": []
   },
   {
@@ -66,18 +32,8 @@
     "appCapture": "docs/evidence/figma-exact/browser/light-magenta-16A.png",
     "comparison": "docs/evidence/figma-exact/comparisons/browser/light-magenta-16A.jpg",
     "maskedOsRegions": [
-      [
-        0,
-        0,
-        430,
-        44
-      ],
-      [
-        0,
-        898,
-        430,
-        932
-      ]
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
     ],
     "maskedDataRegions": [],
     "retainedMapControls": []
@@ -89,18 +45,8 @@
     "appCapture": "docs/evidence/figma-exact/browser/dark-magenta-16A.png",
     "comparison": "docs/evidence/figma-exact/comparisons/browser/dark-magenta-16A.jpg",
     "maskedOsRegions": [
-      [
-        0,
-        0,
-        430,
-        44
-      ],
-      [
-        0,
-        898,
-        430,
-        932
-      ]
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
     ],
     "maskedDataRegions": [],
     "retainedMapControls": []
@@ -112,18 +58,8 @@
     "appCapture": "docs/evidence/figma-exact/browser/light-magenta-17.png",
     "comparison": "docs/evidence/figma-exact/comparisons/browser/light-magenta-17.jpg",
     "maskedOsRegions": [
-      [
-        0,
-        0,
-        430,
-        44
-      ],
-      [
-        0,
-        898,
-        430,
-        932
-      ]
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
     ],
     "maskedDataRegions": [],
     "retainedMapControls": []
@@ -135,18 +71,8 @@
     "appCapture": "docs/evidence/figma-exact/browser/dark-magenta-17.png",
     "comparison": "docs/evidence/figma-exact/comparisons/browser/dark-magenta-17.jpg",
     "maskedOsRegions": [
-      [
-        0,
-        0,
-        430,
-        44
-      ],
-      [
-        0,
-        898,
-        430,
-        932
-      ]
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
     ],
     "maskedDataRegions": [],
     "retainedMapControls": []
@@ -158,18 +84,8 @@
     "appCapture": "docs/evidence/figma-exact/browser/light-magenta-1B.png",
     "comparison": "docs/evidence/figma-exact/comparisons/browser/light-magenta-1B.jpg",
     "maskedOsRegions": [
-      [
-        0,
-        0,
-        430,
-        44
-      ],
-      [
-        0,
-        898,
-        430,
-        932
-      ]
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
     ],
     "maskedDataRegions": [],
     "retainedMapControls": []
@@ -181,18 +97,8 @@
     "appCapture": "docs/evidence/figma-exact/browser/dark-magenta-1B.png",
     "comparison": "docs/evidence/figma-exact/comparisons/browser/dark-magenta-1B.jpg",
     "maskedOsRegions": [
-      [
-        0,
-        0,
-        430,
-        44
-      ],
-      [
-        0,
-        898,
-        430,
-        932
-      ]
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
     ],
     "maskedDataRegions": [],
     "retainedMapControls": []
@@ -204,18 +110,8 @@
     "appCapture": "docs/evidence/figma-exact/browser/light-magenta-2.png",
     "comparison": "docs/evidence/figma-exact/comparisons/browser/light-magenta-2.jpg",
     "maskedOsRegions": [
-      [
-        0,
-        0,
-        430,
-        44
-      ],
-      [
-        0,
-        898,
-        430,
-        932
-      ]
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
     ],
     "maskedDataRegions": [],
     "retainedMapControls": []
@@ -227,18 +123,8 @@
     "appCapture": "docs/evidence/figma-exact/browser/dark-magenta-2.png",
     "comparison": "docs/evidence/figma-exact/comparisons/browser/dark-magenta-2.jpg",
     "maskedOsRegions": [
-      [
-        0,
-        0,
-        430,
-        44
-      ],
-      [
-        0,
-        898,
-        430,
-        932
-      ]
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
     ],
     "maskedDataRegions": [],
     "retainedMapControls": []
@@ -250,18 +136,8 @@
     "appCapture": "docs/evidence/figma-exact/browser/light-magenta-3.png",
     "comparison": "docs/evidence/figma-exact/comparisons/browser/light-magenta-3.jpg",
     "maskedOsRegions": [
-      [
-        0,
-        0,
-        430,
-        44
-      ],
-      [
-        0,
-        898,
-        430,
-        932
-      ]
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
     ],
     "maskedDataRegions": [],
     "retainedMapControls": []
@@ -273,18 +149,8 @@
     "appCapture": "docs/evidence/figma-exact/browser/dark-magenta-3.png",
     "comparison": "docs/evidence/figma-exact/comparisons/browser/dark-magenta-3.jpg",
     "maskedOsRegions": [
-      [
-        0,
-        0,
-        430,
-        44
-      ],
-      [
-        0,
-        898,
-        430,
-        932
-      ]
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
     ],
     "maskedDataRegions": [],
     "retainedMapControls": []
@@ -296,18 +162,8 @@
     "appCapture": "docs/evidence/figma-exact/browser/light-magenta-4.png",
     "comparison": "docs/evidence/figma-exact/comparisons/browser/light-magenta-4.jpg",
     "maskedOsRegions": [
-      [
-        0,
-        0,
-        430,
-        44
-      ],
-      [
-        0,
-        898,
-        430,
-        932
-      ]
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
     ],
     "maskedDataRegions": [],
     "retainedMapControls": []
@@ -319,18 +175,8 @@
     "appCapture": "docs/evidence/figma-exact/browser/dark-magenta-4.png",
     "comparison": "docs/evidence/figma-exact/comparisons/browser/dark-magenta-4.jpg",
     "maskedOsRegions": [
-      [
-        0,
-        0,
-        430,
-        44
-      ],
-      [
-        0,
-        898,
-        430,
-        932
-      ]
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
     ],
     "maskedDataRegions": [],
     "retainedMapControls": []
@@ -342,18 +188,8 @@
     "appCapture": "docs/evidence/figma-exact/browser/light-magenta-5.png",
     "comparison": "docs/evidence/figma-exact/comparisons/browser/light-magenta-5.jpg",
     "maskedOsRegions": [
-      [
-        0,
-        0,
-        430,
-        44
-      ],
-      [
-        0,
-        898,
-        430,
-        932
-      ]
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
     ],
     "maskedDataRegions": [],
     "retainedMapControls": []
@@ -365,18 +201,8 @@
     "appCapture": "docs/evidence/figma-exact/browser/dark-magenta-5.png",
     "comparison": "docs/evidence/figma-exact/comparisons/browser/dark-magenta-5.jpg",
     "maskedOsRegions": [
-      [
-        0,
-        0,
-        430,
-        44
-      ],
-      [
-        0,
-        898,
-        430,
-        932
-      ]
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
     ],
     "maskedDataRegions": [],
     "retainedMapControls": []
@@ -388,18 +214,8 @@
     "appCapture": "docs/evidence/figma-exact/browser/light-magenta-20.png",
     "comparison": "docs/evidence/figma-exact/comparisons/browser/light-magenta-20.jpg",
     "maskedOsRegions": [
-      [
-        0,
-        0,
-        430,
-        44
-      ],
-      [
-        0,
-        898,
-        430,
-        932
-      ]
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
     ],
     "maskedDataRegions": [],
     "retainedMapControls": []
@@ -411,18 +227,8 @@
     "appCapture": "docs/evidence/figma-exact/browser/dark-magenta-20.png",
     "comparison": "docs/evidence/figma-exact/comparisons/browser/dark-magenta-20.jpg",
     "maskedOsRegions": [
-      [
-        0,
-        0,
-        430,
-        44
-      ],
-      [
-        0,
-        898,
-        430,
-        932
-      ]
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
     ],
     "maskedDataRegions": [],
     "retainedMapControls": []
@@ -434,18 +240,8 @@
     "appCapture": "docs/evidence/figma-exact/browser/light-magenta-20A.png",
     "comparison": "docs/evidence/figma-exact/comparisons/browser/light-magenta-20A.jpg",
     "maskedOsRegions": [
-      [
-        0,
-        0,
-        430,
-        44
-      ],
-      [
-        0,
-        898,
-        430,
-        932
-      ]
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
     ],
     "maskedDataRegions": [],
     "retainedMapControls": []
@@ -457,18 +253,8 @@
     "appCapture": "docs/evidence/figma-exact/browser/dark-magenta-20A.png",
     "comparison": "docs/evidence/figma-exact/comparisons/browser/dark-magenta-20A.jpg",
     "maskedOsRegions": [
-      [
-        0,
-        0,
-        430,
-        44
-      ],
-      [
-        0,
-        898,
-        430,
-        932
-      ]
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
     ],
     "maskedDataRegions": [],
     "retainedMapControls": []
@@ -480,50 +266,15 @@
     "appCapture": "docs/evidence/figma-exact/browser/light-magenta-21.png",
     "comparison": "docs/evidence/figma-exact/comparisons/browser/light-magenta-21.jpg",
     "maskedOsRegions": [
-      [
-        0,
-        0,
-        430,
-        44
-      ],
-      [
-        0,
-        898,
-        430,
-        932
-      ]
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
     ],
     "maskedDataRegions": [
-      [
-        28,
-        198,
-        403,
-        225
-      ],
-      [
-        106,
-        262,
-        391,
-        333
-      ],
-      [
-        106,
-        376,
-        391,
-        447
-      ],
-      [
-        106,
-        490,
-        391,
-        561
-      ],
-      [
-        106,
-        604,
-        391,
-        675
-      ]
+      [28, 198, 403, 225],
+      [106, 262, 391, 333],
+      [106, 376, 391, 447],
+      [106, 490, 391, 561],
+      [106, 604, 391, 675]
     ],
     "retainedMapControls": []
   },
@@ -534,50 +285,15 @@
     "appCapture": "docs/evidence/figma-exact/browser/dark-magenta-21.png",
     "comparison": "docs/evidence/figma-exact/comparisons/browser/dark-magenta-21.jpg",
     "maskedOsRegions": [
-      [
-        0,
-        0,
-        430,
-        44
-      ],
-      [
-        0,
-        898,
-        430,
-        932
-      ]
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
     ],
     "maskedDataRegions": [
-      [
-        28,
-        198,
-        403,
-        225
-      ],
-      [
-        106,
-        262,
-        391,
-        333
-      ],
-      [
-        106,
-        376,
-        391,
-        447
-      ],
-      [
-        106,
-        490,
-        391,
-        561
-      ],
-      [
-        106,
-        604,
-        391,
-        675
-      ]
+      [28, 198, 403, 225],
+      [106, 262, 391, 333],
+      [106, 376, 391, 447],
+      [106, 490, 391, 561],
+      [106, 604, 391, 675]
     ],
     "retainedMapControls": []
   },
@@ -588,46 +304,14 @@
     "appCapture": "docs/evidence/figma-exact/browser/light-magenta-22.png",
     "comparison": "docs/evidence/figma-exact/comparisons/browser/light-magenta-22.jpg",
     "maskedOsRegions": [
-      [
-        0,
-        0,
-        430,
-        44
-      ],
-      [
-        0,
-        898,
-        430,
-        932
-      ]
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
     ],
-    "maskedDataRegions": [
-      [
-        0,
-        150,
-        430,
-        744
-      ]
-    ],
+    "maskedDataRegions": [[0, 150, 430, 744]],
     "retainedMapControls": [
-      [
-        25,
-        664,
-        85,
-        726
-      ],
-      [
-        102,
-        664,
-        162,
-        726
-      ],
-      [
-        179,
-        664,
-        239,
-        726
-      ]
+      [25, 664, 85, 726],
+      [102, 664, 162, 726],
+      [179, 664, 239, 726]
     ]
   },
   {
@@ -637,46 +321,14 @@
     "appCapture": "docs/evidence/figma-exact/browser/dark-magenta-22.png",
     "comparison": "docs/evidence/figma-exact/comparisons/browser/dark-magenta-22.jpg",
     "maskedOsRegions": [
-      [
-        0,
-        0,
-        430,
-        44
-      ],
-      [
-        0,
-        898,
-        430,
-        932
-      ]
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
     ],
-    "maskedDataRegions": [
-      [
-        0,
-        150,
-        430,
-        744
-      ]
-    ],
+    "maskedDataRegions": [[0, 150, 430, 744]],
     "retainedMapControls": [
-      [
-        25,
-        664,
-        85,
-        726
-      ],
-      [
-        102,
-        664,
-        162,
-        726
-      ],
-      [
-        179,
-        664,
-        239,
-        726
-      ]
+      [25, 664, 85, 726],
+      [102, 664, 162, 726],
+      [179, 664, 239, 726]
     ]
   },
   {
@@ -686,18 +338,8 @@
     "appCapture": "docs/evidence/figma-exact/browser/light-magenta-22A.png",
     "comparison": "docs/evidence/figma-exact/comparisons/browser/light-magenta-22A.jpg",
     "maskedOsRegions": [
-      [
-        0,
-        0,
-        430,
-        44
-      ],
-      [
-        0,
-        898,
-        430,
-        932
-      ]
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
     ],
     "maskedDataRegions": [],
     "retainedMapControls": []
@@ -709,18 +351,8 @@
     "appCapture": "docs/evidence/figma-exact/browser/dark-magenta-22A.png",
     "comparison": "docs/evidence/figma-exact/comparisons/browser/dark-magenta-22A.jpg",
     "maskedOsRegions": [
-      [
-        0,
-        0,
-        430,
-        44
-      ],
-      [
-        0,
-        898,
-        430,
-        932
-      ]
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
     ],
     "maskedDataRegions": [],
     "retainedMapControls": []
@@ -732,18 +364,8 @@
     "appCapture": "docs/evidence/figma-exact/browser/light-magenta-22B.png",
     "comparison": "docs/evidence/figma-exact/comparisons/browser/light-magenta-22B.jpg",
     "maskedOsRegions": [
-      [
-        0,
-        0,
-        430,
-        44
-      ],
-      [
-        0,
-        898,
-        430,
-        932
-      ]
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
     ],
     "maskedDataRegions": [],
     "retainedMapControls": []
@@ -755,18 +377,8 @@
     "appCapture": "docs/evidence/figma-exact/browser/dark-magenta-22B.png",
     "comparison": "docs/evidence/figma-exact/comparisons/browser/dark-magenta-22B.jpg",
     "maskedOsRegions": [
-      [
-        0,
-        0,
-        430,
-        44
-      ],
-      [
-        0,
-        898,
-        430,
-        932
-      ]
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
     ],
     "maskedDataRegions": [],
     "retainedMapControls": []
@@ -778,58 +390,18 @@
     "appCapture": "docs/evidence/figma-exact/browser/light-magenta-23.png",
     "comparison": "docs/evidence/figma-exact/comparisons/browser/light-magenta-23.jpg",
     "maskedOsRegions": [
-      [
-        0,
-        0,
-        430,
-        44
-      ],
-      [
-        0,
-        898,
-        430,
-        932
-      ]
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
     ],
     "maskedDataRegions": [
-      [
-        0,
-        150,
-        430,
-        826
-      ],
-      [
-        41,
-        612,
-        390,
-        657
-      ]
+      [0, 150, 430, 826],
+      [41, 612, 390, 657]
     ],
     "retainedMapControls": [
-      [
-        94,
-        473,
-        154,
-        534
-      ],
-      [
-        171,
-        473,
-        231,
-        534
-      ],
-      [
-        248,
-        473,
-        308,
-        534
-      ],
-      [
-        24,
-        554,
-        406,
-        813
-      ]
+      [94, 473, 154, 534],
+      [171, 473, 231, 534],
+      [248, 473, 308, 534],
+      [24, 554, 406, 813]
     ]
   },
   {
@@ -839,58 +411,18 @@
     "appCapture": "docs/evidence/figma-exact/browser/dark-magenta-23.png",
     "comparison": "docs/evidence/figma-exact/comparisons/browser/dark-magenta-23.jpg",
     "maskedOsRegions": [
-      [
-        0,
-        0,
-        430,
-        44
-      ],
-      [
-        0,
-        898,
-        430,
-        932
-      ]
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
     ],
     "maskedDataRegions": [
-      [
-        0,
-        150,
-        430,
-        826
-      ],
-      [
-        41,
-        612,
-        390,
-        657
-      ]
+      [0, 150, 430, 826],
+      [41, 612, 390, 657]
     ],
     "retainedMapControls": [
-      [
-        94,
-        473,
-        154,
-        534
-      ],
-      [
-        171,
-        473,
-        231,
-        534
-      ],
-      [
-        248,
-        473,
-        308,
-        534
-      ],
-      [
-        24,
-        554,
-        406,
-        813
-      ]
+      [94, 473, 154, 534],
+      [171, 473, 231, 534],
+      [248, 473, 308, 534],
+      [24, 554, 406, 813]
     ]
   },
   {
@@ -900,32 +432,12 @@
     "appCapture": "docs/evidence/figma-exact/browser/light-magenta-25.png",
     "comparison": "docs/evidence/figma-exact/comparisons/browser/light-magenta-25.jpg",
     "maskedOsRegions": [
-      [
-        0,
-        0,
-        430,
-        44
-      ],
-      [
-        0,
-        898,
-        430,
-        932
-      ]
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
     ],
     "maskedDataRegions": [
-      [
-        0,
-        44,
-        430,
-        308
-      ],
-      [
-        25,
-        338,
-        405,
-        392
-      ]
+      [0, 44, 430, 308],
+      [25, 338, 405, 392]
     ],
     "retainedMapControls": []
   },
@@ -936,32 +448,12 @@
     "appCapture": "docs/evidence/figma-exact/browser/dark-magenta-25.png",
     "comparison": "docs/evidence/figma-exact/comparisons/browser/dark-magenta-25.jpg",
     "maskedOsRegions": [
-      [
-        0,
-        0,
-        430,
-        44
-      ],
-      [
-        0,
-        898,
-        430,
-        932
-      ]
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
     ],
     "maskedDataRegions": [
-      [
-        0,
-        44,
-        430,
-        308
-      ],
-      [
-        25,
-        338,
-        405,
-        392
-      ]
+      [0, 44, 430, 308],
+      [25, 338, 405, 392]
     ],
     "retainedMapControls": []
   },
@@ -972,18 +464,8 @@
     "appCapture": "docs/evidence/figma-exact/browser/light-magenta-26A.png",
     "comparison": "docs/evidence/figma-exact/comparisons/browser/light-magenta-26A.jpg",
     "maskedOsRegions": [
-      [
-        0,
-        0,
-        430,
-        44
-      ],
-      [
-        0,
-        898,
-        430,
-        932
-      ]
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
     ],
     "maskedDataRegions": [],
     "retainedMapControls": []
@@ -995,18 +477,8 @@
     "appCapture": "docs/evidence/figma-exact/browser/dark-magenta-26A.png",
     "comparison": "docs/evidence/figma-exact/comparisons/browser/dark-magenta-26A.jpg",
     "maskedOsRegions": [
-      [
-        0,
-        0,
-        430,
-        44
-      ],
-      [
-        0,
-        898,
-        430,
-        932
-      ]
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
     ],
     "maskedDataRegions": [],
     "retainedMapControls": []
@@ -1018,18 +490,8 @@
     "appCapture": "docs/evidence/figma-exact/browser/light-magenta-26B.png",
     "comparison": "docs/evidence/figma-exact/comparisons/browser/light-magenta-26B.jpg",
     "maskedOsRegions": [
-      [
-        0,
-        0,
-        430,
-        44
-      ],
-      [
-        0,
-        898,
-        430,
-        932
-      ]
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
     ],
     "maskedDataRegions": [],
     "retainedMapControls": []
@@ -1041,18 +503,8 @@
     "appCapture": "docs/evidence/figma-exact/browser/dark-magenta-26B.png",
     "comparison": "docs/evidence/figma-exact/comparisons/browser/dark-magenta-26B.jpg",
     "maskedOsRegions": [
-      [
-        0,
-        0,
-        430,
-        44
-      ],
-      [
-        0,
-        898,
-        430,
-        932
-      ]
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
     ],
     "maskedDataRegions": [],
     "retainedMapControls": []
@@ -1064,27 +516,10 @@
     "appCapture": "docs/evidence/figma-exact/browser/light-magenta-28.png",
     "comparison": "docs/evidence/figma-exact/comparisons/browser/light-magenta-28.jpg",
     "maskedOsRegions": [
-      [
-        0,
-        0,
-        430,
-        44
-      ],
-      [
-        0,
-        898,
-        430,
-        932
-      ]
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
     ],
-    "maskedDataRegions": [
-      [
-        20,
-        283,
-        409,
-        696
-      ]
-    ],
+    "maskedDataRegions": [[20, 283, 409, 696]],
     "retainedMapControls": []
   },
   {
@@ -1094,27 +529,10 @@
     "appCapture": "docs/evidence/figma-exact/browser/dark-magenta-28.png",
     "comparison": "docs/evidence/figma-exact/comparisons/browser/dark-magenta-28.jpg",
     "maskedOsRegions": [
-      [
-        0,
-        0,
-        430,
-        44
-      ],
-      [
-        0,
-        898,
-        430,
-        932
-      ]
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
     ],
-    "maskedDataRegions": [
-      [
-        20,
-        283,
-        409,
-        696
-      ]
-    ],
+    "maskedDataRegions": [[20, 283, 409, 696]],
     "retainedMapControls": []
   },
   {
@@ -1124,18 +542,8 @@
     "appCapture": "docs/evidence/figma-exact/browser/light-magenta-79.png",
     "comparison": "docs/evidence/figma-exact/comparisons/browser/light-magenta-79.jpg",
     "maskedOsRegions": [
-      [
-        0,
-        0,
-        430,
-        44
-      ],
-      [
-        0,
-        898,
-        430,
-        932
-      ]
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
     ],
     "maskedDataRegions": [],
     "retainedMapControls": []
@@ -1147,18 +555,8 @@
     "appCapture": "docs/evidence/figma-exact/browser/dark-magenta-79.png",
     "comparison": "docs/evidence/figma-exact/comparisons/browser/dark-magenta-79.jpg",
     "maskedOsRegions": [
-      [
-        0,
-        0,
-        430,
-        44
-      ],
-      [
-        0,
-        898,
-        430,
-        932
-      ]
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
     ],
     "maskedDataRegions": [],
     "retainedMapControls": []
@@ -1170,18 +568,8 @@
     "appCapture": "docs/evidence/figma-exact/browser/light-magenta-80.png",
     "comparison": "docs/evidence/figma-exact/comparisons/browser/light-magenta-80.jpg",
     "maskedOsRegions": [
-      [
-        0,
-        0,
-        430,
-        44
-      ],
-      [
-        0,
-        898,
-        430,
-        932
-      ]
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
     ],
     "maskedDataRegions": [],
     "retainedMapControls": []
@@ -1193,18 +581,8 @@
     "appCapture": "docs/evidence/figma-exact/browser/dark-magenta-80.png",
     "comparison": "docs/evidence/figma-exact/comparisons/browser/dark-magenta-80.jpg",
     "maskedOsRegions": [
-      [
-        0,
-        0,
-        430,
-        44
-      ],
-      [
-        0,
-        898,
-        430,
-        932
-      ]
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
     ],
     "maskedDataRegions": [],
     "retainedMapControls": []
@@ -1216,18 +594,8 @@
     "appCapture": "docs/evidence/figma-exact/browser/light-magenta-83.png",
     "comparison": "docs/evidence/figma-exact/comparisons/browser/light-magenta-83.jpg",
     "maskedOsRegions": [
-      [
-        0,
-        0,
-        430,
-        44
-      ],
-      [
-        0,
-        898,
-        430,
-        932
-      ]
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
     ],
     "maskedDataRegions": [],
     "retainedMapControls": []
@@ -1239,18 +607,8 @@
     "appCapture": "docs/evidence/figma-exact/browser/dark-magenta-83.png",
     "comparison": "docs/evidence/figma-exact/comparisons/browser/dark-magenta-83.jpg",
     "maskedOsRegions": [
-      [
-        0,
-        0,
-        430,
-        44
-      ],
-      [
-        0,
-        898,
-        430,
-        932
-      ]
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
     ],
     "maskedDataRegions": [],
     "retainedMapControls": []
@@ -1262,18 +620,8 @@
     "appCapture": "docs/evidence/figma-exact/browser/light-magenta-84.png",
     "comparison": "docs/evidence/figma-exact/comparisons/browser/light-magenta-84.jpg",
     "maskedOsRegions": [
-      [
-        0,
-        0,
-        430,
-        44
-      ],
-      [
-        0,
-        898,
-        430,
-        932
-      ]
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
     ],
     "maskedDataRegions": [],
     "retainedMapControls": []
@@ -1285,18 +633,8 @@
     "appCapture": "docs/evidence/figma-exact/browser/dark-magenta-84.png",
     "comparison": "docs/evidence/figma-exact/comparisons/browser/dark-magenta-84.jpg",
     "maskedOsRegions": [
-      [
-        0,
-        0,
-        430,
-        44
-      ],
-      [
-        0,
-        898,
-        430,
-        932
-      ]
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
     ],
     "maskedDataRegions": [],
     "retainedMapControls": []
@@ -1308,18 +646,8 @@
     "appCapture": "docs/evidence/figma-exact/browser/light-magenta-22C.png",
     "comparison": "docs/evidence/figma-exact/comparisons/browser/light-magenta-22C.jpg",
     "maskedOsRegions": [
-      [
-        0,
-        0,
-        430,
-        44
-      ],
-      [
-        0,
-        898,
-        430,
-        932
-      ]
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
     ],
     "maskedDataRegions": [],
     "retainedMapControls": []
@@ -1331,18 +659,8 @@
     "appCapture": "docs/evidence/figma-exact/browser/dark-magenta-22C.png",
     "comparison": "docs/evidence/figma-exact/comparisons/browser/dark-magenta-22C.jpg",
     "maskedOsRegions": [
-      [
-        0,
-        0,
-        430,
-        44
-      ],
-      [
-        0,
-        898,
-        430,
-        932
-      ]
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
     ],
     "maskedDataRegions": [],
     "retainedMapControls": []
@@ -1354,18 +672,8 @@
     "appCapture": "docs/evidence/figma-exact/browser/light-magenta-27.png",
     "comparison": "docs/evidence/figma-exact/comparisons/browser/light-magenta-27.jpg",
     "maskedOsRegions": [
-      [
-        0,
-        0,
-        430,
-        44
-      ],
-      [
-        0,
-        898,
-        430,
-        932
-      ]
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
     ],
     "maskedDataRegions": [],
     "retainedMapControls": []
@@ -1377,18 +685,8 @@
     "appCapture": "docs/evidence/figma-exact/browser/dark-magenta-27.png",
     "comparison": "docs/evidence/figma-exact/comparisons/browser/dark-magenta-27.jpg",
     "maskedOsRegions": [
-      [
-        0,
-        0,
-        430,
-        44
-      ],
-      [
-        0,
-        898,
-        430,
-        932
-      ]
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
     ],
     "maskedDataRegions": [],
     "retainedMapControls": []
@@ -1400,27 +698,10 @@
     "appCapture": "docs/evidence/figma-exact/browser/light-magenta-29.png",
     "comparison": "docs/evidence/figma-exact/comparisons/browser/light-magenta-29.jpg",
     "maskedOsRegions": [
-      [
-        0,
-        0,
-        430,
-        44
-      ],
-      [
-        0,
-        898,
-        430,
-        932
-      ]
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
     ],
-    "maskedDataRegions": [
-      [
-        0,
-        121,
-        430,
-        779
-      ]
-    ],
+    "maskedDataRegions": [[0, 121, 430, 779]],
     "retainedMapControls": []
   },
   {
@@ -1430,27 +711,10 @@
     "appCapture": "docs/evidence/figma-exact/browser/dark-magenta-29.png",
     "comparison": "docs/evidence/figma-exact/comparisons/browser/dark-magenta-29.jpg",
     "maskedOsRegions": [
-      [
-        0,
-        0,
-        430,
-        44
-      ],
-      [
-        0,
-        898,
-        430,
-        932
-      ]
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
     ],
-    "maskedDataRegions": [
-      [
-        0,
-        121,
-        430,
-        779
-      ]
-    ],
+    "maskedDataRegions": [[0, 121, 430, 779]],
     "retainedMapControls": []
   },
   {
@@ -1460,27 +724,10 @@
     "appCapture": "docs/evidence/figma-exact/browser/light-magenta-30.png",
     "comparison": "docs/evidence/figma-exact/comparisons/browser/light-magenta-30.jpg",
     "maskedOsRegions": [
-      [
-        0,
-        0,
-        430,
-        44
-      ],
-      [
-        0,
-        898,
-        430,
-        932
-      ]
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
     ],
-    "maskedDataRegions": [
-      [
-        0,
-        90,
-        430,
-        849
-      ]
-    ],
+    "maskedDataRegions": [[0, 90, 430, 849]],
     "retainedMapControls": []
   },
   {
@@ -1490,27 +737,10 @@
     "appCapture": "docs/evidence/figma-exact/browser/dark-magenta-30.png",
     "comparison": "docs/evidence/figma-exact/comparisons/browser/dark-magenta-30.jpg",
     "maskedOsRegions": [
-      [
-        0,
-        0,
-        430,
-        44
-      ],
-      [
-        0,
-        898,
-        430,
-        932
-      ]
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
     ],
-    "maskedDataRegions": [
-      [
-        0,
-        90,
-        430,
-        849
-      ]
-    ],
+    "maskedDataRegions": [[0, 90, 430, 849]],
     "retainedMapControls": []
   },
   {
@@ -1520,18 +750,8 @@
     "appCapture": "docs/evidence/figma-exact/browser/light-magenta-6.png",
     "comparison": "docs/evidence/figma-exact/comparisons/browser/light-magenta-6.jpg",
     "maskedOsRegions": [
-      [
-        0,
-        0,
-        430,
-        44
-      ],
-      [
-        0,
-        898,
-        430,
-        932
-      ]
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
     ],
     "maskedDataRegions": [],
     "retainedMapControls": []
@@ -1543,18 +763,8 @@
     "appCapture": "docs/evidence/figma-exact/browser/dark-magenta-6.png",
     "comparison": "docs/evidence/figma-exact/comparisons/browser/dark-magenta-6.jpg",
     "maskedOsRegions": [
-      [
-        0,
-        0,
-        430,
-        44
-      ],
-      [
-        0,
-        898,
-        430,
-        932
-      ]
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
     ],
     "maskedDataRegions": [],
     "retainedMapControls": []
@@ -1566,18 +776,8 @@
     "appCapture": "docs/evidence/figma-exact/browser/light-magenta-18.png",
     "comparison": "docs/evidence/figma-exact/comparisons/browser/light-magenta-18.jpg",
     "maskedOsRegions": [
-      [
-        0,
-        0,
-        430,
-        44
-      ],
-      [
-        0,
-        898,
-        430,
-        932
-      ]
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
     ],
     "maskedDataRegions": [],
     "retainedMapControls": []
@@ -1589,18 +789,8 @@
     "appCapture": "docs/evidence/figma-exact/browser/dark-magenta-18.png",
     "comparison": "docs/evidence/figma-exact/comparisons/browser/dark-magenta-18.jpg",
     "maskedOsRegions": [
-      [
-        0,
-        0,
-        430,
-        44
-      ],
-      [
-        0,
-        898,
-        430,
-        932
-      ]
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
     ],
     "maskedDataRegions": [],
     "retainedMapControls": []
@@ -1612,18 +802,8 @@
     "appCapture": "docs/evidence/figma-exact/browser/light-magenta-1.png",
     "comparison": "docs/evidence/figma-exact/comparisons/browser/light-magenta-1.jpg",
     "maskedOsRegions": [
-      [
-        0,
-        0,
-        430,
-        44
-      ],
-      [
-        0,
-        898,
-        430,
-        932
-      ]
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
     ],
     "maskedDataRegions": [],
     "retainedMapControls": []
@@ -1635,18 +815,8 @@
     "appCapture": "docs/evidence/figma-exact/browser/dark-magenta-1.png",
     "comparison": "docs/evidence/figma-exact/comparisons/browser/dark-magenta-1.jpg",
     "maskedOsRegions": [
-      [
-        0,
-        0,
-        430,
-        44
-      ],
-      [
-        0,
-        898,
-        430,
-        932
-      ]
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
     ],
     "maskedDataRegions": [],
     "retainedMapControls": []
@@ -1658,18 +828,8 @@
     "appCapture": "docs/evidence/figma-exact/browser/light-magenta-26.png",
     "comparison": "docs/evidence/figma-exact/comparisons/browser/light-magenta-26.jpg",
     "maskedOsRegions": [
-      [
-        0,
-        0,
-        430,
-        44
-      ],
-      [
-        0,
-        898,
-        430,
-        932
-      ]
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
     ],
     "maskedDataRegions": [],
     "retainedMapControls": []
@@ -1681,18 +841,8 @@
     "appCapture": "docs/evidence/figma-exact/browser/dark-magenta-26.png",
     "comparison": "docs/evidence/figma-exact/comparisons/browser/dark-magenta-26.jpg",
     "maskedOsRegions": [
-      [
-        0,
-        0,
-        430,
-        44
-      ],
-      [
-        0,
-        898,
-        430,
-        932
-      ]
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
     ],
     "maskedDataRegions": [],
     "retainedMapControls": []

@@ -14,6 +14,7 @@ import type { TextInput } from 'react-native'
 import { useTheme, createThemedStyles } from '../theme-provider'
 import { BrandButton } from '../components/brand-button'
 import { BrandIcon } from '../components/brand-icon'
+import { useFormLayout } from '../components/form-layout'
 import { usePopup } from '../components/popup-provider'
 import { useCompletion } from '../onboarding/use-completion'
 import { fonts, typography } from '../theme'
@@ -36,6 +37,7 @@ import {
 export function AccountForm({ mode }: { mode: 'register' | 'login' }) {
   const { entryColors: colors } = useTheme()
   const styles = useStyles()
+  const { compact } = useFormLayout()
 
   const auth = useAuth()
   const router = useRouter()
@@ -110,6 +112,7 @@ export function AccountForm({ mode }: { mode: 'register' | 'login' }) {
         if (signedIn) {
           setPassword('')
         } else {
+          setPassword('')
           setPending(true)
           setAttempted(false)
         }
@@ -148,13 +151,10 @@ export function AccountForm({ mode }: { mode: 'register' | 'login' }) {
     if (busy || !focused.current) return
     try {
       await auth.sendEmail(email, 'signup')
-      if (focused.current)
-        popup.show({
-          tone: 'info',
-          title: 'Email requested',
-          message:
-            'If confirmation is needed, check your inbox and spam. You can confirm on any device.',
-        })
+      if (focused.current) {
+        setPassword('')
+        setPending(true)
+      }
     } catch (error) {
       if (focused.current)
         popup.show({
@@ -189,178 +189,188 @@ export function AccountForm({ mode }: { mode: 'register' | 'login' }) {
     }
   }
 
-  if (auth.state.status === 'signed-in') return <SignedInRedirect />
   if (auth.state.status === 'recovery')
     return <Redirect href="/reset-password" />
+  if (pending)
+    return (
+      <PendingConfirmation
+        email={email}
+        onDifferentEmail={() => {
+          setPending(false)
+          setEmail('')
+          setPassword('')
+          setConfirmation('')
+          setAttempted(false)
+          if (!registering) router.replace('/register')
+        }}
+      />
+    )
+  if (auth.state.status === 'signed-in') return <SignedInRedirect />
   return (
     <AuthShell
       registering={registering}
-      title={
-        pending
-          ? 'Check your email'
-          : registering
-            ? 'Create an Account'
-            : 'Sign in to your\naccount'
-      }
+      title={registering ? 'Create an Account' : 'Sign in to your\naccount'}
       subtitle={
-        pending
-          ? 'Confirm your email to finish creating your account'
-          : registering
-            ? 'Start discovering parking with Parkey'
-            : 'Use your email and password to get back to parking.'
+        registering
+          ? 'Start discovering parking with Parkey'
+          : 'Use your email and password to get back to parking.'
       }
     >
-      {pending ? (
-        <PendingConfirmation
-          email={email}
-          password={password}
-          setPassword={setPassword}
-          resend={resend}
-        />
-      ) : (
-        <>
-          <View style={[styles.fields, !registering && styles.loginFields]}>
-            {registering ? (
-              <FormField
-                compact={registering}
-                label="Full name"
-                icon="person"
-                value={name}
-                onChangeText={setName}
-                autoCapitalize="words"
-                autoComplete="name"
-                maxLength={100}
-                inputRef={nameInput}
-                returnKeyType="next"
-                submitBehavior="submit"
-                onSubmitEditing={() => emailInput.current?.focus()}
-                editable={!busy}
-                error={attempted ? errors.name : null}
-              />
-            ) : null}
+      <>
+        <View
+          style={[
+            styles.fields,
+            !registering && styles.loginFields,
+            compact && { marginTop: 20, gap: 8 },
+          ]}
+        >
+          {registering ? (
             <FormField
-              compact={registering}
-              label="Email address"
-              placeholder={registering ? 'Email address' : 'you@example.com'}
-              icon="mail"
-              value={email}
-              onChangeText={setEmail}
-              autoComplete="email"
-              keyboardType="email-address"
-              maxLength={254}
-              inputRef={emailInput}
+              compact={registering || compact}
+              label="Full name"
+              placeholder="Enter your full name"
+              icon="person"
+              value={name}
+              onChangeText={setName}
+              autoCapitalize="words"
+              autoComplete="name"
+              maxLength={100}
+              inputRef={nameInput}
               returnKeyType="next"
               submitBehavior="submit"
-              onSubmitEditing={() => passwordInput.current?.focus()}
+              onSubmitEditing={() => emailInput.current?.focus()}
               editable={!busy}
-              error={attempted ? errors.email : null}
+              error={attempted ? errors.name : null}
             />
+          ) : null}
+          <FormField
+            compact={registering || compact}
+            label="Email address"
+            placeholder={registering ? 'Enter your email' : 'you@example.com'}
+            icon="mail"
+            value={email}
+            onChangeText={setEmail}
+            autoComplete="email"
+            keyboardType="email-address"
+            maxLength={254}
+            inputRef={emailInput}
+            returnKeyType="next"
+            submitBehavior="submit"
+            onSubmitEditing={() => passwordInput.current?.focus()}
+            editable={!busy}
+            error={attempted ? errors.email : null}
+          />
+          <FormField
+            compact={registering || compact}
+            label="Password"
+            placeholder={registering ? 'Create a password' : 'Password'}
+            icon="lock"
+            password
+            value={password}
+            onChangeText={(value) => {
+              setPassword(value)
+              setServerPasswordError(null)
+            }}
+            autoComplete={registering ? 'new-password' : 'current-password'}
+            inputRef={passwordInput}
+            accessibilityHint={
+              registering ? passwordGuidance : 'Your Parkey account password.'
+            }
+            returnKeyType={registering ? 'next' : 'go'}
+            submitBehavior="submit"
+            editable={!busy}
+            onSubmitEditing={() =>
+              registering ? confirmationInput.current?.focus() : void submit()
+            }
+            error={
+              attempted
+                ? registering
+                  ? (serverPasswordError ??
+                    (errors.password
+                      ? 'Meet the password requirements below.'
+                      : null))
+                  : !password
+                    ? 'Enter your password.'
+                    : null
+                : null
+            }
+          />
+          {registering && (password || attempted) ? (
+            <PasswordRequirements password={password} />
+          ) : null}
+          {registering ? (
             <FormField
               compact={registering}
-              label="Password"
-              icon="lock"
+              label="Confirm password"
+              placeholder="Confirm your password"
+              icon="shield-check"
               password
-              value={password}
-              onChangeText={(value) => {
-                setPassword(value)
-                setServerPasswordError(null)
-              }}
-              autoComplete={registering ? 'new-password' : 'current-password'}
-              inputRef={passwordInput}
-              accessibilityHint={
-                registering ? passwordGuidance : 'Your Parkey account password.'
-              }
-              returnKeyType={registering ? 'next' : 'go'}
-              submitBehavior="submit"
+              value={confirmation}
+              onChangeText={setConfirmation}
+              autoComplete="new-password"
+              inputRef={confirmationInput}
+              returnKeyType="go"
+              onSubmitEditing={() => void submit()}
               editable={!busy}
-              onSubmitEditing={() =>
-                registering ? confirmationInput.current?.focus() : void submit()
-              }
-              error={
-                attempted
-                  ? registering
-                    ? (serverPasswordError ??
-                      (errors.password
-                        ? 'Meet the password requirements below.'
-                        : null))
-                    : !password
-                      ? 'Enter your password.'
-                      : null
-                  : null
-              }
+              error={attempted ? errors.confirmation : null}
             />
-            {registering && (password || attempted) ? (
-              <PasswordRequirements password={password} />
-            ) : null}
-            {registering ? (
-              <FormField
-                compact={registering}
-                label="Confirm password"
-                icon="shield-check"
-                password
-                value={confirmation}
-                onChangeText={setConfirmation}
-                autoComplete="new-password"
-                inputRef={confirmationInput}
-                returnKeyType="go"
-                onSubmitEditing={() => void submit()}
-                editable={!busy}
-                error={attempted ? errors.confirmation : null}
-              />
-            ) : null}
+          ) : null}
+        </View>
+        {!registering ? (
+          <View style={styles.options}>
+            <Pressable
+              accessibilityRole="checkbox"
+              accessibilityLabel="Remember me"
+              accessibilityHint="Keep this session in secure device storage after closing the app. Passwords are never saved."
+              accessibilityState={{ checked: remember, disabled: busy }}
+              disabled={busy}
+              onPress={() => setRemember((value) => !value)}
+              style={styles.remember}
+            >
+              <View style={styles.checkbox}>
+                {remember ? (
+                  <BrandIcon name="check" size={12} color={colors.plum} />
+                ) : null}
+              </View>
+              <Text style={styles.optionText}>Remember me</Text>
+            </Pressable>
+            <Pressable
+              accessibilityRole="link"
+              disabled={busy}
+              onPress={() => router.push('/forgot-password')}
+              style={styles.forgot}
+            >
+              <Text style={[styles.optionText, styles.cyan]}>
+                Forgot password?
+              </Text>
+            </Pressable>
           </View>
-          {!registering ? (
-            <View style={styles.options}>
-              <Pressable
-                accessibilityRole="checkbox"
-                accessibilityLabel="Remember me"
-                accessibilityHint="Keep this session in secure device storage after closing the app. Passwords are never saved."
-                accessibilityState={{ checked: remember, disabled: busy }}
-                disabled={busy}
-                onPress={() => setRemember((value) => !value)}
-                style={styles.remember}
-              >
-                <View style={styles.checkbox}>
-                  {remember ? (
-                    <BrandIcon name="check" size={12} color={colors.plum} />
-                  ) : null}
-                </View>
-                <Text style={styles.optionText}>Remember me</Text>
-              </Pressable>
-              <Pressable
-                accessibilityRole="link"
-                disabled={busy}
-                onPress={() => router.push('/forgot-password')}
-                style={styles.forgot}
-              >
-                <Text style={[styles.optionText, styles.cyan]}>
-                  Forgot password?
-                </Text>
-              </Pressable>
-            </View>
-          ) : null}
-          {auth.state.status === 'error' ? (
-            <BrandButton
-              title="Retry session check"
-              variant="text"
-              onPress={() => void auth.retry()}
-            />
-          ) : null}
+        ) : null}
+        {auth.state.status === 'error' ? (
           <BrandButton
-            title={registering ? 'Create Account' : 'Log In'}
-            busy={auth.busy}
-            disabled={!ready}
-            onPress={() => void submit()}
-            style={[styles.primary, !registering && styles.loginPrimary]}
+            title="Retry session check"
+            variant="text"
+            onPress={() => void auth.retry()}
           />
-          <SocialButtons
-            providers={auth.socialProviders}
-            disabled={busy || !ready}
-            onPress={(provider) => void socialSignIn(provider)}
-          />
-        </>
-      )}
-      <View style={styles.footer}>
+        ) : null}
+        <BrandButton
+          title={registering ? 'Create Account' : 'Log In'}
+          busy={auth.busy}
+          disabled={!ready}
+          onPress={() => void submit()}
+          style={[
+            styles.primary,
+            !registering && styles.loginPrimary,
+            compact && { marginTop: 16, minHeight: 52 },
+          ]}
+        />
+        <SocialButtons
+          providers={auth.socialProviders}
+          disabled={busy || !ready}
+          onPress={(provider) => void socialSignIn(provider)}
+        />
+      </>
+      <View style={[styles.footer, compact && { paddingTop: 12 }]}>
         <Text style={[styles.optionText, registering && styles.plumMuted]}>
           {registering ? 'Already have an account?' : 'New to Parkey?'}
         </Text>
@@ -390,7 +400,7 @@ const useStyles = createThemedStyles(({ entryColors: colors }) =>
   StyleSheet.create({
     fields: { marginTop: 33, gap: 6 },
     loginFields: { marginTop: 39, gap: 16 },
-    primary: { marginTop: 24, minHeight: 50, borderRadius: 13 },
+    primary: { marginTop: 24, minHeight: 56, borderRadius: 14 },
     loginPrimary: { marginTop: 23, minHeight: 58, borderRadius: 15 },
     cyan: { color: colors.cyan },
     plumMuted: { color: colors.onPlumMuted },

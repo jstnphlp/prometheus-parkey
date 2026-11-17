@@ -1,197 +1,102 @@
-import {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { ComponentRef } from 'react'
-import { useFocusEffect } from 'expo-router'
-import { useIsFocused } from 'expo-router/react-navigation'
-import {
-  ActivityIndicator,
-  AppState,
-  Keyboard,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native'
+import { Keyboard } from 'react-native'
 import type { TextInput } from 'react-native'
 
-import { useTheme, createThemedStyles } from '../theme-provider'
-import { BrandButton } from '../components/brand-button'
-import { BrandIcon } from '../components/brand-icon'
-import { usePopup } from '../components/popup-provider'
-import { typography } from '../theme'
-import { watchConfirmation } from './confirmation-watch'
-import { authErrorCode, authFeedback } from './feedback'
-import { FormField } from './form-field'
+import { useCompletion } from '../onboarding/use-completion'
+import { emailCodeLength } from './email-code'
+import { EmailVerificationForm } from './email-verification-form'
+import { authErrorCode } from './feedback'
 import { useAuth } from './provider'
+import { authErrorMessage } from './validation'
 
 export function PendingConfirmation({
   email,
-  password,
-  setPassword,
-  resend,
+  onDifferentEmail,
 }: {
   email: string
-  password: string
-  setPassword: (password: string) => void
-  resend: () => Promise<void>
+  onDifferentEmail: () => void
 }) {
-  const { entryColors: colors } = useTheme()
-  const styles = useStyles()
-
   const auth = useAuth()
-  const popup = usePopup()
-  const focused = useIsFocused()
-  const [foreground, setForeground] = useState(
-    AppState.currentState === 'active',
-  )
-  const [progress, setProgress] = useState<'waiting' | 'checking' | 'paused'>(
-    'waiting',
-  )
-  const [revision, setRevision] = useState(0)
-  const [resumePassword, setResumePassword] = useState('')
+  const completion = useCompletion('/account-setup')
   const input = useRef<ComponentRef<typeof TextInput>>(null)
-  const monitor = useRef<ReturnType<typeof watchConfirmation> | null>(null)
-  const latest = useRef({ auth, popup, setPassword })
-  useLayoutEffect(() => {
-    latest.current = { auth, popup, setPassword }
-  }, [auth, popup, setPassword])
-  const clearSecrets = useCallback(() => {
-    monitor.current?.stop()
-    latest.current.setPassword('')
-    setResumePassword('')
+  const inFlight = useRef(false)
+  const [code, setCode] = useState('')
+  const [error, setError] = useState<string | null>(null)
+  const [expired, setExpired] = useState(false)
+  const [verified, setVerified] = useState(false)
+  const [sessionPending, setSessionPending] = useState(false)
+  const [retryAt, setRetryAt] = useState(() => Date.now() + 60000)
+  const [now, setNow] = useState(Date.now)
+  useEffect(() => {
+    const timer = setInterval(() => setNow(Date.now()), 1000)
+    return () => clearInterval(timer)
   }, [])
-  useEffect(() => {
-    const subscription = AppState.addEventListener('change', (state) => {
-      setForeground(state === 'active')
-      if (state !== 'active') clearSecrets()
-    })
-    return () => subscription.remove()
-  }, [clearSecrets])
-  useFocusEffect(useCallback(() => () => clearSecrets(), [clearSecrets]))
-  useEffect(() => {
-    if (!focused || !foreground || !password) return
-    const watcher = watchConfirmation({
-      async check() {
-        if (latest.current.auth.busy) return false
-        try {
-          // A real credential check, not a public email-status lookup. The
-          // password stays in memory, and the session is not remembered.
-          await latest.current.auth.signIn(email, password, false)
-          return true
-        } catch (error) {
-          if (authErrorCode(error) === 'email_not_confirmed') return false
-          throw error
-        }
-      },
-      checking: () => setProgress('checking'),
-      waiting: () => setProgress('waiting'),
-      confirmed() {
-        clearSecrets()
-        // The verified signed-in parent opens account setup through SignedInRedirect.
-      },
-      expired() {
-        clearSecrets()
-        setProgress('paused')
-      },
-      failed(error) {
-        setProgress('paused')
-        clearSecrets()
-        latest.current.popup.show({
-          ...authFeedback(error, 'Could not check confirmation'),
-          returnFocus: () => input.current?.focus(),
-          primary: { title: 'Try again' },
-          secondary: { title: 'Not now', restoreFocus: false },
-        })
-      },
-    })
-    monitor.current = watcher
-    return () => {
-      watcher.stop()
-      if (monitor.current === watcher) monitor.current = null
-    }
-  }, [email, password, focused, foreground, revision, clearSecrets])
+  const remaining = Math.max(0, Math.ceil((retryAt - now) / 1000))
+  const busy = auth.busy || completion.busy
 
-  function resume() {
-    if (!resumePassword) {
+  async function verify() {
+    if (busy || inFlight.current) return
+    if (!sessionPending && code.length !== emailCodeLength) {
+      setError(`Enter the ${emailCodeLength}-digit code from your email.`)
       input.current?.focus()
       return
     }
+    inFlight.current = true
+    setError(null)
     Keyboard.dismiss()
-    setPassword(resumePassword)
-    setResumePassword('')
-    setProgress('waiting')
-    setRevision((value) => value + 1)
+    try {
+      await auth.verifyEmailCode(email, code)
+      setVerified(true)
+      setCode('')
+    } catch (failure) {
+      setSessionPending(
+        authErrorCode(failure) === 'verification_session_pending',
+      )
+      setExpired(authErrorCode(failure) === 'otp_expired')
+      setError(authErrorMessage(failure))
+    } finally {
+      inFlight.current = false
+    }
+  }
+  async function resend() {
+    if (busy || sessionPending || remaining > 0 || inFlight.current) return
+    inFlight.current = true
+    setError(null)
+    try {
+      await auth.sendEmail(email, 'signup')
+      setRetryAt(Date.now() + 60000)
+      setNow(Date.now())
+      setExpired(false)
+      setCode('')
+      input.current?.focus()
+    } catch (failure) {
+      setError(authErrorMessage(failure))
+    } finally {
+      inFlight.current = false
+    }
   }
   return (
-    <View style={styles.content}>
-      <BrandIcon name="mail" color={colors.cyan} size={44} />
-      <Text style={styles.body}>
-        Confirm from the email on any device. Parkey will continue here
-        automatically.
-      </Text>
-      {!password ? (
-        <>
-          <Text style={styles.body}>
-            Enter your password to continue checking.
-          </Text>
-          <FormField
-            label="Password"
-            icon="lock"
-            password
-            value={resumePassword}
-            onChangeText={setResumePassword}
-            inputRef={input}
-            autoComplete="current-password"
-            editable={!auth.busy}
-            returnKeyType="go"
-            onSubmitEditing={resume}
-          />
-          <BrandButton title="Continue" onPress={resume} disabled={auth.busy} />
-        </>
-      ) : (
-        <>
-          <View style={styles.status} accessibilityLiveRegion="polite">
-            {progress === 'checking' ? (
-              <ActivityIndicator color={colors.cyan} />
-            ) : null}
-            <Text style={styles.body}>
-              {progress === 'checking'
-                ? 'Checking confirmation…'
-                : progress === 'paused'
-                  ? 'Automatic checks paused'
-                  : 'Waiting for confirmation'}
-            </Text>
-          </View>
-          <BrandButton
-            title={progress === 'paused' ? 'Resume checking' : 'Check now'}
-            variant="text"
-            disabled={auth.busy}
-            onPress={() => {
-              if (progress === 'paused') {
-                setProgress('waiting')
-                setRevision((value) => value + 1)
-              } else void monitor.current?.checkNow()
-            }}
-          />
-        </>
-      )}
-      <BrandButton
-        title="Resend confirmation email"
-        variant="text"
-        disabled={auth.busy}
-        onPress={() => void resend()}
-      />
-    </View>
+    <EmailVerificationForm
+      email={email}
+      code={code}
+      error={error}
+      expired={expired}
+      verified={verified}
+      remaining={remaining}
+      busy={busy}
+      sessionPending={sessionPending}
+      continueDisabled={auth.state.status !== 'signed-in'}
+      inputRef={input}
+      onCodeChange={(value) => {
+        setCode(value.replace(/\D/g, '').slice(0, emailCodeLength))
+        setError(null)
+        setExpired(false)
+      }}
+      onVerify={() => void verify()}
+      onResend={() => void resend()}
+      onDifferentEmail={onDifferentEmail}
+      onContinue={() => void completion.finish()}
+    />
   )
 }
-const useStyles = createThemedStyles(({ entryColors: colors }) =>
-  StyleSheet.create({
-    content: { marginTop: 32, gap: 20 },
-    body: { ...typography.body, color: colors.text },
-    status: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  }),
-)

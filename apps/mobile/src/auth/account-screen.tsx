@@ -9,6 +9,7 @@ import { BrandButton } from '../components/brand-button'
 import { BrandIcon } from '../components/brand-icon'
 import { usePopup } from '../components/popup-provider'
 import { typography } from '../theme'
+import { profileComplete } from '../onboarding/profile'
 import { AuthShell } from './auth-shell'
 import { useAuth } from './provider'
 import { AuthChoices } from './auth-choices'
@@ -80,6 +81,13 @@ export function AccountScreen() {
               {typeof name === 'string' && name.trim() ? ` as ${name}` : ''}
             </Text>
             <Text style={styles.body}>{auth.state.user.email}</Text>
+            {!profileComplete(auth.state.user) ? (
+              <BrandButton
+                title="Complete your profile"
+                disabled={auth.busy}
+                onPress={() => router.push('/account-setup')}
+              />
+            ) : null}
             <BrandButton
               title="Sign out"
               busy={auth.busy}

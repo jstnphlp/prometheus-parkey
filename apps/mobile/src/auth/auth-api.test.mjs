@@ -3,6 +3,7 @@ import { Buffer } from 'node:buffer'
 import test from 'node:test'
 
 import { createAuthClient } from './auth-api.ts'
+import { verifySignupCode } from './email-code.ts'
 import { authRedirectUrl } from './links.ts'
 import { authFailure } from './auth-failure.ts'
 import { createSessionStorage, sessionStorageKey } from './secure-storage.ts'
@@ -65,6 +66,37 @@ function setup(respond) {
   )
   return { values, secrets, storage, client, calls, request }
 }
+
+test('SDK verification submits an email code to /verify and obtains a real confirmed session', async () => {
+  const { client, calls, storage } = setup(() => ({ json: sessionPayload() }))
+  await storage.setRemember(false)
+  await verifySignupCode(client.auth, fixtureUser.email, '123456')
+  const verification = calls.find((call) => call.url.endsWith('/verify'))
+  assert.deepEqual(verification.body, {
+    email: fixtureUser.email,
+    token: '123456',
+    type: 'signup',
+    gotrue_meta_security: {},
+  })
+  assert.ok((await client.auth.getSession()).data.session)
+  assert.equal(
+    calls.some((call) => call.url.includes('grant_type=pkce')),
+    false,
+  )
+})
+
+test('an expired email code leaves the SDK signed out', async () => {
+  const { client, storage } = setup(() => ({
+    status: 403,
+    json: { code: 'otp_expired', msg: 'Token has expired or is invalid' },
+  }))
+  await storage.setRemember(false)
+  await assert.rejects(
+    verifySignupCode(client.auth, fixtureUser.email, '123456'),
+    { code: 'otp_expired' },
+  )
+  assert.equal((await client.auth.getSession()).data.session, null)
+})
 
 test('SDK signup sends name metadata and S256 PKCE, and does not invent an authenticated session', async () => {
   const { client, calls, storage } = setup(() => ({

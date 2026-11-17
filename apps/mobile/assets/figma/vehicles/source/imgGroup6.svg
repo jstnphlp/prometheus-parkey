@@ -1,0 +1,35 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="100.832" height="38.075" viewBox="0 0 100.832 38.075" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Group">
+<path id="Vector" d="M1.325 28.25L2.325 7.75C2.99167 4.41667 5.825 2.58333 10.825 2.25H71.825C77.4917 2.25 81.825 4.91667 84.825 10.25L90.825 18.75L96.325 21.25C99.325 22.5833 100.492 25.25 99.825 29.25L98.825 37.25H0.825001L1.325 28.25Z" fill="url(#paint0_linear_0_31)" stroke-width="1.65" stroke-linejoin="round" stroke="#143758"/>
+<path id="Vector_2" d="M6.325 5.75H70.825C76.1583 6.08333 80.1583 10.25 82.825 18.25H5.325L6.325 5.75Z" fill="url(#paint1_linear_0_31)" stroke-width="1.4" stroke-linejoin="round" stroke="#1C3859"/>
+<g id="Vector_3">
+<path d="M28.325 6.25V18.25ZM53.325 6.25V18.75ZM74.325 7.75L80.825 18.75ZM54.325 20.75V33.25ZM25.825 20.75V33.75Z" fill="black"/>
+<path d="M28.325 6.25V18.25M53.325 6.25V18.75M74.325 7.75L80.825 18.75M54.325 20.75V33.25M25.825 20.75V33.75" stroke-width="1.35" stroke-linejoin="round" stroke="#143B66"/>
+</g>
+<g id="Vector_4">
+<path d="M7.825 1.25H74.825Z" fill="black"/>
+<path d="M7.825 1.25H74.825" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke="#142B4D"/>
+</g>
+<path id="Vector_5" opacity="0.72" d="M4.325 21.25C26.9917 19.5833 57.4917 20.4167 95.825 23.75" stroke-width="1.5" stroke-linejoin="round" stroke="#ACE9FF"/>
+<g id="Vector_6" opacity="0.6">
+<path d="M5.325 34.75H96.825Z" fill="black"/>
+<path d="M5.325 34.75H96.825" stroke-width="2" stroke-linejoin="round" stroke="#0B4C97"/>
+</g>
+<path id="Vector_7" d="M35.325 24.25H29.325C28.7727 24.25 28.325 24.6977 28.325 25.25V25.75C28.325 26.3023 28.7727 26.75 29.325 26.75H35.325C35.8773 26.75 36.325 26.3023 36.325 25.75V25.25C36.325 24.6977 35.8773 24.25 35.325 24.25Z" fill="#DAEDFF"/>
+<path id="Vector_8" d="M68.325 24.25H61.825C61.2727 24.25 60.825 24.6977 60.825 25.25V25.75C60.825 26.3023 61.2727 26.75 61.825 26.75H68.325C68.8773 26.75 69.325 26.3023 69.325 25.75V25.25C69.325 24.6977 68.8773 24.25 68.325 24.25Z" fill="#D2E9FF"/>
+<path id="Vector_9" d="M90.825 22.25L99.825 25.25L98.825 28.25H88.825L90.825 22.25Z" fill="#ECF8FF"/>
+<path id="Vector_10" d="M1.325 19.25H5.325V28.25H0.825001L1.325 19.25Z" fill="#ED6870"/>
+</g>
+<defs>
+<linearGradient id="paint0_linear_0_31" x1="0.825001" y1="2.25" x2="2.58375" y2="37.8491" gradientUnits="userSpaceOnUse">
+<stop stop-color="#5DCBFF"/>
+<stop offset="0.43" stop-color="#258FF7"/>
+<stop offset="1" stop-color="#0964CD"/>
+</linearGradient>
+<linearGradient id="paint1_linear_0_31" x1="5.325" y1="5.75" x2="7.1689" y2="23.3379" gradientUnits="userSpaceOnUse">
+<stop stop-color="#6B96CD"/>
+<stop offset="0.45" stop-color="#3A5A8C"/>
+<stop offset="1" stop-color="#162E54"/>
+</linearGradient>
+</defs>
+</svg>

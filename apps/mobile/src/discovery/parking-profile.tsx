@@ -149,6 +149,7 @@ export function ParkingProfile({
           onSaved={onSaved}
           onPreferences={onPreferences}
           onTools={() => setToolsOpen((value) => !value)}
+          hasDeviceDrafts={drafts.length > 0}
         />
         {toolsOpen ? (
           <>

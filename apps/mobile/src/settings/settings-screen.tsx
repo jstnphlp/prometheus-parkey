@@ -3,11 +3,10 @@ import type { ReactNode } from 'react'
 import { useState } from 'react'
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 
-import { AccountEntry } from '../auth/account-entry'
-import { useAuth } from '../auth/provider'
 import { AboutParkey } from './about-parkey'
 import { AccountMenu } from './account-menu'
 import { HelpCenter } from './help-center'
+import { PersonalInfo } from './personal-info'
 import { BottomNavigation } from '../discovery/bottom-navigation'
 import { useArchitectureInsets } from '../components/architecture-page'
 import { ArchitecturePage } from '../components/architecture-page'
@@ -263,7 +262,6 @@ export function SettingsDetailScreen({ section }: { section: string }) {
   const ui = useUI()
   const styles = useStyles()
   const router = useRouter()
-  const { state } = useAuth()
   const match = sections.find(([id]) => id === section)
   const id: SettingsSection | undefined = match?.[0]
   return (
@@ -343,27 +341,7 @@ export function SettingsDetailScreen({ section }: { section: string }) {
           </Text>
         </>
       ) : id === 'personal' ? (
-        <>
-          {state.status === 'signed-in' ? (
-            <>
-              <Text selectable style={ui.heading}>
-                {state.user.email}
-              </Text>
-              <Text style={ui.body}>
-                This is the email from your current authenticated session.
-              </Text>
-            </>
-          ) : (
-            <Text style={ui.body}>
-              You are browsing without a signed-in account.
-            </Text>
-          )}
-          <Text style={ui.muted}>
-            Editing personal information and extended profile setup are not
-            enabled.
-          </Text>
-          <AccountEntry />
-        </>
+        <PersonalInfo />
       ) : id === 'security' ? (
         <>
           <Text style={ui.body}>

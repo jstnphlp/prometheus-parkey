@@ -210,7 +210,7 @@ export function Button({
   const foreground = disabled
     ? colors.disabled
     : secondary
-      ? colors.brandDeep
+      ? colors.ink
       : colors.onAction
   return (
     <MotionPressable
@@ -225,7 +225,7 @@ export function Button({
         ui.button,
         secondary && ui.secondary,
         pressed && (secondary ? ui.secondaryPressed : ui.buttonPressed),
-        disabled && ui.disabled,
+        disabled && [ui.disabled, { backgroundColor: colors.border }],
         focused && ui.focused,
       ]}
     >

@@ -37,6 +37,7 @@ export function FormField({
   const styles = useStyles()
 
   const [visible, setVisible] = useState(false)
+  const [focused, setFocused] = useState(false)
   const { fontScale } = useWindowDimensions()
   const fieldId = `auth-${label.toLowerCase().replaceAll(' ', '-')}`
   return (
@@ -57,6 +58,15 @@ export function FormField({
         style={[
           styles.field,
           {
+            borderColor: error
+              ? colors.pending
+              : focused
+                ? colors.primary
+                : colors.border,
+            backgroundColor:
+              props.editable === false ? colors.surface : colors.card,
+          },
+          {
             height: Math.max(compact ? 47 : 57, Math.ceil(18 * fontScale + 28)),
           },
         ]}
@@ -73,7 +83,7 @@ export function FormField({
             accessibilityLabel={label}
             accessibilityHint={error || props.accessibilityHint}
             placeholder={props.placeholder ?? label}
-            placeholderTextColor={fieldColors.ink}
+            placeholderTextColor={colors.secondary}
             secureTextEntry={password && !visible}
             multiline={false}
             numberOfLines={1}
@@ -82,7 +92,19 @@ export function FormField({
             autoCorrect={false}
             autoCapitalize={props.autoCapitalize ?? 'none'}
             selectionColor={fieldColors.icon}
-            style={styles.input}
+            onFocus={(event) => {
+              setFocused(true)
+              props.onFocus?.(event)
+            }}
+            onBlur={(event) => {
+              setFocused(false)
+              props.onBlur?.(event)
+            }}
+            style={[
+              styles.input,
+              props.editable === false && { color: colors.secondary },
+              compact && { fontSize: 14 },
+            ]}
           />
         </View>
         {password ? (

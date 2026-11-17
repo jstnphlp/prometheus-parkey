@@ -4,26 +4,35 @@ import { Pressable, StyleSheet, Text, View } from 'react-native'
 import { useAuth } from '../auth/provider'
 import { BrandLogo } from '../components/brand-logo'
 import { useOpenAppearance } from '../components/appearance-navigation'
-import { Icon, IconButton } from '../discovery/ui'
+import { Icon } from '../discovery/ui'
 import type { IconName } from '../discovery/ui'
 import { fonts } from '../theme'
 import { createThemedStyles, useTheme } from '../theme-provider'
+import { profileFromUser } from '../onboarding/profile'
 
 /** Frame 16's account hierarchy. Guest copy never implies an existing profile. */
 export function AccountMenu({
   onSaved,
   onPreferences,
   onTools,
+  hasDeviceDrafts = false,
 }: {
   onSaved: () => void
   onPreferences: () => void
   onTools: () => void
+  hasDeviceDrafts?: boolean
 }) {
   const styles = useStyles()
   const { colors } = useTheme()
   const router = useRouter()
   const openAppearance = useOpenAppearance()
   const { state } = useAuth()
+  const displayName =
+    state.status === 'signed-in'
+      ? profileFromUser(state.user).fullName.trim() ||
+        state.user.email ||
+        'Your account'
+      : 'Explore as a guest'
   const section = (id: string) =>
     router.push({ pathname: '/settings/[section]', params: { section: id } })
   const groups: { title: string; icon: IconName; action: () => void }[][] = [
@@ -51,6 +60,9 @@ export function AccountMenu({
         action: () => section('privacy'),
       },
       { title: 'About Parkey', icon: 'info', action: () => section('about') },
+      ...(hasDeviceDrafts
+        ? [{ title: 'Device drafts', icon: 'info' as const, action: onTools }]
+        : []),
     ],
   ]
   return (
@@ -64,28 +76,22 @@ export function AccountMenu({
         <Text accessibilityRole="header" style={styles.title}>
           Account
         </Text>
-        <IconButton
-          icon="more"
-          label="Device drafts and map tools"
-          onPress={onTools}
-          style={styles.more}
-        />
       </View>
       <Pressable
         accessibilityRole="button"
-        accessibilityLabel="Your Parkey account"
-        onPress={() => router.push('/account')}
+        accessibilityLabel={displayName}
+        onPress={() =>
+          state.status === 'signed-in'
+            ? section('personal')
+            : router.push('/account')
+        }
         style={styles.account}
       >
         <View style={styles.avatar}>
           <Icon name="person" size={28} color={colors.muted} />
         </View>
         <View style={{ flex: 1, minWidth: 0 }}>
-          <Text style={styles.label}>
-            {state.status === 'signed-in'
-              ? 'Your Parkey account'
-              : 'Explore as a guest'}
-          </Text>
+          <Text style={styles.label}>{displayName}</Text>
           <Text numberOfLines={2} style={styles.subtitle}>
             {state.status === 'signed-in'
               ? state.user.email
@@ -150,13 +156,6 @@ const useStyles = createThemedStyles(({ colors }) =>
       fontSize: 24,
       lineHeight: 32,
       color: colors.ink,
-    },
-    more: {
-      width: 44,
-      height: 44,
-      borderWidth: 1,
-      borderColor: colors.border,
-      backgroundColor: colors.canvas,
     },
     account: {
       flexDirection: 'row',

@@ -43,6 +43,7 @@ export function ScreenContainer({
           keyboardShouldPersistTaps="handled"
           keyboardDismissMode="on-drag"
           showsVerticalScrollIndicator={false}
+          alwaysBounceVertical={false}
         >
           <View style={[styles.content, contentStyle]}>{children}</View>
         </ScrollView>

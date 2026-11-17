@@ -8,6 +8,7 @@ import {
 } from 'react-native'
 
 import { useArchitectureInsets } from '../components/architecture-page'
+import { useFormLayout } from '../components/form-layout'
 import { fonts } from '../theme'
 import { createThemedStyles, useTheme } from '../theme-provider'
 import { Button, Icon, IconButton } from './ui'
@@ -103,17 +104,17 @@ export function EmptySavedPage({
 }) {
   const styles = useStyles()
   const { colors } = useTheme()
-  const insets = useArchitectureInsets()
-  const { height } = useWindowDimensions()
+  const { insets, height, space } = useFormLayout()
   return (
     <View style={styles.screen}>
       <ScrollView
+        alwaysBounceVertical={false}
         contentContainerStyle={[
           styles.content,
           {
             minHeight: height,
             paddingTop: insets.top + 6,
-            paddingBottom: insets.bottom + 64,
+            paddingBottom: insets.bottom + space(38),
           },
         ]}
       >
@@ -124,7 +125,7 @@ export function EmptySavedPage({
           onPress={onExplore}
           style={styles.back}
         />
-        <View style={[styles.savedHeader, { marginTop: 40 }]}>
+        <View style={[styles.savedHeader, { marginTop: space(24) }]}>
           <Text accessibilityRole="header" style={styles.title}>
             Saved parking
           </Text>
@@ -135,17 +136,39 @@ export function EmptySavedPage({
             style={{ backgroundColor: 'transparent' }}
           />
         </View>
-        <View style={styles.savedRing}>
-          <Icon name="heart" size={88} color={colors.brand} />
+        <View
+          style={{
+            flexGrow: 1,
+            justifyContent: 'center',
+            gap: space(24),
+            paddingVertical: space(24),
+          }}
+        >
+          <View
+            style={[
+              styles.savedRing,
+              {
+                width: space(222),
+                height: space(222),
+                marginTop: 0,
+                marginBottom: 0,
+              },
+            ]}
+          >
+            <Icon name="heart" size={88} color={colors.brand} />
+          </View>
+          <Text
+            accessibilityRole="header"
+            style={[styles.emptyTitle, { marginTop: 0 }]}
+          >
+            Nothing saved yet
+          </Text>
+          <Text style={[styles.copy, { marginTop: 0 }]}>
+            Save parking locations while browsing. They’ll appear here for quick
+            access.
+          </Text>
         </View>
-        <Text accessibilityRole="header" style={styles.emptyTitle}>
-          Nothing saved yet
-        </Text>
-        <Text style={[styles.copy, { marginTop: 44 }]}>
-          Save parking locations while browsing. They’ll appear here for quick
-          access.
-        </Text>
-        <View style={styles.actions}>
+        <View style={[styles.actions, { paddingTop: space(16) }]}>
           <Button onPress={onExplore}>Explore Parking</Button>
         </View>
       </ScrollView>

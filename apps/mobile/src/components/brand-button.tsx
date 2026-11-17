@@ -3,14 +3,14 @@ import type { StyleProp, ViewStyle } from 'react-native'
 
 import type { ParkeyTheme } from '../theme-colors'
 import { useTheme } from '../theme-provider'
-import { layout, radius, spacing, typography } from '../theme'
+import { fonts, radius, spacing, typography } from '../theme'
 
 const getVariants = (colors: ParkeyTheme['entryColors']) =>
   ({
     teal: { backgroundColor: colors.teal, color: colors.onAction },
     cyan: { backgroundColor: colors.plum, color: colors.onAction },
     plum: { backgroundColor: colors.plum, color: colors.onAction },
-    white: { backgroundColor: colors.accentSoft, color: colors.link },
+    white: { backgroundColor: colors.accentSoft, color: colors.text },
     text: { backgroundColor: 'transparent', color: colors.link },
     plain: { backgroundColor: 'transparent', color: colors.link },
   }) as const
@@ -34,6 +34,7 @@ export function BrandButton({
   const variants = getVariants(colors)
 
   const palette = variants[variant]
+  const textButton = variant === 'text' || variant === 'plain'
   return (
     <Pressable
       accessibilityRole="button"
@@ -44,8 +45,9 @@ export function BrandButton({
       style={({ pressed }) => [
         styles.button,
         { backgroundColor: palette.backgroundColor },
-        (variant === 'text' || variant === 'plain') && styles.textButton,
-        (pressed || disabled || busy) && styles.dimmed,
+        textButton && styles.textButton,
+        pressed && !disabled && !busy && styles.dimmed,
+        disabled && !textButton && { backgroundColor: colors.border },
         style,
       ]}
     >
@@ -56,9 +58,9 @@ export function BrandButton({
           style={[
             variant === 'text' || variant === 'plain'
               ? typography.link
-              : typography.button,
+              : styles.primaryLabel,
             styles.label,
-            { color: palette.color },
+            { color: disabled ? colors.secondary : palette.color },
           ]}
         >
           {title}
@@ -70,7 +72,7 @@ export function BrandButton({
 
 const styles = StyleSheet.create({
   button: {
-    minHeight: layout.buttonHeight,
+    minHeight: 56,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
     borderRadius: radius.button,
@@ -78,7 +80,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  textButton: { minHeight: layout.touchTarget, borderRadius: 0 },
+  textButton: { minHeight: 44, borderRadius: 0 },
+  primaryLabel: { fontFamily: fonts.semibold, fontSize: 16, lineHeight: 22 },
   label: { alignSelf: 'stretch', textAlign: 'center' },
   dimmed: { opacity: 0.65 },
 })

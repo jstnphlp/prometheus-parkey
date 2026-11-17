@@ -4,6 +4,7 @@ import { Platform, StyleSheet, Text } from 'react-native'
 import { useTheme, createThemedStyles } from '../theme-provider'
 import { BrandLogo } from '../components/brand-logo'
 import { ScreenContainer } from '../components/screen-container'
+import { useFormLayout } from '../components/form-layout'
 import { BackButton } from '../onboarding/back-button'
 import { fonts, typography } from '../theme'
 import { useAuthSystemPopup } from './use-system-popup'
@@ -25,6 +26,7 @@ export function AuthShell({
 }) {
   const { entryColors: colors } = useTheme()
   const styles = useStyles()
+  const { compact, horizontalPadding } = useFormLayout()
 
   useAuthSystemPopup()
   const background = colors.canvas
@@ -34,7 +36,11 @@ export function AuthShell({
       keyboardAware
       contentStyle={[
         styles.content,
-        { paddingTop: Platform.OS === 'web' ? 77 : 33 },
+        {
+          paddingTop: compact ? 16 : Platform.OS === 'web' ? 77 : 33,
+          paddingBottom: compact ? 12 : 44,
+          paddingHorizontal: horizontalPadding,
+        },
       ]}
       overlay={
         <BackButton
@@ -50,6 +56,7 @@ export function AuthShell({
           styles.title,
           registering ? typography.accountTitle : styles.signInTitle,
           !registering && styles.loginTitle,
+          compact && !registering && { marginTop: 20 },
           recovery && { marginTop: 78 },
         ]}
       >
@@ -60,6 +67,7 @@ export function AuthShell({
           styles.subtitle,
           { color: registering ? colors.onPlumMuted : colors.onDarkMuted },
           !registering && styles.loginSubtitle,
+          compact && !registering && { marginTop: 18 },
           recovery && { marginTop: 18, lineHeight: 21 },
         ]}
       >

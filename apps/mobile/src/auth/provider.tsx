@@ -11,12 +11,13 @@ import { AppState } from 'react-native'
 import * as WebBrowser from 'expo-web-browser'
 
 import { config } from '../discovery/config'
+import type { ProfileDraft } from '../onboarding/profile'
 
 import { createAuthRuntime, secrets } from './client'
 import { authFailure } from './auth-failure'
 import type { AuthRuntime } from './client'
 import { authRedirectUrl, readEmailFlow } from './links'
-import { resendConfirmation } from './resend-confirmation'
+import { confirmSignupSession } from './email-code'
 import { pendingFlowKey, sessionStorageKey } from './secure-storage'
 import { createSessionVerifier } from './session'
 import type { AuthSnapshot } from './session'
@@ -24,6 +25,9 @@ import { completeOAuth, invalidOAuth, openOAuth } from './oauth-flow'
 import { enabledSocialProviders } from './oauth-policy'
 import type { SocialProvider } from './oauth-policy'
 import { boundedAuthFetch } from './network'
+import { saveAccountProfile } from './profile-save'
+import { savePersonalInfo } from './personal-info'
+import type { PersonalInfoDraft } from './personal-info'
 
 type AuthContextValue = {
   state: AuthSnapshot
@@ -38,8 +42,11 @@ type AuthContextValue = {
   signIn: (email: string, password: string, remember: boolean) => Promise<void>
   signUp: (name: string, email: string, password: string) => Promise<boolean>
   sendEmail: (email: string, kind: 'signup' | 'recovery') => Promise<void>
+  verifyEmailCode: (email: string, code: string) => Promise<void>
   callback: (code: string) => Promise<'signup' | 'recovery'>
   updatePassword: (password: string) => Promise<void>
+  saveProfile: (draft: ProfileDraft) => Promise<void>
+  savePersonalInfo: (draft: PersonalInfoDraft) => Promise<void>
   signOut: () => Promise<boolean>
 }
 const AuthContext = createContext<AuthContextValue | null>(null)
@@ -305,12 +312,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     sendEmail: (email, kind) =>
       action(async (current) => {
         if (kind === 'signup') {
-          // A rejected/rate-limited resend must not invalidate the original link.
-          await resendConfirmation(secrets, current.storage, email, () =>
-            current.client.auth.resend({
-              type: 'signup',
-              email: email.trim(),
-              options: { emailRedirectTo: authRedirectUrl },
+          const { error } = await current.client.auth.resend({
+            type: 'signup',
+            email: email.trim(),
+          })
+          if (error) throw error
+          // Only renew the pending context after the provider accepts the send.
+          await secrets.setItem(
+            pendingFlowKey,
+            JSON.stringify({
+              kind: 'signup',
+              email: email.trim().toLowerCase(),
+              createdAt: Date.now(),
             }),
           )
           return
@@ -319,6 +332,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           current.client.auth.resetPasswordForEmail(email.trim(), {
             redirectTo: authRedirectUrl,
           }),
+        )
+      }),
+    verifyEmailCode: (email, code) =>
+      action(async (current) => {
+        if (recovery.current || state.status === 'recovery') throw invalidLink()
+        await current.storage.setRemember(false)
+        await confirmSignupSession(
+          current.client.auth,
+          email,
+          code,
+          async () => verifier.current?.verify(),
+          async () => {
+            await secrets.removeItem(pendingFlowKey)
+            await current.storage.removeItem(
+              `${sessionStorageKey}-code-verifier`,
+            )
+          },
         )
       }),
     callback: (code) =>
@@ -340,6 +370,36 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           throw invalidLink()
         await secrets.removeItem(pendingFlowKey)
         return pending.kind
+      }),
+    saveProfile: (draft) =>
+      action(async (current) => {
+        if (
+          state.status !== 'signed-in' ||
+          recovery.current ||
+          state.expiresAt <= Date.now()
+        )
+          throw new Error('Sign in again to save your profile.')
+        await saveAccountProfile(current.client.auth, state.user.id, draft)
+        const verified = await verifier.current?.verify()
+        if (verified?.status !== 'signed-in')
+          throw new Error(
+            'Session could not be verified. Please sign in again.',
+          )
+      }),
+    savePersonalInfo: (draft) =>
+      action(async (current) => {
+        if (
+          state.status !== 'signed-in' ||
+          recovery.current ||
+          state.expiresAt <= Date.now()
+        )
+          throw new Error('Sign in again to update your personal info.')
+        await savePersonalInfo(current.client.auth, state.user.id, draft)
+        const verified = await verifier.current?.verify()
+        if (verified?.status !== 'signed-in')
+          throw new Error(
+            'Session could not be verified. Please sign in again.',
+          )
       }),
     updatePassword: (password) =>
       action(async (current) => {

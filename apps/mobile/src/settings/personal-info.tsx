@@ -14,6 +14,10 @@ import {
   personalInfoProblem,
 } from '../auth/personal-info'
 import type { PersonalInfoDraft } from '../auth/personal-info'
+import {
+  personalInfoEditor,
+  reconcilePersonalInfoEditor,
+} from '../auth/personal-info-state'
 import { useAuth } from '../auth/provider'
 import { FormDropdown } from '../components/form-dropdown'
 import { usePopup } from '../components/popup-provider'
@@ -28,46 +32,40 @@ export function PersonalInfo() {
   const styles = useStyles()
   const popup = usePopup()
   const inFlight = useRef(false)
-  const [draft, setDraft] = useState(() => personalInfoFromUser(null))
-  const [loadedUser, setLoadedUser] = useState<string | null>(null)
-  const [editing, setEditing] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [editor, setEditor] = useState(() => personalInfoEditor(null))
+  const { draft, editing, error } = editor
   const user = auth.state.status === 'signed-in' ? auth.state.user : null
-  if (user && loadedUser !== user.id) {
-    setLoadedUser(user.id)
-    setDraft(personalInfoFromUser(user))
-    setEditing(false)
-    setError(null)
-  } else if (!user && auth.state.status !== 'checking' && loadedUser !== null) {
-    setLoadedUser(null)
-    setDraft(personalInfoFromUser(null))
-    setEditing(false)
-    setError(null)
-  }
+  const reconciled = reconcilePersonalInfoEditor(editor, auth.state)
+  if (reconciled !== editor) setEditor(reconciled)
   const values = editing ? draft : personalInfoFromUser(user)
   const update = (key: keyof PersonalInfoDraft, value: string) => {
-    setDraft((current) => ({ ...current, [key]: value }))
-    setError(null)
+    setEditor((current) => ({
+      ...current,
+      draft: { ...current.draft, [key]: value },
+      error: null,
+    }))
   }
   async function save() {
     if (auth.busy || inFlight.current) return
     const problem = personalInfoProblem(draft)
-    setError(problem)
+    setEditor((current) => ({ ...current, error: problem }))
     if (problem) return
     inFlight.current = true
     Keyboard.dismiss()
     try {
       await auth.savePersonalInfo(draft)
-      setEditing(false)
+      setEditor((current) => ({ ...current, editing: false, error: null }))
       popup.show({
         tone: 'success',
         title: 'Personal info updated',
         message: 'Your changes have been saved.',
       })
     } catch {
-      setError(
-        'Could not save your changes. Check your connection and try again.',
-      )
+      setEditor((current) => ({
+        ...current,
+        error:
+          'Could not save your changes. Check your connection and try again.',
+      }))
     } finally {
       inFlight.current = false
     }
@@ -126,6 +124,17 @@ export function PersonalInfo() {
         accessibilityLabel="Loading personal info"
       />
     )
+  if (auth.state.status === 'error')
+    return (
+      <View style={styles.content}>
+        <Text accessibilityRole="alert" style={styles.error}>
+          Could not check your account. Reconnect and try again.
+        </Text>
+        <Button disabled={auth.busy} onPress={() => void auth.retry()}>
+          Retry
+        </Button>
+      </View>
+    )
   if (!user) return <AccountEntry />
   return (
     <View style={styles.content}>
@@ -170,8 +179,11 @@ export function PersonalInfo() {
             disabled={auth.busy}
             onPress={() => {
               Keyboard.dismiss()
-              setEditing(false)
-              setError(null)
+              setEditor((current) => ({
+                ...current,
+                editing: false,
+                error: null,
+              }))
             }}
           >
             Cancel
@@ -181,9 +193,7 @@ export function PersonalInfo() {
         <Button
           disabled={auth.busy}
           onPress={() => {
-            setDraft(personalInfoFromUser(user))
-            setEditing(true)
-            setError(null)
+            setEditor({ ...personalInfoEditor(user), editing: true })
           }}
         >
           Edit Details

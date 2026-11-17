@@ -5,7 +5,9 @@ import { usePopup } from '../components/popup-provider'
 
 import { useOnboarding } from './provider'
 
-export function useCompletion(destination: '/register' | '/') {
+export function useCompletion(
+  destination: '/register' | '/login' | '/account-setup' | '/',
+) {
   const router = useRouter()
   const { complete } = useOnboarding()
   const popup = usePopup()

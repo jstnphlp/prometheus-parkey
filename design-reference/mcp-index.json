@@ -437,6 +437,20 @@
       "nodeId": "249:6952",
       "screenshot": "screens/dark-magenta/26.png",
       "layout": "layouts/dark-magenta/26.json"
+    },
+    {
+      "id": "8",
+      "theme": "light-magenta",
+      "nodeId": "249:2015",
+      "screenshot": "screens/light-magenta/8.png",
+      "layout": "layouts/light-magenta/8.json"
+    },
+    {
+      "id": "8",
+      "theme": "dark-magenta",
+      "nodeId": "249:5446",
+      "screenshot": "screens/dark-magenta/8.png",
+      "layout": "layouts/dark-magenta/8.json"
     }
   ]
 }

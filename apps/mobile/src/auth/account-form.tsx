@@ -15,6 +15,7 @@ import { useTheme, createThemedStyles } from '../theme-provider'
 import { BrandButton } from '../components/brand-button'
 import { BrandIcon } from '../components/brand-icon'
 import { usePopup } from '../components/popup-provider'
+import { useCompletion } from '../onboarding/use-completion'
 import { fonts, typography } from '../theme'
 import { AuthShell } from './auth-shell'
 import { FormField } from './form-field'
@@ -38,6 +39,7 @@ export function AccountForm({ mode }: { mode: 'register' | 'login' }) {
 
   const auth = useAuth()
   const router = useRouter()
+  const guest = useCompletion('/')
   const registering = mode === 'register'
   const popup = usePopup()
   const [name, setName] = useState('')
@@ -373,6 +375,13 @@ export function AccountForm({ mode }: { mode: 'register' | 'login' }) {
           </Text>
         </Pressable>
       </View>
+      <BrandButton
+        title="Explore as guest"
+        variant="text"
+        disabled={busy}
+        busy={guest.busy}
+        onPress={() => void guest.finish()}
+      />
     </AuthShell>
   )
 }

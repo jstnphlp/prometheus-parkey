@@ -11,7 +11,7 @@ import { useCompletion } from '../onboarding/use-completion'
 export function SignedInRedirect() {
   const { entryColors: colors } = useTheme()
 
-  const { finish, busy } = useCompletion('/')
+  const { finish, busy } = useCompletion('/account-setup')
   const attempted = useRef(false)
   useEffect(() => {
     if (attempted.current) return
@@ -26,10 +26,13 @@ export function SignedInRedirect() {
       {busy ? (
         <ActivityIndicator
           color={colors.cyan}
-          accessibilityLabel="Opening Parkey"
+          accessibilityLabel="Opening account setup"
         />
       ) : (
-        <BrandButton title="Continue to Parkey" onPress={() => void finish()} />
+        <BrandButton
+          title="Continue to account setup"
+          onPress={() => void finish()}
+        />
       )}
     </ScreenContainer>
   )

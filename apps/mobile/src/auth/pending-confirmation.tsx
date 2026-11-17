@@ -91,7 +91,7 @@ export function PendingConfirmation({
       waiting: () => setProgress('waiting'),
       confirmed() {
         clearSecrets()
-        // The signed-in parent opens discovery through SignedInRedirect.
+        // The verified signed-in parent opens account setup through SignedInRedirect.
       },
       expired() {
         clearSecrets()

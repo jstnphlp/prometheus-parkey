@@ -48,7 +48,7 @@ export function OnboardingScreen({ step }: { step: keyof typeof steps }) {
   const { width, height } = useWindowDimensions()
   const scale = Math.min(width / 430, 1.15)
   const page = steps[step]
-  const { finish, busy } = useCompletion('/')
+  const { finish, busy } = useCompletion('/login')
   return (
     <View style={styles.screen}>
       <ScrollView

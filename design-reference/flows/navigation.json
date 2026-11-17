@@ -3,7 +3,8 @@
   "source": {
     "kind": "manually curated from Figma canonical journey node 283:3352 and 60-pair screen index",
     "verifiedAt": "2026-11-16",
-    "warning": "This is a product-aware flow outline, not an exported Figma prototype reaction graph. Per-node reactions are exported by scripts/figma-snapshot.mjs where available."
+    "warning": "This is a product-aware flow outline, not an exported Figma prototype reaction graph. Per-node reactions are exported by scripts/figma-snapshot.mjs where available.",
+    "ownerCorrection": "2026-11-17: walkthrough Finish/Skip -> Sign in (17); real successful authentication -> profile setup (8). Profile/vehicle saving and completion remain integration-gated."
   },
   "modes": ["light-magenta", "dark-magenta"],
   "policy": {
@@ -25,8 +26,8 @@
     {
       "id": "entry",
       "status": "v1",
-      "screenIds": ["1", "1B", "2", "3", "4", "5", "20", "20A", "21", "22"],
-      "note": "Optional/skippable visual intro. Guest Browse always available. Location denied → manual search."
+      "screenIds": ["1", "1B", "2", "3", "4", "17", "20", "20A", "21", "22"],
+      "note": "Optional introduction. Finish/Skip leads to Sign in. Guest Browse is an explicit choice and remains available; location denied -> manual search."
     },
     {
       "id": "new-account",
@@ -130,7 +131,7 @@
     },
     {
       "from": "4",
-      "to": "5",
+      "to": "17",
       "action": "finish",
       "status": "v1"
     },
@@ -232,9 +233,10 @@
     },
     {
       "from": "17",
-      "to": "19",
+      "to": "8",
       "action": "valid-credentials",
-      "status": "gated"
+      "status": "gated",
+      "note": "Requires server-verified confirmed session. Opens profile entry, never discovery or a fake setup-complete state. Saving remains gated."
     },
     {
       "from": "17",
@@ -445,6 +447,24 @@
       "to": "85",
       "action": "logout",
       "status": "gated"
+    },
+    {
+      "from": "2",
+      "to": "17",
+      "action": "skip-walkthrough",
+      "status": "v1"
+    },
+    {
+      "from": "3",
+      "to": "17",
+      "action": "skip-walkthrough",
+      "status": "v1"
+    },
+    {
+      "from": "4",
+      "to": "17",
+      "action": "skip-walkthrough",
+      "status": "v1"
     }
   ]
 }

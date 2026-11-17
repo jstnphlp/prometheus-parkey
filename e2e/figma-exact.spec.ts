@@ -252,8 +252,8 @@ for (const mode of ['light-magenta', 'dark-magenta'] as const) {
         })
         .click()
     }
-    await expect(page.getByTestId('discovery-map-ready')).toBeVisible()
-    await page.goto('/login')
+    await expect(page).toHaveURL(/\/login$/)
+    await expect(page.getByTestId('discovery-map-ready')).toHaveCount(0)
     const close = page.getByRole('button', {
       name: 'Close message',
       exact: true,

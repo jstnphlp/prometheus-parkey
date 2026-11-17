@@ -1,4 +1,6 @@
+import { useEffect, useRef } from 'react'
 import { useRouter } from 'expo-router'
+import { useIsFocused } from 'expo-router/react-navigation'
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native'
 
 import { SettingsLinks } from '../settings/settings-screen'
@@ -16,9 +18,26 @@ export function AccountScreen() {
   const styles = useStyles()
 
   const auth = useAuth()
+  const focused = useIsFocused()
+  const signingInFromChoices = useRef(false)
   const router = useRouter()
   const popup = usePopup()
   const name: unknown = auth.state.user?.user_metadata.full_name
+  useEffect(() => {
+    if (!focused) {
+      signingInFromChoices.current = false
+      return
+    }
+    if (
+      auth.state.status === 'signed-out' ||
+      auth.state.status === 'unavailable'
+    )
+      signingInFromChoices.current = true
+    if (signingInFromChoices.current && auth.state.status === 'signed-in') {
+      signingInFromChoices.current = false
+      router.replace('/account-setup')
+    }
+  }, [auth.state.status, focused, router])
   async function signOut() {
     try {
       const revoked = await auth.signOut()

@@ -13,16 +13,19 @@ import google from '../../assets/auth/google-g.png'
 import { useArchitectureInsets } from '../components/architecture-page'
 import { BrandLogo } from '../components/brand-logo'
 import { usePopup } from '../components/popup-provider'
+import { useCompletion } from '../onboarding/use-completion'
 import { Icon } from '../discovery/ui'
 import { fonts } from '../theme'
 import { createThemedStyles, useTheme } from '../theme-provider'
 import { authFeedback } from './feedback'
 import { useAuth } from './provider'
+import { SignedInRedirect } from './signed-in-redirect'
 
 export function AuthChoices() {
   const styles = useStyles()
   const { colors } = useTheme()
   const auth = useAuth()
+  const guest = useCompletion('/')
   const router = useRouter()
   const popup = usePopup()
   const insets = useArchitectureInsets()
@@ -37,6 +40,7 @@ export function AuthChoices() {
       })
     }
   }
+  if (auth.state.status === 'signed-in') return <SignedInRedirect />
   return (
     <View style={styles.screen}>
       <ScrollView
@@ -118,7 +122,8 @@ export function AuthChoices() {
         </Text>
         <Pressable
           accessibilityRole="button"
-          onPress={() => router.replace('/')}
+          disabled={auth.busy || guest.busy}
+          onPress={() => void guest.finish()}
           style={styles.guest}
         >
           <Text style={styles.link}>Continue exploring</Text>

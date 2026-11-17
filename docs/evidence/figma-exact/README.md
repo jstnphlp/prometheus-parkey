@@ -57,3 +57,13 @@ Final receipts deliberately retain earlier failures and the fixes they caused; r
 The final dark entry review selects the supplied white/teal logo in Splash, Welcome and auth/location entry frames, while Profile/Saved/About keep the supplied magenta/teal logo in both modes. These are original Figma variants, not runtime tinting.
 
 - Supplied-logo final follow-up: **14 passed / 0 failed** across both modes (`figma-exact.spec.ts`, `figma-states.spec.ts`, desktop-chromium). Entry and settings captures now use their exact supplied Figma logo variants.
+
+## Entry flow correction ? 2026-11-17
+
+Walkthrough Finish and Skip now go to Login, not discovery. Verified sign-in/email confirmation/OAuth go to the protected profile entry at `/account-setup` (Figma 8). Profile saving, vehicle/preferences setup and final completion remain gated until the missing backend contracts are explicitly authorized and integrated. No profile completion flag is inferred from finishing the visual introduction.
+
+Correction checks: mobile and E2E TypeScript passed; scoped ESLint passed; 18 targeted session/setup/intro persistence tests passed; updated paired Figma browser tests passed 6/6, and dedicated flow browser tests passed 4/4 after fixing a test synchronization race between successive Next buttons. The successful-auth boundary is covered with server-verifier unit fixtures, not a fake login in production or an asserted live-account test.
+
+Android API 35: Welcome ? all three walkthrough screens ? Login verified using the existing native client. `android/entry-flow-login-light-magenta.png` is the actual blank login form after completing the walkthrough. The development Tools overlay remains visible in this proof image; it is not a Figma parity capture. The native preview now loads existing local public auth configuration instead of the earlier auth-disabled QA environment. No account was created, no credentials were entered, and no verification email was sent by the agent.
+
+The two actual frame-8 Figma exports were added to the MCP index (64 references total, 32 pairs). There is no claimed signed-in application screenshot or pixel comparison for this gated profile screen.

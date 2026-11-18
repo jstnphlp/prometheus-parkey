@@ -71,9 +71,10 @@ import {
   rankParking,
   validateContribution,
 } from './model'
-import type { Viewport } from './model'
 import ParkingMap from './parking-map'
 import type { CameraTarget } from './map-types'
+import { useMapCallback, useSettledViewport } from './use-map-events'
+import { viewportChanged } from './viewport-changes'
 import {
   parkingDestination,
   parkingDetailData,
@@ -117,6 +118,7 @@ import { useParking } from './use-parking'
 import { useRoute } from './use-route'
 
 const EMPTY_POINTS: Coordinate[] = []
+const EMPTY_RECORDS: DiscoveryParking[] = []
 function sameNavigationContext(
   before: ReturnType<typeof useNavigation>['state'],
   after: ReturnType<typeof useNavigation>['state'],
@@ -730,17 +732,20 @@ export default function Explore() {
     )
     return () => cancelAnimationFrame(frame)
   }, [nav.selectedId, ranked])
-  const updateViewport = useCallback((next: Viewport) => {
-    setViewport((current) =>
-      current.west === next.west &&
-      current.south === next.south &&
-      current.east === next.east &&
-      current.north === next.north &&
-      current.zoom === next.zoom
-        ? current
-        : next,
-    )
-  }, [])
+  const viewportUpdate = useSettledViewport(
+    focused &&
+      !nav.route &&
+      !fullPageActive &&
+      nav.view === 'map' &&
+      !nav.details &&
+      !searchActive,
+    (next) => {
+      if (!navigationViewportPrivate.current)
+        setViewport((current) =>
+          viewportChanged(current, next) ? next : current,
+        )
+    },
+  )
 
   function center(coordinate: Coordinate) {
     updateNavigation({ center: coordinate }, 'replace')
@@ -1176,6 +1181,43 @@ export default function Explore() {
     topOverlayHeight,
     cameraBottom,
   )
+  const mapTop = nav.route || drawing ? cameraPadding.top : 20
+  const mapBottom =
+    nav.route || drawing
+      ? cameraPadding.bottom
+      : selected && !nav.directions
+        ? previewHeight + 42
+        : 20
+  const mapPadding = useMemo(
+    () => ({ top: mapTop, bottom: mapBottom }),
+    [mapTop, mapBottom],
+  )
+  const selectMapRecord = useMapCallback((id: string) => {
+    if (!nav.route) select(id)
+  })
+  const pressMap = useMapCallback((point: Coordinate) => {
+    if (nav.route) return
+    if (searchActive) {
+      closeNavigation({
+        searching: false,
+        query: nav.query,
+        searchPoint: nav.searchPoint,
+      })
+      Keyboard.dismiss()
+      return
+    }
+    if (drawing && isCoordinate(point))
+      setPoints((current) =>
+        kind === 'street' ? [...current, point].slice(0, 12) : [point],
+      )
+    else if (nav.details) closeNavigation({ details: false })
+    else if (nav.selectedId) closeMapParking()
+  })
+  const panMap = useMapCallback(() => {
+    if (!nav.route) navigationViewportPrivate.current = false
+  })
+  const mapHidden =
+    fullPageActive || nav.view === 'list' || nav.details || searchActive
   function centerOnMyLocation() {
     void location.locate().then((point) => {
       if (point) {
@@ -1310,18 +1352,19 @@ export default function Explore() {
               })}
           pointerEvents={fullPageActive ? 'none' : 'box-none'}
         >
-          <View style={StyleSheet.absoluteFill}>
+          <View
+            style={StyleSheet.absoluteFill}
+            accessibilityElementsHidden={mapHidden}
+            importantForAccessibility={
+              mapHidden ? 'no-hide-descendants' : 'auto'
+            }
+          >
             <ParkingMap
-              accessibilityHidden={
-                fullPageActive ||
-                nav.view === 'list' ||
-                nav.details ||
-                searchActive
-              }
+              accessibilityHidden={Platform.OS === 'web' && mapHidden}
               key={mapRevision}
               night={dark}
               simplifiedMarkers
-              records={parking.canQuery ? visible : []}
+              records={parking.canQuery ? visible : EMPTY_RECORDS}
               featuredId={
                 parking.canQuery && currentLocation
                   ? (ranked[0]?.id ?? null)
@@ -1334,15 +1377,7 @@ export default function Explore() {
               }
               route={routeState.route}
               target={target}
-              cameraPadding={
-                nav.route || drawing
-                  ? cameraPadding
-                  : {
-                      top: 20,
-                      bottom:
-                        selected && !nav.directions ? previewHeight + 42 : 20,
-                    }
-              }
+              cameraPadding={mapPadding}
               parkedLocation={local.state.parked?.coordinate ?? null}
               navigation={mapNavigation}
               userLocation={
@@ -1358,49 +1393,16 @@ export default function Explore() {
               draftPoints={drawing ? points : EMPTY_POINTS}
               drawing={drawing}
               searching={searchActive}
-              onSelect={(id) => {
-                if (!nav.route) select(id)
-              }}
+              onSelect={selectMapRecord}
               onPlaceSelect={
                 nav.route || drawing || panel !== null
                   ? undefined
                   : setSelectedPlace
               }
-              onMapPress={(point) => {
-                if (nav.route) return
-                if (searchActive) {
-                  closeNavigation({
-                    searching: false,
-                    query: nav.query,
-                    searchPoint: nav.searchPoint,
-                  })
-                  Keyboard.dismiss()
-                  return
-                }
-                if (drawing && isCoordinate(point))
-                  setPoints((current) =>
-                    kind === 'street'
-                      ? [...current, point].slice(0, 12)
-                      : [point],
-                  )
-                else if (nav.details) closeNavigation({ details: false })
-                else if (nav.selectedId) closeMapParking()
-                else if (nav.route) endNavigation()
-              }}
-              onPan={() => {
-                if (!nav.route) navigationViewportPrivate.current = false
-              }}
-              onViewport={(next) => {
-                if (
-                  !nav.route &&
-                  !fullPageActive &&
-                  nav.view === 'map' &&
-                  !nav.details &&
-                  !searchActive &&
-                  !navigationViewportPrivate.current
-                )
-                  updateViewport(next)
-              }}
+              onMapPress={pressMap}
+              onPan={panMap}
+              onMoveStart={viewportUpdate.cancel}
+              onViewport={viewportUpdate.settle}
               onStatus={setMapStatus}
             />
           </View>

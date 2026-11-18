@@ -44,8 +44,19 @@ test('discovery uses a floating search, an icon-only legend, and a guest drawer 
   await page.keyboard.press('Escape')
   await expect(legend).toHaveAttribute('aria-expanded', 'false')
 
-  await menuButton.click()
   const drawer = page.getByTestId('main-navigation-drawer')
+  for (const close of [
+    () => drawer.getByRole('button', { name: 'Close menu' }).click(),
+    () => page.keyboard.press('Escape'),
+  ]) {
+    await menuButton.click()
+    await expect(drawer).toBeVisible()
+    await close()
+    await expect(drawer).toHaveCount(0)
+    await expect(canvas).toHaveAttribute('data-original-map', 'true')
+  }
+
+  await menuButton.click()
   await expect(drawer).toBeVisible()
   await expect(
     drawer.getByRole('button', { name: 'Sign In', exact: true }),

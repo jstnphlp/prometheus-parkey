@@ -1,6 +1,7 @@
 import { useRouter } from 'expo-router'
 import {
   Keyboard,
+  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -40,6 +41,7 @@ export function MainDrawer({
   const insets = useSafeAreaInsets()
   const { width } = useWindowDimensions()
   const drawerWidth = Math.min(320 + insets.left, width - 48)
+  const keepMounted = Platform.OS === 'android'
   const user = state.status === 'signed-in' ? state.user : null
   const name = user
     ? profileFromUser(user).fullName.trim() || 'Your account'
@@ -61,16 +63,23 @@ export function MainDrawer({
 
   return (
     <>
-      <MotionLayer visible={open} distance={0} style={styles.backdrop}>
+      <MotionLayer
+        visible={open}
+        keepMounted={keepMounted}
+        direction="fade"
+        style={styles.backdrop}
+      />
+      {open ? (
         <Pressable
           accessibilityRole="button"
           accessibilityLabel="Dismiss menu"
           onPress={onClose}
-          style={StyleSheet.absoluteFill}
+          style={styles.dismiss}
         />
-      </MotionLayer>
+      ) : null}
       <MotionLayer
         visible={open}
+        keepMounted={keepMounted}
         direction="horizontal"
         distance={-drawerWidth}
         fromOpacity={1}
@@ -186,6 +195,7 @@ const useStyles = createThemedStyles(({ colors }) =>
       zIndex: 25,
       backgroundColor: 'rgba(28, 20, 36, 0.46)',
     },
+    dismiss: { ...StyleSheet.absoluteFill, zIndex: 25 },
     drawer: {
       position: 'absolute',
       top: 0,

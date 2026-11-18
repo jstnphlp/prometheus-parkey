@@ -74,7 +74,11 @@ import { useLocalState } from './use-local-state'
 import { useConnectivity } from './use-connectivity'
 import { publicPilotCache } from './pilot-cache-storage'
 import { PUBLIC_PILOT_CACHE_TTL_MS } from './pilot-cache'
-import { samePilotRecords, uniquePilotRecords } from './pilot-performance'
+import {
+  retainedPilotSnapshotTime,
+  samePilotRecords,
+  uniquePilotRecords,
+} from './pilot-performance'
 import NcrMap from './ncr-map'
 import {
   createPilotRequestGate,
@@ -88,6 +92,7 @@ import {
   pilotRequestKey,
   pilotSelectionKey,
   pilotSelectedRecord,
+  validPilotBounds,
 } from './pilot-client'
 import type { PilotRequest } from './pilot-client'
 import {
@@ -105,6 +110,18 @@ import {
 } from './motion'
 import { usePilotPanels } from './use-pilot-panels'
 import { useLocation } from './use-location'
+import { useMapCallback, useSettledViewport } from './use-map-events'
+import { boundsChanged } from './viewport-changes'
+
+function roundedBounds({ west, south, east, north }: Viewport): PilotBounds {
+  const round = (edge: number) => Math.round(edge * 100000) / 100000
+  return {
+    west: round(west),
+    south: round(south),
+    east: round(east),
+    north: round(north),
+  }
+}
 
 function Text({ style, ...props }: TextProps) {
   const ui = useUI()
@@ -227,7 +244,6 @@ export default function PilotDiscovery({
   const [clock, setClock] = useState(Date.now())
   const [mapFailed, setMapFailed] = useState(false)
   const [navBusy, setNavBusy] = useState(false)
-  const [cachedAt, setCachedAt] = useState<number | null>(null)
   const request = useMemo<PilotRequest>(
     () => ({
       city,
@@ -238,6 +254,7 @@ export default function PilotDiscovery({
     [city, mode, bounds, token],
   )
   const key = pilotRequestKey(request)
+  const scope = pilotSelectionKey(request)
   const currentKey = useRef(key)
   currentKey.current = key
   const parkingGate = useRef(createPilotRequestGate())
@@ -248,6 +265,9 @@ export default function PilotDiscovery({
   const searchCursors = useRef(new Set<string>())
   const [parking, setParking] = useState<{
     key: string
+    scope: string
+    receivedAt: number | null
+    cachedAt: number | null
     records: PilotParking[]
     next: string | null
     notice: string
@@ -255,6 +275,9 @@ export default function PilotDiscovery({
     error: string
   }>({
     key: '',
+    scope: '',
+    receivedAt: null,
+    cachedAt: null,
     records: [],
     next: null,
     notice: '',
@@ -394,9 +417,10 @@ export default function PilotDiscovery({
       if (error instanceof PilotAccessError && mode === 'public') {
         cacheEpoch.current++
         setSelection(null)
-        setCachedAt(null)
         setParking((previous) => ({
           ...previous,
+          receivedAt: null,
+          cachedAt: null,
           records: [],
           next: null,
           status: 'error',
@@ -444,18 +468,25 @@ export default function PilotDiscovery({
     const capturedCacheEpoch = cacheEpoch.current
     let networkSucceeded = false
     let cacheAllowed = request.mode === 'public'
-    setCachedAt(null)
     cursors.current = new Set()
-    setParking({
-      key,
-      records: [],
-      next: null,
-      notice: '',
-      status: pilotConfig.ready ? 'loading' : 'error',
-      error: pilotConfig.ready
-        ? ''
-        : pilotConfig.configurationError ||
-          'Parking information is unavailable.',
+    setParking((previous) => {
+      const retainedAt = pilotConfig.ready
+        ? retainedPilotSnapshotTime(previous, request, Date.now())
+        : null
+      return {
+        key,
+        scope,
+        receivedAt: retainedAt,
+        cachedAt: retainedAt,
+        records: retainedAt === null ? [] : previous.records,
+        next: null,
+        notice: '',
+        status: pilotConfig.ready ? 'loading' : 'error',
+        error: pilotConfig.ready
+          ? ''
+          : pilotConfig.configurationError ||
+            'Parking information is unavailable.',
+      }
     })
     if (!pilotConfig.ready) return () => requests.cancel()
     if (cacheAllowed)
@@ -469,10 +500,14 @@ export default function PilotDiscovery({
           currentKey.current !== key
         )
           return
-        setCachedAt(entry.fetchedAt)
         setParking((previous) =>
           previous.key === key
-            ? { ...previous, records: entry.records }
+            ? {
+                ...previous,
+                records: entry.records,
+                receivedAt: entry.fetchedAt,
+                cachedAt: entry.fetchedAt,
+              }
             : previous,
         )
       })
@@ -490,9 +525,11 @@ export default function PilotDiscovery({
               request.mode === 'public'
                 ? uniquePilotRecords(page.records)
                 : page.records
-            setCachedAt(null)
             setParking({
               key,
+              scope,
+              receivedAt: Date.now(),
+              cachedAt: null,
               records,
               next: page.nextCursor,
               notice: page.notice,
@@ -507,13 +544,17 @@ export default function PilotDiscovery({
           if (!attempt.current() || currentKey.current !== key) return
           if (error instanceof PilotAccessError) {
             cacheAllowed = false
-            setCachedAt(null)
             if (request.mode === 'public')
               void publicPilotCache.invalidate(request)
           }
           accessFailed(error)
           setParking((previous) => ({
             key,
+            scope,
+            receivedAt:
+              cacheAllowed && previous.key === key ? previous.receivedAt : null,
+            cachedAt:
+              cacheAllowed && previous.key === key ? previous.cachedAt : null,
             records:
               cacheAllowed && previous.key === key ? previous.records : [],
             next: null,
@@ -527,7 +568,7 @@ export default function PilotDiscovery({
       clearTimeout(timer)
       requests.cancel()
     }
-  }, [key, refresh, request, accessFailed])
+  }, [key, scope, refresh, request, accessFailed])
   useEffect(() => {
     const requests = searchGate.current
     const attempt = requests.begin()
@@ -580,11 +621,17 @@ export default function PilotDiscovery({
     }
   }, [searchKey, citySearch, refresh, request, city, query, accessFailed])
   const cacheNow = Date.now()
+  const cachedAt =
+    parking.key === key
+      ? parking.cachedAt
+      : retainedPilotSnapshotTime(parking, request, cacheNow)
+  const showCachedNotice =
+    cachedAt !== null && (parking.status === 'error' || connectivity.offline)
   const cacheCurrent =
     cachedAt === null ||
     (cacheNow >= cachedAt && cacheNow - cachedAt < PUBLIC_PILOT_CACHE_TTL_MS)
   const eligible =
-    parking.key === key &&
+    (parking.key === key || cachedAt !== null) &&
     cacheCurrent &&
     !(mode === 'candidate_research' && connectivity.offline)
       ? parking.records.filter((record) =>
@@ -646,28 +693,29 @@ export default function PilotDiscovery({
     [visible, mode],
   )
   const lastViewport = useRef(bounds)
-  const updateViewport = useCallback(
-    (viewport: Viewport) => {
-      const next = {
-        west: Math.round(viewport.west * 100000) / 100000,
-        south: Math.round(viewport.south * 100000) / 100000,
-        east: Math.round(viewport.east * 100000) / 100000,
-        north: Math.round(viewport.north * 100000) / 100000,
-      }
-      lastViewport.current = next
-      if (searching || drawerOpen || appearanceOpen) return
+  const viewportUpdate = useSettledViewport(
+    focused && !searching && !drawerOpen && !appearanceOpen,
+    (viewport) => {
+      const next = roundedBounds(viewport)
       setBounds((previous) =>
-        JSON.stringify(previous) === JSON.stringify(next) ? previous : next,
+        validPilotBounds(previous) !== validPilotBounds(next) ||
+        boundsChanged(previous, next)
+          ? next
+          : previous,
       )
     },
-    [searching, drawerOpen, appearanceOpen],
   )
+  const updateViewport = useMapCallback((viewport: Viewport) => {
+    lastViewport.current = roundedBounds(viewport)
+    viewportUpdate.settle(viewport)
+  })
   const clusterTarget = useCallback(
     (coordinate: Coordinate) => setTarget({ coordinate, zoom: 16 }),
     [],
   )
   const mapError = useCallback(() => setMapFailed(true), [])
   function chooseCity(next: PilotCity) {
+    viewportUpdate.cancel()
     parkingGate.current.cancel()
     searchGate.current.cancel()
     navigationGate.current.cancel()
@@ -765,6 +813,9 @@ export default function PilotDiscovery({
         request.mode === 'public' ? uniquePilotRecords(pages) : pages
       setParking({
         key,
+        scope,
+        receivedAt: parking.receivedAt,
+        cachedAt: parking.cachedAt,
         records: merged,
         next: page.nextCursor,
         notice: page.notice,
@@ -931,6 +982,7 @@ export default function PilotDiscovery({
     place: Pick<PilotDestination, 'name' | 'coordinate'>,
     credit: SearchCredit | null = null,
   ) {
+    viewportUpdate.cancel()
     const [lng, lat] = place.coordinate
     const inCity = (candidate: PilotCity) => {
       const { west, east, south, north } = pilotAreas[candidate].bounds
@@ -959,6 +1011,7 @@ export default function PilotDiscovery({
   }
 
   function searchMapArea() {
+    viewportUpdate.cancel()
     setBounds(lastViewport.current)
     setRefresh((current) => current + 1)
   }
@@ -971,6 +1024,15 @@ export default function PilotDiscovery({
         : [point],
     )
   }
+  const selectMapRecord = useMapCallback((id: string) => {
+    if (searching) closeSearch()
+    else if (!reportAdjusting) chooseRecord(id)
+  })
+  const pressMap = useMapCallback((point: Coordinate) => {
+    if (reportAdjusting) reportPoint(point)
+    else if (searching) closeSearch()
+  })
+  const mapHidden = drawerOpen || (!mapVisible && !reportAdjusting)
   return (
     <AppearanceNavigation value={openAppearance}>
       <View testID="pilot-screen" style={styles.screen}>
@@ -981,14 +1043,13 @@ export default function PilotDiscovery({
         <View
           testID="pilot-map"
           style={StyleSheet.absoluteFill}
-          pointerEvents={
-            drawerOpen || (!mapVisible && !reportAdjusting) ? 'none' : 'auto'
-          }
+          pointerEvents={mapHidden ? 'none' : 'auto'}
+          aria-hidden={mapHidden}
+          accessibilityElementsHidden={mapHidden}
+          importantForAccessibility={mapHidden ? 'no-hide-descendants' : 'auto'}
         >
           <NcrMap
-            accessibilityHidden={
-              drawerOpen || (!mapVisible && !reportAdjusting)
-            }
+            accessibilityHidden={Platform.OS === 'web' && mapHidden}
             night={dark}
             simplifiedMarkers
             draftPoints={reportAdjusting ? reportPoints : undefined}
@@ -996,14 +1057,9 @@ export default function PilotDiscovery({
             selectedId={selected?.id || null}
             target={target}
             onViewport={updateViewport}
-            onSelect={(id) => {
-              if (searching) closeSearch()
-              else if (!reportAdjusting) chooseRecord(id)
-            }}
-            onMapPress={(point) => {
-              if (reportAdjusting) reportPoint(point)
-              else if (searching) closeSearch()
-            }}
+            onMoveStart={viewportUpdate.cancel}
+            onSelect={selectMapRecord}
+            onMapPress={pressMap}
             onCluster={clusterTarget}
             onError={mapError}
           />
@@ -1138,7 +1194,7 @@ export default function PilotDiscovery({
               parking.status !== 'ready' ||
               !records.length ||
               connectivity.offline ||
-              cachedAt !== null ||
+              showCachedNotice ||
               mapFailed ||
               authMessage ||
               location.status === 'denied' ||
@@ -1161,7 +1217,7 @@ export default function PilotDiscovery({
                       Navigation is disabled.
                     </Text>
                   ) : null}
-                  {cachedAt !== null ? (
+                  {showCachedNotice && cachedAt !== null ? (
                     <Text testID="pilot-cache-notice" style={styles.warning}>
                       {cacheCurrent
                         ? `Showing a saved public copy from ${new Date(cachedAt).toLocaleTimeString()}. Facts may have changed; directions require current approval.`

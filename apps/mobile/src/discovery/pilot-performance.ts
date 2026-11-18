@@ -1,5 +1,26 @@
 import type { PilotParking } from '@parkey/shared-types'
 
+import { PUBLIC_PILOT_CACHE_TTL_MS } from './pilot-cache.ts'
+import { pilotSelectionKey, validPilotBounds } from './pilot-client.ts'
+import type { PilotRequest } from './pilot-client.ts'
+
+/** Only a fresh public snapshot from the same city can bridge a viewport refresh. */
+export function retainedPilotSnapshotTime(
+  snapshot: { scope: string; receivedAt: number | null },
+  request: PilotRequest,
+  now: number,
+) {
+  const { receivedAt } = snapshot
+  return request.mode === 'public' &&
+    snapshot.scope === pilotSelectionKey(request) &&
+    validPilotBounds(request.bounds) &&
+    receivedAt !== null &&
+    now >= receivedAt &&
+    now - receivedAt < PUBLIC_PILOT_CACHE_TTL_MS
+    ? receivedAt
+    : null
+}
+
 /** Identity alone is insufficient: a new approval/fact object must be observed. */
 export function samePilotRecords(
   a: readonly PilotParking[],

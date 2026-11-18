@@ -60,6 +60,7 @@ export default function ParkingMap(props: ParkingMapProps) {
   )
   const { top, bottom } = props.cameraPadding
   const status = useEffectEvent(props.onStatus)
+  const moveStarted = useEffectEvent(() => props.onMoveStart?.())
   const pressed = useEffectEvent(
     (event: {
       point: { x: number; y: number }
@@ -467,6 +468,7 @@ export default function ParkingMap(props: ParkingMapProps) {
       moved()
     })
     instance.on('click', pressed)
+    instance.on('movestart', moveStarted)
     instance.on('moveend', moved)
     instance.on('dragstart', panned)
     instance.on('zoomstart', (event) => {

@@ -180,7 +180,7 @@ export function MotionLayer({
   ...props
 }: ViewProps & {
   visible: boolean
-  direction?: 'vertical' | 'horizontal'
+  direction?: 'vertical' | 'horizontal' | 'fade'
   distance?: number
   fromOpacity?: number
 }) {
@@ -190,7 +190,9 @@ export function MotionLayer({
   // Browsers remove the closing form immediately to retire keyboard focus.
   const keepClosing = !reduced && Platform.OS !== 'web'
   if (!visible && present && !keepClosing) setPresent(false)
-  const [progress] = useState(() => new Animated.Value(reduced ? 1 : 0))
+  const [progress] = useState(
+    () => new Animated.Value(reduced && visible ? 1 : 0),
+  )
   useLayoutEffect(() => {
     if (!visible && !present) {
       progress.setValue(0)
@@ -214,6 +216,20 @@ export function MotionLayer({
   }, [present, progress, reduced, visible])
 
   if (!visible && (!present || !keepClosing)) return null
+  const horizontal = {
+    opacity: progress.interpolate({
+      inputRange: [0, 1],
+      outputRange: [fromOpacity, 1],
+    }),
+    transform: [
+      {
+        translateX: progress.interpolate({
+          inputRange: [0, 1],
+          outputRange: [distance, 0],
+        }),
+      },
+    ],
+  }
   return (
     <Animated.View
       {...props}
@@ -223,22 +239,11 @@ export function MotionLayer({
       pointerEvents={visible ? 'auto' : 'none'}
       style={[
         style,
-        direction === 'vertical'
-          ? revealStyle(progress, { distance, fromOpacity })
-          : {
-              opacity: progress.interpolate({
-                inputRange: [0, 1],
-                outputRange: [fromOpacity, 1],
-              }),
-              transform: [
-                {
-                  translateX: progress.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [distance, 0],
-                  }),
-                },
-              ],
-            },
+        direction === 'fade'
+          ? { opacity: progress }
+          : direction === 'horizontal'
+            ? horizontal
+            : revealStyle(progress, { distance, fromOpacity }),
       ]}
     />
   )

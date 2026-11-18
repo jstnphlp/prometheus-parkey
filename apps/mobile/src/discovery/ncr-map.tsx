@@ -25,19 +25,29 @@ function NcrMap(props: NcrMapProps) {
   const mapStyle = useNativeMapStyle(props.night)
   const [markMapReady] = useState(() => createLocalMapBenchmark())
   const draft = useMemo(
-    () => draftGeoJSON(props.draftPoints ?? []),
+    () => JSON.stringify(draftGeoJSON(props.draftPoints ?? [])),
     [props.draftPoints],
   )
   const camera = useRef<CameraRef>(null)
   const [loaded, setLoaded] = useState(false)
   const visibility = props.data?.items.length ? 'visible' : 'none'
-  const sources = useMemo(() => ncrMapSources(props.data, null), [props.data])
+  const sources = useMemo(() => {
+    const { shapes, anchors } = ncrMapSources(props.data, null)
+    return { shapes: JSON.stringify(shapes), anchors: JSON.stringify(anchors) }
+  }, [props.data])
+  const [initialViewState] = useState(() => ({
+    center: props.target.coordinate,
+    zoom: props.target.zoom,
+  }))
+  const previousTarget = useRef(props.target)
   useEffect(() => {
+    if (!loaded || previousTarget.current === props.target) return
+    previousTarget.current = props.target
     camera.current?.jumpTo({
       center: props.target.coordinate,
       zoom: props.target.zoom,
     })
-  }, [props.target])
+  }, [loaded, props.target])
   // Compose the map and its overlays together to avoid Android surface flicker.
   return (
     <Map
@@ -59,6 +69,7 @@ function NcrMap(props: NcrMapProps) {
       mapStyle={mapStyle}
       onPress={(event) => props.onMapPress?.(event.nativeEvent.lngLat)}
       onDidFailLoadingMap={props.onError}
+      onRegionWillChange={props.onMoveStart}
       onRegionDidChange={(event) => {
         const {
           bounds: [west, south, east, north],
@@ -72,10 +83,7 @@ function NcrMap(props: NcrMapProps) {
         ref={camera}
         minZoom={8.5}
         maxZoom={20}
-        initialViewState={{
-          center: props.target.coordinate,
-          zoom: props.target.zoom,
-        }}
+        initialViewState={initialViewState}
       />
       <GeoJSONSource
         id="ncr-shapes"

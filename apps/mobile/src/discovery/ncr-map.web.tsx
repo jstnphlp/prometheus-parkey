@@ -39,6 +39,7 @@ function NcrMap(props: NcrMapProps) {
     [props.draftPoints],
   )
   const editing = useEffectEvent(() => Boolean(props.draftPoints))
+  const moveStarted = useEffectEvent(() => props.onMoveStart())
   const mapPressed = useEffectEvent((point: [number, number]) =>
     props.onMapPress?.(point),
   )
@@ -263,6 +264,7 @@ function NcrMap(props: NcrMapProps) {
       setLoaded(true)
       viewport()
     })
+    instance.on('movestart', moveStarted)
     instance.on('moveend', viewport)
     instance.on('error', failed)
     instance.on('click', (event) => {

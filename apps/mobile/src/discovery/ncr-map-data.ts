@@ -36,6 +36,7 @@ export type NcrMapProps = {
   selectedId: string | null
   target: { coordinate: Coordinate; zoom: number }
   onViewport: (viewport: Viewport) => void
+  onMoveStart: () => void
   onSelect: (id: string) => void
   onCluster: (coordinate: Coordinate) => void
   onError: () => void

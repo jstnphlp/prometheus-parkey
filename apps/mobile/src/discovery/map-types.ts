@@ -29,5 +29,6 @@ export type ParkingMapProps = {
   onPlaceSelect?: ((place: Destination) => void) | undefined
   onMapPress: (point: Coordinate) => void
   onViewport: (viewport: Viewport) => void
+  onMoveStart?: () => void
   onStatus: (status: 'loading' | 'ready' | 'error') => void
 }

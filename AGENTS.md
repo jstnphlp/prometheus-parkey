@@ -114,3 +114,36 @@ capture screenshots, and replace conflicting discovery/list/settings screen
 composition while retaining the canonical V1 data, auth and safety contract.
 Do not label an expanded legacy map sheet as Figma's dedicated List or Map
 screen, and never claim pixel parity without app-vs-Figma image evidence.
+
+
+## Mandatory UX psychology review for product experiences (2026-11-18)
+
+For **every new or modified user-facing feature, screen, flow, copy, interaction,
+or product design**, read
+[.agents/skills/ux-psychology/SKILL.md](.agents/skills/ux-psychology/SKILL.md)
+before proposing, designing, or implementing the change. Consult
+[the six principles](.agents/skills/ux-psychology/references/principles.md)
+when choosing UX patterns and
+[the audit template](.agents/skills/ux-psychology/references/audit-template.md)
+for substantial reviews. Explicitly check which principles actually help the
+user complete the task; do not force all six onto every screen.
+
+Apply these rules to onboarding and transitions, destination search, map and
+parking discovery, details, navigation, lists, filters, saved places, account
+flows, empty/error/loading states, accessibility, and user-facing wording.
+Use useful editable defaults, honest step progress, early meaningful value,
+appropriate customization, truthful warnings, and fair comparisons where
+relevant. Avoid dark patterns, fake urgency, invented metrics, and unnecessary
+friction. Respect reduced-motion preferences.
+
+**Order of authority:** canonical V1 execution plan, security/privacy and actual
+product behavior > exact approved Figma visual layouts and design tokens >
+UX-psychology recommendations. The skill is an evaluation and interaction
+guideline, **not** approval to add features, change authentication or consent,
+publish private data, imply live parking availability, or introduce bookings.
+Preserve the approved light/dark magenta designs unless a design change is
+explicitly requested.
+
+For every relevant change, include a short UX-psychology check in the handoff:
+which principles were applied (or intentionally skipped), what friction was
+addressed, and what was validated versus still hypothetical.

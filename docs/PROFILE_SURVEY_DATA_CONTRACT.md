@@ -1,6 +1,6 @@
 # Parkey — Profile Survey Data Contract (Implementation and Research Boundary)
 
-**Date:** 2026-11-18 · **Owner intent:** keep answers to the profile questionnaire to support research, **remove age question**. This is a specification for future code work, not evidence of data collection, consent, deployment or analytics.
+**Date:** 2026-11-18 · **Owner intent:** **mandatory profile setup immediately after registering**, retain research questionnaire answers and **remove age question**. Guest exploration before registration remains available. This is a specification for future code work, not evidence of data collection, consent, deployment or analytics.
 
 ## Baseline (inspect before changing)
 
@@ -28,17 +28,17 @@ All values below are user-provided and stored only after a supported signed-in s
 
 ## Completion vs account access
 
-- `completed survey` means *all* active v2 answers validated and verified saved to the matching signed-in account, not merely navigating to step 4.
-- `incomplete survey` (including opted out, skipped, in-progress, partial legacy data or failed save) **does not** block guest exploration, signed-in map/search, saved places, directions, or app use.
-- Never label skipped survey as complete or count it as a usable completed research response. For partially populated profiles, maintain a private, appropriately gated resume path with truthful progress.
-- The ability to use Parkey does not constitute research consent. Choosing `Explore without setup` must not submit questionnaire responses.
+- **Mandatory after registration:** `completed survey` means *all* active v2 answers validated and verified saved to the matching signed-in account, not merely visiting step 4. Newly registered and verified signed-in users complete setup before entering signed-in discovery.
+- **Incomplete signed-in accounts:** on subsequent sign-in, resume required profile setup. In-progress, partial legacy data or failed saves do not count as completion; they must not unlock signed-in discovery. Maintain a clear retry/resume path that preserves user input when safe.
+- **Guest route unaffected:** unauthenticated users may choose `Explore as guest` before registration and discover parking without any questionnaire. Do not make registration mandatory to use the discovery-only app. An account-holder can explicitly sign out and enter guest discovery; this is not a signed-in skip or completed profile.
+- The ability to use Parkey as guest, or to register an account, does not by itself authorize a separate research analytics pipeline. Only the real acknowledged account-profile submission may save questionnaire answers within the reviewed account-data policy.
 
 ## Data minimization, consent and research
 
 This is personal/account data, potentially including city and work. Distinguish **account profile persistence** from **research analytics/exports**.
 
 1. Explain in plain language what responses are collected, why, where stored, who can see them, retention/deletion rules, and how they can be changed or removed. Link the app's real Privacy & Data controls; do not invent a functioning policy/support/export endpoint.
-2. For collection of optional questionnaire answers, get a clear affirmative action on `Save profile` following an accurate data-use disclosure. Because V1 discovery works without it, skipping must remain possible.
+2. For **mandatory registered-account setup**, make the survey's purpose and account-data handling clear before submission. The user affirmatively submits via `Finish Setup` / `Save Profile`; only verified writes count as completion. The required questionnaire may be part of the disclosed terms of creating a signed-in account, but **do not bundle a separate optional research-export/analytics consent into mandatory account setup**. The user must be able to decline registration and use the independent guest-discovery route.
 3. Any **separate research analysis, aggregate reporting, admin export or data transmission** needs a separately reviewed purpose, lawful basis/appropriate consent where required, access restrictions, retention period and deletion process. No research consent checkbox should be prechecked; decline must not block Parkey discovery. Do not quietly add research ingestion/telemetry or a public endpoint as part of this UI PR.
 4. If a research-use consent control is implemented, it must be backed by real persistence, an identifiable policy/version, reversible consent management, and a reliable enforcement path before labeling it working. Otherwise keep research processing disabled and document the integration gap. Display no false `we are using your answers to personalize results` claim unless real app functionality is verified.
 5. Use least privilege, service-side authorization/RLS where appropriate, and avoid email, city, occupation or answers in client logs, analytics events, bug reports, screenshots of real user records, crash breadcrumbs, URLs or map/search requests.
@@ -60,7 +60,7 @@ Existing `user_metadata.parkey_profile.ageRange` may exist. Implement **forward-
 - Only attempt write for a signed-in, server-verified, confirmed, unexpired user; preserve existing `saveAccountProfile` identity and server confirmation rules.
 - Saving a completed profile must not overwrite an already valid registration name with an empty/untrusted value; a valid existing name is reused. When missing, collect and validate.
 - Trim and normalize free text, deduplicate multi-select choices, clear stale `*Other` hidden fields when not selected, reject unknown enum values and 101+ character input.
-- While incomplete, avoid silently sending research responses. Maintain an editable draft through step navigation and failed retries. If drafts persist across app restart, secure their storage, namespace to user and clear on sign-out, account change or explicit discard.
+- While incomplete, avoid silently sending research responses. Required survey answers are collected via an explicit save and verified confirmation. Maintain an editable draft through step navigation and failed retries. If drafts persist across app restart, secure their storage, namespace to user and clear on sign-out, account change or explicit discard.
 - For `Other` values, retain the entered text when toggling away/back during an unsaved editing session, but do not persist hidden values on completed save.
 - Personal Info edit must preserve the **latest verified** survey answers rather than overwriting them with stale local state; avoid unsafe concurrent writes.
 - Show `Saved` only after a verified, confirmed server response. On network failure show a friendly retry that keeps the existing draft, never a false completed state.
@@ -72,8 +72,8 @@ Existing `user_metadata.parkey_profile.ageRange` may exist. Implement **forward-
 - Valid `Other`, invalid `Other`, unknown choices, duplicate arrays, blank name, existing verified registered name, OAuth missing-name path.
 - Signed-in verified, unverified/expired, changed-account, interrupted/network failure and retry cases; no partial/fake success.
 - Saved profile → personal-info edit → saved profile leaves unrelated v2 fields intact and strips legacy age from new payload.
-- Guest and signed-in incomplete users can reach discovery without any research submission; no unapproved analytics/network exports.
-- If consent UI is added: test unchecked default, explicit opt-in, revoke/decline, enforcement and data-use disclosures.
+- Guests can reach discovery without registering, authenticating or submitting research answers. Verified signed-in users with incomplete survey cannot reach signed-in discovery until the profile save succeeds; returning sign-in resumes the survey. No unapproved research analytics/network exports.
+- If **separate optional research-use** consent UI is added later: test unchecked default, explicit opt-in, revoke/decline, enforcement and disclosures. Declining research export/analysis must not be represented as a failed account-profile setup if the required account data has been lawfully saved.
 - Privacy review must be recorded in PR; explicitly list any pending policy/consent/Research Console integration and do not claim research pipeline is live until verified.
 
 **Reference implementation brief:** [UX_PSYCHOLOGY_PROFILE_SETUP_CODEX_BRIEF.md](UX_PSYCHOLOGY_PROFILE_SETUP_CODEX_BRIEF.md).

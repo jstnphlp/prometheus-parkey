@@ -147,3 +147,26 @@ explicitly requested.
 For every relevant change, include a short UX-psychology check in the handoff:
 which principles were applied (or intentionally skipped), what friction was
 addressed, and what was validated versus still hypothetical.
+
+
+## Required post-registration profile survey — owner directive (2026-11-18)
+
+For any account, registration, profile, or setup work, **first read**
+[docs/UX_PSYCHOLOGY_PROFILE_SETUP_CODEX_BRIEF.md](docs/UX_PSYCHOLOGY_PROFILE_SETUP_CODEX_BRIEF.md)
+and [docs/PROFILE_SURVEY_DATA_CONTRACT.md](docs/PROFILE_SURVEY_DATA_CONTRACT.md),
+alongside the mandatory `ux-psychology` skill and paired Figma references.
+
+**Newly registered/verified accounts must complete their user-profile survey
+before entering signed-in discovery.** Returning signed-in accounts whose survey
+is incomplete must resume it; there is no skip/finish-later action *inside* the
+registered setup. Keep **anonymous Explore as guest** fully accessible *without
+registering* as V1 requires. Use the four required steps vehicle types, about
+you (occupation, residence city, driving purpose), driving habits (frequency,
+duration), and parking preferences. Remove age from active UI, types, validation
+and new saves; safely tolerate legacy age metadata. Reuse registration name.
+Save a completed profile only after verified backend confirmation, and do not
+silently enable additional research analytics/exports or imply consent to them.
+Preserve the exact Figma light/dark-magenta style with smooth accessible motion.
+This owner decision supersedes older profile handoffs that described those
+steps as optional or deferred, but does **not** authorize deployments, fake
+backend behavior, changes to V1 parking discovery rules, or unrelated features.

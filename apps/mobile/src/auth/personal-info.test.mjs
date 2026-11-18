@@ -15,12 +15,12 @@ const user = {
       drivingFrequency: 'Daily',
       parkingPreferences: ['Covered parking'],
       future_field: 'preserve',
+      ageRange: '25–34',
     },
   },
 }
 const draft = {
   fullName: ' Updated Driver ',
-  ageRange: '25–34',
   city: 'Taguig City',
   cityOther: 'stale hidden city',
   work: 'Other',
@@ -53,8 +53,11 @@ test('personal edits update the name and preserve fresh server questionnaire ans
   assert.equal(submitted.data.full_name, 'Updated Driver')
   assert.equal(submitted.data.parkey_profile.cityOther, '')
   assert.equal(submitted.data.parkey_profile.workOther, 'Consultant')
-  for (const [key, value] of Object.entries(user.user_metadata.parkey_profile))
+  for (const [key, value] of Object.entries(
+    user.user_metadata.parkey_profile,
+  ).filter(([field]) => field !== 'ageRange'))
     assert.deepEqual(submitted.data.parkey_profile[key], value)
+  assert.equal('ageRange' in submitted.data.parkey_profile, false)
   assert.equal(draft.fullName, ' Updated Driver ')
 })
 
@@ -62,7 +65,6 @@ test('missing and invalid personal answers cannot send an update', async () => {
   for (const patch of [
     { fullName: ' ' },
     { fullName: 'x'.repeat(101) },
-    { ageRange: '' },
     { city: 'Unknown' },
     { city: 'Other', cityOther: '' },
     { work: 'Unknown' },
@@ -131,7 +133,6 @@ test('saved Other answers restore for editing without exposing unrelated metadat
         ...user.user_metadata,
         parkey_profile: {
           ...user.user_metadata.parkey_profile,
-          ageRange: draft.ageRange,
           city: 'Other',
           cityOther: 'Custom city',
           work: 'Other',
@@ -141,7 +142,6 @@ test('saved Other answers restore for editing without exposing unrelated metadat
     }),
     {
       fullName: 'Registered Driver',
-      ageRange: draft.ageRange,
       city: 'Other',
       cityOther: 'Custom city',
       work: 'Other',

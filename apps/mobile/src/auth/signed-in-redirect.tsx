@@ -1,3 +1,4 @@
+import type { User } from '@supabase/supabase-js'
 import { useEffect, useRef } from 'react'
 import { ActivityIndicator, StyleSheet } from 'react-native'
 
@@ -5,13 +6,15 @@ import { useTheme } from '../theme-provider'
 import { BrandButton } from '../components/brand-button'
 import { ScreenContainer } from '../components/screen-container'
 import { useCompletion } from '../onboarding/use-completion'
+import { postAuthDestination } from './setup-access'
 
 // Use the same durable completion/history cleanup as the introduction, including
 // when Login was opened directly from Welcome before onboarding was completed.
-export function SignedInRedirect() {
+export function SignedInRedirect({ user }: { user: User }) {
   const { entryColors: colors } = useTheme()
 
-  const { finish, busy } = useCompletion('/account-setup')
+  const destination = postAuthDestination(user)
+  const { finish, busy } = useCompletion(destination)
   const attempted = useRef(false)
   useEffect(() => {
     if (attempted.current) return
@@ -26,11 +29,17 @@ export function SignedInRedirect() {
       {busy ? (
         <ActivityIndicator
           color={colors.cyan}
-          accessibilityLabel="Opening account setup"
+          accessibilityLabel={
+            destination === '/' ? 'Opening discovery' : 'Opening account setup'
+          }
         />
       ) : (
         <BrandButton
-          title="Continue to account setup"
+          title={
+            destination === '/'
+              ? 'Explore parking'
+              : 'Continue to account setup'
+          }
           onPress={() => void finish()}
         />
       )}

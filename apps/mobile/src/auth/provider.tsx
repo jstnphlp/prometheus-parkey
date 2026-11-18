@@ -25,7 +25,7 @@ import { completeOAuth, invalidOAuth, openOAuth } from './oauth-flow'
 import { enabledSocialProviders } from './oauth-policy'
 import type { SocialProvider } from './oauth-policy'
 import { boundedAuthFetch } from './network'
-import { saveAccountProfile } from './profile-save'
+import { profileSaveConfirmed, saveAccountProfile } from './profile-save'
 import { savePersonalInfo } from './personal-info'
 import type { PersonalInfoDraft } from './personal-info'
 
@@ -379,9 +379,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           state.expiresAt <= Date.now()
         )
           throw new Error('Sign in again to save your profile.')
-        await saveAccountProfile(current.client.auth, state.user.id, draft)
+        const userId = state.user.id
+        const saved = await saveAccountProfile(
+          current.client.auth,
+          userId,
+          draft,
+        )
         const verified = await verifier.current?.verify()
-        if (verified?.status !== 'signed-in')
+        if (
+          verified?.status !== 'signed-in' ||
+          !profileSaveConfirmed(verified.user, userId, saved)
+        )
           throw new Error(
             'Session could not be verified. Please sign in again.',
           )

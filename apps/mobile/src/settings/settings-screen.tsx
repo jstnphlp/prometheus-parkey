@@ -274,6 +274,19 @@ export function SettingsDetailScreen({ section }: { section: string }) {
             only when requested. Account actions use the configured
             authentication service.
           </Text>
+          <Text style={ui.heading}>Your account profile</Text>
+          <Text style={ui.body}>
+            Parkey stores your name, vehicle categories, occupation, city of
+            residence, driving habits and parking preferences with your account
+            in Supabase. Parkey’s account service and authorized support staff
+            can access this information to operate or support your account.
+          </Text>
+          <Text style={ui.body}>
+            You can update your name, city and occupation in Personal Info.
+            Profile answers stay with your account when you sign out or clear
+            app storage. Clearing app storage removes local data only. Account
+            data removal is handled separately from this screen.
+          </Text>
           <Text style={ui.body}>
             Reports stay local unless you explicitly send them through the
             enabled private review service. Sending does not publish or verify

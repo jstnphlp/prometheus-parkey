@@ -1,7 +1,6 @@
 import type { User } from '@supabase/supabase-js'
 
 export const profileChoices = {
-  ageRange: ['Under 18', '18–24', '25–34', '35–44', '45–54', '55–64', '65+'],
   vehicleType: [
     'Motorcycle',
     'Sedan / Hatchback',
@@ -59,7 +58,6 @@ export const profileChoices = {
 
 export type ProfileDraft = {
   fullName: string
-  ageRange: string
   vehicleTypes: string[]
   work: string
   workOther: string
@@ -72,7 +70,7 @@ export type ProfileDraft = {
   parkingPreferences: string[]
 }
 
-const validText = (value: string) =>
+export const validProfileText = (value: string) =>
   value.trim().length >= 2 && value.trim().length <= 100
 const chosen = (values: readonly string[], value: string) =>
   values.includes(value.trim())
@@ -86,48 +84,87 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return Boolean(value) && typeof value === 'object' && !Array.isArray(value)
 }
 
-export function profileStepProblem(
+export const profileStepCount = 4
+
+export type ProfileIssue = {
+  field: keyof ProfileDraft
+  message: string
+}
+
+export function profileStepIssue(
   draft: ProfileDraft,
   step: number,
-): string | null {
+): ProfileIssue | null {
   switch (step) {
     case 0:
-      if (!validText(draft.fullName))
-        return 'Enter your full name (2–100 characters).'
-      return chosen(profileChoices.ageRange, draft.ageRange)
-        ? null
-        : 'Choose your age range.'
-    case 1:
-      return Array.isArray(draft.vehicleTypes) &&
-        draft.vehicleTypes.length > 0 &&
+      if (!validProfileText(draft.fullName))
+        return {
+          field: 'fullName',
+          message: 'Enter your full name (2–100 characters).',
+        }
+      return draft.vehicleTypes.length > 0 &&
         draft.vehicleTypes.every((value) =>
           chosen(profileChoices.vehicleType, value),
         )
         ? null
-        : 'Choose at least one vehicle type.'
+        : {
+            field: 'vehicleTypes',
+            message: 'Choose at least one vehicle type.',
+          }
+    case 1:
+      for (const [key, label] of [
+        ['work', 'your occupation'],
+        ['city', 'your city of residence'],
+        ['drivingPurpose', 'what you usually drive for'],
+      ] as const) {
+        if (!chosen(profileChoices[key], draft[key]))
+          return { field: key, message: 'Choose ' + label + '.' }
+        if (
+          draft[key].trim() === 'Other' &&
+          !validProfileText(draft[otherField(key)])
+        )
+          return {
+            field: otherField(key),
+            message: 'Enter 2–100 characters for Other.',
+          }
+      }
+      return null
     case 2:
-      return (['work', 'city', 'drivingPurpose'] as const).every(
-        (key) =>
-          chosen(profileChoices[key], draft[key]) &&
-          (draft[key] !== 'Other' || validText(draft[otherField(key)])),
-      )
+      if (!chosen(profileChoices.drivingFrequency, draft.drivingFrequency))
+        return {
+          field: 'drivingFrequency',
+          message: 'Choose how often you drive.',
+        }
+      return chosen(profileChoices.parkingDuration, draft.parkingDuration)
         ? null
-        : 'Choose an answer for all three questions. If you choose Other, enter 2–100 characters.'
+        : {
+            field: 'parkingDuration',
+            message: 'Choose how long you usually park.',
+          }
     case 3:
-      return chosen(profileChoices.drivingFrequency, draft.drivingFrequency) &&
-        chosen(profileChoices.parkingDuration, draft.parkingDuration)
-        ? null
-        : 'Choose your driving frequency and parking duration.'
-    case 4:
       return draft.parkingPreferences.length > 0 &&
         draft.parkingPreferences.every((value) =>
           chosen(profileChoices.parkingPreferences, value),
         )
         ? null
-        : 'Choose at least one parking preference.'
+        : {
+            field: 'parkingPreferences',
+            message: 'Choose at least one parking preference.',
+          }
     default:
-      return 'Unknown setup step.'
+      return { field: 'fullName', message: 'Unknown setup step.' }
   }
+}
+
+export function profileStepProblem(draft: ProfileDraft, step: number) {
+  return profileStepIssue(draft, step)?.message ?? null
+}
+
+export function firstIncompleteProfileStep(draft: ProfileDraft): number | null {
+  for (let step = 0; step < profileStepCount; step++) {
+    if (profileStepIssue(draft, step)) return step
+  }
+  return null
 }
 
 export function profileFromUser(user: User | null): ProfileDraft {
@@ -142,15 +179,20 @@ export function profileFromUser(user: User | null): ProfileDraft {
       : []
   const selection = (key: AboutField) => {
     const text = read(key).trim()
-    return !text || chosen(profileChoices[key], text) ? text : 'Other'
+    if (!text || chosen(profileChoices[key], text)) return text
+    // Older metadata stored custom text directly. Invalid modern enums are incomplete.
+    return Object.hasOwn(saved, otherField(key)) ? '' : 'Other'
   }
   const custom = (key: AboutField) =>
     selection(key) === 'Other'
       ? read(otherField(key)) || (read(key) !== 'Other' ? read(key) : '')
       : ''
+  const fullName = [metadata.full_name, metadata.name].find(
+    (name): name is string =>
+      typeof name === 'string' && validProfileText(name),
+  )
   return {
-    fullName: typeof metadata.full_name === 'string' ? metadata.full_name : '',
-    ageRange: read('ageRange'),
+    fullName: fullName?.trim() ?? '',
     vehicleTypes: Array.isArray(saved.vehicleTypes)
       ? readArray('vehicleTypes')
       : read('vehicleType')
@@ -169,38 +211,54 @@ export function profileFromUser(user: User | null): ProfileDraft {
 }
 
 export function needsProfileName(user: User) {
-  return (
-    user.app_metadata.provider !== 'email' ||
-    !validText(profileFromUser(user).fullName)
-  )
+  return !validProfileText(profileFromUser(user).fullName)
 }
 
 export function profileComplete(user: User) {
-  const draft = profileFromUser(user)
-  return [0, 1, 2, 3, 4].every((step) => !profileStepProblem(draft, step))
+  return firstIncompleteProfileStep(profileFromUser(user)) === null
+}
+
+/** Write only supported survey fields, including when editing a partial legacy profile. */
+export function profileSurveyFields(draft: ProfileDraft) {
+  const selection = (
+    key: AboutField | 'drivingFrequency' | 'parkingDuration',
+  ) => (chosen(profileChoices[key], draft[key]) ? draft[key].trim() : '')
+  const custom = (key: AboutField) =>
+    selection(key) === 'Other' && validProfileText(draft[otherField(key)])
+      ? draft[otherField(key)].trim()
+      : ''
+  const selections = (options: readonly string[], values: string[]) => [
+    ...new Set(
+      values
+        .map((value) => value.trim())
+        .filter((value) => options.includes(value)),
+    ),
+  ]
+  return {
+    vehicleTypes: selections(profileChoices.vehicleType, draft.vehicleTypes),
+    work: selection('work'),
+    workOther: custom('work'),
+    city: selection('city'),
+    cityOther: custom('city'),
+    drivingPurpose: selection('drivingPurpose'),
+    drivingPurposeOther: custom('drivingPurpose'),
+    drivingFrequency: selection('drivingFrequency'),
+    parkingDuration: selection('parkingDuration'),
+    parkingPreferences: selections(
+      profileChoices.parkingPreferences,
+      draft.parkingPreferences,
+    ),
+  }
 }
 
 export function profileMetadata(draft: ProfileDraft) {
-  for (let step = 0; step < 5; step++) {
-    const problem = profileStepProblem(draft, step)
-    if (problem) throw new Error(problem)
-  }
-  const { fullName, ...profile } = draft
+  const incomplete = firstIncompleteProfileStep(draft)
+  if (incomplete !== null)
+    throw new Error(
+      profileStepProblem(draft, incomplete) ?? 'Complete your profile.',
+    )
   return {
-    full_name: fullName.trim(),
-    parkey_profile: {
-      ...profile,
-      vehicleTypes: [...new Set(profile.vehicleTypes)],
-      work: profile.work.trim(),
-      city: profile.city.trim(),
-      drivingPurpose: profile.drivingPurpose.trim(),
-      workOther: profile.work === 'Other' ? profile.workOther.trim() : '',
-      cityOther: profile.city === 'Other' ? profile.cityOther.trim() : '',
-      drivingPurposeOther:
-        profile.drivingPurpose === 'Other'
-          ? profile.drivingPurposeOther.trim()
-          : '',
-      parkingPreferences: [...new Set(profile.parkingPreferences)],
-    },
+    full_name: draft.fullName.trim(),
+    parkey_profile: profileSurveyFields(draft),
   }
 }

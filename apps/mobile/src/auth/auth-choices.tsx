@@ -40,7 +40,8 @@ export function AuthChoices() {
       })
     }
   }
-  if (auth.state.status === 'signed-in') return <SignedInRedirect />
+  if (auth.state.status === 'signed-in')
+    return <SignedInRedirect user={auth.state.user} />
   return (
     <View style={styles.screen}>
       <ScrollView

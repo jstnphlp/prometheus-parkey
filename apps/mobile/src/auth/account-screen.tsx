@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { useRouter } from 'expo-router'
+import { Redirect, useRouter } from 'expo-router'
 import { useIsFocused } from 'expo-router/react-navigation'
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native'
 
@@ -13,6 +13,7 @@ import { profileComplete } from '../onboarding/profile'
 import { AuthShell } from './auth-shell'
 import { useAuth } from './provider'
 import { AuthChoices } from './auth-choices'
+import { postAuthDestination } from './setup-access'
 
 export function AccountScreen() {
   const { entryColors: colors } = useTheme()
@@ -36,9 +37,9 @@ export function AccountScreen() {
       signingInFromChoices.current = true
     if (signingInFromChoices.current && auth.state.status === 'signed-in') {
       signingInFromChoices.current = false
-      router.replace('/account-setup')
+      if (postAuthDestination(auth.state.user) === '/') router.replace('/')
     }
-  }, [auth.state.status, focused, router])
+  }, [auth.state, focused, router])
   async function signOut() {
     try {
       const revoked = await auth.signOut()
@@ -65,6 +66,8 @@ export function AccountScreen() {
   }
   if (auth.state.status === 'signed-out' || auth.state.status === 'unavailable')
     return <AuthChoices />
+  if (auth.state.status === 'signed-in' && !profileComplete(auth.state.user))
+    return <Redirect href="/account-setup" />
   return (
     <AuthShell title="Your account" subtitle="Your Parkey account">
       <View style={styles.content}>
@@ -81,13 +84,6 @@ export function AccountScreen() {
               {typeof name === 'string' && name.trim() ? ` as ${name}` : ''}
             </Text>
             <Text style={styles.body}>{auth.state.user.email}</Text>
-            {!profileComplete(auth.state.user) ? (
-              <BrandButton
-                title="Complete your profile"
-                disabled={auth.busy}
-                onPress={() => router.push('/account-setup')}
-              />
-            ) : null}
             <BrandButton
               title="Sign out"
               busy={auth.busy}

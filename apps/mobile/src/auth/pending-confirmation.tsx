@@ -8,6 +8,7 @@ import { emailCodeLength } from './email-code'
 import { EmailVerificationForm } from './email-verification-form'
 import { authErrorCode } from './feedback'
 import { useAuth } from './provider'
+import { SignedInRedirect } from './signed-in-redirect'
 import { authErrorMessage } from './validation'
 
 export function PendingConfirmation({
@@ -76,6 +77,9 @@ export function PendingConfirmation({
       inFlight.current = false
     }
   }
+  if (verified && auth.state.status === 'signed-in')
+    return <SignedInRedirect user={auth.state.user} />
+
   return (
     <EmailVerificationForm
       email={email}

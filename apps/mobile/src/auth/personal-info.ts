@@ -1,32 +1,32 @@
 import type { SupabaseClient, User } from '@supabase/supabase-js'
 
-import { profileChoices, profileFromUser } from '../onboarding/profile.ts'
+import {
+  profileChoices,
+  profileFromUser,
+  profileSurveyFields,
+  validProfileText,
+} from '../onboarding/profile.ts'
 import type { ProfileDraft } from '../onboarding/profile.ts'
 
 export type PersonalInfoDraft = Pick<
   ProfileDraft,
-  'fullName' | 'ageRange' | 'city' | 'cityOther' | 'work' | 'workOther'
+  'fullName' | 'city' | 'cityOther' | 'work' | 'workOther'
 >
 
 export function personalInfoFromUser(user: User | null): PersonalInfoDraft {
-  const { fullName, ageRange, city, cityOther, work, workOther } =
-    profileFromUser(user)
-  return { fullName, ageRange, city, cityOther, work, workOther }
+  const { fullName, city, cityOther, work, workOther } = profileFromUser(user)
+  return { fullName, city, cityOther, work, workOther }
 }
 
 export function personalInfoProblem(draft: PersonalInfoDraft) {
-  const validText = (value: string) =>
-    value.trim().length >= 2 && value.trim().length <= 100
-  if (!validText(draft.fullName))
+  if (!validProfileText(draft.fullName))
     return 'Enter your full name (2–100 characters).'
-  if (!profileChoices.ageRange.some((value) => value === draft.ageRange))
-    return 'Choose your age range.'
   for (const field of ['city', 'work'] as const) {
     if (!profileChoices[field].some((value) => value === draft[field]))
       return field === 'city' ? 'Choose your city.' : 'Choose your occupation.'
     if (
       draft[field] === 'Other' &&
-      !validText(draft[field === 'city' ? 'cityOther' : 'workOther'])
+      !validProfileText(draft[field === 'city' ? 'cityOther' : 'workOther'])
     )
       return field === 'city'
         ? 'Enter your city (2–100 characters).'
@@ -47,21 +47,31 @@ export async function savePersonalInfo(
   const user = verified.data.user
   if (user?.id !== userId || !user.email_confirmed_at)
     throw new Error('Sign in again to update your personal info.')
-  const current: unknown = user.user_metadata.parkey_profile
-  const existing =
-    typeof current === 'object' && current !== null && !Array.isArray(current)
-      ? current
+  const stored: unknown = user.user_metadata.parkey_profile
+  // Retain unrelated metadata from the latest verified profile while retiring
+  // legacy keys whose values are represented by the active survey fields.
+  const unrelated =
+    stored && typeof stored === 'object' && !Array.isArray(stored)
+      ? Object.fromEntries(
+          Object.entries(stored).filter(
+            ([key]) => key !== 'ageRange' && key !== 'vehicleType',
+          ),
+        )
       : {}
-  const { fullName, ...fields } = draft
+  const { fullName, city, work } = draft
   const normalized = {
-    ...fields,
+    city,
+    work,
     cityOther: draft.city === 'Other' ? draft.cityOther.trim() : '',
     workOther: draft.work === 'Other' ? draft.workOther.trim() : '',
   }
   const result = await auth.updateUser({
     data: {
       full_name: fullName.trim(),
-      parkey_profile: { ...existing, ...normalized },
+      parkey_profile: {
+        ...unrelated,
+        ...profileSurveyFields({ ...profileFromUser(user), ...normalized }),
+      },
     },
   })
   if (result.error) throw result.error

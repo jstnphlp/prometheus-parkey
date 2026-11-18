@@ -1,6 +1,7 @@
-import { ActivityIndicator, Pressable, StyleSheet, Text } from 'react-native'
+import { ActivityIndicator, StyleSheet, Text } from 'react-native'
 import type { StyleProp, ViewStyle } from 'react-native'
 
+import { MotionPressable } from '../discovery/motion'
 import type { ParkeyTheme } from '../theme-colors'
 import { useTheme } from '../theme-provider'
 import { fonts, radius, spacing, typography } from '../theme'
@@ -36,7 +37,7 @@ export function BrandButton({
   const palette = variants[variant]
   const textButton = variant === 'text' || variant === 'plain'
   return (
-    <Pressable
+    <MotionPressable
       accessibilityRole="button"
       accessibilityLabel={title}
       accessibilityState={{ disabled: disabled || busy, busy }}
@@ -66,7 +67,7 @@ export function BrandButton({
           {title}
         </Text>
       )}
-    </Pressable>
+    </MotionPressable>
   )
 }
 

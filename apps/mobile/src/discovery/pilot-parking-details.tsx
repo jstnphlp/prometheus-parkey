@@ -17,6 +17,7 @@ import {
 } from '../components/architecture-page'
 import { fonts } from '../theme'
 import { createThemedStyles, useTheme } from '../theme-provider'
+import { MotionView } from './motion'
 import { ParkingImage } from './parking-photos'
 import { parkingPhotos, parkingPhotoIdentityKey } from './photos'
 import ParkingMap from './parking-map'
@@ -94,7 +95,12 @@ export function PilotParkingDetails({
   }
   if (tab === 'Entrance')
     return (
-      <View style={styles.page}>
+      <MotionView
+        style={styles.page}
+        duration={240}
+        distance={5}
+        fromOpacity={0.8}
+      >
         <ArchitecturePage
           title="Entrance & Access"
           subtitle="Locate the correct vehicle entrance."
@@ -136,7 +142,7 @@ export function PilotParkingDetails({
             Get Directions
           </Button>
         </ArchitecturePage>
-      </View>
+      </MotionView>
     )
   return (
     <View style={styles.page}>

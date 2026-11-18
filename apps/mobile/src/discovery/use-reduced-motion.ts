@@ -1,34 +1,50 @@
 import { useSyncExternalStore } from 'react'
-import { AccessibilityInfo } from 'react-native'
+import { AccessibilityInfo, AppState } from 'react-native'
 
 // Share one preference subscription across sheets and interactive controls.
 let reduced = true
+let foreground = true
 let unsubscribe: (() => void) | undefined
 const listeners = new Set<() => void>()
 
+function notify() {
+  for (const listener of listeners) listener()
+}
+
 function update(value: boolean) {
   reduced = value
-  for (const listener of listeners) listener()
+  notify()
 }
 
 function subscribe(listener: () => void) {
   listeners.add(listener)
   if (listeners.size === 1) {
     let active = true
-    void AccessibilityInfo.isReduceMotionEnabled()
-      .then((value) => {
-        if (active) update(value)
-      })
-      .catch(() => {
-        if (active) update(true)
-      })
+    let receivedPreference = false
+    foreground =
+      AppState.currentState == null || AppState.currentState === 'active'
     const subscription = AccessibilityInfo.addEventListener(
       'reduceMotionChanged',
-      update,
+      (value) => {
+        receivedPreference = true
+        update(value)
+      },
+    )
+    const appState = AppState.addEventListener('change', (value) => {
+      foreground = value === 'active'
+      notify()
+    })
+    void AccessibilityInfo.isReduceMotionEnabled().then(
+      (value) => {
+        if (active && !receivedPreference) update(value)
+      },
+      () => {},
     )
     unsubscribe = () => {
       active = false
       subscription.remove()
+      appState.remove()
+      reduced = true
     }
   }
   return () => {
@@ -43,7 +59,7 @@ function subscribe(listener: () => void) {
 export function useReducedMotion() {
   return useSyncExternalStore(
     subscribe,
-    () => reduced,
+    () => reduced || !foreground,
     () => true,
   )
 }

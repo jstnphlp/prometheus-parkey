@@ -15,6 +15,7 @@ import Svg, { Path } from 'react-native-svg'
 import { useTheme, createThemedStyles } from '../theme-provider'
 import { AppearanceButton } from '../components/appearance-button'
 import { FigmaAsset } from './figma-assets'
+import { MotionView } from './motion'
 import { arrivalTime } from './drive-math'
 import { routeDistance, routeDuration } from './routing'
 import type { DrivingStep } from './routing'
@@ -174,7 +175,9 @@ export function RouteDetails({
   const floating = phase === 'navigating'
   const floatingBottom = floating ? Math.max(insets.bottom, 24) : 0
   return (
-    <View
+    <MotionView
+      fromOpacity={0.8}
+      distance={5}
       testID="route-panel"
       onLayout={(event) =>
         onHeightChange(event.nativeEvent.layout.height + floatingBottom)
@@ -403,7 +406,7 @@ export function RouteDetails({
           </ScrollView>
         </>
       )}
-    </View>
+    </MotionView>
   )
 }
 const useStyles = createThemedStyles(({ colors }) =>

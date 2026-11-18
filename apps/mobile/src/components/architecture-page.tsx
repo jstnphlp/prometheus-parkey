@@ -1,7 +1,15 @@
 import type { ReactNode } from 'react'
-import { Platform, ScrollView, StyleSheet, Text, View } from 'react-native'
+import {
+  Animated,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
+import { revealStyle, useEntranceProgress } from '../discovery/motion'
 import { IconButton } from '../discovery/ui'
 import { fonts } from '../theme'
 import { createThemedStyles, useTheme } from '../theme-provider'
@@ -22,6 +30,7 @@ export function ArchitecturePage({
   children,
   footer,
   scrollable = true,
+  animateHeading = true,
 }: {
   title: string
   subtitle: string
@@ -29,10 +38,15 @@ export function ArchitecturePage({
   children: ReactNode
   footer?: ReactNode
   scrollable?: boolean
+  animateHeading?: boolean
 }) {
   const styles = useStyles()
   const { colors } = useTheme()
   const insets = useArchitectureInsets()
+  const progress = useEntranceProgress(220, undefined, animateHeading)
+  const reveal = animateHeading
+    ? revealStyle(progress, { distance: 5, fromOpacity: 0.76 })
+    : null
   const content = (
     <>
       <IconButton
@@ -42,12 +56,12 @@ export function ArchitecturePage({
         onPress={onBack}
         style={styles.back}
       />
-      <View style={styles.heading}>
+      <Animated.View style={[styles.heading, reveal]}>
         <Text accessibilityRole="header" style={styles.title}>
           {title}
         </Text>
         <Text style={styles.subtitle}>{subtitle}</Text>
-      </View>
+      </Animated.View>
       {children}
       {footer ? <View style={styles.footer}>{footer}</View> : null}
     </>

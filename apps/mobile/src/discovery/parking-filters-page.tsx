@@ -44,6 +44,7 @@ export function ParkingFiltersPage({
   return (
     <View style={{ flex: 1 }}>
       <ArchitecturePage
+        animateHeading={false}
         title="Filter parking"
         subtitle="Choose what matters most to you."
         onBack={onBack}

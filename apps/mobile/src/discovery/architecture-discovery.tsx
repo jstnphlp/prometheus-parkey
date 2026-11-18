@@ -10,6 +10,7 @@ import {
 } from 'react-native'
 
 import { createThemedStyles, useTheme } from '../theme-provider'
+import { MotionView } from './motion'
 import type { ParkingReference } from './model'
 import { parkingDetailData } from './parking-detail-data'
 import { reviewedParkingEntrance } from './parking-navigation'
@@ -80,7 +81,10 @@ export function DiscoveryMapActions({
   const styles = useStyles()
   const { colors } = useTheme()
   return (
-    <View
+    <MotionView
+      duration={160}
+      distance={0}
+      fromOpacity={0.76}
       style={[styles.mapActions, { bottom }, selected && styles.centerActions]}
     >
       <IconButton
@@ -105,7 +109,7 @@ export function DiscoveryMapActions({
         onPress={onLocate}
         style={styles.mapAction}
       />
-    </View>
+    </MotionView>
   )
 }
 
@@ -163,7 +167,13 @@ export function ParkingListPage({
   const styles = useStyles()
   const { colors } = useTheme()
   return (
-    <View testID="parking-list-page" style={[styles.listPage, { top, bottom }]}>
+    <MotionView
+      duration={220}
+      distance={4}
+      fromOpacity={0.8}
+      testID="parking-list-page"
+      style={[styles.listPage, { top, bottom }]}
+    >
       <FlatList
         contentOffset={{ x: 0, y: scrollOffset }}
         ref={listRef}
@@ -226,7 +236,7 @@ export function ParkingListPage({
           <Text style={styles.viewText}>Map</Text>
         </Pressable>
       </View>
-    </View>
+    </MotionView>
   )
 }
 
@@ -256,6 +266,7 @@ export function ParkingPreview({
   const details = parkingDetailData(parking, null, now)
   return (
     <ParkingPreviewCard
+      parkingId={parking.id}
       title={details.title}
       bottom={bottom}
       favorite={favorite}
@@ -271,6 +282,7 @@ export function ParkingPreview({
 }
 
 export function ParkingPreviewCard({
+  parkingId,
   title,
   bottom,
   favorite,
@@ -282,6 +294,7 @@ export function ParkingPreviewCard({
   maxHeight = 600,
   onHeightChange,
 }: {
+  parkingId: string
   title: string
   bottom: number
   favorite: boolean
@@ -296,7 +309,11 @@ export function ParkingPreviewCard({
   const styles = useStyles()
   const ui = useUI()
   return (
-    <View
+    <MotionView
+      transitionKey={parkingId}
+      duration={220}
+      distance={6}
+      fromOpacity={0.76}
       testID="parking-preview"
       onLayout={({ nativeEvent }) =>
         onHeightChange?.(nativeEvent.layout.height)
@@ -358,7 +375,7 @@ export function ParkingPreviewCard({
           </Pressable>
         </View>
       </ScrollView>
-    </View>
+    </MotionView>
   )
 }
 

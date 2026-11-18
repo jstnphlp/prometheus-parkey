@@ -33,7 +33,12 @@ export function ParkingPage({
 
   const insets = useSafeAreaInsets()
   return (
-    <MotionView style={styles.page}>
+    <MotionView
+      style={styles.page}
+      duration={160}
+      distance={0}
+      fromOpacity={0.86}
+    >
       <ScrollView
         contentContainerStyle={[
           styles.content,

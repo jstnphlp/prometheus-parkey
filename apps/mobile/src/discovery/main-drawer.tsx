@@ -11,6 +11,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { useAuth } from '../auth/provider'
+import { BrandLogo } from '../components/brand-logo'
 import { profileFromUser } from '../onboarding/profile'
 import { fonts } from '../theme'
 import { createThemedStyles, useTheme } from '../theme-provider'
@@ -92,9 +93,22 @@ export function MainDrawer({
           keyboardShouldPersistTaps="handled"
         >
           <View style={styles.header}>
-            <Text accessibilityRole="header" style={styles.title}>
-              Parkey
-            </Text>
+            <View style={styles.brand}>
+              <View
+                aria-hidden
+                accessibilityElementsHidden
+                importantForAccessibility="no-hide-descendants"
+              >
+                <BrandLogo
+                  variant="account"
+                  artwork="magenta"
+                  style={styles.logo}
+                />
+              </View>
+              <Text accessibilityRole="header" style={styles.title}>
+                Parkey
+              </Text>
+            </View>
             <MotionPressable
               accessibilityRole="button"
               accessibilityLabel="Close menu"
@@ -185,6 +199,8 @@ const useStyles = createThemedStyles(({ colors }) =>
       marginBottom: 20,
       marginRight: -10,
     },
+    brand: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 10 },
+    logo: { width: 32, height: 35 },
     title: {
       fontFamily: fonts.extraBold,
       fontSize: 32,

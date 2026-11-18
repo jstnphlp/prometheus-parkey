@@ -105,8 +105,12 @@ export function MainDrawer({
                   style={styles.logo}
                 />
               </View>
-              <Text accessibilityRole="header" style={styles.title}>
-                Parkey
+              <Text
+                accessibilityRole="header"
+                accessibilityLabel="Parkey"
+                style={styles.title}
+              >
+                arkey
               </Text>
             </View>
             <MotionPressable
@@ -199,7 +203,7 @@ const useStyles = createThemedStyles(({ colors }) =>
       marginBottom: 20,
       marginRight: -10,
     },
-    brand: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 10 },
+    brand: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 3 },
     logo: { width: 32, height: 35 },
     title: {
       fontFamily: fonts.extraBold,

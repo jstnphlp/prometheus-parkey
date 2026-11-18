@@ -9,10 +9,11 @@ import {
 
 test('vehicle setup accepts multiple selected categories and requires at least one', () => {
   const draft = profileFromUser(null)
+  draft.fullName = 'Test Driver'
   draft.vehicleTypes = ['Motorcycle', 'SUV / Crossover']
-  assert.equal(profileStepProblem(draft, 1), null)
-  assert.ok(profileStepProblem({ ...draft, vehicleTypes: [] }, 1))
-  assert.ok(profileStepProblem({ ...draft, vehicleTypes: ['invalid'] }, 1))
+  assert.equal(profileStepProblem(draft, 0), null)
+  assert.ok(profileStepProblem({ ...draft, vehicleTypes: [] }, 0))
+  assert.ok(profileStepProblem({ ...draft, vehicleTypes: ['invalid'] }, 0))
 })
 
 test('About You requires dropdown values and an explanation only when Other is selected', () => {
@@ -22,13 +23,13 @@ test('About You requires dropdown values and an explanation only when Other is s
     city: 'Taguig City',
     drivingPurpose: 'Work / Commuting',
   }
-  assert.equal(profileStepProblem(draft, 2), null)
-  assert.ok(profileStepProblem({ ...draft, work: 'arbitrary free text' }, 2))
-  assert.ok(profileStepProblem({ ...draft, work: 'Other' }, 2))
+  assert.equal(profileStepProblem(draft, 1), null)
+  assert.ok(profileStepProblem({ ...draft, work: 'arbitrary free text' }, 1))
+  assert.ok(profileStepProblem({ ...draft, work: 'Other' }, 1))
   assert.equal(
     profileStepProblem(
       { ...draft, work: 'Other', workOther: 'Custom occupation' },
-      2,
+      1,
     ),
     null,
   )
@@ -55,7 +56,6 @@ test('saving clears hidden Other text and preserves all selected vehicles', () =
   const draft = {
     ...profileFromUser(null),
     fullName: 'Test Driver',
-    ageRange: '25–34',
     vehicleTypes: ['Motorcycle', 'SUV / Crossover'],
     work: 'Office employee',
     workOther: 'stale text',

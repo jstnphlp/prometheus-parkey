@@ -70,9 +70,9 @@ export function FormDropdown({
         ref={field}
         accessibilityRole="button"
         accessibilityLabel={label}
-        accessibilityValue={{ text: value || 'Choose an option' }}
+        aria-valuetext={value || 'Choose an option'}
         accessibilityHint="Opens the list of choices"
-        accessibilityState={{ expanded: open, disabled }}
+        aria-expanded={open}
         disabled={disabled}
         onPress={() => {
           Keyboard.dismiss()
@@ -144,7 +144,7 @@ export function FormDropdown({
                   key={option}
                   accessibilityRole="radio"
                   accessibilityLabel={option}
-                  accessibilityState={{ checked: value === option }}
+                  aria-checked={value === option}
                   onPress={() => {
                     onChange(option)
                     setOpen(false)

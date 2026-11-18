@@ -1,3 +1,4 @@
+import { Asset } from 'expo-asset'
 import { Map, setWorkerUrl } from 'maplibre-gl'
 import type { GeoJSONSource } from 'maplibre-gl'
 import {
@@ -10,9 +11,12 @@ import {
 } from 'react'
 import 'maplibre-gl/dist/maplibre-gl.css'
 
+import { mainMarkerImages } from './main-marker-images'
 import { useTheme } from '../theme-provider'
-import { config } from './config'
+import { useMapStyle } from './use-map-style'
 import { mapTextFont } from './map-font'
+import { draftGeoJSON } from './map-data'
+import { mainParkingMarkerLayout } from './map-marker-style'
 import { ncrMapSources } from './ncr-map-data'
 import type { NcrMapProps } from './ncr-map-data'
 
@@ -26,6 +30,19 @@ function NcrMap(props: NcrMapProps) {
   }, [props.accessibilityHidden])
   const map = useRef<Map | null>(null)
   const [loaded, setLoaded] = useState(false)
+  const [simplifiedMarkers] = useState(props.simplifiedMarkers ?? false)
+  const mapStyle = useMapStyle(props.night)
+  const [initialStyle] = useState(mapStyle)
+  const activeStyle = useRef(initialStyle)
+  const draft = useMemo(
+    () => draftGeoJSON(props.draftPoints ?? []),
+    [props.draftPoints],
+  )
+  const editing = useEffectEvent(() => Boolean(props.draftPoints))
+  const moveStarted = useEffectEvent(() => props.onMoveStart())
+  const mapPressed = useEffectEvent((point: [number, number]) =>
+    props.onMapPress?.(point),
+  )
   const sources = useMemo(() => ncrMapSources(props.data, null), [props.data])
   const viewport = useEffectEvent(() => {
     const instance = map.current,
@@ -45,6 +62,7 @@ function NcrMap(props: NcrMapProps) {
     props.onCluster(point),
   )
   const [initialTarget] = useState(props.target)
+  const renderedTarget = useRef(initialTarget)
   useEffect(() => {
     const { colors, mapColors } = initialTheme.current
     if (!container.current) return
@@ -53,7 +71,7 @@ function NcrMap(props: NcrMapProps) {
     try {
       instance = new Map({
         container: container.current,
-        style: config.mapStyle,
+        style: initialStyle,
         center: initialTarget.coordinate,
         zoom: initialTarget.zoom,
         minZoom: 8.5,
@@ -66,7 +84,20 @@ function NcrMap(props: NcrMapProps) {
       return
     }
     map.current = instance
-    instance.on('load', () => {
+    const markerAssets = new globalThis.Map(Object.entries(mainMarkerImages))
+    if (simplifiedMarkers)
+      instance.setMissingStyleImageResolver(async (name) => {
+        const asset = markerAssets.get(name)
+        if (asset === undefined) return
+        try {
+          const marker = await instance.loadImage(Asset.fromModule(asset).uri)
+          if (map.current === instance && !instance.hasImage(name))
+            instance.addImage(name, marker.data, { pixelRatio: 3 })
+        } catch {
+          if (map.current === instance) failed()
+        }
+      })
+    instance.on('style.load', () => {
       instance.addSource('shapes', {
         type: 'geojson',
         data: { type: 'FeatureCollection', features: [] },
@@ -111,36 +142,53 @@ function NcrMap(props: NcrMapProps) {
           'line-dasharray': [2, 1],
         },
       })
-      instance.addLayer({
-        id: 'ncr-anchors',
-        type: 'circle',
-        source: 'anchors',
-        filter: ['!', ['has', 'point_count']],
-        paint: {
-          'circle-color': [
-            'case',
-            ['get', 'restricted'],
-            colors.error,
-            [
-              'match',
-              ['get', 'featureType'],
-              'entrance',
-              colors.amber,
-              'space',
-              mapColors.street,
-              colors.brand,
+      if (!simplifiedMarkers)
+        instance.addLayer({
+          id: 'ncr-anchors',
+          type: 'circle',
+          source: 'anchors',
+          filter: ['!', ['has', 'point_count']],
+          paint: {
+            'circle-color': [
+              'case',
+              ['get', 'restricted'],
+              colors.error,
+              [
+                'match',
+                ['get', 'featureType'],
+                'entrance',
+                colors.amber,
+                'space',
+                mapColors.street,
+                colors.brand,
+              ],
             ],
-          ],
-          'circle-radius': [
-            'case',
-            ['get', 'selected'],
-            10,
-            ['match', ['get', 'featureType'], 'entrance', 4, 'space', 4, 7],
-          ],
-          'circle-stroke-color': mapColors.casing,
-          'circle-stroke-width': 2,
-        },
-      })
+            'circle-radius': [
+              'case',
+              ['get', 'selected'],
+              10,
+              ['match', ['get', 'featureType'], 'entrance', 4, 'space', 4, 7],
+            ],
+            'circle-stroke-color': mapColors.casing,
+            'circle-stroke-width': 2,
+          },
+        })
+      if (simplifiedMarkers) {
+        instance.addLayer({
+          id: 'ncr-selected-ring',
+          type: 'circle',
+          source: 'anchors',
+          filter: ['==', ['get', 'id'], ''],
+          paint: { 'circle-radius': 29, 'circle-color': colors.surface },
+        })
+        instance.addLayer({
+          id: 'ncr-parking-markers',
+          type: 'symbol',
+          source: 'anchors',
+          filter: ['!', ['has', 'point_count']],
+          layout: mainParkingMarkerLayout(1),
+        })
+      }
       instance.addLayer({
         id: 'ncr-destination-labels',
         type: 'symbol',
@@ -189,15 +237,46 @@ function NcrMap(props: NcrMapProps) {
         },
         paint: { 'text-color': mapColors.casing },
       })
+      if (simplifiedMarkers) {
+        instance.addSource('pilot-draft', {
+          type: 'geojson',
+          data: { type: 'FeatureCollection', features: [] },
+        })
+        instance.addLayer({
+          id: 'pilot-draft-line',
+          type: 'line',
+          source: 'pilot-draft',
+          paint: { 'line-color': colors.amber, 'line-width': 5 },
+        })
+        instance.addLayer({
+          id: 'pilot-draft-points',
+          type: 'circle',
+          source: 'pilot-draft',
+          filter: ['==', ['geometry-type'], 'Point'],
+          paint: {
+            'circle-radius': 8,
+            'circle-color': colors.amber,
+            'circle-stroke-color': colors.surface,
+            'circle-stroke-width': 2,
+          },
+        })
+      }
       setLoaded(true)
       viewport()
     })
+    instance.on('movestart', moveStarted)
     instance.on('moveend', viewport)
     instance.on('error', failed)
     instance.on('click', (event) => {
+      const point: [number, number] = [event.lngLat.lng, event.lngLat.lat]
+      if (editing()) {
+        mapPressed(point)
+        return
+      }
+      if (!instance.getSource('anchors')) return
       const features = instance.queryRenderedFeatures(event.point, {
         layers: [
-          'ncr-anchors',
+          simplifiedMarkers ? 'ncr-parking-markers' : 'ncr-anchors',
           'ncr-destination-labels',
           'ncr-clusters',
           'ncr-streets',
@@ -213,6 +292,7 @@ function NcrMap(props: NcrMapProps) {
         if (x !== undefined && y !== undefined) cluster([x, y])
       } else if (typeof feature?.properties.id === 'string')
         selected(feature.properties.id)
+      else mapPressed(point)
     })
     // Container size changes do not always emit a browser window resize.
     // Keep the same map/camera when overlays or device orientation change.
@@ -228,18 +308,32 @@ function NcrMap(props: NcrMapProps) {
       instance.remove()
       map.current = null
     }
-  }, [initialTarget])
+  }, [initialTarget, initialStyle, simplifiedMarkers])
+
+  useEffect(() => {
+    if (activeStyle.current === mapStyle || !map.current) return
+    activeStyle.current = mapStyle
+    setLoaded(false)
+    map.current.setStyle(mapStyle, { diff: false })
+  }, [mapStyle])
+
+  useEffect(() => {
+    if (loaded)
+      map.current?.getSource<GeoJSONSource>('pilot-draft')?.setData(draft)
+  }, [draft, loaded])
   useEffect(() => {
     if (!loaded) return
     const instance = map.current
-    if (!instance) return
+    if (!instance?.getSource('anchors')) return
     // Hide immediately when the parent clears private data on a mode switch,
     // while the GeoJSON worker applies the empty source in the background.
     const visibility = sources.anchors.features.length ? 'visible' : 'none'
     for (const layer of [
       'ncr-areas',
       'ncr-streets',
-      'ncr-anchors',
+      ...(simplifiedMarkers
+        ? ['ncr-parking-markers', 'ncr-selected-ring']
+        : ['ncr-anchors']),
       'ncr-destination-labels',
       'ncr-clusters',
       'ncr-cluster-label',
@@ -247,28 +341,37 @@ function NcrMap(props: NcrMapProps) {
       instance.setLayoutProperty(layer, 'visibility', visibility)
     for (const id of ['shapes', 'anchors'] as const)
       instance.getSource<GeoJSONSource>(id)?.setData(sources[id])
-  }, [loaded, sources])
+  }, [loaded, sources, simplifiedMarkers])
   useEffect(() => {
-    if (!loaded) return
+    if (!loaded || !map.current?.getSource('anchors')) return
     // A selection changes paint only, without reparsing/reclustering the full
     // snapshot or recreating the map when a detail modal opens.
+    if (simplifiedMarkers) {
+      map.current?.setFilter('ncr-selected-ring', [
+        '==',
+        ['get', 'id'],
+        props.selectedId || '',
+      ])
+      return
+    }
     map.current?.setPaintProperty('ncr-anchors', 'circle-radius', [
       'case',
       ['==', ['get', 'id'], props.selectedId || ''],
       10,
       ['match', ['get', 'featureType'], 'entrance', 4, 'space', 4, 7],
     ])
-  }, [loaded, props.selectedId])
+  }, [loaded, props.selectedId, simplifiedMarkers])
   useEffect(() => {
-    if (loaded)
-      map.current?.jumpTo({
-        center: props.target.coordinate,
-        zoom: props.target.zoom,
-      })
+    if (!loaded || props.target === renderedTarget.current) return
+    renderedTarget.current = props.target
+    map.current?.jumpTo({
+      center: props.target.coordinate,
+      zoom: props.target.zoom,
+    })
   }, [loaded, props.target])
   useEffect(() => {
     const instance = map.current
-    if (!loaded || !instance) return
+    if (!loaded || !instance?.getLayer('ncr-areas')) return
     const { colors, mapColors } = theme
     instance.setPaintProperty('ncr-areas', 'fill-color', [
       'case',
@@ -282,26 +385,33 @@ function NcrMap(props: NcrMapProps) {
       colors.error,
       mapColors.street,
     ])
-    instance.setPaintProperty('ncr-anchors', 'circle-color', [
-      'case',
-      ['get', 'restricted'],
-      colors.error,
-      [
-        'match',
-        ['get', 'featureType'],
-        'entrance',
-        colors.amber,
-        'space',
-        mapColors.street,
-        colors.brand,
-      ],
-    ])
+    if (simplifiedMarkers)
+      instance.setPaintProperty(
+        'ncr-selected-ring',
+        'circle-color',
+        colors.surface,
+      )
+    else
+      instance.setPaintProperty('ncr-anchors', 'circle-color', [
+        'case',
+        ['get', 'restricted'],
+        colors.error,
+        [
+          'match',
+          ['get', 'featureType'],
+          'entrance',
+          colors.amber,
+          'space',
+          mapColors.street,
+          colors.brand,
+        ],
+      ])
     instance.setPaintProperty(
       'ncr-destination-labels',
       'text-color',
       mapColors.label,
     )
-  }, [loaded, theme])
+  }, [loaded, theme, simplifiedMarkers])
   return (
     <div
       ref={container}

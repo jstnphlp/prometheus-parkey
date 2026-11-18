@@ -4,9 +4,10 @@ import { Platform } from 'react-native'
 const panels = [
   'results',
   'filters',
-  'profile',
+  'report',
   'preview',
   'search',
+  'city-search',
   'access',
   'detail',
   'entrance',

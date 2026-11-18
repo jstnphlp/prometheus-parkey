@@ -38,6 +38,7 @@ type PopupAction = {
   restoreFocus?: boolean
 }
 export type PopupRequest = PopupIdentity & {
+  presentation?: 'sign-out'
   primary?: PopupAction
   secondary?: PopupAction
   returnFocus?: () => void
@@ -144,6 +145,7 @@ export function PopupProvider({ children }: { children: ReactNode }) {
     allowAgain: (key) => gate.current.allowAgain(key),
   }
   const palette = current ? palettes[current.tone] : palettes.info
+  const signOut = current?.presentation === 'sign-out'
   return (
     <PopupContext.Provider value={api}>
       {children}
@@ -156,10 +158,12 @@ export function PopupProvider({ children }: { children: ReactNode }) {
         onRequestClose={() => dismiss()}
         onShow={focusTitle}
       >
-        <SafeAreaView style={styles.backdrop}>
+        <SafeAreaView
+          style={[styles.backdrop, signOut && styles.signOutBackdrop]}
+        >
           {current ? (
             <View
-              style={styles.card}
+              style={[styles.card, signOut && styles.signOutCard]}
               {...(Platform.OS === 'web'
                 ? {}
                 : {
@@ -168,47 +172,65 @@ export function PopupProvider({ children }: { children: ReactNode }) {
                   })}
             >
               <ScrollView
-                contentContainerStyle={styles.content}
+                contentContainerStyle={[
+                  styles.content,
+                  signOut && styles.signOutContent,
+                ]}
                 bounces={false}
                 keyboardShouldPersistTaps="handled"
               >
-                <View style={styles.top}>
-                  <View
-                    style={[
-                      styles.symbol,
-                      { backgroundColor: palette.surface },
-                    ]}
-                  >
-                    <BrandIcon
-                      name={palette.icon}
-                      color={palette.ink}
-                      size={30}
-                    />
+                {!signOut ? (
+                  <View style={styles.top}>
+                    <View
+                      style={[
+                        styles.symbol,
+                        { backgroundColor: palette.surface },
+                      ]}
+                    >
+                      <BrandIcon
+                        name={palette.icon}
+                        color={palette.ink}
+                        size={30}
+                      />
+                    </View>
+                    <Pressable
+                      accessibilityRole="button"
+                      accessibilityLabel="Close message"
+                      onPress={() => dismiss()}
+                      style={styles.close}
+                    >
+                      <BrandIcon name="close" color={colors.dark} />
+                    </Pressable>
                   </View>
-                  <Pressable
-                    accessibilityRole="button"
-                    accessibilityLabel="Close message"
-                    onPress={() => dismiss()}
-                    style={styles.close}
-                  >
-                    <BrandIcon name="close" color={colors.dark} />
-                  </Pressable>
-                </View>
+                ) : null}
                 <Text
                   ref={title}
                   {...(Platform.OS === 'web' ? { tabIndex: -1 } : {})}
                   accessibilityRole="header"
-                  style={styles.title}
+                  style={[styles.title, signOut && styles.signOutTitle]}
                 >
                   {current.title}
                 </Text>
-                <Text style={styles.message}>{current.message}</Text>
+                <Text
+                  style={[styles.message, signOut && styles.signOutMessage]}
+                >
+                  {current.message}
+                </Text>
+                {signOut && current.secondary ? (
+                  <BrandButton
+                    title={current.secondary.title}
+                    variant="accent"
+                    style={styles.signOutButton}
+                    onPress={() => dismiss(current.secondary)}
+                  />
+                ) : null}
                 <BrandButton
+                  style={signOut ? styles.signOutButton : undefined}
                   title={current.primary?.title ?? 'Got it'}
                   variant="plum"
                   onPress={() => dismiss(current.primary)}
                 />
-                {current.secondary ? (
+                {!signOut && current.secondary ? (
                   <BrandButton
                     title={current.secondary.title}
                     variant="plain"
@@ -247,6 +269,19 @@ const useStyles = createThemedStyles(({ entryColors: colors }) =>
       overflow: 'hidden',
     },
     content: { padding: 24, gap: 16 },
+    signOutBackdrop: {
+      backgroundColor: 'rgba(26, 15, 33, 0.48)',
+      paddingHorizontal: 29,
+    },
+    signOutTitle: { fontSize: 23, lineHeight: 32, letterSpacing: 0 },
+    signOutCard: { maxWidth: 372, borderRadius: 28 },
+    signOutContent: { paddingTop: 26, paddingBottom: 24, gap: 15 },
+    signOutMessage: {
+      color: colors.secondary,
+      marginTop: 10,
+      marginBottom: 21,
+    },
+    signOutButton: { minHeight: 49, borderRadius: 18 },
     top: {
       flexDirection: 'row',
       alignItems: 'center',

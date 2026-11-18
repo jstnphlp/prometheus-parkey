@@ -1,11 +1,11 @@
-import { test, expect, destination, openMap } from './fixtures'
+import { test, expect, destination, expandResults, openMap } from './fixtures'
 
 test('search selects a destination, persists recents, and supports clear and undo', async ({
   page,
 }) => {
   await openMap(page)
   await page
-    .getByRole('button', { name: 'Search parking or landmark', exact: true })
+    .getByRole('button', { name: 'Search a place or destination', exact: true })
     .click()
   const query = page.getByTestId('destination-query')
   await query.fill('Poblacion')
@@ -15,19 +15,13 @@ test('search selects a destination, persists recents, and supports clear and und
   await page.getByTestId('destination-result-0').click()
   await expect(
     page.getByRole('button', {
-      name: 'Search parking or landmark',
+      name: 'Search a place or destination',
       exact: true,
     }),
   ).toContainText('Poblacion Test Cafe')
   await expect(page).toHaveURL(/searchLng=121.0308/)
   await expect(page).not.toHaveURL(/search=1/)
-  await page
-    .getByRole('button', { name: 'Find Parking Nearby', exact: true })
-    .click()
-  await page
-    .getByRole('button', { name: 'Show parking list', exact: true })
-    .first()
-    .click()
+  await expandResults(page)
   await expect(
     page
       .getByRole('button', {
@@ -35,15 +29,16 @@ test('search selects a destination, persists recents, and supports clear and und
       })
       .first(),
   ).toBeVisible()
+  await page.getByRole('tab', { name: 'Map', exact: true }).click()
   await page.reload()
   await expect(
     page.getByRole('button', {
-      name: 'Search parking or landmark',
+      name: 'Search a place or destination',
       exact: true,
     }),
   ).toContainText('Poblacion Test Cafe')
   await page
-    .getByRole('button', { name: 'Search parking or landmark', exact: true })
+    .getByRole('button', { name: 'Search a place or destination', exact: true })
     .click()
   await page
     .getByRole('button', { name: 'Clear destination search', exact: true })
@@ -61,9 +56,11 @@ test('search selects a destination, persists recents, and supports clear and und
   await expect(page.getByTestId('destination-recent-0')).toContainText(
     'Poblacion Test Cafe',
   )
-  await page.getByRole('button', { name: 'Back', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Close destination search', exact: true })
+    .click()
   await expect(
-    page.getByRole('tab', { name: 'Explore', exact: true }),
+    page.getByRole('button', { name: 'Open menu', exact: true }),
   ).toBeVisible()
 })
 
@@ -75,18 +72,18 @@ test('search reports no matches and recovers from a provider error', async ({
   )
   await openMap(page)
   await page
-    .getByRole('button', { name: 'Search parking or landmark', exact: true })
+    .getByRole('button', { name: 'Search a place or destination', exact: true })
     .click()
   await page.getByTestId('destination-query').fill('Nowhere')
   await expect(
-    page.getByRole('heading', { name: 'No places found', exact: true }),
+    page.getByText('No places found. Try a different name.', { exact: true }),
   ).toBeVisible()
   await page.route('https://e2e.parkey.test/search?**', (route) =>
     route.fulfill({ status: 503, body: 'Unavailable' }),
   )
   await page.getByTestId('destination-query').fill('Poblacion')
   await expect(
-    page.getByRole('heading', { name: 'Search couldn’t connect', exact: true }),
+    page.getByText('Search couldn’t connect.', { exact: true }),
   ).toBeVisible()
   await page.route('https://e2e.parkey.test/search?**', (route) =>
     route.fulfill({ json: destination }),

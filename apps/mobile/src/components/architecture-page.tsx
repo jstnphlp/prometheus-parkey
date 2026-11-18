@@ -33,7 +33,7 @@ export function ArchitecturePage({
   animateHeading = true,
 }: {
   title: string
-  subtitle: string
+  subtitle?: string
   onBack: () => void
   children: ReactNode
   footer?: ReactNode
@@ -60,7 +60,7 @@ export function ArchitecturePage({
         <Text accessibilityRole="header" style={styles.title}>
           {title}
         </Text>
-        <Text style={styles.subtitle}>{subtitle}</Text>
+        {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
       </Animated.View>
       {children}
       {footer ? <View style={styles.footer}>{footer}</View> : null}

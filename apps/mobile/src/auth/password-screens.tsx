@@ -65,7 +65,8 @@ export function ForgotPasswordScreen() {
         })
     }
   }
-  if (auth.state.status === 'signed-in') return <SignedInRedirect />
+  if (auth.state.status === 'signed-in')
+    return <SignedInRedirect user={auth.state.user} />
   return (
     <AuthShell
       recovery

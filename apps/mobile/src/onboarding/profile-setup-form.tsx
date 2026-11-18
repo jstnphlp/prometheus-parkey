@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
 import type { ComponentRef } from 'react'
+import { useRouter } from 'expo-router'
 import {
+  Animated,
   Image,
   KeyboardAvoidingView,
   Platform,
-  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -18,28 +19,43 @@ import suv from '../../assets/figma/vehicles/suv.png'
 import pickup from '../../assets/figma/vehicles/pickup.png'
 import van from '../../assets/figma/vehicles/van.png'
 import other from '../../assets/figma/vehicles/other.png'
+import type { LayoutChangeEvent } from 'react-native'
+
 import { FormDropdown } from '../components/form-dropdown'
 import { useFormLayout } from '../components/form-layout'
+import {
+  MotionPressable,
+  SelectionPop,
+  revealStyle,
+  useEntranceProgress,
+} from '../discovery/motion'
+import { useReducedMotion } from '../discovery/use-reduced-motion'
 import { Button, Icon, IconButton } from '../discovery/ui'
 import { fonts } from '../theme'
 import { createThemedStyles, useTheme } from '../theme-provider'
-import { otherField, profileChoices } from './profile'
-import type { AboutField, ProfileDraft } from './profile'
+import {
+  otherField,
+  profileChoices,
+  profileStepCount,
+  profileStepIssue,
+} from './profile'
+import type { AboutField, ProfileDraft, ProfileIssue } from './profile'
+
+const AnimatedKeyboardView =
+  Animated.createAnimatedComponent(KeyboardAvoidingView)
 
 const vehicles = [motorcycle, sedan, suv, pickup, van, other]
 const titles = [
-  'Create your profile',
-  'What vehicle\ndo you drive?',
-  'Make Parkey\nyour own',
-  'Your driving\nhabits',
-  'Parking\npreferences',
+  'What do you drive?',
+  'Tell us about your driving life',
+  'Your driving habits',
+  'What matters when you park?',
 ]
 const subtitles = [
-  'A few details to get you started.',
-  'Choose the types you usually park.',
-  'Answer all three questions to continue.',
-  'Choose your driving frequency and parking duration.',
-  'Select at least one parking preference to continue.',
+  'Choose all vehicle types you usually park.',
+  'Tell us about your work, where you live, and why you drive.',
+  'Choose how often you drive and how long you usually park.',
+  'Choose all the parking features you look for. Select at least one.',
 ]
 const aboutLabels = {
   work: 'What best describes your work?',
@@ -52,7 +68,8 @@ export function ProfileSetupForm({
   step,
   nameEditable,
   busy,
-  error,
+  saving,
+  issue,
   saved,
   onChange,
   onBack,
@@ -63,7 +80,8 @@ export function ProfileSetupForm({
   step: number
   nameEditable: boolean
   busy: boolean
-  error: string | null
+  saving: boolean
+  issue: ProfileIssue | null
   saved: boolean
   onChange: <K extends keyof ProfileDraft>(
     key: K,
@@ -74,31 +92,93 @@ export function ProfileSetupForm({
   onFinish: () => void
 }) {
   const styles = useStyles()
-  const { colors, dark } = useTheme()
+  const { colors } = useTheme()
+  const reduced = useReducedMotion()
+  const router = useRouter()
+  const progress = useEntranceProgress(210, saved ? 'confirmed' : step)
   const layout = useFormLayout()
   const { space, insets } = layout
   const scroll = useRef<ComponentRef<typeof ScrollView>>(null)
+  const inputRefs = useRef<
+    Partial<Record<keyof ProfileDraft, ComponentRef<typeof TextInput> | null>>
+  >({})
+  const fieldPositions = useRef<Partial<Record<keyof ProfileDraft, number>>>({})
+  const sectionTop = useRef(0)
   const [focusedField, setFocusedField] = useState<keyof ProfileDraft | null>(
     null,
   )
   useEffect(() => {
     scroll.current?.scrollTo({ y: 0, animated: false })
   }, [step, saved])
-  function next() {
-    onNext()
+  const completed = Array.from(
+    { length: profileStepCount },
+    (_, index) =>
+      index < profileStepCount - 1 && !profileStepIssue(draft, index),
+  )
+  const completedCount = completed.filter(Boolean).length
+
+  useEffect(() => {
+    if (!issue) return
+    const field = issue.field
+    const group =
+      field === 'workOther'
+        ? 'work'
+        : field === 'cityOther'
+          ? 'city'
+          : field === 'drivingPurposeOther'
+            ? 'drivingPurpose'
+            : field
+    const y = fieldPositions.current[group]
+    if (typeof y === 'number') {
+      const offset = step === 1 || step === 2 ? sectionTop.current : 0
+      scroll.current?.scrollTo({ y: offset + y, animated: !reduced })
+    }
+    inputRefs.current[field]?.focus()
+  }, [issue, reduced, step])
+
+  function trackField(field: keyof ProfileDraft, event: LayoutChangeEvent) {
+    fieldPositions.current[field] = event.nativeEvent.layout.y
   }
-  function back() {
-    onBack()
+
+  function trackSection(event: LayoutChangeEvent) {
+    sectionTop.current = event.nativeEvent.layout.y
+  }
+
+  function privacyLink() {
+    return (
+      <MotionPressable
+        accessibilityRole="link"
+        accessibilityLabel="Privacy & Data"
+        disabled={busy}
+        onPress={() => router.push('/settings/privacy')}
+        style={styles.privacyLink}
+      >
+        <Text style={styles.privacyText}>Privacy & Data</Text>
+      </MotionPressable>
+    )
+  }
+
+  function fieldError(field: keyof ProfileDraft) {
+    return issue?.field === field ? (
+      <Text
+        accessibilityRole="alert"
+        accessibilityLiveRegion="polite"
+        style={styles.error}
+      >
+        {issue.message}
+      </Text>
+    ) : null
   }
   function textInput(
     key: 'fullName' | 'workOther' | 'cityOther' | 'drivingPurposeOther',
     label: string,
   ) {
-    const invalid =
-      Boolean(error) &&
-      (draft[key].trim().length < 2 || draft[key].trim().length > 100)
+    const invalid = issue?.field === key
     return (
       <TextInput
+        ref={(input) => {
+          inputRefs.current[key] = input
+        }}
         testID={`profile-${key}`}
         accessibilityLabel={label}
         value={draft[key]}
@@ -128,40 +208,47 @@ export function ProfileSetupForm({
   function aboutField(key: AboutField) {
     const label = aboutLabels[key]
     return (
-      <View key={key} style={{ gap: space(12) }}>
+      <View
+        key={key}
+        onLayout={(event) => trackField(key, event)}
+        style={{ gap: space(12) }}
+      >
         <Text style={styles.label}>{label} *</Text>
         <FormDropdown
           label={label}
           value={draft[key]}
           options={profileChoices[key]}
           disabled={busy}
-          error={
-            Boolean(error) &&
-            !profileChoices[key].some((option) => option === draft[key])
-          }
+          error={issue?.field === key}
           minHeight={Math.max(48, space(63))}
           onChange={(value) => onChange(key, value)}
         />
         {draft[key] === 'Other'
           ? textInput(otherField(key), `Other: ${label}`)
           : null}
+        {fieldError(key)}
+        {fieldError(otherField(key))}
       </View>
     )
   }
   function habit(key: 'drivingFrequency' | 'parkingDuration', label: string) {
     return (
-      <View style={{ gap: space(20) }}>
+      <View
+        onLayout={(event) => trackField(key, event)}
+        style={{ gap: space(20) }}
+      >
         <Text style={styles.label}>{label} *</Text>
-        <View style={styles.habitChoices}>
+        <View
+          accessibilityRole="radiogroup"
+          accessibilityLabel={label}
+          style={styles.habitChoices}
+        >
           {profileChoices[key].map((option, index) => (
-            <Pressable
+            <MotionPressable
               key={option}
               accessibilityRole="radio"
               accessibilityLabel={option}
-              accessibilityState={{
-                checked: draft[key] === option,
-                disabled: busy,
-              }}
+              aria-checked={draft[key] === option}
               disabled={busy}
               onPress={() => onChange(key, option)}
               style={[
@@ -180,24 +267,30 @@ export function ProfileSetupForm({
                 draft[key] === option && styles.choiceSelected,
               ]}
             >
-              <Text
-                style={[
-                  styles.choiceLabel,
-                  draft[key] === option && styles.selectedLabel,
-                ]}
-              >
-                {option}
-              </Text>
-            </Pressable>
+              <SelectionPop selected={draft[key] === option}>
+                <Text
+                  style={[
+                    styles.choiceLabel,
+                    draft[key] === option && styles.selectedLabel,
+                  ]}
+                >
+                  {option}
+                </Text>
+              </SelectionPop>
+            </MotionPressable>
           ))}
         </View>
+        {fieldError(key)}
       </View>
     )
   }
   return (
-    <KeyboardAvoidingView
+    <AnimatedKeyboardView
       testID="account-setup-page"
-      style={styles.screen}
+      style={[
+        styles.screen,
+        revealStyle(progress, { distance: 6, fromOpacity: 0.78 }),
+      ]}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <ScrollView
@@ -225,15 +318,15 @@ export function ProfileSetupForm({
               accessibilityRole="header"
               style={[styles.successTitle, { marginTop: space(54) }]}
             >
-              You’re all set!
+              You’re ready to explore
             </Text>
             <Text style={[styles.successCopy, { marginTop: space(54) }]}>
-              Your profile is ready.{'\n'}Discover parking that suits your
-              needs.
+              Your profile is saved. You can update your personal details in
+              Profile.
             </Text>
             <View style={[styles.footer, { paddingTop: space(45) }]}>
               <Button disabled={busy} onPress={onFinish} icon="arrow">
-                Find Parking
+                Explore parking
               </Button>
             </View>
           </>
@@ -242,29 +335,32 @@ export function ProfileSetupForm({
             <View style={styles.header}>
               <IconButton
                 icon="back"
-                label={step === 0 ? 'Back to account' : 'Previous setup step'}
+                label={step === 0 ? 'Leave setup' : 'Previous setup step'}
                 color={colors.back}
                 style={styles.back}
                 disabled={busy}
-                onPress={back}
+                onPress={onBack}
               />
-              {dark ? (
-                <Text style={styles.step}>SETUP {step + 1} / 5</Text>
-              ) : null}
+              <Text style={styles.step}>
+                Step {step + 1} of {profileStepCount}
+              </Text>
             </View>
             <View
               accessible
               accessibilityRole="progressbar"
-              accessibilityLabel={`Account setup, step ${step + 1} of 5`}
-              accessibilityValue={{ min: 1, max: 5, now: step + 1 }}
+              accessibilityLabel="Account setup progress"
+              aria-valuemin={0}
+              aria-valuemax={profileStepCount}
+              aria-valuenow={completedCount}
               style={styles.progress}
             >
-              {[0, 1, 2, 3, 4].map((index) => (
+              {completed.map((done, index) => (
                 <View
                   key={index}
                   style={[
                     styles.segment,
-                    index <= step && { backgroundColor: colors.brand },
+                    done && styles.segmentDone,
+                    !done && index === step && styles.segmentCurrent,
                   ]}
                 />
               ))}
@@ -273,7 +369,7 @@ export function ProfileSetupForm({
               style={{
                 marginTop: Math.max(
                   space(24),
-                  space(39) - Math.max(0, (step === 0 ? 41 : 82) - space(93)),
+                  space(39) - Math.max(0, 82 - space(93)),
                 ),
                 minHeight: space(93),
                 justifyContent: 'center',
@@ -288,173 +384,135 @@ export function ProfileSetupForm({
             </View>
             {step === 0 ? (
               <>
-                <View
-                  style={[
-                    styles.avatar,
-                    {
-                      width: space(150),
-                      height: space(150),
-                      borderRadius: space(75),
-                    },
-                  ]}
-                >
-                  <View
-                    style={{
-                      position: 'absolute',
-                      left: space(59),
-                      top: space(28),
-                      width: space(32),
-                      height: space(32),
-                      borderRadius: space(16),
-                      backgroundColor: '#9A9AAC',
-                    }}
-                  />
-                  <View
-                    style={{
-                      position: 'absolute',
-                      left: space(37),
-                      top: space(75),
-                      width: space(77),
-                      height: space(51),
-                      borderRadius: space(35),
-                      backgroundColor: '#9A9AAC',
-                    }}
-                  />
+                <View style={styles.intro}>
+                  <Text style={styles.label}>Make Parkey yours</Text>
+                  <Text style={styles.subtitle}>
+                    To finish setting up your account, answer a few questions
+                    about your vehicle and parking habits. Your answers are
+                    saved to your account when you finish.
+                  </Text>
+                  {privacyLink()}
                 </View>
-                <View style={{ gap: space(24), marginTop: space(48) }}>
-                  <View style={{ gap: space(12) }}>
-                    <Text style={styles.label}>
-                      Full name{nameEditable ? ' *' : ''}
-                    </Text>
-                    {nameEditable ? (
-                      textInput('fullName', 'Full name')
-                    ) : (
-                      <View
-                        style={[
-                          styles.input,
-                          {
-                            minHeight: Math.max(48, space(60)),
-                            justifyContent: 'center',
-                          },
-                        ]}
-                      >
-                        <Text selectable style={styles.value}>
-                          {draft.fullName}
-                        </Text>
-                      </View>
-                    )}
+                {nameEditable ? (
+                  <View
+                    onLayout={(event) => trackField('fullName', event)}
+                    style={styles.nameField}
+                  >
+                    <Text style={styles.label}>Full name *</Text>
+                    {textInput('fullName', 'Full name')}
+                    {fieldError('fullName')}
                   </View>
-                  <View style={{ gap: space(12) }}>
-                    <Text style={styles.label}>Age range *</Text>
-                    <FormDropdown
-                      label="Age range"
-                      value={draft.ageRange}
-                      options={profileChoices.ageRange}
-                      disabled={busy}
-                      error={
-                        Boolean(error) &&
-                        !profileChoices.ageRange.some(
-                          (option) => option === draft.ageRange,
-                        )
-                      }
-                      minHeight={Math.max(48, space(60))}
-                      onChange={(value) => onChange('ageRange', value)}
-                    />
+                ) : null}
+                <View onLayout={(event) => trackField('vehicleTypes', event)}>
+                  <View
+                    style={[
+                      styles.vehicleGrid,
+                      { marginTop: space(14), rowGap: space(11) },
+                    ]}
+                  >
+                    {profileChoices.vehicleType.map((label, index) => {
+                      const selected = draft.vehicleTypes.includes(label)
+                      return (
+                        <MotionPressable
+                          key={label}
+                          accessibilityRole="checkbox"
+                          accessibilityLabel={label}
+                          aria-checked={selected}
+                          disabled={busy}
+                          onPress={() =>
+                            onChange(
+                              'vehicleTypes',
+                              selected
+                                ? draft.vehicleTypes.filter(
+                                    (value) => value !== label,
+                                  )
+                                : [...draft.vehicleTypes, label],
+                            )
+                          }
+                          style={[
+                            styles.vehicleCard,
+                            {
+                              minHeight:
+                                space(126) +
+                                Math.max(0, layout.fontScale - 1) * 48,
+                              paddingTop: space(7),
+                            },
+                            selected && styles.vehicleSelected,
+                          ]}
+                        >
+                          <Image
+                            source={vehicles[index]}
+                            resizeMode="contain"
+                            accessibilityIgnoresInvertColors
+                            accessible={false}
+                            fadeDuration={0}
+                            style={{
+                              width: 112 * layout.horizontalScale,
+                              height: 64 * layout.horizontalScale,
+                            }}
+                          />
+                          <Text
+                            style={[
+                              styles.vehicleLabel,
+                              { minHeight: space(41) },
+                              selected && styles.selectedLabel,
+                            ]}
+                          >
+                            {label}
+                          </Text>
+                          <View
+                            pointerEvents="none"
+                            style={[
+                              styles.vehicleCheck,
+                              { opacity: selected ? 1 : 0 },
+                            ]}
+                          >
+                            <SelectionPop selected={selected}>
+                              <Icon
+                                name="check"
+                                size={18}
+                                color={colors.onAction}
+                              />
+                            </SelectionPop>
+                          </View>
+                        </MotionPressable>
+                      )
+                    })}
                   </View>
+                  {fieldError('vehicleTypes')}
                 </View>
               </>
             ) : null}
             {step === 1 ? (
               <View
-                style={[
-                  styles.vehicleGrid,
-                  { marginTop: space(14), rowGap: space(11) },
-                ]}
+                onLayout={trackSection}
+                style={{ marginTop: space(12), gap: space(29) }}
               >
-                {profileChoices.vehicleType.map((label, index) => {
-                  const selected = draft.vehicleTypes.includes(label)
-                  return (
-                    <Pressable
-                      key={label}
-                      accessibilityRole="checkbox"
-                      accessibilityLabel={label}
-                      accessibilityState={{ checked: selected, disabled: busy }}
-                      disabled={busy}
-                      onPress={() =>
-                        onChange(
-                          'vehicleTypes',
-                          selected
-                            ? draft.vehicleTypes.filter(
-                                (value) => value !== label,
-                              )
-                            : [...draft.vehicleTypes, label],
-                        )
-                      }
-                      style={[
-                        styles.vehicleCard,
-                        {
-                          minHeight:
-                            space(126) + Math.max(0, layout.fontScale - 1) * 48,
-                          paddingTop: space(7),
-                        },
-                        selected && styles.vehicleSelected,
-                      ]}
-                    >
-                      <Image
-                        source={vehicles[index]}
-                        resizeMode="contain"
-                        accessibilityIgnoresInvertColors
-                        accessible={false}
-                        fadeDuration={0}
-                        style={{
-                          width: 112 * layout.horizontalScale,
-                          height: 64 * layout.horizontalScale,
-                        }}
-                      />
-                      <Text
-                        style={[
-                          styles.vehicleLabel,
-                          { minHeight: space(41) },
-                          selected && styles.selectedLabel,
-                        ]}
-                      >
-                        {label}
-                      </Text>
-                      {selected ? (
-                        <View style={styles.vehicleCheck}>
-                          <Icon
-                            name="check"
-                            size={18}
-                            color={colors.onAction}
-                          />
-                        </View>
-                      ) : null}
-                    </Pressable>
-                  )
-                })}
-              </View>
-            ) : null}
-            {step === 2 ? (
-              <View style={{ marginTop: space(12), gap: space(29) }}>
                 {(['work', 'city', 'drivingPurpose'] as const).map(aboutField)}
               </View>
             ) : null}
-            {step === 3 ? (
-              <View style={{ marginTop: space(30), gap: space(78) }}>
+            {step === 2 ? (
+              <View
+                onLayout={trackSection}
+                style={{ marginTop: space(30), gap: space(78) }}
+              >
                 {habit('drivingFrequency', 'How often do you drive?')}
                 {habit('parkingDuration', 'How long do you usually park?')}
               </View>
             ) : null}
-            {step === 4 ? (
-              <View style={{ marginTop: space(16), gap: space(20) }}>
+            {step === 3 ? (
+              <View
+                onLayout={(event) => trackField('parkingPreferences', event)}
+                style={{ marginTop: space(16), gap: space(20) }}
+              >
                 {profileChoices.parkingPreferences.map((label) => {
                   const selected = draft.parkingPreferences.includes(label)
                   return (
-                    <Pressable
+                    <MotionPressable
                       key={label}
                       accessibilityRole="checkbox"
                       accessibilityLabel={label}
-                      accessibilityState={{ checked: selected, disabled: busy }}
+                      aria-checked={selected}
                       disabled={busy}
                       onPress={() =>
                         onChange(
@@ -468,49 +526,55 @@ export function ProfileSetupForm({
                       }
                       style={[
                         styles.preference,
+                        selected && styles.choiceSelected,
                         { minHeight: Math.max(56, space(70)) },
                       ]}
                     >
                       <Text style={styles.preferenceLabel}>{label}</Text>
-                      <View
-                        style={[styles.checkbox, selected && styles.checked]}
-                      >
-                        {selected ? (
-                          <Icon
-                            name="check"
-                            size={22}
-                            color={colors.onAction}
-                          />
-                        ) : null}
-                      </View>
-                    </Pressable>
+                      <SelectionPop selected={selected}>
+                        <View
+                          style={[styles.checkbox, selected && styles.checked]}
+                        >
+                          {selected ? (
+                            <Icon
+                              name="check"
+                              size={22}
+                              color={colors.onAction}
+                            />
+                          ) : null}
+                        </View>
+                      </SelectionPop>
+                    </MotionPressable>
                   )
                 })}
+                {fieldError('parkingPreferences')}
+                <Text style={styles.subtitle}>
+                  Finish Setup saves these answers to your Parkey account in
+                  Supabase. You can edit personal details in Profile.
+                </Text>
+                {privacyLink()}
               </View>
             ) : null}
             <View style={[styles.footer, { paddingTop: space(14) }]}>
-              {error ? (
-                <Text
-                  accessibilityRole="alert"
-                  accessibilityLiveRegion="polite"
-                  style={styles.error}
-                >
-                  {error}
-                </Text>
-              ) : null}
               <Button
                 testID="profile-next"
                 disabled={busy}
-                onPress={next}
+                onPress={onNext}
                 icon="arrow"
               >
-                {busy ? 'Saving...' : step === 4 ? 'Finish Setup' : 'Continue'}
+                {saving
+                  ? 'Saving…'
+                  : step === profileStepCount - 1
+                    ? 'Finish Setup'
+                    : step === 0
+                      ? 'Continue setup'
+                      : 'Continue'}
               </Button>
             </View>
           </>
         )}
       </ScrollView>
-    </KeyboardAvoidingView>
+    </AnimatedKeyboardView>
   )
 }
 
@@ -542,7 +606,14 @@ const useStyles = createThemedStyles(({ colors }) =>
       flex: 1,
       height: 5,
       borderRadius: 3,
+      borderWidth: 1,
+      borderColor: colors.border,
       backgroundColor: colors.border,
+    },
+    segmentDone: { backgroundColor: colors.link, borderColor: colors.link },
+    segmentCurrent: {
+      backgroundColor: colors.selected,
+      borderColor: colors.link,
     },
     title: {
       fontFamily: fonts.extraBold,
@@ -574,17 +645,17 @@ const useStyles = createThemedStyles(({ colors }) =>
       lineHeight: 22,
       color: colors.ink,
     },
-    value: {
-      fontFamily: fonts.medium,
-      fontSize: 15,
-      lineHeight: 22,
-      color: colors.ink,
-    },
-    avatar: {
-      alignSelf: 'center',
-      backgroundColor: colors.soft,
-      alignItems: 'center',
+    intro: { gap: 4 },
+    nameField: { gap: 10, marginBottom: 8 },
+    privacyLink: {
+      minHeight: 44,
+      alignSelf: 'flex-start',
       justifyContent: 'center',
+    },
+    privacyText: {
+      fontFamily: fonts.semibold,
+      fontSize: 14,
+      color: colors.link,
     },
     vehicleGrid: {
       flexDirection: 'row',
@@ -602,9 +673,8 @@ const useStyles = createThemedStyles(({ colors }) =>
       paddingHorizontal: 3,
     },
     vehicleSelected: {
-      borderColor: colors.brand,
-      borderWidth: 2.4,
-      backgroundColor: '#E8F7F4',
+      borderColor: colors.link,
+      backgroundColor: colors.selected,
     },
     vehicleLabel: {
       width: '100%',
@@ -617,7 +687,7 @@ const useStyles = createThemedStyles(({ colors }) =>
       paddingTop: 7,
       paddingBottom: 7,
     },
-    selectedLabel: { color: '#20162E' },
+    selectedLabel: { color: colors.ink },
     vehicleCheck: {
       position: 'absolute',
       top: 7,
@@ -641,7 +711,10 @@ const useStyles = createThemedStyles(({ colors }) =>
       paddingHorizontal: 5,
       paddingVertical: 8,
     },
-    choiceSelected: { borderColor: colors.brand, backgroundColor: '#E0F5F0' },
+    choiceSelected: {
+      borderColor: colors.link,
+      backgroundColor: colors.selected,
+    },
     choiceLabel: {
       fontFamily: fonts.semibold,
       fontSize: 15,
@@ -682,8 +755,8 @@ const useStyles = createThemedStyles(({ colors }) =>
       fontFamily: fonts.medium,
       fontSize: 14,
       lineHeight: 20,
-      color: colors.brand,
-      marginBottom: 12,
+      color: colors.error,
+      marginTop: 6,
     },
     successOuter: {
       width: 204,

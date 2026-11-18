@@ -10,21 +10,25 @@ import type {
   CameraRef,
   GeoJSONSourceRef,
 } from '@maplibre/maplibre-react-native'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { memo, useEffect, useMemo, useRef, useState } from 'react'
 import { StyleSheet } from 'react-native'
 
 import { useTheme } from '../theme-provider'
+import { mainMarkerImages } from './main-marker-images'
 import parkingPinImage from '../../assets/figma/interactive/parking-marker.png'
 import navUp from '../../assets/figma/playful/nav-up.png'
 import selectedParkingPinImage from '../../assets/figma/interactive/parking-marker-selected.png'
-import { placeFromFeature, placeLayer } from './places'
-import { config } from './config'
+import { mapPlaceLayer, placeFromFeature, placeLayer } from './places'
+import { useNativeMapStyle } from './use-map-style'
 import { createLocalMapBenchmark } from './local-map-benchmark'
 import { mapTextFont } from './map-font'
 import { routeBearing, splitRoute } from './drive-math'
 import { draftGeoJSON, parkingMapSources } from './map-data'
 import type { ParkingMapProps } from './map-types'
 import {
+  chargingMarkerFilter,
+  chargingMarkerLayout,
+  mainParkingMarkerLayout,
   parkingLabelLayout,
   parkingLabelPaint,
   parkingMarkerLayout,
@@ -33,13 +37,20 @@ import { routeBounds } from './routing'
 import { useReducedMotion } from './use-reduced-motion'
 
 const parkingImages = {
+  ...mainMarkerImages,
   'parking-pin': parkingPinImage,
   'nav-up': navUp,
   'parking-pin-selected': selectedParkingPinImage,
 }
 
-export default function NativeMap(props: ParkingMapProps) {
+const emptyFeatures = JSON.stringify({
+  type: 'FeatureCollection',
+  features: [],
+})
+
+function NativeMap(props: ParkingMapProps) {
   const { colors, mapColors } = useTheme()
+  const mapStyle = useNativeMapStyle(props.night)
 
   const [markMapReady] = useState(() => createLocalMapBenchmark())
   const map = useRef<MapRef>(null)
@@ -62,12 +73,20 @@ export default function NativeMap(props: ParkingMapProps) {
   }))
   const reduced = useReducedMotion()
   const [loaded, setLoaded] = useState(false)
-  const records = useMemo(
-    () => parkingMapSources(props.records, props.selectedId, props.featuredId),
-    [props.records, props.selectedId, props.featuredId],
-  )
+  const records = useMemo(() => {
+    const { streets, facilities, selected } = parkingMapSources(
+      props.records,
+      props.selectedId,
+      props.featuredId,
+    )
+    return {
+      streets: JSON.stringify(streets),
+      facilities: JSON.stringify(facilities),
+      selected: JSON.stringify(selected),
+    }
+  }, [props.records, props.selectedId, props.featuredId])
   const draft = useMemo(
-    () => draftGeoJSON(props.draftPoints),
+    () => JSON.stringify(draftGeoJSON(props.draftPoints)),
     [props.draftPoints],
   )
   const { target, route, onStatus } = props
@@ -132,16 +151,38 @@ export default function NativeMap(props: ParkingMapProps) {
     bottom,
     reduced,
   ])
-  const split = useMemo(
+  const along = props.navigation?.along
+  const routeData = useMemo(
+    () => (route && along !== undefined ? splitRoute(route, along) : null),
+    [route, along],
+  )
+  const remainingRoute = useMemo(
     () =>
-      route && props.navigation
-        ? splitRoute(route, props.navigation.along)
-        : null,
-    [route, props.navigation],
+      routeData
+        ? JSON.stringify({
+            type: 'LineString',
+            coordinates: routeData.remaining,
+          })
+        : route
+          ? JSON.stringify(route.geometry)
+          : emptyFeatures,
+    [route, routeData],
+  )
+  const traveledRoute = useMemo(
+    () =>
+      routeData && routeData.traveled.length > 1
+        ? JSON.stringify({
+            type: 'LineString',
+            coordinates: routeData.traveled,
+          })
+        : emptyFeatures,
+    [routeData],
   )
 
+  // Compose the map and its overlays together to avoid Android surface flicker.
   return (
     <Map
+      androidView="texture"
       accessible={!props.accessibilityHidden}
       accessibilityElementsHidden={props.accessibilityHidden}
       importantForAccessibility={
@@ -149,7 +190,7 @@ export default function NativeMap(props: ParkingMapProps) {
       }
       ref={map}
       style={StyleSheet.absoluteFill}
-      mapStyle={props.night ? config.nightMapStyle : config.mapStyle}
+      mapStyle={mapStyle}
       attribution={false}
       logo={false}
       compass={false}
@@ -161,6 +202,7 @@ export default function NativeMap(props: ParkingMapProps) {
       onDidFailLoadingMap={() => props.onStatus('error')}
       onDidFinishRenderingMapFully={markMapReady}
       onRegionWillChange={(event) => {
+        props.onMoveStart?.()
         if (event.nativeEvent.userInteraction) {
           props.navigation?.onPan()
           props.onPan?.()
@@ -200,7 +242,7 @@ export default function NativeMap(props: ParkingMapProps) {
         props.onViewport({ west, south, east, north, zoom })
       }}
     >
-      <Layer {...placeLayer} />
+      <Layer {...mapPlaceLayer(props.night)} />
       <Images images={parkingImages} />
       <Camera
         ref={camera}
@@ -208,14 +250,7 @@ export default function NativeMap(props: ParkingMapProps) {
         minZoom={3}
         maxZoom={20}
       />
-      <GeoJSONSource
-        id="route"
-        data={
-          split
-            ? { type: 'LineString', coordinates: split.remaining }
-            : (route?.geometry ?? { type: 'FeatureCollection', features: [] })
-        }
-      >
+      <GeoJSONSource id="route" data={remainingRoute}>
         <Layer
           id="route-casing"
           type="line"
@@ -235,14 +270,7 @@ export default function NativeMap(props: ParkingMapProps) {
           }}
         />
       </GeoJSONSource>
-      <GeoJSONSource
-        id="traveled-route"
-        data={
-          split && split.traveled.length > 1
-            ? { type: 'LineString', coordinates: split.traveled }
-            : { type: 'FeatureCollection', features: [] }
-        }
-      >
+      <GeoJSONSource id="traveled-route" data={traveledRoute}>
         <Layer
           id="traveled-route"
           type="line"
@@ -388,13 +416,25 @@ export default function NativeMap(props: ParkingMapProps) {
           id="facilities"
           type="symbol"
           filter={['!', ['has', 'point_count']]}
-          layout={parkingMarkerLayout(1 / 3)}
+          layout={
+            props.simplifiedMarkers
+              ? mainParkingMarkerLayout(1 / 3)
+              : parkingMarkerLayout(1 / 3)
+          }
           paint={{
             'icon-opacity': ['case', ['get', 'muted'], 0.65, 1],
             'text-opacity': ['case', ['get', 'muted'], 0.65, 1],
             'text-color': colors.surface,
           }}
         />
+        {props.simplifiedMarkers ? (
+          <Layer
+            id="facilities-charging"
+            type="symbol"
+            filter={chargingMarkerFilter}
+            layout={chargingMarkerLayout(1 / 3)}
+          />
+        ) : null}
       </GeoJSONSource>
       <GeoJSONSource
         id="selected-facility"
@@ -411,34 +451,49 @@ export default function NativeMap(props: ParkingMapProps) {
           id="selected-halo"
           type="circle"
           paint={{
-            'circle-radius': 46,
-            'circle-color': colors.brand,
-            'circle-opacity': 0.18,
+            'circle-radius': props.simplifiedMarkers ? 29 : 46,
+            'circle-color': props.simplifiedMarkers
+              ? colors.surface
+              : colors.brand,
+            'circle-opacity': props.simplifiedMarkers ? 1 : 0.18,
           }}
         />
         <Layer
           id="selected-facility"
           type="symbol"
-          layout={{
-            'icon-image': 'parking-pin-selected',
-            'icon-size': 1 / 3,
-            'icon-anchor': 'bottom',
-            'icon-allow-overlap': true,
-            'icon-ignore-placement': true,
-            'symbol-z-order': 'source',
-            'symbol-sort-key': ['get', 'sortKey'],
-          }}
+          layout={
+            props.simplifiedMarkers
+              ? mainParkingMarkerLayout(1 / 3)
+              : {
+                  'icon-image': 'parking-pin-selected',
+                  'icon-size': 1 / 3,
+                  'icon-anchor': 'bottom',
+                  'icon-allow-overlap': true,
+                  'icon-ignore-placement': true,
+                  'symbol-z-order': 'source',
+                  'symbol-sort-key': ['get', 'sortKey'],
+                }
+          }
           paint={{
             'icon-opacity': 1,
             'icon-opacity-transition': { duration: 0 },
           }}
         />
-        <Layer
-          id="selected-name"
-          type="symbol"
-          layout={parkingLabelLayout()}
-          paint={parkingLabelPaint(colors)}
-        />
+        {props.simplifiedMarkers ? (
+          <Layer
+            id="selected-charging"
+            type="symbol"
+            filter={chargingMarkerFilter}
+            layout={chargingMarkerLayout(1 / 3)}
+          />
+        ) : (
+          <Layer
+            id="selected-name"
+            type="symbol"
+            layout={parkingLabelLayout()}
+            paint={parkingLabelPaint(colors)}
+          />
+        )}
       </GeoJSONSource>
       {props.userLocation ? (
         <GeoJSONSource
@@ -471,7 +526,7 @@ export default function NativeMap(props: ParkingMapProps) {
               layout={{
                 'icon-image': 'nav-up',
                 'icon-size': 1 / 3,
-                'icon-rotate': routeBearing(split?.remaining ?? []),
+                'icon-rotate': routeBearing(routeData?.remaining ?? []),
                 'icon-rotation-alignment': 'map',
                 'icon-allow-overlap': true,
               }}
@@ -549,3 +604,5 @@ export default function NativeMap(props: ParkingMapProps) {
     </Map>
   )
 }
+
+export default memo(NativeMap)

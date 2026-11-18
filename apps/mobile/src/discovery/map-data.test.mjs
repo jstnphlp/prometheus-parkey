@@ -119,3 +119,23 @@ test('map fee bubbles use recorded values and mark missing fees without a free c
   assert.equal(properties['paid-unknown'].label, 'Paid')
   assert.equal(sources.facilities.features.length, records.length)
 })
+
+test('garage and street classifications survive selection, and charging needs a positive recorded capacity', () => {
+  const garage = {
+    ...sampleParking.find((record) => record.geometry.type === 'Point'),
+    id: 'garage',
+    kind: 'garage',
+    osmTags: { 'capacity:charging': '2' },
+  }
+  const street = {
+    ...sampleParking.find((record) => record.geometry.type === 'LineString'),
+    id: 'street',
+    kind: 'street',
+    osmTags: { 'capacity:charging': '0' },
+  }
+  const records = parkingMapSources([garage, street], garage.id)
+  assert.equal(records.selected.features[0].properties.kind, 'garage')
+  assert.equal(records.selected.features[0].properties.hasEVCharging, true)
+  assert.equal(records.facilities.features[0].properties.kind, 'street')
+  assert.equal(records.facilities.features[0].properties.hasEVCharging, false)
+})

@@ -6,8 +6,10 @@ import { StatusBar } from 'expo-status-bar'
 import { StyleSheet, View } from 'react-native'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 
-import { AuthProvider } from '../auth/provider'
+import { AuthProvider, useAuth } from '../auth/provider'
+import { discoveryDestination } from '../auth/setup-access'
 import { PopupProvider } from '../components/popup-provider'
+import { MainDrawerProvider } from '../discovery/main-drawer-state'
 import { initializeTelemetry } from '../discovery/telemetry'
 import { OnboardingProvider, useOnboarding } from '../onboarding/provider'
 import { SplashScreen } from '../onboarding/splash-screen'
@@ -29,7 +31,9 @@ export default function RootLayout() {
           <AuthProvider>
             <PopupProvider>
               <WalkthroughMotionProvider>
-                <RootNavigator />
+                <MainDrawerProvider>
+                  <RootNavigator />
+                </MainDrawerProvider>
               </WalkthroughMotionProvider>
             </PopupProvider>
           </AuthProvider>
@@ -43,7 +47,10 @@ function RootNavigator() {
   const theme = useTheme()
   const [fontsLoaded, fontError] = useFonts(fontSources)
   const { completed, loadState } = useOnboarding()
+  const { state } = useAuth()
   const pathname = usePathname()
+  const waitingForWelcome =
+    pathname === '/' && discoveryDestination(state, completed) === '/welcome'
   const [contentReady, setContentReady] = useState(false)
   const splashHidden = useRef(false)
   const reducedMotion = useReducedMotion()
@@ -57,11 +64,11 @@ function RootNavigator() {
   useEffect(() => {
     if (!contentReady || splashHidden.current) return
     // The index redirect has no content to reveal on a fresh install.
-    if (loadState !== 'error' && pathname === '/' && !completed) return
+    if (loadState !== 'error' && waitingForWelcome) return
     splashHidden.current = true
     NativeSplash.setOptions({ fade: !reducedMotion, duration: 180 })
     NativeSplash.hide()
-  }, [completed, contentReady, loadState, pathname, reducedMotion])
+  }, [contentReady, loadState, reducedMotion, waitingForWelcome])
 
   if ((!fontsLoaded && !fontError) || loadState === 'loading' || !theme.ready)
     return <SplashScreen />

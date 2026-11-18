@@ -19,7 +19,7 @@ export function AuthShell({
 }: {
   registering?: boolean
   title: ReactNode
-  subtitle: string
+  subtitle?: string
   children: ReactNode
   onBack?: () => void
   recovery?: boolean
@@ -62,17 +62,19 @@ export function AuthShell({
       >
         {title}
       </Text>
-      <Text
-        style={[
-          styles.subtitle,
-          { color: registering ? colors.onPlumMuted : colors.onDarkMuted },
-          !registering && styles.loginSubtitle,
-          compact && !registering && { marginTop: 18 },
-          recovery && { marginTop: 18, lineHeight: 21 },
-        ]}
-      >
-        {subtitle}
-      </Text>
+      {subtitle ? (
+        <Text
+          style={[
+            styles.subtitle,
+            { color: registering ? colors.onPlumMuted : colors.onDarkMuted },
+            !registering && styles.loginSubtitle,
+            compact && !registering && { marginTop: 18 },
+            recovery && { marginTop: 18, lineHeight: 21 },
+          ]}
+        >
+          {subtitle}
+        </Text>
+      ) : null}
       {children}
     </ScreenContainer>
   )

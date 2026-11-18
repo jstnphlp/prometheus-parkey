@@ -11,7 +11,6 @@ const user = {
 }
 const draft = {
   fullName: 'New Name',
-  ageRange: '25–34',
   vehicleTypes: ['Motorcycle'],
   work: 'Office employee',
   workOther: '',
@@ -51,7 +50,11 @@ test('saving verifies the account and reuses the email registration name', async
 })
 
 test('OAuth saves the entered name; invalid answers never call updateUser', async () => {
-  const oauth = { ...user, app_metadata: { provider: 'google' } }
+  const oauth = {
+    ...user,
+    app_metadata: { provider: 'google' },
+    user_metadata: {},
+  }
   let calls = 0
   const auth = {
     getUser: async () => ({ data: { user: oauth }, error: null }),
@@ -62,7 +65,7 @@ test('OAuth saves the entered name; invalid answers never call updateUser', asyn
     },
   }
   await assert.rejects(
-    saveAccountProfile(auth, user.id, { ...draft, ageRange: '' }),
+    saveAccountProfile(auth, user.id, { ...draft, drivingFrequency: '' }),
   )
   assert.equal(calls, 0)
   await saveAccountProfile(auth, user.id, draft)
@@ -115,4 +118,32 @@ test('a missing or incomplete server response never reports success', async () =
         draft,
       ),
     )
+})
+
+test('a different complete survey in the save response is not accepted', async () => {
+  await assert.rejects(
+    saveAccountProfile(
+      {
+        getUser: async () => ({ data: { user }, error: null }),
+        updateUser: async ({ data }) => ({
+          data: {
+            user: {
+              ...user,
+              user_metadata: {
+                ...data,
+                parkey_profile: {
+                  ...data.parkey_profile,
+                  parkingPreferences: ['EV charging'],
+                },
+              },
+            },
+          },
+          error: null,
+        }),
+      },
+      user.id,
+      draft,
+    ),
+    /could not be confirmed/,
+  )
 })

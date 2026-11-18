@@ -21,28 +21,24 @@ import {
 } from 'react-native'
 import type { FlatList } from 'react-native'
 import { StatusBar } from 'expo-status-bar'
+import { useIsFocused } from 'expo-router/react-navigation'
 import { AppearanceNavigation } from '../components/appearance-navigation'
 import {
   ArchitecturePage,
   useArchitectureInsets,
 } from '../components/architecture-page'
 import { AppearanceScreen } from '../settings/settings-screen'
-import {
-  DiscoveryHeader,
-  DiscoveryMapActions,
-  DiscoveryLegend,
-  ParkingListPage,
-  ParkingPreview,
-  SEARCH_HEADER_HEIGHT,
-  MAP_LEGEND_HEIGHT,
-} from './architecture-discovery'
+import { ParkingListPage } from './architecture-discovery'
+import { MainDrawer } from './main-drawer'
+import { useMainDrawer } from './main-drawer-state'
+import { MainMapControls, MapParkingPanel } from './main-map-ui'
+import type { MapParkingSummary } from './main-map-ui'
 
 import { useTheme, createThemedStyles } from '../theme-provider'
 import { discoveryState } from './discovery-state'
 import { StateCard } from './state-card'
 import { useConnectivity } from './use-connectivity'
 import { ArrivalCelebration } from './arrival-celebration'
-import { BottomNavigation, TAB_BAR_HEIGHT } from './bottom-navigation'
 import { ParkingProfile } from './parking-profile'
 import { ReportSubmission } from './report-submission'
 import { createLocalDraftId } from './local-draft-id'
@@ -54,6 +50,7 @@ import { draftParking } from './draft-parking'
 import { useNavigation } from './use-navigation'
 import { useDirectionsConsent } from './use-directions-consent'
 import { MapAttribution } from './discovery-sheet'
+import { SearchAttribution } from './search-credit'
 import { partitionParking } from './filters'
 import { MapInformation } from './information'
 import { recordKey } from './local-state'
@@ -64,7 +61,6 @@ import { config } from './config'
 import { refreshReviewedParking } from './parking-navigation-refresh'
 import {
   anchor,
-  distanceMeters,
   directionsUrl,
   inViewport,
   isCoordinate,
@@ -75,10 +71,15 @@ import {
   rankParking,
   validateContribution,
 } from './model'
-import type { Viewport } from './model'
 import ParkingMap from './parking-map'
 import type { CameraTarget } from './map-types'
-import { parkingDestination } from './parking-detail-data'
+import { useMapCallback, useSettledViewport } from './use-map-events'
+import { viewportChanged } from './viewport-changes'
+import {
+  parkingDestination,
+  parkingDetailData,
+  parkingHoursFacts,
+} from './parking-detail-data'
 import { ParkingDetails } from './parking-details'
 import { FavoriteFeedback } from './favorite-feedback'
 import { EmptyResultsPage } from './empty-pages'
@@ -87,6 +88,7 @@ import { LocationPage } from './location-page'
 import { ParkingFiltersPage } from './parking-filters-page'
 import {
   developmentSamplesEnabled,
+  displaySourceLabel,
   millisecondsToNextMinute,
   parkingTitle,
 } from './presentation'
@@ -116,6 +118,7 @@ import { useParking } from './use-parking'
 import { useRoute } from './use-route'
 
 const EMPTY_POINTS: Coordinate[] = []
+const EMPTY_RECORDS: DiscoveryParking[] = []
 function sameNavigationContext(
   before: ReturnType<typeof useNavigation>['state'],
   after: ReturnType<typeof useNavigation>['state'],
@@ -156,12 +159,6 @@ export default function Explore() {
     getState: getNavigationState,
   } = navigation
   const nav = navigation.state
-  const panned = useRef(false)
-  const searchedCenter = useRef(nav.center)
-  const [areaRefresh, setAreaRefresh] = useState(false)
-  useEffect(() => {
-    searchedCenter.current = nav.center
-  }, [nav.center])
   const [longitude, latitude] = nav.center
   const cameraRevision = navigation.cameraRevision
   const target = useMemo<CameraTarget>(
@@ -220,8 +217,12 @@ export default function Explore() {
       closeNavigation({ consent: false })
     },
   )
-  const [previewHeight, setPreviewHeight] = useState(258)
-  const [sheetHeight] = useState(116 + insets.bottom)
+  const focused = useIsFocused()
+  const { open: drawerOpen, setOpen: setDrawerOpen } = useMainDrawer()
+  const [legendExpanded, setLegendExpanded] = useState(false)
+  const [dismissedParking, setDismissedParking] =
+    useState<MapParkingSummary | null>(null)
+  const [previewHeight, setPreviewHeight] = useState(352)
   const [drawingPanelHeight, setDrawingPanelHeight] = useState(0)
   const [topOverlayHeight, setTopOverlayHeight] = useState(0)
   const [routeTarget, setRouteTarget] = useState<{
@@ -242,12 +243,15 @@ export default function Explore() {
   const searchActive = nav.searching
   const panel = nav.panel
   const appearanceReturn = useRef(nav.panel)
+  const contributionReturn = useRef<'you' | null>(null)
   const directionsReturn = useRef(nav.panel)
   const openAppearance = () => {
     appearanceReturn.current = nav.panel
     updateNavigation({ panel: 'appearance' })
   }
+  const drawerObscuresMap = drawerOpen && Platform.OS !== 'android'
   const fullPageActive =
+    drawerObscuresMap ||
     panel === 'saved' ||
     panel === 'you' ||
     panel === 'appearance' ||
@@ -503,14 +507,6 @@ export default function Explore() {
     () => (parking.canQuery ? rankParking(visible, reference.coordinate) : []),
     [visible, reference.coordinate, parking.canQuery],
   )
-  const farFromCenter =
-    distanceMeters(
-      [
-        (viewport.west + viewport.east) / 2,
-        (viewport.south + viewport.north) / 2,
-      ],
-      nav.center,
-    ) > 600
   const filteredOut = parking.canQuery && records.length > 0 && !visible.length
   const browseState = discoveryState({
     canQuery: parking.canQuery,
@@ -546,7 +542,8 @@ export default function Explore() {
       nav.selectedId ||
       nav.route ||
       nav.directions ||
-      (!hasFilters && !nav.searchPoint) ||
+      !hasFilters ||
+      nav.searchPoint ||
       lastEmptyContext.current === emptyContext
     )
       return
@@ -658,7 +655,23 @@ export default function Explore() {
     return () => clearTimeout(timeout)
   }, [mapStatus, mapRevision])
   function dismissTopmost() {
+    if (!focused) return false
     Keyboard.dismiss()
+    if (drawerOpen) {
+      setDrawerOpen(false)
+      return true
+    }
+    if (
+      legendExpanded &&
+      !nav.searching &&
+      !nav.panel &&
+      !nav.directions &&
+      !nav.details &&
+      !nav.route
+    ) {
+      setLegendExpanded(false)
+      return true
+    }
     if (selectedPlace) setSelectedPlace(null)
     else if (nav.consent) closeNavigation({ consent: false })
     else if (nav.searching)
@@ -674,7 +687,9 @@ export default function Explore() {
           nav.panel === 'appearance' &&
           appearanceReturn.current !== 'appearance'
             ? appearanceReturn.current
-            : null,
+            : nav.panel === 'add'
+              ? contributionReturn.current
+              : null,
       })
     } else if (nav.route) endNavigation()
     else if (nav.directions)
@@ -682,7 +697,7 @@ export default function Explore() {
     else if (nav.details && nav.detailTab === 'Entrance')
       closeNavigation({ detailTab: 'Info' })
     else if (nav.details) closeNavigation({ details: false })
-    else if (nav.selectedId) setSelected(null)
+    else if (nav.selectedId) closeMapParking()
     else if (nav.view === 'list') closeNavigation({ view: 'map' })
     else return false
     return true
@@ -718,27 +733,20 @@ export default function Explore() {
     )
     return () => cancelAnimationFrame(frame)
   }, [nav.selectedId, ranked])
-  const updateViewport = useCallback(
-    (next: Viewport) => {
-      if (panned.current) {
-        const point: Coordinate = [
-          (next.west + next.east) / 2,
-          (next.south + next.north) / 2,
-        ]
-        setAreaRefresh(distanceMeters(point, searchedCenter.current) > 600)
-        panned.current = false
-      }
-      setViewport((current) =>
-        current.west === next.west &&
-        current.south === next.south &&
-        current.east === next.east &&
-        current.north === next.north &&
-        current.zoom === next.zoom
-          ? current
-          : next,
-      )
+  const viewportUpdate = useSettledViewport(
+    focused &&
+      !nav.route &&
+      !drawerOpen &&
+      !fullPageActive &&
+      nav.view === 'map' &&
+      !nav.details &&
+      !searchActive,
+    (next) => {
+      if (!navigationViewportPrivate.current)
+        setViewport((current) =>
+          viewportChanged(current, next) ? next : current,
+        )
     },
-    [setAreaRefresh],
   )
 
   function center(coordinate: Coordinate) {
@@ -954,7 +962,6 @@ export default function Explore() {
       })
   }
   function select(id: string) {
-    setAreaRefresh(false)
     if (searchActive) {
       navigation.close({
         searching: false,
@@ -968,14 +975,16 @@ export default function Explore() {
     clearRoute()
     setRouteTarget(null)
     if (selected?.id === id && nav.view === 'map') {
-      setSelected(null)
+      closeMapParking()
       return
     }
+    setDismissedParking(null)
     setSelected(record)
     viewed(record)
   }
 
   function startContribution(record?: DiscoveryParking, restrictions = '') {
+    contributionReturn.current = nav.panel === 'you' ? 'you' : null
     if (nav.route) drive.stop(false)
     clearRoute()
     setRouteTarget(null)
@@ -1165,13 +1174,52 @@ export default function Explore() {
       : drawing
         ? drawingPanelHeight
         : discoveryVisible
-          ? sheetHeight
+          ? selected
+            ? previewHeight
+            : insets.bottom
           : 0
   const cameraPadding = discoveryCameraPadding(
     screenHeight,
     topOverlayHeight,
     cameraBottom,
   )
+  const mapTop = nav.route || drawing ? cameraPadding.top : 20
+  const mapBottom =
+    nav.route || drawing
+      ? cameraPadding.bottom
+      : selected && !nav.directions
+        ? previewHeight + 42
+        : 20
+  const mapPadding = useMemo(
+    () => ({ top: mapTop, bottom: mapBottom }),
+    [mapTop, mapBottom],
+  )
+  const selectMapRecord = useMapCallback((id: string) => {
+    if (!nav.route) select(id)
+  })
+  const pressMap = useMapCallback((point: Coordinate) => {
+    if (nav.route) return
+    if (searchActive) {
+      closeNavigation({
+        searching: false,
+        query: nav.query,
+        searchPoint: nav.searchPoint,
+      })
+      Keyboard.dismiss()
+      return
+    }
+    if (drawing && isCoordinate(point))
+      setPoints((current) =>
+        kind === 'street' ? [...current, point].slice(0, 12) : [point],
+      )
+    else if (nav.details) closeNavigation({ details: false })
+    else if (nav.selectedId) closeMapParking()
+  })
+  const panMap = useMapCallback(() => {
+    if (!nav.route) navigationViewportPrivate.current = false
+  })
+  const mapHidden =
+    fullPageActive || nav.view === 'list' || nav.details || searchActive
   function centerOnMyLocation() {
     void location.locate().then((point) => {
       if (point) {
@@ -1190,62 +1238,72 @@ export default function Explore() {
     })
   }
 
-  const searchHeader = (
-    <View
-      style={{
-        paddingHorizontal: 0,
-        paddingBottom: 14,
-      }}
-    >
-      <DestinationSearch
-        layout="page"
-        placeholder="Search parking or landmark"
-        onSaved={() => setPanel('saved')}
-        query={nav.query}
-        active={searchActive}
-        onQuery={(query) =>
-          updateNavigation({ query, searchPoint: null }, 'replace')
+  const details = selected
+    ? parkingDetailData(selected, currentLocation, now)
+    : null
+  const parkingSummary =
+    selected && details
+      ? {
+          id: selected.id,
+          title: details.title,
+          subtitle: [details.meta, displaySourceLabel(selected.sourceLabel)]
+            .filter(Boolean)
+            .join(' · '),
+          rates:
+            details.rows.find((fact) => fact.label === 'Fee')?.value ??
+            details.fee,
+          hours: parkingHoursFacts(selected, now).parsed.summary,
+          access: details.access?.replaceAll('_', ' '),
+          directionsAvailable: Boolean(
+            parkingDestination(selected, currentLocation),
+          ),
         }
-        onLocate={() => {
-          updateNavigation({
+      : null
+  const displayedParking = parkingSummary ?? dismissedParking
+  function closeMapParking() {
+    setDismissedParking(parkingSummary)
+    setSelected(null)
+  }
+
+  function searchMapArea() {
+    setRevision((current) => current + 1)
+  }
+
+  const searchHeader = (
+    <DestinationSearch
+      layout="map"
+      onSaved={() => setPanel('saved')}
+      query={nav.query}
+      active={searchActive}
+      onQuery={(query) =>
+        updateNavigation(
+          { query, searchPoint: null, searchCredit: null },
+          'replace',
+        )
+      }
+      onLocate={centerOnMyLocation}
+      onSearchArea={searchMapArea}
+      center={target.coordinate}
+      onActive={(active) => {
+        if (active) updateNavigation({ searching: true })
+        else
+          closeNavigation({
             searching: false,
-            query: '',
-            searchPoint: null,
-            selectedId: null,
-            position: 'medium',
+            query: nav.query,
+            searchPoint: nav.searchPoint,
+            searchCredit: nav.searchCredit,
           })
-          void location.locate().then((point) => {
-            if (point) {
-              clearDestination()
-              updateNavigation({ center: point })
-            }
-          })
-        }}
-        center={target.coordinate}
-        onActive={(active) => {
-          if (active)
-            updateNavigation({
-              searching: true,
-              position: 'expanded',
-            })
-          else
-            closeNavigation({
-              searching: false,
-              query: nav.query,
-              searchPoint: nav.searchPoint,
-            })
-        }}
-        onSelect={(found) => {
-          clearRoute()
-          setRouteTarget(null)
-          navigationViewportPrivate.current = false
-          updateNavigation(parkingNearDestination(found))
-          setAreaRefresh(false)
-          setRevision((current) => current + 1)
-          setSelectedPlace(found)
-        }}
-      />
-    </View>
+      }}
+      onSelect={(found) => {
+        clearRoute()
+        setRouteTarget(null)
+        setDismissedParking(null)
+        navigationViewportPrivate.current = false
+        updateNavigation(parkingNearDestination(found), 'replace')
+
+        setRevision((current) => current + 1)
+      }}
+    />
   )
   return (
     <AppearanceNavigation value={openAppearance}>
@@ -1297,34 +1355,18 @@ export default function Explore() {
           pointerEvents={fullPageActive ? 'none' : 'box-none'}
         >
           <View
-            style={[
-              StyleSheet.absoluteFill,
-              Platform.OS !== 'web' &&
-                (fullPageActive ||
-                  nav.view === 'list' ||
-                  nav.details ||
-                  searchActive) && { display: 'none' },
-              !nav.route &&
-                !drawing && {
-                  top:
-                    insets.top + (nav.directions ? 74 : SEARCH_HEADER_HEIGHT),
-                  bottom: nav.directions
-                    ? insets.bottom + 118
-                    : TAB_BAR_HEIGHT +
-                      insets.bottom +
-                      (selected ? 0 : MAP_LEGEND_HEIGHT),
-                },
-            ]}
+            style={StyleSheet.absoluteFill}
+            accessibilityElementsHidden={mapHidden}
+            importantForAccessibility={
+              mapHidden ? 'no-hide-descendants' : 'auto'
+            }
           >
             <ParkingMap
-              accessibilityHidden={
-                fullPageActive ||
-                nav.view === 'list' ||
-                nav.details ||
-                searchActive
-              }
+              accessibilityHidden={Platform.OS === 'web' && mapHidden}
               key={mapRevision}
-              records={parking.canQuery ? visible : []}
+              night={dark}
+              simplifiedMarkers
+              records={parking.canQuery ? visible : EMPTY_RECORDS}
               featuredId={
                 parking.canQuery && currentLocation
                   ? (ranked[0]?.id ?? null)
@@ -1337,15 +1379,7 @@ export default function Explore() {
               }
               route={routeState.route}
               target={target}
-              cameraPadding={
-                nav.route || drawing
-                  ? cameraPadding
-                  : {
-                      top: 20,
-                      bottom:
-                        selected && !nav.directions ? previewHeight + 42 : 20,
-                    }
-              }
+              cameraPadding={mapPadding}
               parkedLocation={local.state.parked?.coordinate ?? null}
               navigation={mapNavigation}
               userLocation={
@@ -1361,49 +1395,16 @@ export default function Explore() {
               draftPoints={drawing ? points : EMPTY_POINTS}
               drawing={drawing}
               searching={searchActive}
-              onSelect={(id) => {
-                if (!nav.route) select(id)
-              }}
+              onSelect={selectMapRecord}
               onPlaceSelect={
                 nav.route || drawing || panel !== null
                   ? undefined
                   : setSelectedPlace
               }
-              onMapPress={(point) => {
-                if (nav.route) return
-                if (searchActive) {
-                  closeNavigation({
-                    searching: false,
-                    query: nav.query,
-                    searchPoint: nav.searchPoint,
-                  })
-                  Keyboard.dismiss()
-                  return
-                }
-                if (drawing && isCoordinate(point))
-                  setPoints((current) =>
-                    kind === 'street'
-                      ? [...current, point].slice(0, 12)
-                      : [point],
-                  )
-                else if (nav.details) closeNavigation({ details: false })
-                else if (nav.selectedId) setSelected(null)
-                else if (nav.route) endNavigation()
-              }}
-              onPan={() => {
-                if (!nav.route) navigationViewportPrivate.current = false
-              }}
-              onViewport={(next) => {
-                if (
-                  !nav.route &&
-                  !fullPageActive &&
-                  nav.view === 'map' &&
-                  !nav.details &&
-                  !searchActive &&
-                  !navigationViewportPrivate.current
-                )
-                  updateViewport(next)
-              }}
+              onMapPress={pressMap}
+              onPan={panMap}
+              onMoveStart={viewportUpdate.cancel}
+              onViewport={viewportUpdate.settle}
               onStatus={setMapStatus}
             />
           </View>
@@ -1416,9 +1417,7 @@ export default function Explore() {
             style={[
               styles.top,
               {
-                paddingTop:
-                  insets.top +
-                  (nav.route || drawing ? 10 : SEARCH_HEADER_HEIGHT + 10),
+                paddingTop: insets.top + (nav.route || drawing ? 10 : 104),
               },
             ]}
           >
@@ -1513,6 +1512,24 @@ export default function Explore() {
             ) : null}
             {discoveryVisible && !selected && nav.view === 'map' ? (
               <View pointerEvents="box-none" style={styles.mapNotices}>
+                {destination &&
+                !searchActive &&
+                (browseState === 'empty' || browseState === 'filtered') ? (
+                  <View
+                    style={[
+                      styles.loadingToast,
+                      styles.destinationNotice,
+                      ui.shadow,
+                    ]}
+                    accessibilityLiveRegion="polite"
+                  >
+                    <Text style={ui.small}>
+                      {browseState === 'filtered'
+                        ? 'No mapped parking matches these filters.'
+                        : 'No mapped parking found in this area.'}
+                    </Text>
+                  </View>
+                ) : null}
                 {drive.resumable && resumeTarget ? (
                   <View
                     accessibilityLiveRegion="polite"
@@ -1545,36 +1562,6 @@ export default function Explore() {
                     </Button>
                   </View>
                 ) : null}
-                {discoveryVisible && local.state.parked ? (
-                  <View style={styles.carChip}>
-                    <Button
-                      secondary
-                      onPress={() => {
-                        const parked = local.state.parked
-                        if (parked)
-                          void Linking.openURL(
-                            `https://www.google.com/maps/dir/?api=1&destination=${parked.coordinate[1]},${parked.coordinate[0]}&travelmode=walking`,
-                          )
-                      }}
-                    >
-                      Your car ·{' '}
-                      {Math.floor(
-                        (now.getTime() -
-                          Date.parse(local.state.parked.savedAt)) /
-                          3600000,
-                      ) > 0
-                        ? `${Math.floor((now.getTime() - Date.parse(local.state.parked.savedAt)) / 3600000)} h ago`
-                        : Math.floor(
-                              (now.getTime() -
-                                Date.parse(local.state.parked.savedAt)) /
-                                60000,
-                            ) > 0
-                          ? `${Math.floor((now.getTime() - Date.parse(local.state.parked.savedAt)) / 60000)} min ago`
-                          : 'Just now'}{' '}
-                      · Directions
-                    </Button>
-                  </View>
-                ) : null}
               </View>
             ) : null}
           </View>
@@ -1588,7 +1575,7 @@ export default function Explore() {
             <View
               style={{
                 position: 'absolute',
-                top: insets.top + SEARCH_HEADER_HEIGHT + 12,
+                top: insets.top + 120,
                 left: 16,
                 right: 16,
                 zIndex: 5,
@@ -1610,109 +1597,63 @@ export default function Explore() {
               />
             </View>
           ) : null}
-          {discoveryVisible && !searchActive && !(nav.details && selected) ? (
+          {discoveryVisible && nav.view === 'map' && !nav.details ? (
             <>
-              <DiscoveryHeader
-                top={insets.top}
-                query={nav.query}
-                onSearch={() => updateNavigation({ searching: true })}
-                onList={() =>
-                  updateNavigation({
-                    view: 'list',
-                    details: false,
-                  })
-                }
+              <MainMapControls
+                searching={searchActive}
+                obscured={drawerObscuresMap}
+                search={searchHeader}
+                legendExpanded={legendExpanded}
+                onLegend={() => setLegendExpanded((expanded) => !expanded)}
+                onMenu={() => {
+                  Keyboard.dismiss()
+                  if (searchActive)
+                    closeNavigation({ searching: false, query: nav.query })
+                  setDrawerOpen(true)
+                }}
               />
-              {nav.view === 'map' ? (
-                <>
-                  <DiscoveryMapActions
-                    bottom={
-                      TAB_BAR_HEIGHT +
-                      insets.bottom +
-                      (selected ? previewHeight + 34 : MAP_LEGEND_HEIGHT + 20)
-                    }
-                    selected={!!selected}
-                    locating={location.status === 'locating'}
-                    onList={() =>
-                      updateNavigation({
-                        view: 'list',
-                        details: false,
-                      })
-                    }
-                    onFilters={() => setPanel('filters')}
-                    onLocate={() =>
-                      currentLocation
-                        ? centerOnMyLocation()
-                        : setPanel('location')
-                    }
-                  />
-                  {!selected ? (
-                    <DiscoveryLegend
-                      bottom={TAB_BAR_HEIGHT + insets.bottom}
-                      onInfo={() => setPanel('info')}
-                    />
-                  ) : null}
-                  {selected ? (
-                    <ParkingPreview
-                      parking={selected}
-                      onHeightChange={setPreviewHeight}
-                      maxHeight={Math.max(
-                        200,
-                        screenHeight -
-                          insets.top -
-                          SEARCH_HEADER_HEIGHT -
-                          TAB_BAR_HEIGHT -
-                          insets.bottom -
-                          110,
-                      )}
-                      bottom={TAB_BAR_HEIGHT + insets.bottom + 14}
-                      now={now}
-                      favorite={local.state.favorites.some(
-                        (item) => item.key === recordKey(selected),
-                      )}
-                      disabled={
-                        local.status !== 'ready' ||
-                        selected.sourceKind === 'sample'
-                      }
-                      onSave={() => favorite(selected)}
-                      onDetails={() =>
-                        updateNavigation({ details: true, detailTab: 'Info' })
-                      }
-                      onDirections={() => startDirections(selected)}
-                    />
-                  ) : null}
-                </>
-              ) : null}
-              {nav.view === 'list' ? (
-                <ParkingListPage
-                  top={insets.top + SEARCH_HEADER_HEIGHT}
-                  bottom={TAB_BAR_HEIGHT + insets.bottom}
-                  records={ranked}
-                  reference={reference}
-                  listRef={list}
-                  scrollOffset={browseScrollOffset.current}
-                  title={resultsTitle}
-                  notice={
-                    parking.status === 'error' ? (
-                      <StatusMessage
-                        message={parkingError}
-                        onRetry={() => setRevision((value) => value + 1)}
-                      />
-                    ) : browseState === 'location-off' ? (
-                      stateCard
-                    ) : null
+              {displayedParking ? (
+                <MapParkingPanel
+                  record={displayedParking}
+                  open={Boolean(parkingSummary && !searchActive && !drawerOpen)}
+                  onClose={closeMapParking}
+                  onMore={() =>
+                    updateNavigation({ details: true, detailTab: 'Info' })
                   }
-                  empty={
-                    browseState === 'loading' ? <LoadingRows /> : stateCard
-                  }
-                  onSelect={select}
-                  onMap={() => updateNavigation({ view: 'map' })}
-                  onOffset={(offset) => {
-                    browseScrollOffset.current = offset
+                  onDirections={() => {
+                    if (selected) startDirections(selected)
                   }}
+                  onHeight={setPreviewHeight}
                 />
               ) : null}
             </>
+          ) : null}
+          {discoveryVisible && nav.view === 'list' && !searchActive ? (
+            <ParkingListPage
+              top={insets.top}
+              bottom={insets.bottom}
+              records={ranked}
+              reference={reference}
+              listRef={list}
+              scrollOffset={browseScrollOffset.current}
+              title={resultsTitle}
+              notice={
+                parking.status === 'error' ? (
+                  <StatusMessage
+                    message={parkingError}
+                    onRetry={() => setRevision((value) => value + 1)}
+                  />
+                ) : browseState === 'location-off' ? (
+                  stateCard
+                ) : null
+              }
+              empty={browseState === 'loading' ? <LoadingRows /> : stateCard}
+              onSelect={select}
+              onMap={() => updateNavigation({ view: 'map' })}
+              onOffset={(offset) => {
+                browseScrollOffset.current = offset
+              }}
+            />
           ) : null}
 
           {nav.directions && selected && panel === null ? (
@@ -1944,7 +1885,7 @@ export default function Explore() {
               onClose={() => {
                 setPoints([])
                 setAdjusted(null)
-                closeNavigation({ panel: null })
+                closeNavigation({ panel: contributionReturn.current })
               }}
               onAdjust={(current) => {
                 setAdjusted(current)
@@ -2014,24 +1955,6 @@ export default function Explore() {
               />
             </MotionView>
           ) : null}
-          {discoveryVisible && searchActive ? (
-            <View style={StyleSheet.absoluteFill}>
-              <ArchitecturePage
-                title="Search parking"
-                subtitle="Find parking near your destination."
-                onBack={() =>
-                  closeNavigation({
-                    searching: false,
-                    query: nav.query,
-                    searchPoint: nav.searchPoint,
-                    searchCredit: nav.searchCredit,
-                  })
-                }
-              >
-                {searchHeader}
-              </ArchitecturePage>
-            </View>
-          ) : null}
           {toast ? (
             <View
               style={{
@@ -2052,48 +1975,35 @@ export default function Explore() {
               )}
             </View>
           ) : null}
-          {areaRefresh &&
-          farFromCenter &&
-          discoveryVisible &&
-          !selected &&
-          nav.view === 'map' ? (
-            <View
-              style={{
-                position: 'absolute',
-                bottom: sheetHeight + 76,
-                alignSelf: 'center',
-              }}
-            >
-              <Button
-                secondary
-                onPress={() => {
-                  searchedCenter.current = [
-                    (viewport.west + viewport.east) / 2,
-                    (viewport.south + viewport.north) / 2,
-                  ]
-                  setAreaRefresh(false)
-                  setRevision((current) => current + 1)
-                }}
-              >
-                Search this area
-              </Button>
-            </View>
-          ) : null}
           {consent.confirmation}
-          {(nav.route || drawing) && !searchActive ? (
+          {(nav.route ||
+            drawing ||
+            (discoveryVisible && nav.view === 'map' && !selected)) &&
+          !searchActive ? (
             <View
+              pointerEvents="box-none"
               style={[
                 styles.mapInfo,
                 {
-                  bottom:
-                    Math.max(cameraBottom, insets.bottom) +
-                    (discoveryVisible && !selected
-                      ? TAB_BAR_HEIGHT + insets.bottom + MAP_LEGEND_HEIGHT
-                      : 12),
+                  bottom: Math.max(cameraBottom, insets.bottom) + 12,
                 },
               ]}
             >
-              <MapAttribution onPress={() => setPanel('info')} />
+              {nav.route || drawing ? (
+                <MapAttribution onPress={() => setPanel('info')} />
+              ) : (
+                <View style={styles.mapCredit}>
+                  <Pressable
+                    accessibilityRole="button"
+                    accessibilityLabel="Map data sources and attribution"
+                    onPress={() => setPanel('info')}
+                    style={styles.attribution}
+                  >
+                    <Text style={ui.small}>© OpenStreetMap · OpenFreeMap</Text>
+                  </Pressable>
+                  <SearchAttribution credit={nav.searchCredit} />
+                </View>
+              )}
             </View>
           ) : null}
         </View>
@@ -2121,7 +2031,7 @@ export default function Explore() {
                   setRouteTarget(null)
                   navigationViewportPrivate.current = false
                   updateNavigation(parkingNearDestination(selectedPlace))
-                  setAreaRefresh(false)
+
                   setRevision((current) => current + 1)
                   setSelectedPlace(null)
                 }}
@@ -2317,6 +2227,7 @@ export default function Explore() {
         ) : null}
         {panel === 'you' ? (
           <ParkingProfile
+            reportOnly
             onAdd={() => startContribution()}
             onSaved={() => updateNavigation({ panel: 'saved' })}
             onPreferences={() => updateNavigation({ panel: 'filters' })}
@@ -2373,20 +2284,23 @@ export default function Explore() {
             setDrafts={setDrafts}
             storage={storage}
             onStorageReady={() => setStorage('ready')}
+            onBrowse={() =>
+              updateNavigation({ panel: null, view: 'list' }, 'replace')
+            }
+            onFilters={() => setPanel('filters')}
+            onLocation={() => setPanel('location')}
             onClose={() => setPanel(null)}
           />
         ) : null}
-        {(discoveryVisible && !searchActive && !(nav.details && selected)) ||
-        (panel === 'saved' && local.state.favorites.length > 0) ||
-        panel === 'you' ? (
-          <BottomNavigation
-            selected={
-              panel === 'saved' ? 'saved' : panel === 'you' ? 'you' : 'map'
-            }
-            bottom={insets.bottom}
-            onSelect={(tab) => setPanel(tab === 'map' ? null : tab)}
-          />
-        ) : null}
+        <MainDrawer
+          open={drawerOpen}
+          focused={focused}
+          onClose={() => setDrawerOpen(false)}
+          onSaved={() => setPanel('saved')}
+          onReport={() => setPanel('you')}
+          onAppearance={openAppearance}
+          onHelp={() => setPanel('info')}
+        />
       </View>
     </AppearanceNavigation>
   )
@@ -2433,6 +2347,7 @@ const useStyles = createThemedStyles(({ colors }) =>
       justifyContent: 'center',
       alignItems: 'center',
     },
+    destinationNotice: { marginTop: 34 },
     loadingToast: {
       alignSelf: 'center',
       flexDirection: 'row',
@@ -2467,7 +2382,6 @@ const useStyles = createThemedStyles(({ colors }) =>
       flexWrap: 'wrap',
       justifyContent: 'space-between',
     },
-    carChip: { alignSelf: 'flex-start', maxWidth: '100%' },
     top: {
       position: 'absolute',
       top: 0,
@@ -2481,7 +2395,19 @@ const useStyles = createThemedStyles(({ colors }) =>
       maxWidth: 620,
       alignSelf: 'center',
     },
-    mapInfo: { position: 'absolute', left: 16 },
+    mapInfo: {
+      position: 'absolute',
+      left: 18,
+      right: 18,
+      alignItems: 'flex-start',
+    },
+    mapCredit: {
+      alignItems: 'flex-start',
+      backgroundColor: colors.surface,
+      paddingHorizontal: 10,
+      borderRadius: 14,
+    },
+    attribution: { minHeight: 28, justifyContent: 'center' },
     controls: {
       position: 'absolute',
       right: 16,

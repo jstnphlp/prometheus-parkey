@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react'
+import { Redirect } from 'expo-router'
 import {
   ActivityIndicator,
   Keyboard,
@@ -22,7 +23,7 @@ import { useAuth } from '../auth/provider'
 import { FormDropdown } from '../components/form-dropdown'
 import { usePopup } from '../components/popup-provider'
 import { Button, Icon } from '../discovery/ui'
-import { profileChoices } from '../onboarding/profile'
+import { profileChoices, profileComplete } from '../onboarding/profile'
 import { fonts } from '../theme'
 import { createThemedStyles, useTheme } from '../theme-provider'
 
@@ -87,9 +88,8 @@ export function PersonalInfo() {
       />
     )
   }
-  function selection(key: 'ageRange' | 'city' | 'work', label: string) {
-    const custom =
-      key === 'city' ? 'cityOther' : key === 'work' ? 'workOther' : null
+  function selection(key: 'city' | 'work', label: string) {
+    const custom = key === 'city' ? 'cityOther' : 'workOther'
     return (
       <View style={styles.field}>
         <Text style={styles.label}>{label}</Text>
@@ -103,15 +103,14 @@ export function PersonalInfo() {
               disabled={auth.busy}
               minHeight={48}
             />
-            {custom && values[key] === 'Other'
+            {values[key] === 'Other'
               ? input(custom, `Other ${label.toLowerCase()}`)
               : null}
           </>
         ) : (
           <Text selectable style={styles.value}>
-            {(custom && values[key] === 'Other'
-              ? values[custom]
-              : values[key]) || 'Not provided'}
+            {(values[key] === 'Other' ? values[custom] : values[key]) ||
+              'Not provided'}
           </Text>
         )}
       </View>
@@ -136,6 +135,7 @@ export function PersonalInfo() {
       </View>
     )
   if (!user) return <AccountEntry />
+  if (!profileComplete(user)) return <Redirect href="/account-setup" />
   return (
     <View style={styles.content}>
       <View style={styles.avatar}>
@@ -157,7 +157,6 @@ export function PersonalInfo() {
           {user.email || 'Not provided'}
         </Text>
       </View>
-      {selection('ageRange', 'Age range')}
       {selection('city', 'City of residence')}
       {selection('work', 'Occupation')}
       {error ? (

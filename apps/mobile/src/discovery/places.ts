@@ -1,5 +1,6 @@
 import type { SymbolLayerSpecification } from 'maplibre-gl'
 
+import { discoveryNightMapColors } from '../theme-colors.ts'
 import type { Destination } from './data.ts'
 import { mapTextFont } from './map-font.ts'
 import { isCoordinate } from './model.ts'
@@ -56,6 +57,18 @@ export const placeLayer = {
     'text-halo-width': 1.5,
   },
 } satisfies SymbolLayerSpecification
+
+export function mapPlaceLayer(night?: boolean) {
+  if (!night) return placeLayer
+  return {
+    ...placeLayer,
+    paint: {
+      'text-color': discoveryNightMapColors.label,
+      'text-halo-color': discoveryNightMapColors.land,
+      'text-halo-width': 1,
+    },
+  }
+}
 
 function object(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null

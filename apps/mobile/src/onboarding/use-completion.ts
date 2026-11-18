@@ -24,34 +24,37 @@ export function useCompletion(
     }, []),
   )
 
-  async function finish() {
-    if (inFlight.current) return
-    inFlight.current = true
-    setBusy(true)
-    try {
-      await complete()
-      if (!focused.current) return
-      // Remove the introduction history so Back cannot replay completed steps.
-      if (router.canDismiss()) router.dismissAll()
-      router.replace(destination)
-    } catch {
-      if (focused.current)
-        popup.show({
-          tone: 'error',
-          title: 'Could not save progress',
-          message: 'Your progress could not be saved on this device.',
-          primary: {
-            title: 'Retry',
-            onPress: () => void finish(),
-            restoreFocus: false,
-          },
-          secondary: { title: 'Not now' },
-        })
-    } finally {
-      inFlight.current = false
-      setBusy(false)
-    }
-  }
+  const finish = useCallback(
+    async function finish() {
+      if (inFlight.current) return
+      inFlight.current = true
+      setBusy(true)
+      try {
+        await complete()
+        if (!focused.current) return
+        // Remove the introduction history so Back cannot replay completed steps.
+        if (router.canDismiss()) router.dismissAll()
+        router.replace(destination)
+      } catch {
+        if (focused.current)
+          popup.show({
+            tone: 'error',
+            title: 'Could not save progress',
+            message: 'Your progress could not be saved on this device.',
+            primary: {
+              title: 'Retry',
+              onPress: () => void finish(),
+              restoreFocus: false,
+            },
+            secondary: { title: 'Not now' },
+          })
+      } finally {
+        inFlight.current = false
+        setBusy(false)
+      }
+    },
+    [complete, destination, popup, router],
+  )
 
   return { finish, busy }
 }

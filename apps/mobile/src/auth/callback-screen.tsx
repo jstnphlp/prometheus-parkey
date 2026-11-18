@@ -84,7 +84,7 @@ export function CallbackScreen() {
     verifiedCode === code &&
     auth.state.status === 'signed-in'
   )
-    return <SignedInRedirect />
+    return <SignedInRedirect user={auth.state.user} />
   return (
     <AuthShell
       title="Verify your email link"

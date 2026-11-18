@@ -34,7 +34,7 @@ export function AccountMenu({
       ? profileFromUser(state.user).fullName.trim() ||
         state.user.email ||
         'Your account'
-      : 'Explore as a guest'
+      : 'Sign In'
   const section = (id: string) =>
     router.push({ pathname: '/settings/[section]', params: { section: id } })
   const groups: { title: string; icon: IconName; action: () => void }[][] = [
@@ -100,11 +100,11 @@ export function AccountMenu({
         </View>
         <View style={{ flex: 1, minWidth: 0 }}>
           <Text style={styles.label}>{displayName}</Text>
-          <Text numberOfLines={2} style={styles.subtitle}>
-            {state.status === 'signed-in'
-              ? state.user.email
-              : 'Sign in only when you need an account'}
-          </Text>
+          {state.status === 'signed-in' && state.user.email ? (
+            <Text numberOfLines={2} style={styles.subtitle}>
+              {state.user.email}
+            </Text>
+          ) : null}
         </View>
         <Icon name="chevronRight" size={14} color={colors.muted} />
       </Pressable>
@@ -125,26 +125,17 @@ export function AccountMenu({
           ))}
         </View>
       ))}
-      <Pressable
-        accessibilityRole="button"
-        onPress={() => router.push('/account')}
-        style={styles.row}
-      >
-        <Icon
-          name="logout"
-          size={20}
-          color={state.status === 'signed-in' ? colors.error : colors.ink}
-        />
-        <Text
-          style={[
-            styles.label,
-            state.status === 'signed-in' && { color: colors.error },
-          ]}
+      {state.status === 'signed-in' ? (
+        <Pressable
+          accessibilityRole="button"
+          onPress={() => router.push('/account')}
+          style={styles.row}
         >
-          {state.status === 'signed-in' ? 'Log Out' : 'Sign In'}
-        </Text>
-        <Icon name="chevronRight" size={14} color={colors.muted} />
-      </Pressable>
+          <Icon name="logout" size={20} color={colors.error} />
+          <Text style={[styles.label, { color: colors.error }]}>Log Out</Text>
+          <Icon name="chevronRight" size={14} color={colors.muted} />
+        </Pressable>
+      ) : null}
     </View>
   )
 }

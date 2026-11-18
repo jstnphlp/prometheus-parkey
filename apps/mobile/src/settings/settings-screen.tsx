@@ -6,7 +6,6 @@ import { AboutParkey } from './about-parkey'
 import { AccountMenu } from './account-menu'
 import { HelpCenter } from './help-center'
 import { PersonalInfo } from './personal-info'
-import { BottomNavigation } from '../discovery/bottom-navigation'
 import { useArchitectureInsets } from '../components/architecture-page'
 import { ArchitecturePage } from '../components/architecture-page'
 import { useOpenAppearance } from '../components/appearance-navigation'
@@ -111,27 +110,21 @@ export function SettingsScreen() {
         contentContainerStyle={{
           paddingHorizontal: 23,
           paddingTop: insets.top + 6,
-          paddingBottom: insets.bottom + 96,
+          paddingBottom: insets.bottom + 24,
         }}
       >
+        <IconButton
+          icon="back"
+          label="Back"
+          onPress={() =>
+            router.canGoBack() ? router.back() : router.replace('/')
+          }
+        />
         <AccountMenu
           onSaved={() => router.replace('/?panel=saved')}
           onPreferences={() => router.replace('/?panel=filters')}
         />
       </ScrollView>
-      <BottomNavigation
-        selected="you"
-        bottom={insets.bottom}
-        onSelect={(tab) =>
-          router.replace(
-            tab === 'map'
-              ? '/'
-              : tab === 'saved'
-                ? '/?panel=saved'
-                : '/settings',
-          )
-        }
-      />
     </View>
   )
 }
@@ -191,10 +184,6 @@ export function AppearanceChoices() {
                 </View>
                 <View style={ui.flex}>
                   <Text style={styles.optionTitle}>{title}</Text>
-                  <Text style={styles.optionSubtitle}>
-                    {preview.dark ? 'Dark' : 'White'} background · magenta
-                    actions
-                  </Text>
                 </View>
                 <Icon
                   name={selected ? 'check' : 'chevronRight'}
@@ -221,27 +210,13 @@ export function AppearanceChoices() {
 }
 
 export function AppearanceScreen({ onBack }: { onBack?: () => void }) {
-  const { error, saving } = useTheme()
   const router = useRouter()
-  const styles = useStyles()
   return (
     <ArchitecturePage
       title="Appearance"
-      subtitle="Select your preferred visual theme. You can change this any time."
       onBack={
         onBack ??
         (() => (router.canGoBack() ? router.back() : router.replace('/')))
-      }
-      footer={
-        <View style={styles.appearanceNote}>
-          <Text style={styles.optionSubtitle}>
-            {saving
-              ? 'Saving your appearance...'
-              : error
-                ? 'Appearance is active for this session. Select it again to retry saving on this device.'
-                : 'Your appearance is saved on this device. You can change it anytime.'}
-          </Text>
-        </View>
       }
     >
       <AppearanceChoices />
@@ -273,6 +248,19 @@ export function SettingsDetailScreen({ section }: { section: string }) {
             your query and map area. Directions share your start and destination
             only when requested. Account actions use the configured
             authentication service.
+          </Text>
+          <Text style={ui.heading}>Your account profile</Text>
+          <Text style={ui.body}>
+            Parkey stores your name, vehicle categories, occupation, city of
+            residence, driving habits and parking preferences with your account
+            in Supabase. Parkey’s account service and authorized support staff
+            can access this information to operate or support your account.
+          </Text>
+          <Text style={ui.body}>
+            You can update your name, city and occupation in Personal Info.
+            Profile answers stay with your account when you sign out or clear
+            app storage. Clearing app storage removes local data only. Account
+            data removal is handled separately from this screen.
           </Text>
           <Text style={ui.body}>
             Reports stay local unless you explicitly send them through the
@@ -429,21 +417,6 @@ const useStyles = createThemedStyles(({ colors }) =>
       fontSize: 18,
       lineHeight: 24,
       color: colors.ink,
-    },
-    optionSubtitle: {
-      fontFamily: fonts.medium,
-      fontSize: 12,
-      lineHeight: 18,
-      color: colors.muted,
-    },
-    appearanceNote: {
-      minHeight: 75,
-      borderRadius: 13,
-      backgroundColor: colors.surface,
-      borderWidth: 1,
-      borderColor: colors.border,
-      justifyContent: 'center',
-      padding: 18,
     },
     preview: {
       width: 84,

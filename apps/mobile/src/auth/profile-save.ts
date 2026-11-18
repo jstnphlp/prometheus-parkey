@@ -1,4 +1,4 @@
-import type { SupabaseClient } from '@supabase/supabase-js'
+import type { SupabaseClient, User } from '@supabase/supabase-js'
 
 import {
   needsProfileName,
@@ -29,6 +29,22 @@ export async function saveAccountProfile(
   )
   const saved = await auth.updateUser({ data })
   if (saved.error) throw saved.error
-  if (saved.data.user?.id !== userId || !profileComplete(saved.data.user))
+  const confirmed = saved.data.user
+  if (!confirmed || !profileSaveConfirmed(confirmed, userId, data))
     throw new Error('Your profile save could not be confirmed. Please retry.')
+  return data
+}
+
+export function profileSaveConfirmed(
+  user: User,
+  userId: string,
+  expected: ReturnType<typeof profileMetadata>,
+) {
+  return (
+    user.id === userId &&
+    Boolean(user.email_confirmed_at) &&
+    profileComplete(user) &&
+    JSON.stringify(profileMetadata(profileFromUser(user))) ===
+      JSON.stringify(expected)
+  )
 }

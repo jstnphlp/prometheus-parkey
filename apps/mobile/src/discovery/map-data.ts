@@ -1,6 +1,7 @@
 import type { Coordinate, DiscoveryParking } from '@parkey/shared-types'
 import type { FeatureCollection, LineString, Point } from 'geojson'
 
+import { hasParkingFeature } from './filters.ts'
 import { parkingFee } from './parking-fee.ts'
 
 export function parkingGeoJSON(
@@ -19,6 +20,7 @@ export function parkingGeoJSON(
         properties: {
           id: record.id,
           kind: record.kind,
+          hasEVCharging: hasParkingFeature(record, 'ev'),
           sample: record.sourceKind === 'sample',
           selected: record.id === selectedId,
           muted: selectedId !== null && record.id !== selectedId,

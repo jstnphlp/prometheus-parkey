@@ -172,8 +172,24 @@ export async function openPilot(page: Page) {
     timeout: 30_000,
   })
 }
+export async function openPilotMenu(
+  page: Page,
+  name:
+    | 'Saved parking'
+    | 'Report parking'
+    | 'Appearance'
+    | 'Help & privacy'
+    | 'Sign In',
+) {
+  await page.getByRole('button', { name: 'Open menu', exact: true }).click()
+  await page
+    .getByTestId('main-navigation-drawer')
+    .getByRole('button', { name, exact: true })
+    .click()
+}
 export async function openResults(page: Page) {
-  await page.getByTestId('pilot-results').click()
+  await openPilotMenu(page, 'Help & privacy')
+  await page.getByRole('button', { name: 'Parking list', exact: true }).click()
 }
 export async function closeDetails(page: Page) {
   await page

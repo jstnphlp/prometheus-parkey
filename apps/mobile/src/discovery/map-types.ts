@@ -9,6 +9,7 @@ export type CameraTarget = { coordinate: Coordinate; revision: number }
 export type ParkingMapProps = {
   accessibilityHidden?: boolean
   night?: boolean
+  simplifiedMarkers?: boolean
   records: DiscoveryParking[]
   selectedId: string | null
   featuredId: string | null
@@ -28,5 +29,6 @@ export type ParkingMapProps = {
   onPlaceSelect?: ((place: Destination) => void) | undefined
   onMapPress: (point: Coordinate) => void
   onViewport: (viewport: Viewport) => void
+  onMoveStart?: () => void
   onStatus: (status: 'loading' | 'ready' | 'error') => void
 }

@@ -22,6 +22,7 @@ import {
 import { useConnectivity } from './use-connectivity'
 import type { Destination } from './data'
 import { FigmaAsset } from './figma-assets'
+import { MapSearchField, MapSearchPanel, MapSearchRow } from './main-map-ui'
 import { MotionPressable } from './motion'
 import { fonts } from './typography'
 import { StateCard } from './state-card'
@@ -41,6 +42,8 @@ export function DestinationSearch({
   onLocate,
   onActive,
   onSaved,
+  onSearchArea,
+  triggerID,
   layout = 'overlay',
   fillSheet = false,
   placeholder = 'Search parking or landmark',
@@ -53,7 +56,9 @@ export function DestinationSearch({
   onLocate: () => void
   onActive: (active: boolean) => void
   onSaved: () => void
-  layout?: 'overlay' | 'sheet' | 'page'
+  layout?: 'overlay' | 'sheet' | 'page' | 'map'
+  onSearchArea?: () => void
+  triggerID?: string | undefined
   fillSheet?: boolean
   placeholder?: string
 }) {
@@ -110,6 +115,7 @@ export function DestinationSearch({
 
   function close() {
     cancel()
+    if (layout === 'map') setNotice(false)
     onActive(false)
     input.current?.blur()
     Keyboard.dismiss()
@@ -236,6 +242,139 @@ export function DestinationSearch({
     Keyboard.dismiss()
     onSelect(destination)
     if (!destination.attribution) void history.remember(destination)
+  }
+
+  if (layout === 'map') {
+    const shortQuery = query.trim().length < 3
+    const message = {
+      idle: '',
+      loading: 'Searching places…',
+      empty: 'No places found. Try a different name.',
+      error: 'Search couldn’t connect.',
+      unavailable: 'Destination search is unavailable.',
+      offline: 'Reconnect to search places.',
+      limited: `Please wait ${limitSeconds} seconds before trying again.`,
+    }[status]
+
+    return (
+      <View pointerEvents="box-none" testID="destination-search-card">
+        <MapSearchField
+          active={active}
+          query={query}
+          triggerID={triggerID}
+          inputRef={input}
+          onOpen={() => onActive(true)}
+          onClose={close}
+          onClear={clearSearch}
+          onChangeText={(text) => {
+            cancel()
+            onQuery(text)
+            setResults([])
+            setStatus('idle')
+          }}
+          onSubmitEditing={() => void search()}
+        />
+        {active ? (
+          <MapSearchPanel
+            maxHeight={Math.min(
+              350,
+              Math.max(112, (visibleBottom ?? height) - 172),
+            )}
+          >
+            {shortQuery ? (
+              <>
+                <MapSearchRow
+                  label="Search this map area"
+                  onPress={() => {
+                    close()
+                    onSearchArea?.()
+                  }}
+                />
+                {history.recents.length ? (
+                  <>
+                    <View style={styles.mapRule} />
+                    <View style={ui.row}>
+                      <Text style={[ui.small, ui.flex]}>Recent searches</Text>
+                      <MotionPressable
+                        accessibilityRole="button"
+                        accessibilityLabel="Clear recent searches"
+                        onPress={() => {
+                          setCleared(history.recents)
+                          void history.clear()
+                        }}
+                        style={styles.clearAction}
+                      >
+                        <Text style={[ui.small, ui.link]}>Clear</Text>
+                      </MotionPressable>
+                    </View>
+                    {history.recents.map((entry, index) => (
+                      <MapSearchRow
+                        key={`${entry.name}-${entry.coordinate.join(',')}`}
+                        label={entry.name}
+                        description={entry.address}
+                        testID={`destination-recent-${index}`}
+                        onPress={() => select(entry)}
+                      />
+                    ))}
+                  </>
+                ) : null}
+              </>
+            ) : (
+              <>
+                {message ? (
+                  <Text
+                    accessibilityLiveRegion="polite"
+                    style={[ui.body, styles.message]}
+                  >
+                    {message}
+                  </Text>
+                ) : null}
+                {status === 'error' || status === 'limited' ? (
+                  <MapSearchRow
+                    label="Retry search"
+                    icon="search"
+                    onPress={() => void search()}
+                  />
+                ) : null}
+                {status === 'empty' ? (
+                  <MapSearchRow
+                    label="Clear search"
+                    icon="close"
+                    onPress={clearSearch}
+                  />
+                ) : null}
+                {results.map((entry, index) => (
+                  <MapSearchRow
+                    key={`${entry.id}-${index}`}
+                    label={entry.name}
+                    description={entry.address}
+                    testID={`destination-result-${index}`}
+                    onPress={() => select(entry)}
+                  />
+                ))}
+                {hasSearchProvider && notice ? (
+                  <Text style={[ui.small, styles.message]}>
+                    Search queries are sent to Parkey and its search provider.
+                  </Text>
+                ) : null}
+              </>
+            )}
+            {cleared ? (
+              <UndoToast
+                message="Recent searches cleared"
+                onUndo={() => {
+                  void history.restore(cleared)
+                  setCleared(null)
+                }}
+              />
+            ) : null}
+            {history.error ? (
+              <Text style={ui.small}>{history.error}</Text>
+            ) : null}
+          </MapSearchPanel>
+        ) : null}
+      </View>
+    )
   }
 
   return (
@@ -542,6 +681,7 @@ function DestinationRow({
 
 const useStyles = createThemedStyles(({ colors }) =>
   StyleSheet.create({
+    mapRule: { borderTopWidth: 1, borderColor: colors.border },
     pageContainer: {
       padding: 0,
       backgroundColor: colors.canvas,

@@ -1,9 +1,17 @@
 import { useState } from 'react'
 import { Redirect } from 'expo-router'
-import { Pressable, StyleSheet, Text, View } from 'react-native'
+import {
+  ActivityIndicator,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-import { createThemedStyles } from '../theme-provider'
+import { useAuth } from '../auth/provider'
+import { discoveryDestination } from '../auth/setup-access'
+import { createThemedStyles, useTheme } from '../theme-provider'
 import Explore from '../discovery/explore'
 import { pilotDiscoveryEnabled } from '../discovery/pilot-config'
 import PilotDiscovery from '../discovery/pilot-discovery'
@@ -11,7 +19,25 @@ import { useOnboarding } from '../onboarding/provider'
 
 export default function IndexRoute() {
   const { completed } = useOnboarding()
-  return completed ? <MainDiscovery /> : <Redirect href="/welcome" />
+  const { state } = useAuth()
+  const { colors } = useTheme()
+  const destination = discoveryDestination(state, completed)
+  const [admitted, setAdmitted] = useState(destination === '/')
+
+  // Keep the public map mounted while an already admitted session is rechecked.
+  if (destination && admitted !== (destination === '/'))
+    setAdmitted(destination === '/')
+
+  if (!destination && !admitted)
+    return (
+      <ActivityIndicator
+        color={colors.brand}
+        accessibilityLabel="Checking account session"
+        style={{ flex: 1 }}
+      />
+    )
+  if (destination && destination !== '/') return <Redirect href={destination} />
+  return <MainDiscovery />
 }
 
 function MainDiscovery() {

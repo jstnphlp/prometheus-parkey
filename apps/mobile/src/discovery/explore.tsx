@@ -249,8 +249,9 @@ export default function Explore() {
     appearanceReturn.current = nav.panel
     updateNavigation({ panel: 'appearance' })
   }
+  const drawerObscuresMap = drawerOpen && Platform.OS !== 'android'
   const fullPageActive =
-    drawerOpen ||
+    drawerObscuresMap ||
     panel === 'saved' ||
     panel === 'you' ||
     panel === 'appearance' ||
@@ -735,6 +736,7 @@ export default function Explore() {
   const viewportUpdate = useSettledViewport(
     focused &&
       !nav.route &&
+      !drawerOpen &&
       !fullPageActive &&
       nav.view === 'map' &&
       !nav.details &&
@@ -1599,7 +1601,7 @@ export default function Explore() {
             <>
               <MainMapControls
                 searching={searchActive}
-                obscured={drawerOpen}
+                obscured={drawerObscuresMap}
                 search={searchHeader}
                 legendExpanded={legendExpanded}
                 onLegend={() => setLegendExpanded((expanded) => !expanded)}
@@ -2292,6 +2294,7 @@ export default function Explore() {
         ) : null}
         <MainDrawer
           open={drawerOpen}
+          focused={focused}
           onClose={() => setDrawerOpen(false)}
           onSaved={() => setPanel('saved')}
           onReport={() => setPanel('you')}

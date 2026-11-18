@@ -2,11 +2,27 @@
 
 PR #43 is stacked on PR #41 (baseline `a5cacbe`). Testing used the isolated Parkey QA package on an Android 15/API 35 x86_64 emulator with an NVIDIA RTX 2050 host GPU.
 
-## Sources of work
+## Drawer blackout follow-up
+
+A frame-by-frame Android capture reproduced the reported blink. In the original recording, the basemap disappeared while the search and map controls stayed visible. The final camera comparison alone had missed this transition behavior. The drawer now uses a separate, transparent, hardware-accelerated Android window. The window owns touch and accessibility focus. MapLibre stays in the discovery window while the drawer slides and the scrim fades.
+
+A 48-by-960 pixel strip outside the drawer was sampled from each 720-by-1600 video. A flat frame had at most two levels between its 10th and 90th luma percentiles. Visual inspection confirmed the baseline flat frames were missing the map. Capture lengths and rates varied, so the counts measure sampled blackout frames.
+
+| Android development recording | Captured frames | Flat map frames |
+| ----------------------------- | --------------: | --------------: |
+| Dark + Magenta before         |              77 |              75 |
+| Dark + Magenta after          |             191 |               0 |
+| Light + Magenta after         |             144 |               0 |
+
+![Dark drawer before the fix with a blank map at left, and after the fix with the map still visible at right](android-drawer-before-after.webp)
+
+Android Back, backdrop taps, and the close button returned to discovery in both themes. Mobile TypeScript, scoped ESLint and Prettier, and ten focused discovery tests passed for the follow-up. The device recordings use the API 35 development build.
+
+## Initial sources of work
 
 - MapLibre sends the viewport from its Android camera-idle listener. Each accepted idle event previously changed React state before the parking request debounce. The pilot screen then replaced its data with an empty collection while the request was pending. Even minor changes could trigger reconciliation, request cancellation and source rebuilds.
 - MapLibre React Native 11.5 serializes object-form GeoJSON in the source component's render path. Drawer state previously changed native map accessibility props and inline event handlers, defeating the memoized pilot map on each transition. The legacy renderer also received new callback, padding and empty-array references.
-- The full-screen drawer scrim previously mounted and unmounted an opacity-animated wrapper with a zero-distance transform. A retained Android scrim now animates opacity only. The drawer panel keeps its original horizontal animation. Only the open drawer mounts the transparent dismissal target. The accessibility exclusion lives on the map wrapper, outside the native renderer.
+- The full-screen drawer scrim previously mounted and unmounted an opacity-animated wrapper with a zero-distance transform. The first pass retained the Android scrim and animated opacity only. The drawer panel keeps its original horizontal animation. Only the open drawer mounts the transparent dismissal target. The accessibility exclusion lives on the map wrapper, outside the native renderer.
 - The drawer does not update the basemap style, camera target or React key. The dark basemap hook already shares its pending style request and caches the softened style. A cold dark style can still use the URL fallback while the softened style loads. The stacked branch already uses MapLibre's texture renderer.
 
 The app waits another 120 ms after MapLibre's idle event before committing a materially changed viewport. A new gesture or a blocking overlay cancels pending commits. The existing endpoint debounces still apply. Retention uses the existing public cache lifetime and immediately excludes expired, revoked or out-of-scope records. Previously loaded results are treated as cached for directions, and research results are excluded from retention.

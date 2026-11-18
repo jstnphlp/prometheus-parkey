@@ -1032,7 +1032,8 @@ export default function PilotDiscovery({
     if (reportAdjusting) reportPoint(point)
     else if (searching) closeSearch()
   })
-  const mapHidden = drawerOpen || (!mapVisible && !reportAdjusting)
+  const drawerObscuresMap = drawerOpen && Platform.OS !== 'android'
+  const mapHidden = drawerObscuresMap || (!mapVisible && !reportAdjusting)
   return (
     <AppearanceNavigation value={openAppearance}>
       <View testID="pilot-screen" style={styles.screen}>
@@ -1068,7 +1069,7 @@ export default function PilotDiscovery({
           <>
             <MainMapControls
               pilot
-              obscured={drawerOpen}
+              obscured={drawerObscuresMap}
               searching={searching}
               legendExpanded={legendExpanded}
               onLegend={() => setLegendExpanded((expanded) => !expanded)}
@@ -2109,6 +2110,7 @@ export default function PilotDiscovery({
           ))}
         <MainDrawer
           open={drawerOpen}
+          focused={focused}
           onClose={() => setDrawerOpen(false)}
           onSaved={() => setSheet('saved')}
           onReport={() => {

@@ -90,6 +90,7 @@ import {
   millisecondsToNextMinute,
   parkingTitle,
 } from './presentation'
+import { MotionLayer, MotionView } from './motion'
 import { NavigationBanner, RouteDetails } from './route-details'
 import { nextParking } from './drive-math'
 import { useDriveNavigation } from './use-drive-navigation'
@@ -1961,7 +1962,10 @@ export default function Explore() {
           {(discoveryVisible || panel === 'appearance') &&
           selected &&
           nav.details ? (
-            <View
+            <MotionView
+              duration={240}
+              distance={5}
+              fromOpacity={0.8}
               testID="parking-details-page"
               style={[
                 StyleSheet.absoluteFill,
@@ -2008,7 +2012,7 @@ export default function Explore() {
                 expanded
                 onDirections={() => startDirections(selected)}
               />
-            </View>
+            </MotionView>
           ) : null}
           {discoveryVisible && searchActive ? (
             <View style={StyleSheet.absoluteFill}>
@@ -2204,22 +2208,23 @@ export default function Explore() {
             />
           </View>
         ) : null}
-        {panel === 'filters' ? (
-          <View style={StyleSheet.absoluteFill}>
-            <ParkingFiltersPage
-              kind={filter}
-              fees={feeFilter}
-              selectedFeatures={nav.features}
-              onBack={() => closeNavigation({ panel: null })}
-              onApply={(filter, fees, features) => {
-                updateNavigation(
-                  { filter, fees, features, panel: null },
-                  'replace',
-                )
-              }}
-            />
-          </View>
-        ) : null}
+        <MotionLayer
+          visible={panel === 'filters'}
+          style={StyleSheet.absoluteFill}
+        >
+          <ParkingFiltersPage
+            kind={filter}
+            fees={feeFilter}
+            selectedFeatures={nav.features}
+            onBack={() => closeNavigation({ panel: null })}
+            onApply={(filter, fees, features) => {
+              updateNavigation(
+                { filter, fees, features, panel: null },
+                'replace',
+              )
+            }}
+          />
+        </MotionLayer>
         {panel === 'appearance' ? (
           <View style={StyleSheet.absoluteFill}>
             <AppearanceScreen
@@ -2235,67 +2240,80 @@ export default function Explore() {
           </View>
         ) : null}
         {panel === 'saved' ? (
-          <SavedPlaces
-            local={local}
-            onParkingDirections={startDirections}
-            onLocateAddress={location.locate}
-            onClose={() => setPanel(null)}
-            onAddPlace={() =>
-              updateNavigation({
-                panel: null,
-                selectedId: null,
-                searching: true,
-                position: 'expanded',
-              })
-            }
-            records={[...parking.knownRecords, ...previews]}
-            locating={location.status === 'locating'}
-            locationError={saveLocationError ?? locationMessage}
-            onSaveParked={() => {
-              setSaveLocationError(null)
-              void location.locate().then(async (point) => {
-                if (!point) {
-                  setSaveLocationError(
-                    'Your location could not be saved. Check location access and try again.',
-                  )
-                  return
-                }
-                if (await local.park(point)) {
-                  center(point)
-                  track({ name: 'parked_spot_saved' })
-                }
-              })
-            }}
-            onCenter={(point) => {
-              updateNavigation(
-                { panel: null, selectedId: null, center: point, route: false },
-                'replace',
-              )
-            }}
-            onDirections={() => {
-              const parked = local.state.parked
-              if (parked)
-                void Linking.openURL(
-                  `https://www.google.com/maps/dir/?api=1&destination=${parked.coordinate[1]},${parked.coordinate[0]}&travelmode=walking`,
-                )
-            }}
-            onSelect={(record) => {
-              clearRoute()
-              setRouteTarget(null)
-              updateNavigation(
-                {
+          <MotionView
+            style={StyleSheet.absoluteFill}
+            pointerEvents="box-none"
+            duration={160}
+            distance={0}
+            fromOpacity={0.86}
+          >
+            <SavedPlaces
+              local={local}
+              onParkingDirections={startDirections}
+              onLocateAddress={location.locate}
+              onClose={() => setPanel(null)}
+              onAddPlace={() =>
+                updateNavigation({
                   panel: null,
-                  selectedId: record.id,
-                  view: 'map',
-                  details: true,
-                  center: anchor(record.geometry),
-                  route: false,
-                },
-                'replace',
-              )
-              viewed(record)
-            }}
-          />
+                  selectedId: null,
+                  searching: true,
+                  position: 'expanded',
+                })
+              }
+              records={[...parking.knownRecords, ...previews]}
+              locating={location.status === 'locating'}
+              locationError={saveLocationError ?? locationMessage}
+              onSaveParked={() => {
+                setSaveLocationError(null)
+                void location.locate().then(async (point) => {
+                  if (!point) {
+                    setSaveLocationError(
+                      'Your location could not be saved. Check location access and try again.',
+                    )
+                    return
+                  }
+                  if (await local.park(point)) {
+                    center(point)
+                    track({ name: 'parked_spot_saved' })
+                  }
+                })
+              }}
+              onCenter={(point) => {
+                updateNavigation(
+                  {
+                    panel: null,
+                    selectedId: null,
+                    center: point,
+                    route: false,
+                  },
+                  'replace',
+                )
+              }}
+              onDirections={() => {
+                const parked = local.state.parked
+                if (parked)
+                  void Linking.openURL(
+                    `https://www.google.com/maps/dir/?api=1&destination=${parked.coordinate[1]},${parked.coordinate[0]}&travelmode=walking`,
+                  )
+              }}
+              onSelect={(record) => {
+                clearRoute()
+                setRouteTarget(null)
+                updateNavigation(
+                  {
+                    panel: null,
+                    selectedId: record.id,
+                    view: 'map',
+                    details: true,
+                    center: anchor(record.geometry),
+                    route: false,
+                  },
+                  'replace',
+                )
+                viewed(record)
+              }}
+            />
+          </MotionView>
         ) : null}
         {panel === 'you' ? (
           <ParkingProfile

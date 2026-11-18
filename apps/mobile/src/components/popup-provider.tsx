@@ -25,7 +25,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 
 import type { ParkeyTheme } from '../theme-colors'
 import { useTheme, createThemedStyles } from '../theme-provider'
-import { useReducedMotion } from '../onboarding/use-reduced-motion'
+import { useReducedMotion } from '../discovery/use-reduced-motion'
 import { typography } from '../theme'
 import { BrandButton } from './brand-button'
 import { BrandIcon } from './brand-icon'

@@ -10,6 +10,7 @@ import { Stack, useRouter } from 'expo-router'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   ActivityIndicator,
+  Animated,
   AppState,
   BackHandler,
   FlatList,
@@ -85,6 +86,12 @@ import {
 } from './pilot-config'
 import { Button, IconButton, useUI } from './ui'
 import { ModalSheet } from './sheets'
+import {
+  MotionLayer,
+  MotionView,
+  revealStyle,
+  useEntranceProgress,
+} from './motion'
 import { usePilotPanels } from './use-pilot-panels'
 import { useLocation } from './use-location'
 
@@ -777,6 +784,15 @@ export default function PilotDiscovery({
       if (attempt.current()) setNavBusy(false)
     }
   }
+  const savedMotion = useEntranceProgress(
+    160,
+    sheet ?? 'map',
+    sheet === 'saved',
+  )
+  const savedReveal = revealStyle(savedMotion, {
+    distance: 0,
+    fromOpacity: 0.86,
+  })
   const status = !pilotConfig.ready
     ? pilotConfig.configurationError ||
       'Pilot discovery has not been configured.'
@@ -876,6 +892,7 @@ export default function PilotDiscovery({
             />
             {sheet === 'preview' && selected ? (
               <ParkingPreviewCard
+                parkingId={selected.id}
                 title={
                   selected.officialName ||
                   selected.descriptiveLabel ||
@@ -1072,78 +1089,83 @@ export default function PilotDiscovery({
             </ScrollView>
           </ModalSheet>
         ) : null}
-        {sheet === 'filters' ? (
-          <View style={[styles.fullPage, { bottom: 0 }]}>
-            <ArchitecturePage
-              title="Filter parking"
-              subtitle="Choose what matters most to you."
-              onBack={backPanel}
-            >
-              <View style={styles.content}>
-                <ScrollView horizontal contentContainerStyle={styles.row}>
-                  {filters.map((filter) => (
-                    <Action
-                      key={filter.value}
-                      selected={category === filter.value}
-                      onPress={() => {
-                        setCategory(filter.value)
-                        setSelection(null)
-                      }}
-                    >
-                      {filter.label}
-                    </Action>
-                  ))}
-                </ScrollView>
-                <View style={styles.row}>
-                  {(['all', 'free', 'paid'] as const).map((value) => (
-                    <Action
-                      key={value}
-                      testID={`pilot-fees-${value}`}
-                      selected={feeFilter === value}
-                      onPress={() => {
-                        setFeeFilter(value)
-                        setSelection(null)
-                      }}
-                    >
-                      {value === 'all'
-                        ? 'All prices'
-                        : value === 'free'
-                          ? 'Recorded no fee'
-                          : 'Fee applies'}
-                    </Action>
-                  ))}
-                </View>
-                <Text>
-                  Straight-line distance to {referenceLabel}. This is not a
-                  walking route.
-                </Text>
-                {feeFilter !== 'all' && partition.unknown.length > 0 ? (
-                  <Text>
-                    {partition.unknown.length} loaded records have unknown fees
-                    and are excluded by this filter.
-                  </Text>
-                ) : null}
-                {destination ? (
+        <MotionLayer
+          visible={sheet === 'filters'}
+          style={[styles.fullPage, { bottom: 0 }]}
+        >
+          <ArchitecturePage
+            animateHeading={false}
+            title="Filter parking"
+            subtitle="Choose what matters most to you."
+            onBack={backPanel}
+          >
+            <View style={styles.content}>
+              <ScrollView horizontal contentContainerStyle={styles.row}>
+                {filters.map((filter) => (
                   <Action
+                    key={filter.value}
+                    selected={category === filter.value}
                     onPress={() => {
-                      setDestination(null)
-                      setQuery('')
+                      setCategory(filter.value)
+                      setSelection(null)
                     }}
                   >
-                    Clear destination
+                    {filter.label}
                   </Action>
-                ) : null}
-                <Text selectable>
-                  Filters apply to loaded parking records. Load more to inspect
-                  additional records.
-                </Text>
+                ))}
+              </ScrollView>
+              <View style={styles.row}>
+                {(['all', 'free', 'paid'] as const).map((value) => (
+                  <Action
+                    key={value}
+                    testID={`pilot-fees-${value}`}
+                    selected={feeFilter === value}
+                    onPress={() => {
+                      setFeeFilter(value)
+                      setSelection(null)
+                    }}
+                  >
+                    {value === 'all'
+                      ? 'All prices'
+                      : value === 'free'
+                        ? 'Recorded no fee'
+                        : 'Fee applies'}
+                  </Action>
+                ))}
               </View>
-              <Button onPress={() => setSheet(null)}>Apply Filters</Button>
-            </ArchitecturePage>
-          </View>
-        ) : null}
+              <Text>
+                Straight-line distance to {referenceLabel}. This is not a
+                walking route.
+              </Text>
+              {feeFilter !== 'all' && partition.unknown.length > 0 ? (
+                <Text>
+                  {partition.unknown.length} loaded records have unknown fees
+                  and are excluded by this filter.
+                </Text>
+              ) : null}
+              {destination ? (
+                <Action
+                  onPress={() => {
+                    setDestination(null)
+                    setQuery('')
+                  }}
+                >
+                  Clear destination
+                </Action>
+              ) : null}
+              <Text selectable>
+                Filters apply to loaded parking records. Load more to inspect
+                additional records.
+              </Text>
+            </View>
+            <Button onPress={() => setSheet(null)}>Apply Filters</Button>
+          </ArchitecturePage>
+        </MotionLayer>
         {sheet === 'profile' ? (
-          <View
+          <MotionView
+            duration={160}
+            distance={0}
+            fromOpacity={0.86}
             style={[
               styles.fullPage,
               { bottom: TAB_BAR_HEIGHT + insets.bottom },
@@ -1163,10 +1185,13 @@ export default function PilotDiscovery({
                 toolsLabel="Map information"
               />
             </ScrollView>
-          </View>
+          </MotionView>
         ) : null}
         {sheet === 'results' ? (
-          <View
+          <MotionView
+            duration={220}
+            distance={4}
+            fromOpacity={0.8}
             testID="pilot-list-page"
             style={[
               styles.fullPage,
@@ -1303,7 +1328,7 @@ export default function PilotDiscovery({
                 <Text style={styles.viewText}>Map</Text>
               </Pressable>
             </View>
-          </View>
+          </MotionView>
         ) : null}
         {sheet === 'search' ? (
           <View style={[styles.fullPage, { bottom: 0 }]}>
@@ -1719,17 +1744,20 @@ export default function PilotDiscovery({
           local.status === 'ready' &&
           saved.items.length === 0 &&
           !showSavedTools ? (
-            <View style={[styles.fullPage, { bottom: 0 }]}>
+            <Animated.View
+              style={[styles.fullPage, { bottom: 0 }, savedReveal]}
+            >
               <EmptySavedPage
                 onExplore={() => setSheet(null)}
                 onTools={() => setShowSavedTools(true)}
               />
-            </View>
+            </Animated.View>
           ) : (
-            <View
+            <Animated.View
               style={[
                 styles.fullPage,
                 { bottom: 0, paddingTop: insets.top + 12 },
+                savedReveal,
               ]}
             >
               <View
@@ -1919,7 +1947,7 @@ export default function PilotDiscovery({
                   </View>
                 )}
               />
-            </View>
+            </Animated.View>
           )
         ) : null}
         {appearanceOpen ? (

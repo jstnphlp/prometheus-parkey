@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native'
 import { AppearanceButton } from '../components/appearance-button'
 import { fonts } from '../theme'
 import { createThemedStyles, useTheme } from '../theme-provider'
+import { MotionView } from './motion'
 import { IconButton } from './ui'
 
 export function DirectionsChoice({
@@ -22,7 +23,11 @@ export function DirectionsChoice({
   const { colors } = useTheme()
   return (
     <>
-      <View style={[styles.header, { paddingTop: top + 6 }]}>
+      <MotionView
+        fromOpacity={0.8}
+        distance={4}
+        style={[styles.header, { paddingTop: top + 6 }]}
+      >
         <IconButton
           icon="back"
           label="Back from directions"
@@ -34,8 +39,10 @@ export function DirectionsChoice({
           Get Direction
         </Text>
         <AppearanceButton />
-      </View>
-      <View
+      </MotionView>
+      <MotionView
+        fromOpacity={0.8}
+        distance={6}
         testID="directions-choice"
         style={[styles.footer, { paddingBottom: bottom + 8 }]}
       >
@@ -72,7 +79,7 @@ export function DirectionsChoice({
         <Text style={styles.note}>
           Google/Waze open externally · Parkey uses in-app guidance
         </Text>
-      </View>
+      </MotionView>
     </>
   )
 }

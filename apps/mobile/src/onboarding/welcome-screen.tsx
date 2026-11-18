@@ -1,13 +1,14 @@
-import { useRouter } from 'expo-router'
-import { Image, StyleSheet, Text, View } from 'react-native'
+import { Animated, Image, StyleSheet, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { useCompletion } from './use-completion'
+import { useWalkthroughMotion } from './walkthrough-motion'
 import { useTheme, createThemedStyles } from '../theme-provider'
 import wordmark from '../../assets/figma/interactive/welcome-wordmark.png'
 import darkWordmark from '../../assets/figma/interactive/welcome-wordmark-dark.png'
 import { BrandButton } from '../components/brand-button'
 import { BrandLogo } from '../components/brand-logo'
+import { revealStyle, useEntranceProgress } from '../discovery/motion'
 import { ScreenContainer } from '../components/screen-container'
 import { radius, typography } from '../theme'
 
@@ -16,7 +17,8 @@ export function WelcomeScreen() {
   const styles = useStyles()
 
   const { finish, busy } = useCompletion('/')
-  const router = useRouter()
+  const { advance } = useWalkthroughMotion(0)
+  const entrance = useEntranceProgress(240)
   const insets = useSafeAreaInsets()
   return (
     <ScreenContainer
@@ -29,9 +31,15 @@ export function WelcomeScreen() {
         },
       ]}
     >
-      <Text accessibilityRole="header" style={styles.heading}>
+      <Animated.Text
+        accessibilityRole="header"
+        style={[
+          styles.heading,
+          revealStyle(entrance, { distance: 0, fromOpacity: 0.75 }),
+        ]}
+      >
         Welcome
-      </Text>
+      </Animated.Text>
       <View style={styles.hero}>
         <View
           accessible
@@ -46,7 +54,18 @@ export function WelcomeScreen() {
             style={styles.wordmark}
           />
         </View>
-        <Text style={styles.tagline}>Designed Around the Driver</Text>
+        <Animated.Text
+          style={[
+            styles.tagline,
+            revealStyle(entrance, {
+              distance: 4,
+              fromOpacity: 0.7,
+              start: 0.57,
+            }),
+          ]}
+        >
+          Designed Around the Driver
+        </Animated.Text>
       </View>
       <BrandButton
         title="Explore parking"
@@ -57,7 +76,7 @@ export function WelcomeScreen() {
       />
       <BrandButton
         title="Get Started"
-        onPress={() => router.push('/onboarding/discover')}
+        onPress={() => advance('/onboarding/discover')}
         style={styles.button}
       />
     </ScreenContainer>

@@ -1,6 +1,6 @@
-import { useEffect } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useFonts } from 'expo-font'
-import { Stack } from 'expo-router'
+import { Stack, usePathname } from 'expo-router'
 import * as NativeSplash from 'expo-splash-screen'
 import { StatusBar } from 'expo-status-bar'
 import { StyleSheet, View } from 'react-native'
@@ -12,7 +12,9 @@ import { initializeTelemetry } from '../discovery/telemetry'
 import { OnboardingProvider, useOnboarding } from '../onboarding/provider'
 import { SplashScreen } from '../onboarding/splash-screen'
 import { StorageRecovery } from '../onboarding/storage-recovery'
-import { useReducedMotion } from '../onboarding/use-reduced-motion'
+import { useReducedMotion } from '../discovery/use-reduced-motion'
+import { walkthroughTransitionDuration } from '../onboarding/walkthrough-motion-state'
+import { WalkthroughMotionProvider } from '../onboarding/walkthrough-motion'
 import { fontSources } from '../theme'
 import { ThemeProvider, useTheme } from '../theme-provider'
 
@@ -26,7 +28,9 @@ export default function RootLayout() {
         <OnboardingProvider>
           <AuthProvider>
             <PopupProvider>
-              <RootNavigator />
+              <WalkthroughMotionProvider>
+                <RootNavigator />
+              </WalkthroughMotionProvider>
             </PopupProvider>
           </AuthProvider>
         </OnboardingProvider>
@@ -38,24 +42,32 @@ export default function RootLayout() {
 function RootNavigator() {
   const theme = useTheme()
   const [fontsLoaded, fontError] = useFonts(fontSources)
-  const { loadState } = useOnboarding()
+  const { completed, loadState } = useOnboarding()
+  const pathname = usePathname()
+  const [contentReady, setContentReady] = useState(false)
+  const splashHidden = useRef(false)
   const reducedMotion = useReducedMotion()
   useEffect(initializeTelemetry, [])
   const onboardingTransition = {
-    animation: reducedMotion ? 'fade' : 'slide_from_right',
+    animation: reducedMotion ? 'none' : 'fade_from_bottom',
+    animationDuration: walkthroughTransitionDuration,
     animationMatchesGesture: true,
   } as const
 
-  function hideSplash() {
-    NativeSplash.setOptions({ fade: !reducedMotion, duration: 200 })
+  useEffect(() => {
+    if (!contentReady || splashHidden.current) return
+    // The index redirect has no content to reveal on a fresh install.
+    if (loadState !== 'error' && pathname === '/' && !completed) return
+    splashHidden.current = true
+    NativeSplash.setOptions({ fade: !reducedMotion, duration: 180 })
     NativeSplash.hide()
-  }
+  }, [completed, contentReady, loadState, pathname, reducedMotion])
 
   if ((!fontsLoaded && !fontError) || loadState === 'loading' || !theme.ready)
     return <SplashScreen />
   if (loadState === 'error')
     return (
-      <View style={styles.screen} onLayout={hideSplash}>
+      <View style={styles.screen} onLayout={() => setContentReady(true)}>
         <StorageRecovery />
       </View>
     )
@@ -63,7 +75,7 @@ function RootNavigator() {
   return (
     <View
       style={[styles.screen, { backgroundColor: theme.tokens.canvas }]}
-      onLayout={hideSplash}
+      onLayout={() => setContentReady(true)}
     >
       <StatusBar style={theme.dark ? 'light' : 'dark'} />
       <Stack
@@ -77,7 +89,7 @@ function RootNavigator() {
         <Stack.Screen
           name="welcome"
           options={{
-            animation: 'fade',
+            animation: 'none',
             contentStyle: { backgroundColor: theme.tokens.canvas },
           }}
         />

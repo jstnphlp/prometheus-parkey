@@ -1,6 +1,5 @@
-import { useRouter } from 'expo-router'
 import {
-  Image,
+  Animated,
   ScrollView,
   StyleSheet,
   Text,
@@ -14,9 +13,12 @@ import navigate from '../../assets/figma/interactive/navigate.png'
 import { useArchitectureInsets } from '../components/architecture-page'
 import { useFormLayout } from '../components/form-layout'
 import { BrandButton } from '../components/brand-button'
+import { revealStyle, useEntranceProgress } from '../discovery/motion'
 import { fonts } from '../theme'
-import { createThemedStyles } from '../theme-provider'
+import { createThemedStyles, useTheme } from '../theme-provider'
 import { useCompletion } from './use-completion'
+import { walkthroughTransitionDuration } from './walkthrough-motion-state'
+import { useWalkthroughMotion } from './walkthrough-motion'
 
 const steps = {
   discover: {
@@ -44,7 +46,7 @@ const steps = {
 
 export function OnboardingScreen({ step }: { step: keyof typeof steps }) {
   const styles = useStyles()
-  const router = useRouter()
+  const { colors } = useTheme()
   const insets = useArchitectureInsets()
   const { width, height } = useWindowDimensions()
   const { space } = useFormLayout()
@@ -57,6 +59,8 @@ export function OnboardingScreen({ step }: { step: keyof typeof steps }) {
     ),
   )
   const page = steps[step]
+  const entrance = useEntranceProgress(walkthroughTransitionDuration)
+  const { advance, progress } = useWalkthroughMotion(page.number)
   const { finish, busy } = useCompletion('/login')
   return (
     <View style={styles.screen}>
@@ -71,13 +75,18 @@ export function OnboardingScreen({ step }: { step: keyof typeof steps }) {
         ]}
       >
         <View style={[styles.artArea, { height: 478 * scale }]}>
-          <Image
+          <Animated.Image
             source={page.image}
             accessibilityLabel={`Illustration only: ${step === 'compare' ? 'example parking details, rates and distances' : step === 'discover' ? 'a parking facility' : 'navigation app choices'}`}
             resizeMode="contain"
             fadeDuration={0}
             style={[
               styles.art,
+              revealStyle(entrance, {
+                distance: 10,
+                fromOpacity: 0.45,
+                end: 0.91,
+              }),
               step === 'discover'
                 ? { width: 458 * scale, height: 344 * scale, top: 94 * scale }
                 : step === 'compare'
@@ -95,16 +104,33 @@ export function OnboardingScreen({ step }: { step: keyof typeof steps }) {
           />
         </View>
         <View style={[styles.text, { paddingTop: space(48) }]}>
-          <Text
+          <Animated.Text
             accessibilityRole="header"
             accessibilityLabel={`Step ${page.number} of 3. ${page.title.replace('\n', ' ')}`}
-            style={styles.title}
+            style={[
+              styles.title,
+              revealStyle(entrance, {
+                distance: 6,
+                start: 0.52,
+                fromOpacity: 0.72,
+              }),
+            ]}
           >
             {page.title}
-          </Text>
-          <Text style={[styles.copy, { marginTop: space(48) }]}>
+          </Animated.Text>
+          <Animated.Text
+            style={[
+              styles.copy,
+              { marginTop: space(48) },
+              revealStyle(entrance, {
+                distance: 6,
+                start: 0.76,
+                fromOpacity: 0.72,
+              }),
+            ]}
+          >
             {page.copy}
-          </Text>
+          </Animated.Text>
           {step === 'compare' ? (
             <Text style={styles.disclosure}>
               Illustration only{' \u00b7 '}example rates and distances
@@ -117,9 +143,27 @@ export function OnboardingScreen({ step }: { step: keyof typeof steps }) {
             style={[styles.progress, { marginBottom: space(32) }]}
           >
             {[1, 2, 3].map((number) => (
-              <View
+              <Animated.View
                 key={number}
-                style={[styles.dot, page.number === number && styles.activeDot]}
+                style={[
+                  styles.dot,
+                  {
+                    width: progress.interpolate({
+                      inputRange: [1, 2, 3],
+                      outputRange: [1, 2, 3].map((stepNumber) =>
+                        stepNumber === number ? 28 : 12,
+                      ),
+                      extrapolate: 'clamp',
+                    }),
+                    backgroundColor: progress.interpolate({
+                      inputRange: [1, 2, 3],
+                      outputRange: [1, 2, 3].map((stepNumber) =>
+                        stepNumber === number ? colors.brand : colors.border,
+                      ),
+                      extrapolate: 'clamp',
+                    }),
+                  },
+                ]}
               />
             ))}
           </View>
@@ -134,9 +178,7 @@ export function OnboardingScreen({ step }: { step: keyof typeof steps }) {
             <BrandButton
               title={page.next ? 'Next' : 'Continue'}
               busy={busy}
-              onPress={() =>
-                page.next ? router.push(page.next) : void finish()
-              }
+              onPress={() => (page.next ? advance(page.next) : void finish())}
               style={styles.next}
             />
           </View>
@@ -181,12 +223,9 @@ const useStyles = createThemedStyles(({ colors }) =>
       marginBottom: 32,
     },
     dot: {
-      width: 12,
       height: 6,
       borderRadius: 3,
-      backgroundColor: colors.border,
     },
-    activeDot: { width: 28, backgroundColor: colors.brand },
     actions: { flexDirection: 'row', gap: 13 },
     skip: { flex: 0.6, minHeight: 58, borderRadius: 17 },
     next: { flex: 1, minHeight: 58, borderRadius: 17 },

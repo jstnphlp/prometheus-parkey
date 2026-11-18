@@ -211,11 +211,6 @@ export function AccountForm({ mode }: { mode: 'register' | 'login' }) {
     <AuthShell
       registering={registering}
       title={registering ? 'Create an Account' : 'Sign in to your\naccount'}
-      subtitle={
-        registering
-          ? 'Start discovering parking with Parkey'
-          : 'Use your email and password to get back to parking.'
-      }
     >
       <>
         <View
@@ -274,9 +269,7 @@ export function AccountForm({ mode }: { mode: 'register' | 'login' }) {
             }}
             autoComplete={registering ? 'new-password' : 'current-password'}
             inputRef={passwordInput}
-            accessibilityHint={
-              registering ? passwordGuidance : 'Your Parkey account password.'
-            }
+            {...(registering ? { accessibilityHint: passwordGuidance } : {})}
             returnKeyType={registering ? 'next' : 'go'}
             submitBehavior="submit"
             editable={!busy}

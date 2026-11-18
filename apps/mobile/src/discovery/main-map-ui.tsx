@@ -346,9 +346,6 @@ export function MapSearchPanel({
         contentContainerStyle={styles.searchContent}
         keyboardShouldPersistTaps="handled"
       >
-        <Text accessibilityRole="header" style={styles.searchHeading}>
-          Find parking around a place
-        </Text>
         {children}
       </ScrollView>
     </MotionView>
@@ -361,14 +358,12 @@ export function MapSearchRow({
   icon = 'pin',
   onPress,
   testID,
-  muted,
 }: {
   label: string
   description?: string
   icon?: MainIconName
   onPress: () => void
   testID?: string
-  muted?: boolean
 }) {
   const styles = useStyles()
   return (
@@ -380,9 +375,7 @@ export function MapSearchRow({
     >
       <MainIcon name={icon} />
       <View style={styles.grow}>
-        <Text style={[styles.searchRowText, muted && styles.searchPlaceholder]}>
-          {label}
-        </Text>
+        <Text style={styles.searchRowText}>{label}</Text>
         {description ? (
           <Text style={styles.legendNotice}>{description}</Text>
         ) : null}
@@ -587,13 +580,6 @@ const useStyles = createThemedStyles(({ colors }) =>
       overflow: 'hidden',
     },
     searchContent: { paddingHorizontal: 17, paddingTop: 16, paddingBottom: 10 },
-    searchHeading: {
-      fontSize: 17,
-      lineHeight: 24,
-      fontFamily: fonts.semibold,
-      color: colors.ink,
-      marginBottom: 10,
-    },
     searchRow: {
       flexDirection: 'row',
       gap: 13,

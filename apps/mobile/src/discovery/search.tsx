@@ -115,6 +115,7 @@ export function DestinationSearch({
 
   function close() {
     cancel()
+    if (layout === 'map') setNotice(false)
     onActive(false)
     input.current?.blur()
     Keyboard.dismiss()
@@ -289,16 +290,9 @@ export function DestinationSearch({
                     onSearchArea?.()
                   }}
                 />
-                <View style={styles.mapRule} />
-                <MapSearchRow
-                  label="Mall, landmark or address"
-                  icon="search"
-                  muted
-                  onPress={() => input.current?.focus()}
-                />
-
                 {history.recents.length ? (
                   <>
+                    <View style={styles.mapRule} />
                     <View style={ui.row}>
                       <Text style={[ui.small, ui.flex]}>Recent searches</Text>
                       <MotionPressable
@@ -358,10 +352,9 @@ export function DestinationSearch({
                     onPress={() => select(entry)}
                   />
                 ))}
-                {hasSearchProvider && (notice || results.length > 0) ? (
+                {hasSearchProvider && notice ? (
                   <Text style={[ui.small, styles.message]}>
-                    Searching shares your text with Parkey and its search
-                    provider. See Help & privacy.
+                    Search queries are sent to Parkey and its search provider.
                   </Text>
                 ) : null}
               </>

@@ -116,7 +116,7 @@ export function AccountScreen() {
 
   if (!user && !guest) {
     return (
-      <AuthShell title="Your account" subtitle="Your Parkey account">
+      <AuthShell title="Your account">
         <View style={styles.recovery}>
           {auth.state.status === 'checking' ? (
             <ActivityIndicator
@@ -197,11 +197,10 @@ export function AccountScreen() {
           <>
             <Text
               accessibilityRole="header"
-              style={[styles.title, styles.signedTitle]}
+              style={[styles.title, styles.sectionTitle]}
             >
               Your account
             </Text>
-            <Text style={styles.subtitle}>Your Parkey account</Text>
             <View style={styles.identity}>
               <View style={styles.avatar}>
                 <MainIcon name="accountUser" />
@@ -224,7 +223,6 @@ export function AccountScreen() {
               <AccountRow
                 icon="personal"
                 title="Personal Info"
-                subtitle="Manage your saved profile"
                 onPress={() =>
                   router.push({
                     pathname: '/settings/[section]',
@@ -256,15 +254,12 @@ export function AccountScreen() {
           </>
         ) : (
           <>
-            <View style={styles.guestIntro}>
-              <Text style={styles.eyebrow}>PARKEY</Text>
-              <Text accessibilityRole="header" style={styles.title}>
-                Let’s get you parked.
-              </Text>
-              <Text style={styles.body}>
-                Sign in to manage your Parkey account.
-              </Text>
-            </View>
+            <Text
+              accessibilityRole="header"
+              style={[styles.title, styles.sectionTitle]}
+            >
+              Account
+            </Text>
             <View style={styles.guestActions}>
               <AccountRow
                 icon="email"
@@ -280,9 +275,6 @@ export function AccountScreen() {
                 }}
                 style={styles.register}
               />
-              <Text style={styles.note}>
-                Complete your profile after registration
-              </Text>
             </View>
             <View style={styles.guestFooter}>
               <MotionPressable
@@ -319,7 +311,7 @@ function AccountRow({
     <MotionPressable
       accessibilityRole="button"
       onPress={onPress}
-      style={[styles.row, !subtitle && styles.emailRow]}
+      style={[styles.row, icon === 'email' && styles.emailRow]}
     >
       <MainIcon name={icon} />
       <View style={styles.rowLabels}>
@@ -359,16 +351,9 @@ const useStyles = createThemedStyles(({ colors }) =>
       lineHeight: 40,
     },
     body: { ...typography.body, color: colors.muted },
-    signedTitle: { marginTop: 34 },
-    subtitle: {
-      fontFamily: fonts.regular,
-      fontSize: 15,
-      lineHeight: 22,
-      color: colors.muted,
-      marginTop: 10,
-    },
+    sectionTitle: { marginTop: 34 },
     identity: {
-      marginTop: 48,
+      marginTop: 24,
       backgroundColor: colors.surface,
       borderWidth: 1,
       borderColor: colors.border,
@@ -444,24 +429,8 @@ const useStyles = createThemedStyles(({ colors }) =>
       borderTopWidth: 1,
       borderColor: colors.border,
     },
-    guestIntro: { marginTop: 60, gap: 32, marginHorizontal: 5 },
-    eyebrow: {
-      fontFamily: fonts.semibold,
-      fontSize: 15,
-      lineHeight: 21,
-      color: colors.link,
-      marginBottom: 4,
-    },
-    guestActions: { marginTop: 106, gap: 17 },
+    guestActions: { marginTop: 24, gap: 17 },
     register: { minHeight: 67, borderRadius: 28 },
-    note: {
-      fontFamily: fonts.regular,
-      color: colors.muted,
-      fontSize: 13,
-      lineHeight: 19,
-      textAlign: 'center',
-      marginTop: 9,
-    },
     guestFooter: { marginTop: 'auto', paddingTop: 36 },
     continue: {
       minHeight: 72,

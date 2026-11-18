@@ -47,7 +47,9 @@ test('discovery uses a floating search, an icon-only legend, and a guest drawer 
   await menuButton.click()
   const drawer = page.getByTestId('main-navigation-drawer')
   await expect(drawer).toBeVisible()
-  await expect(drawer.getByText('Explore as a guest')).toBeVisible()
+  await expect(
+    drawer.getByRole('button', { name: 'Sign In', exact: true }),
+  ).toHaveCount(1)
   await drawer.getByRole('button', { name: 'Sign In', exact: true }).click()
   await expect(
     page.getByRole('button', { name: 'Sign in with email', exact: true }),

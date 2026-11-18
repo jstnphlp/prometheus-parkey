@@ -184,10 +184,6 @@ export function AppearanceChoices() {
                 </View>
                 <View style={ui.flex}>
                   <Text style={styles.optionTitle}>{title}</Text>
-                  <Text style={styles.optionSubtitle}>
-                    {preview.dark ? 'Dark' : 'White'} background · magenta
-                    actions
-                  </Text>
                 </View>
                 <Icon
                   name={selected ? 'check' : 'chevronRight'}
@@ -214,27 +210,13 @@ export function AppearanceChoices() {
 }
 
 export function AppearanceScreen({ onBack }: { onBack?: () => void }) {
-  const { error, saving } = useTheme()
   const router = useRouter()
-  const styles = useStyles()
   return (
     <ArchitecturePage
       title="Appearance"
-      subtitle="Select your preferred visual theme. You can change this any time."
       onBack={
         onBack ??
         (() => (router.canGoBack() ? router.back() : router.replace('/')))
-      }
-      footer={
-        <View style={styles.appearanceNote}>
-          <Text style={styles.optionSubtitle}>
-            {saving
-              ? 'Saving your appearance...'
-              : error
-                ? 'Appearance is active for this session. Select it again to retry saving on this device.'
-                : 'Your appearance is saved on this device. You can change it anytime.'}
-          </Text>
-        </View>
       }
     >
       <AppearanceChoices />
@@ -435,21 +417,6 @@ const useStyles = createThemedStyles(({ colors }) =>
       fontSize: 18,
       lineHeight: 24,
       color: colors.ink,
-    },
-    optionSubtitle: {
-      fontFamily: fonts.medium,
-      fontSize: 12,
-      lineHeight: 18,
-      color: colors.muted,
-    },
-    appearanceNote: {
-      minHeight: 75,
-      borderRadius: 13,
-      backgroundColor: colors.surface,
-      borderWidth: 1,
-      borderColor: colors.border,
-      justifyContent: 'center',
-      padding: 18,
     },
     preview: {
       width: 84,

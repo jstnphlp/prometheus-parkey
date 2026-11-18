@@ -42,7 +42,7 @@ export function MainDrawer({
   const user = state.status === 'signed-in' ? state.user : null
   const name = user
     ? profileFromUser(user).fullName.trim() || 'Your account'
-    : 'Explore as a guest'
+    : 'Sign In'
   const menu = [
     ['bookmark', 'Saved parking', onSaved],
     ['edit', 'Report parking', onReport],
@@ -104,7 +104,6 @@ export function MainDrawer({
               <MainIcon name="close" />
             </MotionPressable>
           </View>
-          <Text style={styles.eyebrow}>MENU</Text>
           {menu.map(([icon, label, action], index) => (
             <MotionPressable
               key={label}
@@ -137,23 +136,25 @@ export function MainDrawer({
               <Text style={styles.accountLabel} numberOfLines={2}>
                 {name}
               </Text>
-              <Text style={styles.accountSubtitle}>
-                {user ? user.email : 'Sign in only when you need an account'}
-              </Text>
+              {user?.email ? (
+                <Text style={styles.accountSubtitle}>{user.email}</Text>
+              ) : null}
             </View>
             <MainIcon name="chevron" color={colors.muted} />
           </MotionPressable>
-          <MotionPressable
-            accessibilityRole="button"
-            onPress={() => account(Boolean(user))}
-            style={[styles.accountAction, styles.divider]}
-          >
-            <MainIcon name={user ? 'logout' : 'login'} />
-            <Text style={[styles.accountLabel, styles.accountLabels]}>
-              {user ? 'Log Out' : 'Sign In'}
-            </Text>
-            <MainIcon name="chevron" color={colors.muted} />
-          </MotionPressable>
+          {user ? (
+            <MotionPressable
+              accessibilityRole="button"
+              onPress={() => account(true)}
+              style={[styles.accountAction, styles.divider]}
+            >
+              <MainIcon name="logout" />
+              <Text style={[styles.accountLabel, styles.accountLabels]}>
+                Log Out
+              </Text>
+              <MainIcon name="chevron" color={colors.muted} />
+            </MotionPressable>
+          ) : null}
         </View>
       </MotionLayer>
     </>
@@ -181,7 +182,7 @@ const useStyles = createThemedStyles(({ colors }) =>
       alignItems: 'center',
       justifyContent: 'space-between',
       gap: 12,
-      marginBottom: 34,
+      marginBottom: 20,
       marginRight: -10,
     },
     title: {
@@ -198,13 +199,6 @@ const useStyles = createThemedStyles(({ colors }) =>
       backgroundColor: colors.selected,
       alignItems: 'center',
       justifyContent: 'center',
-    },
-    eyebrow: {
-      fontFamily: fonts.semibold,
-      fontSize: 12,
-      lineHeight: 16,
-      color: colors.muted,
-      marginBottom: 10,
     },
     menuRow: {
       minHeight: 79,

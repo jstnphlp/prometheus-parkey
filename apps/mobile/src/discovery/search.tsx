@@ -12,17 +12,25 @@ import {
 } from 'react-native'
 import type { Coordinate } from '@parkey/shared-types'
 
+import { useTheme, createThemedStyles } from '../theme-provider'
 import { config } from './config'
-import { searchDestinations } from './data'
+import {
+  searchPlaces,
+  SearchRateLimit,
+  SEARCH_DEBOUNCE_MS,
+} from './place-search'
+import { useConnectivity } from './use-connectivity'
 import type { Destination } from './data'
 import { FigmaAsset } from './figma-assets'
 import { MotionPressable } from './motion'
 import { fonts } from './typography'
 import { StateCard } from './state-card'
-import { colors, IconButton, UndoToast, ui } from './ui'
+import { IconButton, UndoToast, useUI } from './ui'
 import { useSearchHistory } from './use-search-history'
 
-const hasSearchProvider = Boolean(config.geocoder.trim())
+const hasSearchProvider = Boolean(
+  config.placeSearchEnabled || config.geocoder.trim(),
+)
 
 export function DestinationSearch({
   query,
@@ -35,9 +43,7 @@ export function DestinationSearch({
   onSaved,
   layout = 'overlay',
   fillSheet = false,
-  placeholder = layout === 'sheet'
-    ? 'Search for an address'
-    : 'Where do you need parking?',
+  placeholder = 'Search parking or landmark',
 }: {
   query: string
   onQuery: (query: string) => void
@@ -47,11 +53,18 @@ export function DestinationSearch({
   onLocate: () => void
   onActive: (active: boolean) => void
   onSaved: () => void
-  layout?: 'overlay' | 'sheet'
+  layout?: 'overlay' | 'sheet' | 'page'
   fillSheet?: boolean
   placeholder?: string
 }) {
+  const { colors } = useTheme()
+  const ui = useUI()
+  const styles = useStyles()
+
   const { height } = useWindowDimensions()
+  const { offline } = useConnectivity()
+  const [retryAt, setRetryAt] = useState(0)
+  const [limitSeconds, setLimitSeconds] = useState(60)
   const compact = height < 700
   const [focused, setFocused] = useState(false)
   const [cleared, setCleared] = useState<Destination[] | null>(null)
@@ -62,7 +75,13 @@ export function DestinationSearch({
   }, [cleared])
   const [results, setResults] = useState<Destination[]>([])
   const [status, setStatus] = useState<
-    'idle' | 'loading' | 'empty' | 'error' | 'unavailable'
+    | 'idle'
+    | 'loading'
+    | 'empty'
+    | 'error'
+    | 'unavailable'
+    | 'offline'
+    | 'limited'
   >('idle')
   const [notice, setNotice] = useState(false)
   const [cardTop, setCardTop] = useState(10)
@@ -154,6 +173,16 @@ export function DestinationSearch({
   const search = useCallback(async () => {
     cancel()
     if (!active || query.trim().length < 3) return
+    if (offline) {
+      setResults([])
+      setStatus('offline')
+      return
+    }
+    if (Date.now() < retryAt) {
+      setResults([])
+      setStatus('limited')
+      return
+    }
     if (!hasSearchProvider) {
       setResults([])
       setNotice(false)
@@ -169,25 +198,35 @@ export function DestinationSearch({
       if (firstSearch && request.current === controller) setNotice(true)
     })
     try {
-      const found = await searchDestinations(
-        config.geocoder,
+      const found = await searchPlaces(
+        {
+          enabled: config.placeSearchEnabled,
+          backend: config.supabaseUrl,
+          publicKey: config.supabaseKey,
+          legacyEndpoint: config.geocoder,
+        },
         query,
         center,
         controller.signal,
       )
       if (request.current !== controller || controller.signal.aborted) return
-      setResults(found.slice(0, 6))
-      setStatus(found.length ? 'idle' : 'empty')
-    } catch {
-      if (request.current === controller) setStatus('error')
+      setResults(found.results.slice(0, 6))
+      setStatus(found.results.length ? 'idle' : 'empty')
+    } catch (error) {
+      if (request.current !== controller) return
+      if (error instanceof SearchRateLimit) {
+        setRetryAt(Date.now() + error.retryAfter * 1000)
+        setLimitSeconds(error.retryAfter)
+        setStatus('limited')
+      } else setStatus('error')
     } finally {
       clearTimeout(timeout)
     }
-  }, [active, query, center, noteSearch])
+  }, [active, query, center, noteSearch, offline, retryAt])
 
   useEffect(() => {
     if (active && query.trim().length >= 3)
-      debounce.current = setTimeout(() => void search(), 300)
+      debounce.current = setTimeout(() => void search(), SEARCH_DEBOUNCE_MS)
     return cancel
   }, [active, query, center, search])
 
@@ -196,7 +235,7 @@ export function DestinationSearch({
     input.current?.blur()
     Keyboard.dismiss()
     onSelect(destination)
-    void history.remember(destination)
+    if (!destination.attribution) void history.remember(destination)
   }
 
   return (
@@ -220,6 +259,7 @@ export function DestinationSearch({
           : {
               maxHeight: Math.max(0, (visibleBottom ?? height) - cardTop - 64),
             },
+        layout === 'page' && styles.pageContainer,
         layout === 'overlay' && ui.shadow,
         !active &&
           layout === 'sheet' && { padding: 0, backgroundColor: 'transparent' },
@@ -236,7 +276,7 @@ export function DestinationSearch({
             accessibilityLabel="Open saved places"
             style={({ pressed }) => [styles.savedAction, pressed && ui.pressed]}
           >
-            <Text style={ui.small}>Makati</Text>
+            <Text style={ui.small}>Saved</Text>
           </MotionPressable>
         </View>
       ) : null}
@@ -245,9 +285,10 @@ export function DestinationSearch({
           styles.bar,
           layout === 'sheet' && styles.sheetBar,
           focused && styles.focusedBar,
+          layout === 'page' && styles.pageBar,
         ]}
       >
-        {active && fillSheet ? (
+        {active && fillSheet && layout !== 'page' ? (
           <IconButton
             icon="back"
             label="Close destination search"
@@ -284,8 +325,13 @@ export function DestinationSearch({
           onSubmitEditing={() => void search()}
           submitBehavior="submit"
           returnKeyType="search"
-          style={[styles.input, layout === 'sheet' && styles.sheetInput]}
+          style={[
+            styles.input,
+            layout === 'sheet' && styles.sheetInput,
+            layout === 'page' && styles.pageInput,
+          ]}
         />
+
         {query ? (
           <IconButton
             icon="close"
@@ -294,6 +340,13 @@ export function DestinationSearch({
           />
         ) : null}
       </View>
+      {active && layout === 'page' ? (
+        <Text style={styles.suggestionsLabel}>
+          {query.trim().length >= 3
+            ? 'SUGGESTED DESTINATIONS'
+            : 'RECENT DESTINATIONS'}
+        </Text>
+      ) : null}
       {active ? (
         <ScrollView
           testID="destination-results"
@@ -303,6 +356,7 @@ export function DestinationSearch({
             ui.sheetScroll,
             styles.results,
             fillSheet && { flex: 1, maxHeight: undefined },
+            layout === 'page' && { maxHeight: undefined, marginTop: 0 },
           ]}
           contentContainerStyle={styles.resultsContent}
         >
@@ -388,6 +442,22 @@ export function DestinationSearch({
                   onAction={close}
                 />
               ) : null}
+              {status === 'offline' ? (
+                <StateCard
+                  title="You are offline"
+                  body="Reconnect to search places. You can still browse the map."
+                  action="Back to map"
+                  onAction={close}
+                />
+              ) : null}
+              {status === 'limited' ? (
+                <StateCard
+                  title="Search is busy"
+                  body={`Please wait ${limitSeconds} seconds before trying again.`}
+                  action="Retry search"
+                  onAction={() => void search()}
+                />
+              ) : null}
               {status === 'error' ? (
                 <StateCard
                   title="Search couldn’t connect"
@@ -416,10 +486,12 @@ export function DestinationSearch({
                   onPress={() => select(destination)}
                 />
               ))}
-              {hasSearchProvider && (notice || layout === 'sheet') ? (
+              {hasSearchProvider &&
+              (notice || layout === 'sheet' || layout === 'page') ? (
                 <Text style={[ui.small, styles.message]}>
-                  Searching shares your search text and map area with the search
-                  service. Details in You → Privacy.
+                  Searching shares your text with Parkey and its search
+                  provider. Map-area bias is sent only when using the legacy
+                  provider. Details in You → Privacy.
                 </Text>
               ) : null}
             </>
@@ -442,6 +514,9 @@ function DestinationRow({
   recent?: boolean
   onPress: () => void
 }) {
+  const ui = useUI()
+  const styles = useStyles()
+
   return (
     <MotionPressable
       accessibilityRole="button"
@@ -465,112 +540,152 @@ function DestinationRow({
   )
 }
 
-const styles = StyleSheet.create({
-  searchButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: colors.brand,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 10,
-  },
-  container: {
-    borderRadius: 32,
-    backgroundColor: colors.surface,
-    overflow: 'hidden',
-    padding: 16,
-  },
-  compactContainer: { padding: 12 },
-  sheetContainer: {
-    paddingTop: 0,
-    paddingBottom: 12,
-    borderRadius: 0,
-    flexShrink: 1,
-    minHeight: 0,
-  },
-  sheetBar: {
-    minHeight: 52,
-    borderRadius: 999,
-    backgroundColor: colors.soft,
-    borderColor: 'transparent',
-  },
-  sheetInput: { fontSize: 15, lineHeight: 22, paddingVertical: 12 },
-  compactHeader: { paddingBottom: 8 },
-  compactBrand: { fontSize: 26, lineHeight: 30 },
-  header: {
-    flexShrink: 0,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: 12,
-    paddingHorizontal: 4,
-    paddingBottom: 12,
-  },
-  bar: {
-    flexShrink: 0,
-    minHeight: 52,
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingLeft: 14,
-    paddingRight: 2,
-    gap: 12,
-    borderRadius: 28,
-    borderWidth: 2,
-    borderColor: 'transparent',
-    backgroundColor: colors.soft,
-  },
-  focusedBar: { borderColor: colors.accent },
-  brand: {
-    fontFamily: fonts.black,
-    fontSize: 32,
-    lineHeight: 36,
-    letterSpacing: -1,
-    color: colors.brand,
-  },
-  savedAction: {
-    minHeight: 44,
-    backgroundColor: colors.soft,
-    justifyContent: 'center',
-    paddingHorizontal: 12,
-    borderRadius: 24,
-  },
-  input: {
-    fontFamily: fonts.regular,
-    flex: 1,
-    minWidth: 0,
-    paddingVertical: 14,
-    fontSize: 17,
-    lineHeight: 24,
-    color: colors.ink,
-  },
-  results: { flexShrink: 1, minHeight: 0, maxHeight: 360, marginTop: 8 },
-  resultsContent: { paddingBottom: 4 },
-  result: {
-    minHeight: 64,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    paddingVertical: 12,
-  },
-  resultName: { ...ui.heading, fontFamily: fonts.bold },
-  resultIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: colors.selected,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  locationBadge: { backgroundColor: colors.positiveSurface },
-  clearAction: {
-    minHeight: 48,
-    justifyContent: 'center',
-    paddingHorizontal: 8,
-  },
-  message: { paddingVertical: 12 },
-  skeleton: { backgroundColor: colors.border, borderRadius: 8 },
-  skeletonText: { gap: 8 },
-  skeletonName: { width: '65%', height: 16 },
-  skeletonArea: { width: '90%', height: 12 },
-})
+const useStyles = createThemedStyles(({ colors }) =>
+  StyleSheet.create({
+    pageContainer: {
+      padding: 0,
+      backgroundColor: colors.canvas,
+      borderRadius: 0,
+      maxHeight: undefined,
+    },
+    pageBar: {
+      minHeight: 63,
+      borderRadius: 14,
+      borderWidth: 1,
+      borderColor: colors.brand,
+      paddingHorizontal: 20,
+      backgroundColor: colors.surface,
+    },
+    pageInput: {
+      fontFamily: fonts.semibold,
+      fontSize: 16,
+      lineHeight: 24,
+      paddingVertical: 16,
+    },
+    suggestionsLabel: {
+      fontFamily: fonts.semibold,
+      fontSize: 14,
+      lineHeight: 20,
+      color: colors.muted,
+      marginTop: 40,
+      marginBottom: 20,
+    },
+    searchButton: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      backgroundColor: colors.brand,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginRight: 10,
+    },
+    container: {
+      borderRadius: 32,
+      backgroundColor: colors.surface,
+      overflow: 'hidden',
+      padding: 16,
+    },
+    compactContainer: { padding: 12 },
+    sheetContainer: {
+      paddingTop: 0,
+      paddingBottom: 12,
+      borderRadius: 0,
+      flexShrink: 1,
+      minHeight: 0,
+    },
+    sheetBar: {
+      minHeight: 52,
+      borderRadius: 16,
+      backgroundColor: colors.soft,
+      borderColor: colors.border,
+    },
+    sheetInput: { fontSize: 15, lineHeight: 22, paddingVertical: 12 },
+    compactHeader: { paddingBottom: 8 },
+    compactBrand: { fontSize: 26, lineHeight: 30 },
+    header: {
+      flexShrink: 0,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      gap: 12,
+      paddingHorizontal: 4,
+      paddingBottom: 12,
+    },
+    bar: {
+      flexShrink: 0,
+      minHeight: 52,
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingLeft: 14,
+      paddingRight: 2,
+      gap: 12,
+      borderRadius: 28,
+      borderWidth: 2,
+      borderColor: 'transparent',
+      backgroundColor: colors.soft,
+    },
+    focusedBar: { borderColor: colors.accent },
+    brand: {
+      fontFamily: fonts.black,
+      fontSize: 32,
+      lineHeight: 36,
+      letterSpacing: -1,
+      color: colors.brand,
+    },
+    savedAction: {
+      minHeight: 44,
+      backgroundColor: colors.soft,
+      justifyContent: 'center',
+      paddingHorizontal: 12,
+      borderRadius: 24,
+    },
+    input: {
+      fontFamily: fonts.regular,
+      flex: 1,
+      minWidth: 0,
+      paddingVertical: 14,
+      fontSize: 17,
+      lineHeight: 24,
+      color: colors.ink,
+    },
+    results: { flexShrink: 1, minHeight: 0, maxHeight: 360, marginTop: 8 },
+    resultsContent: { paddingBottom: 4 },
+    result: {
+      minHeight: 84,
+      borderWidth: 1,
+      borderColor: colors.border,
+      borderRadius: 14,
+      paddingHorizontal: 16,
+      marginBottom: 15,
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 12,
+      paddingVertical: 12,
+    },
+    resultName: {
+      fontFamily: fonts.semibold,
+      fontSize: 18,
+      lineHeight: 22,
+      color: colors.ink,
+    },
+    resultIcon: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      backgroundColor: colors.selected,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    locationBadge: { backgroundColor: colors.positiveSurface },
+    clearAction: {
+      minHeight: 48,
+      justifyContent: 'center',
+      paddingHorizontal: 8,
+    },
+    message: { paddingVertical: 12 },
+    skeleton: { backgroundColor: colors.border, borderRadius: 8 },
+    skeletonText: { gap: 8 },
+    skeletonName: { width: '65%', height: 16 },
+    skeletonArea: { width: '90%', height: 12 },
+  }),
+)

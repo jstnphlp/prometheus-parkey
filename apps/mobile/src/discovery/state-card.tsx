@@ -1,8 +1,9 @@
 import { StyleSheet, Text, View } from 'react-native'
 
+import { createThemedStyles } from '../theme-provider'
 import { FigmaAsset } from './figma-assets'
 import type { FigmaAssetName } from './figma-assets'
-import { Button, colors, ui } from './ui'
+import { Button, useUI } from './ui'
 
 export function StateCard({
   icon = 'info-brand',
@@ -17,6 +18,9 @@ export function StateCard({
   action: string
   onAction: () => void
 }) {
+  const ui = useUI()
+  const styles = useStyles()
+
   return (
     <View style={styles.card}>
       <View style={styles.message} accessibilityLiveRegion="polite">
@@ -35,15 +39,17 @@ export function StateCard({
   )
 }
 
-const styles = StyleSheet.create({
-  card: { gap: 12, width: '100%' },
-  message: { flexDirection: 'row', alignItems: 'flex-start', gap: 12 },
-  badge: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.selected,
-  },
-})
+const useStyles = createThemedStyles(({ colors }) =>
+  StyleSheet.create({
+    card: { gap: 12, width: '100%' },
+    message: { flexDirection: 'row', alignItems: 'flex-start', gap: 12 },
+    badge: {
+      width: 44,
+      height: 44,
+      borderRadius: 22,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: colors.selected,
+    },
+  }),
+)

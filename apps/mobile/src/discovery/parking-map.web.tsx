@@ -4,18 +4,16 @@ import type { GeoJSONSource } from 'maplibre-gl'
 import { useEffect, useEffectEvent, useMemo, useRef, useState } from 'react'
 import 'maplibre-gl/dist/maplibre-gl.css'
 
-import selectedSpot from '../../assets/figma/playful/mascot.png'
-import freePin from '../../assets/figma/playful/pin-free.png'
-import paidPin from '../../assets/figma/playful/pin-paid.png'
-import unknownPin from '../../assets/figma/playful/pin-unknown.png'
+import { useTheme } from '../theme-provider'
+import parkingMarker from '../../assets/figma/interactive/parking-marker.png'
+import selectedSpot from '../../assets/figma/interactive/parking-marker-selected.png'
 import navUp from '../../assets/figma/playful/nav-up.png'
-
+import { placeFromFeature, placeLayer } from './places'
 import { config } from './config'
 import { mapTextFont } from './map-font'
 import { routeBearing, splitRoute } from './drive-math'
 import { draftGeoJSON, parkingMapSources } from './map-data'
 import type { ParkingMapProps } from './map-types'
-import { mapColors, colors } from './palette'
 import {
   parkingLabelLayout,
   parkingLabelPaint,
@@ -25,8 +23,15 @@ import { routeBounds } from './routing'
 import { useReducedMotion } from './use-reduced-motion'
 
 export default function ParkingMap(props: ParkingMapProps) {
+  const theme = useTheme()
+  const initialTheme = useRef(theme)
+
   const container = useRef<HTMLDivElement>(null)
   const map = useRef<Map | null>(null)
+  useEffect(() => {
+    if (container.current)
+      container.current.inert = props.accessibilityHidden ?? false
+  }, [props.accessibilityHidden])
   const previousTarget = useRef(props.target)
   const focusUntil = useRef(0)
   const [initialCamera] = useState(() => ({
@@ -102,7 +107,23 @@ export default function ParkingMap(props: ParkingMapProps) {
       }
       const id: unknown = feature?.properties.id
       if (!props.drawing && typeof id === 'string') props.onSelect(id)
-      else props.onMapPress([event.lngLat.lng, event.lngLat.lat])
+      else {
+        const places =
+          !props.drawing &&
+          props.onPlaceSelect &&
+          map.current?.getLayer(placeLayer.id)
+            ? map.current.queryRenderedFeatures(
+                [
+                  [event.point.x - 10, event.point.y - 10],
+                  [event.point.x + 10, event.point.y + 10],
+                ],
+                { layers: [placeLayer.id] },
+              )
+            : []
+        const place = places.map(placeFromFeature).find((item) => item !== null)
+        if (place) props.onPlaceSelect?.(place)
+        else props.onMapPress([event.lngLat.lng, event.lngLat.lat])
+      }
     },
   )
   const panned = useEffectEvent(() => {
@@ -132,6 +153,7 @@ export default function ParkingMap(props: ParkingMapProps) {
   })
 
   useEffect(() => {
+    const { colors, mapColors } = initialTheme.current
     if (!container.current) return
     setWorkerUrl('/maplibre/maplibre-gl-worker.mjs')
     status('loading')
@@ -154,11 +176,8 @@ export default function ParkingMap(props: ParkingMapProps) {
     instance.jumpTo(initialCamera)
     map.current = instance
     const markerAssets = new globalThis.Map<string, number>([
-      ['parking-pin', selectedSpot],
+      ['parking-pin', parkingMarker],
       ['parking-pin-selected', selectedSpot],
-      ['pin-free', freePin],
-      ['pin-paid', paidPin],
-      ['pin-unknown', unknownPin],
       ['nav-up', navUp],
     ])
     // MapLibre awaits this resolver before treating an image as missing.
@@ -175,6 +194,7 @@ export default function ParkingMap(props: ParkingMapProps) {
       }
     })
     instance.on('load', () => {
+      if (instance.getSource(placeLayer.source)) instance.addLayer(placeLayer)
       instance.addSource('route', {
         type: 'geojson',
         data: { type: 'FeatureCollection', features: [] },
@@ -335,7 +355,7 @@ export default function ParkingMap(props: ParkingMapProps) {
         type: 'symbol',
         source: 'selected-facility',
         layout: parkingLabelLayout(),
-        paint: parkingLabelPaint,
+        paint: parkingLabelPaint(colors),
       })
       for (const [id, color, radius] of [
         ['user', mapColors.user, 10],
@@ -576,6 +596,29 @@ export default function ParkingMap(props: ParkingMapProps) {
           : { type: 'FeatureCollection', features: [] },
       )
   }, [loaded, props.parkedLocation])
+
+  useEffect(() => {
+    const instance = map.current
+    if (!loaded || !instance) return
+    const { colors, mapColors } = theme
+    for (const id of ['cluster-shadow', 'clusters'])
+      if (instance.getLayer(id))
+        instance.setPaintProperty(id, 'circle-color', colors.brand)
+    if (instance.getLayer('selected-name')) {
+      instance.setPaintProperty('selected-name', 'text-color', colors.ink)
+      instance.setPaintProperty(
+        'selected-name',
+        'text-halo-color',
+        colors.surface,
+      )
+    }
+    if (instance.getLayer('parked'))
+      instance.setPaintProperty('parked', 'circle-color', mapColors.parked)
+    if (instance.getLayer('draft-line'))
+      instance.setPaintProperty('draft-line', 'line-color', mapColors.draft)
+    if (instance.getLayer('draft-points'))
+      instance.setPaintProperty('draft-points', 'circle-color', mapColors.draft)
+  }, [loaded, theme])
 
   return (
     <div

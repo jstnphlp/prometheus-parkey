@@ -1,0 +1,93 @@
+{
+  "scope": "Optional native Google and Facebook Supabase PKCE OAuth",
+  "hostedSettings": {
+    "observedAt": "2026-11-14",
+    "source": "read-only public /auth/v1/settings",
+    "googleEnabled": true,
+    "facebookEnabled": true,
+    "emailConfirmationRequired": true,
+    "nativeRedirect": "parkey://auth/oauth",
+    "redirectAllowlistEvidence": "owner reports Saved; dashboard CDP unavailable for independent reread"
+  },
+  "secretHandling": "provider credentials entered dashboard-to-dashboard by owner; no client secrets in mobile bundle",
+  "buildFlags": {
+    "checkedInDefaults": false,
+    "internalTestGoogle": true,
+    "internalTestFacebook": true,
+    "publicEnablementApproved": false
+  },
+  "checks": {
+    "authTestsPassed": 56,
+    "authTestsFailed": 0,
+    "oauthTestsPassed": 12,
+    "mobileTypecheck": "pass",
+    "workspaceLint": "pass",
+    "workspaceTypecheck": "pass",
+    "workspaceFormatCheck": "pass; final changed-source formatting also checked",
+    "workspaceWebBuild": "pass",
+    "nativePrebuild": "pass",
+    "nativeReleaseBuild": "pass; 1m40s final rebuild",
+    "apkV2Signature": "verified",
+    "readOnlyReview": "requesting-code-review skill; slot cleanup/binding finding resolved; no remaining P1/P2"
+  },
+  "audit": {
+    "moderateOrHigher": 0,
+    "low": 1,
+    "module": "deepmerge",
+    "advisory": "https://github.com/advisories/GHSA-gcqx-w48m-w2h4"
+  },
+  "native": {
+    "device": "Parkey API35 emulator-5554",
+    "standardDp": "360x800",
+    "smallDp": "320x640",
+    "smallFontScale": 1.5,
+    "loginAndRegisterSocialControlsReachable": true,
+    "displayAndFontRestored": true,
+    "typing": "Gboard restored",
+    "google": "real accounts.google.com credential page observed; no credentials entered by agent",
+    "facebook": "real m.facebook.com credential page observed; no credentials entered by agent",
+    "googleBackCancellation": "returns to Login without error popup",
+    "browserFirstRun": "completed Chrome setup outside auth session without adding an account",
+    "successfulConsentAndReturn": "owner chose physical-phone test; acceptance pending",
+    "ios": "not available",
+    "physicalDevice": "not tested"
+  },
+  "security": {
+    "pkce": "S256; SDK flowId selects exact secure verifier slot",
+    "flowExpiryMinutes": 15,
+    "cancelDeletesIndexedProof": true,
+    "recoveryProofRejectedBeforeExchange": true,
+    "freshUserCheckRequired": true,
+    "passwordPersistence": false,
+    "defaultSessionPersistence": "memory; Login Remember me opts into SecureStore",
+    "guestDiscoveryUnchanged": true,
+    "newMigrationsOrPolicies": false
+  },
+  "artifact": {
+    "path": "output/ncr/parkey-phase3-oauth-test.apk",
+    "alias": "output/ncr/parkey-phase3-test.apk",
+    "previousBuild": "output/ncr/parkey-phase3-auto-confirmation.apk",
+    "bytes": 114876522,
+    "sha256": "63bcc378c3b0a508a4f2dda9dbb89a2526cccd0d07771e0a0f54e2c790742694",
+    "signing": "local test key; not a store release"
+  },
+  "limitations": [
+    "successful real provider consent/native return pending",
+    "Google/Meta public eligibility and required policy/deletion/branding review not established",
+    "provider browser prompt currently identifies Supabase project domain",
+    "provider settings unavailable/offline hides buttons until auth runtime is reinitialized",
+    "no iOS/physical-provider test",
+    "warm duplicate callback serialization requires real callback acceptance evidence"
+  ],
+  "screenshots": [
+    "android-login-before-oauth.png",
+    "android-login-oauth.png",
+    "compare-login-oauth.png",
+    "android-google-provider-prompt.png",
+    "android-facebook-provider-prompt.png",
+    "android-login-oauth-small-large-text-top.png",
+    "android-login-oauth-small-large-text-controls.png",
+    "android-register-oauth-small-large-text-top.png",
+    "android-register-oauth-small-large-text-controls.png"
+  ]
+}

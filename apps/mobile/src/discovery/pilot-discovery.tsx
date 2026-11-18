@@ -6,7 +6,7 @@ import type {
   PilotDestination,
   PilotParking,
 } from '@parkey/shared-types'
-import { Stack } from 'expo-router'
+import { Stack, useRouter } from 'expo-router'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   ActivityIndicator,
@@ -14,21 +14,42 @@ import {
   BackHandler,
   FlatList,
   Linking,
+  Modal,
   Platform,
   Pressable,
   ScrollView,
   StyleSheet,
-  Text,
+  Text as NativeText,
   TextInput,
+  useWindowDimensions,
   View,
 } from 'react-native'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import {
+  ArchitecturePage,
+  useArchitectureInsets,
+} from '../components/architecture-page'
+import { AccountMenu } from '../settings/account-menu'
+import type { TextProps } from 'react-native'
 
+import { AppearanceButton } from '../components/appearance-button'
+import { AppearanceNavigation } from '../components/appearance-navigation'
+import { AppearanceScreen } from '../settings/settings-screen'
+import { SettingsLinks } from '../settings/settings-screen'
+import { useTheme, createThemedStyles } from '../theme-provider'
 import type { Viewport } from './model'
-import { BottomNavigation } from './bottom-navigation'
+import { BottomNavigation, TAB_BAR_HEIGHT } from './bottom-navigation'
+import {
+  DiscoveryHeader,
+  DiscoveryMapActions,
+  DiscoveryLegend,
+  ParkingPreviewCard,
+  SEARCH_HEADER_HEIGHT,
+  MAP_LEGEND_HEIGHT,
+} from './architecture-discovery'
+import { fonts as architectureFonts } from '../theme'
 import { detailDistance } from './parking-detail-data'
-import { ParkingGallery } from './parking-photos'
-import { parkingPhotos, parkingPhotoIdentityKey } from './photos'
+import { EmptySavedPage } from './empty-pages'
+import { PilotParkingDetails } from './pilot-parking-details'
 import {
   partitionPilotParking,
   rankPilotParking,
@@ -43,7 +64,6 @@ import { publicPilotCache } from './pilot-cache-storage'
 import { PUBLIC_PILOT_CACHE_TTL_MS } from './pilot-cache'
 import { samePilotRecords, uniquePilotRecords } from './pilot-performance'
 import NcrMap from './ncr-map'
-import { colors } from './palette'
 import {
   createPilotRequestGate,
   fetchPilotPage,
@@ -63,8 +83,15 @@ import {
   pilotConfig,
   pilotCities,
 } from './pilot-config'
+import { Button, IconButton, useUI } from './ui'
 import { ModalSheet } from './sheets'
+import { usePilotPanels } from './use-pilot-panels'
 import { useLocation } from './use-location'
+
+function Text({ style, ...props }: TextProps) {
+  const ui = useUI()
+  return <NativeText {...props} style={[ui.body, style]} />
+}
 
 function Action({
   children,
@@ -79,6 +106,9 @@ function Action({
   disabled?: boolean
   testID?: string
 }) {
+  const { colors } = useTheme()
+  const styles = useStyles()
+
   return (
     <Pressable
       accessibilityRole="button"
@@ -92,7 +122,7 @@ function Action({
         disabled && styles.disabled,
       ]}
     >
-      <Text style={{ color: selected ? colors.surface : colors.ink }}>
+      <Text style={{ color: selected ? colors.onAction : colors.ink }}>
         {children}
       </Text>
     </Pressable>
@@ -119,7 +149,14 @@ export default function PilotDiscovery({
   allowLegacy: boolean
   onOpenLegacy: () => void
 }) {
-  const insets = useSafeAreaInsets()
+  const styles = useStyles()
+
+  const insets = useArchitectureInsets()
+  const { height: screenHeight } = useWindowDimensions()
+  const [previewHeight, setPreviewHeight] = useState(258)
+  const [showSavedTools, setShowSavedTools] = useState(false)
+  const { colors } = useTheme()
+  const router = useRouter()
   const [city, setCity] = useState<PilotCity>('Manila')
   const [mode, setMode] = useState<PilotRequest['mode']>('public')
   const [token, setToken] = useState<string | null>(null)
@@ -132,9 +169,13 @@ export default function PilotDiscovery({
   }>({ coordinate: pilotAreas.Manila.coordinate, zoom: 13 })
   const [category, setCategory] = useState<'all' | NcrFeatureType>('all')
   const [feeFilter, setFeeFilter] = useState<PilotFeeFilter>('all')
-  const [sheet, setSheet] = useState<
-    'results' | 'search' | 'access' | 'detail' | 'sources' | 'saved' | null
-  >(null)
+  const {
+    panel: sheet,
+    set: setSheet,
+    back: backPanel,
+    appearanceOpen,
+    openAppearance,
+  } = usePilotPanels()
   const [selection, setSelection] = useState<{
     key: string
     record: PilotParking
@@ -208,19 +249,53 @@ export default function PilotDiscovery({
     setAuthMessage(
       'The research session was closed while offline. Browse public parking or reconnect with an authorized session.',
     )
-  }, [mode, connectivity.offline])
+  }, [mode, connectivity.offline, setSheet])
 
   useEffect(() => {
     if (Platform.OS === 'web') return
     const listener = BackHandler.addEventListener('hardwareBackPress', () => {
+      if (appearanceOpen) {
+        backPanel()
+        return true
+      }
       if (!sheet) return false
-      setSheet(null)
+      backPanel()
       setDraftToken('')
       return true
     })
     return () => listener.remove()
-  }, [sheet])
+  }, [sheet, appearanceOpen, backPanel])
 
+  useEffect(() => {
+    if (Platform.OS !== 'web') return
+    const escape = (event: KeyboardEvent) => {
+      if (
+        event.key !== 'Escape' ||
+        event.defaultPrevented ||
+        !sheet ||
+        appearanceOpen ||
+        window.location.pathname !== '/'
+      )
+        return
+      if (
+        event.target instanceof HTMLElement &&
+        event.target.closest('[role="dialog"], [role="alertdialog"]')
+      )
+        return
+      event.preventDefault()
+      backPanel()
+      setDraftToken('')
+    }
+    const clearReviewerDraft = () => {
+      if (window.location.pathname === '/') setDraftToken('')
+    }
+    window.addEventListener('keydown', escape)
+    window.addEventListener('popstate', clearReviewerDraft)
+    return () => {
+      window.removeEventListener('keydown', escape)
+      window.removeEventListener('popstate', clearReviewerDraft)
+    }
+  }, [sheet, appearanceOpen, backPanel])
   const accessFailed = useCallback(
     (error: unknown) => {
       if (error instanceof PilotAccessError && mode === 'public') {
@@ -659,9 +734,9 @@ export default function PilotDiscovery({
       const record = visible.find((item) => item.id === id)
       if (!record || !pilotRecordCanDisplay(record, request.mode)) return
       setSelection({ key: pilotSelectionKey(request), record, cachedAt })
-      setSheet('detail')
+      setSheet('preview')
     },
-    [visible, request, cachedAt],
+    [visible, request, cachedAt, setSheet],
   )
   async function directions(record: PilotParking) {
     if (
@@ -709,457 +784,670 @@ export default function PilotDiscovery({
       ? 'Loading this city…'
       : `${visible.length} loaded ${mode === 'public' ? 'approved records' : 'research observations'}`
   return (
-    <View testID="pilot-screen" style={styles.screen}>
-      <Stack.Screen
-        options={{ headerShown: false, title: 'Parkey discovery' }}
-      />
-      <View testID="pilot-map" style={StyleSheet.absoluteFill}>
-        <NcrMap
-          data={pilotConfig.ready ? mapData : null}
-          selectedId={selected?.id || null}
-          target={target}
-          onViewport={updateViewport}
-          onSelect={chooseRecord}
-          onCluster={clusterTarget}
-          onError={mapError}
+    <AppearanceNavigation value={openAppearance}>
+      <View testID="pilot-screen" style={styles.screen}>
+        <Stack.Screen
+          options={{ headerShown: false, title: 'Parkey discovery' }}
         />
-      </View>
-      <View style={[styles.top, { top: insets.top + 10 }]}>
-        <View style={styles.row}>
-          {pilotCities.map((value) => (
-            <Action
-              key={value}
-              selected={city === value}
-              onPress={() => chooseCity(value)}
-              testID={`pilot-city-${value}`}
-            >
-              {value === 'Manila' ? 'City of Manila' : 'Mandaluyong City'}
-            </Action>
-          ))}
-        </View>
-        {candidateResearchEnabled ? (
-          <View style={styles.row}>
-            <Action
-              selected={mode === 'public'}
-              onPress={publicMode}
-              testID="pilot-mode-public"
-            >
-              Approved parking
-            </Action>
-            <Action
-              selected={mode === 'candidate_research'}
-              onPress={() => setSheet('access')}
-              testID="pilot-mode-candidate"
-            >
-              Candidate research
-            </Action>
-          </View>
-        ) : null}
-        <Action onPress={() => setSheet('search')} testID="pilot-search-open">
-          {destination
-            ? `Near ${destination.name}`
-            : 'Search destinations in this city'}
-        </Action>
-        <View style={styles.row}>
-          <Action
-            onPress={() => {
-              void location.locate().then((point) => {
-                if (point) setTarget({ coordinate: point, zoom: 16 })
-              })
-            }}
-            testID="pilot-location"
-          >
-            {location.status === 'locating' ? 'Locating…' : 'My location'}
-          </Action>
-          <Action onPress={() => chooseCity(city)}>City center</Action>
-          <Action
-            onPress={() => {
-              setSelection(null)
-              setRefresh((n) => n + 1)
-            }}
-            testID="pilot-refresh"
-          >
-            Refresh
-          </Action>
-        </View>
-        {mode === 'candidate_research' ? (
-          <Text
-            testID="pilot-candidate-warning"
-            selectable
-            style={styles.warning}
-          >
-            Restricted research. Unverified source observations; visitor access,
-            names and entrances are unconfirmed. Navigation is disabled.
-          </Text>
-        ) : null}
-        {authMessage ? (
-          <Text selectable style={styles.warning}>
-            {authMessage}
-          </Text>
-        ) : null}
-      </View>
-      <View style={[styles.bottom, { bottom: insets.bottom + 104 }]}>
-        {cachedAt !== null ? (
-          <Text testID="pilot-cache-notice" style={styles.warning}>
-            {cacheCurrent
-              ? `Showing a saved public copy from ${new Date(cachedAt).toLocaleTimeString()}. Facts may have changed; directions require current approval.`
-              : 'Saved public information expired. Connect and retry to refresh this area.'}
-          </Text>
-        ) : null}
-        {connectivity.offline ? (
-          <Text accessibilityRole="alert" style={styles.warning}>
-            Offline. Fresh parking and map tiles may be unavailable. Saved
-            places remain on this device.
-          </Text>
-        ) : null}
-        <Text selectable style={styles.status}>
-          {status}
-        </Text>
-        {parking.status === 'loading' ? (
-          <ActivityIndicator accessibilityLabel="Loading pilot records" />
-        ) : null}
-        {parking.error || !pilotConfig.ready ? (
-          <Text testID="pilot-error" selectable style={styles.error}>
-            {parking.error || pilotConfig.configurationError}
-          </Text>
-        ) : null}
-        {parking.status === 'error' ? (
-          <Action testID="pilot-retry" onPress={() => setRefresh((n) => n + 1)}>
-            Retry parking
-          </Action>
-        ) : null}
-        {mapFailed ? (
-          <Text selectable style={styles.warning}>
-            Map tiles are unavailable. Loaded records remain accessible in the
-            list.
-          </Text>
-        ) : null}
-        {location.status === 'denied' || location.status === 'error' ? (
-          <Text selectable style={styles.warning}>
-            Location unavailable. Select a city or search a destination.
-          </Text>
-        ) : null}
-        {parking.key === key &&
-        parking.status === 'ready' &&
-        !records.length ? (
-          <Text testID="pilot-empty" selectable>
-            No {mode === 'public' ? 'approved parking' : 'research records'} in
-            this view. Empty results do not establish an absence of parking.
-          </Text>
-        ) : null}
-        <View style={styles.row}>
-          <Action onPress={() => setSheet('results')} testID="pilot-results">
-            Parking list and filters
-          </Action>
-          <Action onPress={() => setSheet('sources')}>Sources</Action>
-        </View>
-      </View>
-      <BottomNavigation
-        bottom={insets.bottom}
-        selected={
-          sheet === 'saved' ? 'saved' : sheet === 'sources' ? 'you' : 'map'
-        }
-        onSelect={(tab) =>
-          setSheet(tab === 'saved' ? 'saved' : tab === 'you' ? 'sources' : null)
-        }
-      />
-      {sheet === 'access' && candidateResearchEnabled ? (
-        <ModalSheet
-          title="Restricted candidate research"
-          onClose={() => {
-            setSheet(null)
-            setDraftToken('')
-          }}
+        <View
+          testID="pilot-map"
+          style={[
+            StyleSheet.absoluteFill,
+            {
+              top: insets.top + SEARCH_HEADER_HEIGHT,
+              bottom:
+                TAB_BAR_HEIGHT +
+                insets.bottom +
+                (sheet === 'preview' && selected ? 0 : MAP_LEGEND_HEIGHT),
+            },
+          ]}
         >
-          <ScrollView
-            keyboardShouldPersistTaps="handled"
-            contentContainerStyle={styles.content}
-          >
-            <Text selectable>
-              Only an explicitly authorized reviewer session with MFA can access
-              candidates. The server decides access. Your token stays in memory
-              and is cleared on disconnect or app restart.
-            </Text>
-            <TextInput
-              testID="pilot-reviewer-token"
-              accessibilityLabel="Reviewer session token"
-              secureTextEntry
-              autoComplete="off"
-              autoCapitalize="none"
-              autoCorrect={false}
-              value={draftToken}
-              onChangeText={setDraftToken}
-              maxLength={16000}
-              style={styles.input}
+          <NcrMap
+            accessibilityHidden={
+              appearanceOpen ||
+              (sheet !== null &&
+                sheet !== 'preview' &&
+                !((sheet === 'detail' || sheet === 'entrance') && !selected))
+            }
+            data={pilotConfig.ready ? mapData : null}
+            selectedId={selected?.id || null}
+            target={target}
+            onViewport={updateViewport}
+            onSelect={chooseRecord}
+            onCluster={clusterTarget}
+            onError={mapError}
+          />
+        </View>
+        {sheet === null ||
+        sheet === 'preview' ||
+        ((sheet === 'detail' || sheet === 'entrance') && !selected) ? (
+          <>
+            <DiscoveryHeader
+              searchTestID="pilot-search-open"
+              listTestID="pilot-results"
+              top={insets.top}
+              query={destination?.name || ''}
+              onSearch={() => setSheet('search')}
+              onList={() => setSheet('results')}
             />
-            {authMessage ? (
-              <Text selectable style={styles.error}>
-                {authMessage}
-              </Text>
-            ) : null}
-            <Action onPress={connect} testID="pilot-reviewer-connect">
-              Connect reviewer session
-            </Action>
-            <Action onPress={publicMode} testID="pilot-reviewer-disconnect">
-              Disconnect and use approved parking
-            </Action>
-          </ScrollView>
-        </ModalSheet>
-      ) : null}
-      {sheet === 'results' ? (
-        <ModalSheet
-          title={`${city} parking in view`}
-          onClose={() => setSheet(null)}
-        >
-          <View style={styles.content}>
-            <ScrollView horizontal contentContainerStyle={styles.row}>
-              {filters.map((filter) => (
-                <Action
-                  key={filter.value}
-                  selected={category === filter.value}
-                  onPress={() => {
-                    setCategory(filter.value)
-                    setSelection(null)
-                  }}
-                >
-                  {filter.label}
-                </Action>
-              ))}
-            </ScrollView>
-            <View style={styles.row}>
-              {(['all', 'free', 'paid'] as const).map((value) => (
+            <View
+              style={[
+                styles.cityChoices,
+                { top: insets.top + SEARCH_HEADER_HEIGHT + 8 },
+              ]}
+            >
+              {pilotCities.map((value) => (
                 <Action
                   key={value}
-                  testID={`pilot-fees-${value}`}
-                  selected={feeFilter === value}
-                  onPress={() => {
-                    setFeeFilter(value)
-                    setSelection(null)
-                  }}
+                  selected={city === value}
+                  onPress={() => chooseCity(value)}
+                  testID={`pilot-city-${value}`}
                 >
-                  {value === 'all'
-                    ? 'All prices'
-                    : value === 'free'
-                      ? 'Recorded no fee'
-                      : 'Fee applies'}
+                  {value === 'Manila' ? 'City of Manila' : 'Mandaluyong City'}
                 </Action>
               ))}
-            </View>
-            <Text>
-              Straight-line distance to {referenceLabel}. This is not a walking
-              route.
-            </Text>
-            {feeFilter !== 'all' && partition.unknown.length > 0 ? (
-              <Text>
-                {partition.unknown.length} loaded records have unknown fees and
-                are excluded by this filter.
-              </Text>
-            ) : null}
-            {destination ? (
-              <Action
+              <IconButton
+                testID="pilot-refresh"
+                icon="undo"
+                label="Refresh parking"
                 onPress={() => {
-                  setDestination(null)
-                  setQuery('')
-                }}
-              >
-                Clear destination
-              </Action>
-            ) : null}
-            <Text selectable>
-              Filters apply to loaded parking records. Load more to inspect
-              additional records.
-            </Text>
-          </View>
-          <FlatList
-            data={ranked}
-            keyExtractor={({ record }) => record.id}
-            contentContainerStyle={styles.content}
-            keyboardShouldPersistTaps="handled"
-            renderItem={({ item: { record: item, straightLineMeters } }) => (
-              <Pressable
-                testID={`pilot-record-${item.id}`}
-                accessibilityRole="button"
-                onPress={() => {
-                  chooseRecord(item.id)
-                  setTarget({ coordinate: item.representativePoint, zoom: 17 })
-                }}
-                style={styles.record}
-              >
-                <Text style={styles.status}>
-                  {item.officialName || item.descriptiveLabel || item.name}
-                </Text>
-                <Text>
-                  {pilotTypeLabel(item.featureType, mode)} ·{' '}
-                  {item.accessClass || 'Access unknown'}
-                </Text>
-                <Text>
-                  {straightLineMeters === null
-                    ? 'Distance unknown'
-                    : `${detailDistance(straightLineMeters) ?? 'Distance unknown'} straight-line to ${referenceLabel}`}{' '}
-                  · Fees: {item.fees || 'Unknown'}
-                </Text>
-                {item.descriptiveLabel && !item.officialName ? (
-                  <Text>Descriptive label; official name unknown.</Text>
-                ) : null}
-              </Pressable>
-            )}
-            ListEmptyComponent={
-              <Text selectable>
-                {parking.status === 'loading'
-                  ? 'Loading records…'
-                  : parking.status === 'error'
-                    ? parking.error
-                    : 'No loaded records match this filter.'}
-              </Text>
-            }
-            ListFooterComponent={
-              <View style={styles.content}>
-                {parking.next ? (
-                  <Action
-                    onPress={() => {
-                      void loadMore()
-                    }}
-                    disabled={parking.status === 'loading'}
-                    testID="pilot-load-more"
-                  >
-                    Load more parking
-                  </Action>
-                ) : null}
-                {parking.error ? (
-                  <View style={styles.content}>
-                    <Text selectable style={styles.error}>
-                      {parking.error}
-                    </Text>
-                    <Action onPress={() => setRefresh((n) => n + 1)}>
-                      Retry parking results
-                    </Action>
-                  </View>
-                ) : null}
-                {category !== 'all' || feeFilter !== 'all' ? (
-                  <Action
-                    onPress={() => {
-                      setCategory('all')
-                      setFeeFilter('all')
-                    }}
-                  >
-                    Clear filters
-                  </Action>
-                ) : null}
-              </View>
-            }
-          />
-        </ModalSheet>
-      ) : null}
-      {sheet === 'search' ? (
-        <ModalSheet
-          title={`Destinations in ${city}`}
-          onClose={() => setSheet(null)}
-        >
-          <View style={styles.content}>
-            <TextInput
-              testID="pilot-destination-search"
-              accessibilityLabel="Search city destinations"
-              value={query}
-              onChangeText={(value) => {
-                setQuery(value)
-                setDestination(null)
-              }}
-              maxLength={100}
-              placeholder="Destination name"
-              style={styles.input}
-            />
-            <Text selectable>
-              A destination is a map reference, not parking identity or
-              permission to park.
-            </Text>
-          </View>
-          <FlatList
-            data={
-              destinations.key === searchKey
-                ? destinations.records.filter(
-                    (d) =>
-                      mode !== 'public' ||
-                      (d.publicationApproved &&
-                        Date.parse(d.reviewDueAt || '') > clock),
-                  )
-                : []
-            }
-            keyExtractor={(item) => item.id}
-            keyboardShouldPersistTaps="handled"
-            contentContainerStyle={styles.content}
-            renderItem={({ item }) => (
-              <Pressable
-                testID={`pilot-destination-${item.id}`}
-                accessibilityRole="button"
-                style={styles.record}
-                onPress={() => {
-                  setDestination(item)
                   setSelection(null)
-                  setTarget({ coordinate: item.coordinate, zoom: 16 })
-                  setBounds({
-                    west: item.coordinate[0] - 0.01,
-                    south: item.coordinate[1] - 0.01,
-                    east: item.coordinate[0] + 0.01,
-                    north: item.coordinate[1] + 0.01,
-                  })
-                  setSheet(null)
+                  setRefresh((value) => value + 1)
                 }}
-              >
-                <Text style={styles.status}>{item.name}</Text>
-                <Text>
-                  {item.category} · {item.source.attribution}
-                </Text>
-              </Pressable>
+              />
+            </View>
+            <DiscoveryMapActions
+              bottom={
+                TAB_BAR_HEIGHT +
+                insets.bottom +
+                (sheet === 'preview' && selected
+                  ? previewHeight + 34
+                  : MAP_LEGEND_HEIGHT + 20)
+              }
+              selected={sheet === 'preview' && !!selected}
+              locating={location.status === 'locating'}
+              onList={() => setSheet('results')}
+              onFilters={() => setSheet('filters')}
+              onLocate={() => {
+                void location.locate().then((point) => {
+                  if (point) setTarget({ coordinate: point, zoom: 16 })
+                })
+              }}
+            />
+            {sheet === 'preview' && selected ? (
+              <ParkingPreviewCard
+                title={
+                  selected.officialName ||
+                  selected.descriptiveLabel ||
+                  selected.name
+                }
+                bottom={TAB_BAR_HEIGHT + insets.bottom + 14}
+                onHeightChange={setPreviewHeight}
+                maxHeight={Math.max(
+                  200,
+                  screenHeight -
+                    insets.top -
+                    SEARCH_HEADER_HEIGHT -
+                    TAB_BAR_HEIGHT -
+                    insets.bottom -
+                    110,
+                )}
+                favorite={saved.items.some(
+                  (item) => item.key === pilotSavedKey(selected, city),
+                )}
+                disabled={
+                  mode !== 'public' || saved.status !== 'ready' || saved.busy
+                }
+                canDirections={
+                  !!pilotNavigationEntrance(selected, mode, clock) &&
+                  !navBusy &&
+                  !connectivity.offline &&
+                  cachedAt === null
+                }
+                onSave={() => {
+                  void saved.toggle(selected, city, mode, clock)
+                }}
+                onDetails={() => setSheet('detail')}
+                onDirections={() => {
+                  void directions(selected)
+                }}
+              />
+            ) : (
+              <DiscoveryLegend
+                bottom={TAB_BAR_HEIGHT + insets.bottom}
+                onInfo={() => setSheet('sources')}
+              />
             )}
-            ListEmptyComponent={
-              <Text selectable>
-                {destinations.key !== searchKey ||
-                destinations.status === 'loading'
-                  ? 'Searching this city…'
-                  : destinations.status === 'error'
-                    ? destinations.error
-                    : 'No approved destinations match. Try another name or browse the city map.'}
-              </Text>
+            {mode === 'candidate_research' ||
+            parking.status !== 'ready' ||
+            !records.length ||
+            connectivity.offline ||
+            cachedAt !== null ||
+            mapFailed ||
+            authMessage ||
+            location.status === 'denied' ||
+            location.status === 'error' ||
+            !pilotConfig.ready ? (
+              <>
+                <View
+                  style={[
+                    styles.pilotNotices,
+                    { top: insets.top + SEARCH_HEADER_HEIGHT + 68 },
+                  ]}
+                >
+                  {authMessage ? (
+                    <Text accessibilityRole="alert" style={styles.warning}>
+                      {authMessage}
+                    </Text>
+                  ) : null}
+                  {mode === 'candidate_research' ? (
+                    <Text
+                      testID="pilot-candidate-warning"
+                      style={styles.warning}
+                    >
+                      Restricted research. Unverified source observations;
+                      visitor access, names and entrances are unconfirmed.
+                      Navigation is disabled.
+                    </Text>
+                  ) : null}
+                  {cachedAt !== null ? (
+                    <Text testID="pilot-cache-notice" style={styles.warning}>
+                      {cacheCurrent
+                        ? `Showing a saved public copy from ${new Date(cachedAt).toLocaleTimeString()}. Facts may have changed; directions require current approval.`
+                        : 'Saved public information expired. Connect and retry to refresh this area.'}
+                    </Text>
+                  ) : null}
+                  {connectivity.offline ? (
+                    <Text accessibilityRole="alert" style={styles.warning}>
+                      Offline. Fresh parking and map tiles may be unavailable.
+                      Saved places remain on this device.
+                    </Text>
+                  ) : null}
+                  <Text selectable style={styles.status}>
+                    {status}
+                  </Text>
+                  {parking.status === 'loading' ? (
+                    <ActivityIndicator accessibilityLabel="Loading pilot records" />
+                  ) : null}
+                  {parking.error || !pilotConfig.ready ? (
+                    <Text testID="pilot-error" selectable style={styles.error}>
+                      {parking.error || pilotConfig.configurationError}
+                    </Text>
+                  ) : null}
+                  {parking.status === 'error' ? (
+                    <Action
+                      testID="pilot-retry"
+                      onPress={() => setRefresh((n) => n + 1)}
+                    >
+                      Retry parking
+                    </Action>
+                  ) : null}
+                  {mapFailed ? (
+                    <Text selectable style={styles.warning}>
+                      Map tiles are unavailable. Loaded records remain
+                      accessible in the list.
+                    </Text>
+                  ) : null}
+                  {location.status === 'denied' ||
+                  location.status === 'error' ? (
+                    <Text selectable style={styles.warning}>
+                      Location unavailable. Select a city or search a
+                      destination.
+                    </Text>
+                  ) : null}
+                  {parking.key === key &&
+                  parking.status === 'ready' &&
+                  !records.length ? (
+                    <Text testID="pilot-empty" selectable>
+                      No{' '}
+                      {mode === 'public'
+                        ? 'approved parking'
+                        : 'research records'}{' '}
+                      in this view. Empty results do not establish an absence of
+                      parking.
+                    </Text>
+                  ) : null}
+                </View>
+              </>
+            ) : null}
+          </>
+        ) : null}
+        {sheet !== 'filters' ? (
+          <BottomNavigation
+            bottom={insets.bottom}
+            selected={
+              sheet === 'saved'
+                ? 'saved'
+                : sheet === 'profile' || sheet === 'sources'
+                  ? 'you'
+                  : 'map'
             }
-            ListFooterComponent={
-              <View style={styles.content}>
-                {destinations.next ? (
-                  <Action
-                    onPress={() => {
-                      void loadMoreDestinations()
-                    }}
-                    disabled={destinations.status === 'loading'}
-                  >
-                    More destinations
-                  </Action>
-                ) : null}
-                {destinations.status === 'error' ? (
-                  <Action
-                    testID="pilot-search-retry"
-                    onPress={() => setRefresh((n) => n + 1)}
-                  >
-                    Retry search
-                  </Action>
-                ) : null}
-              </View>
+            onSelect={(tab) =>
+              setSheet(
+                tab === 'saved' ? 'saved' : tab === 'you' ? 'profile' : null,
+              )
             }
           />
-        </ModalSheet>
-      ) : null}
-      {sheet === 'detail' && selected ? (
-        <ModalSheet
-          title={mode === 'public' ? 'Parking details' : 'Parking observation'}
-          onClose={() => setSheet(null)}
-        >
-          <ScrollView
-            testID="pilot-details"
-            contentContainerStyle={styles.content}
+        ) : null}
+        {sheet === 'access' && candidateResearchEnabled ? (
+          <ModalSheet
+            title="Restricted candidate research"
+            onClose={() => {
+              setSheet(null)
+              setDraftToken('')
+            }}
           >
-            <Text selectable style={styles.status}>
-              {selected.officialName ||
-                selected.descriptiveLabel ||
-                selected.name}
-            </Text>
+            <ScrollView
+              keyboardShouldPersistTaps="handled"
+              contentContainerStyle={styles.content}
+            >
+              <Text selectable>
+                Only an explicitly authorized reviewer session with MFA can
+                access candidates. The server decides access. Your token stays
+                in memory and is cleared on disconnect or app restart.
+              </Text>
+              <TextInput
+                testID="pilot-reviewer-token"
+                accessibilityLabel="Reviewer session token"
+                secureTextEntry
+                autoComplete="off"
+                autoCapitalize="none"
+                autoCorrect={false}
+                value={draftToken}
+                onChangeText={setDraftToken}
+                maxLength={16000}
+                style={styles.input}
+              />
+              {authMessage ? (
+                <Text selectable style={styles.error}>
+                  {authMessage}
+                </Text>
+              ) : null}
+              <Action onPress={connect} testID="pilot-reviewer-connect">
+                Connect reviewer session
+              </Action>
+              <Action onPress={publicMode} testID="pilot-reviewer-disconnect">
+                Disconnect and use approved parking
+              </Action>
+            </ScrollView>
+          </ModalSheet>
+        ) : null}
+        {sheet === 'filters' ? (
+          <View style={[styles.fullPage, { bottom: 0 }]}>
+            <ArchitecturePage
+              title="Filter parking"
+              subtitle="Choose what matters most to you."
+              onBack={backPanel}
+            >
+              <View style={styles.content}>
+                <ScrollView horizontal contentContainerStyle={styles.row}>
+                  {filters.map((filter) => (
+                    <Action
+                      key={filter.value}
+                      selected={category === filter.value}
+                      onPress={() => {
+                        setCategory(filter.value)
+                        setSelection(null)
+                      }}
+                    >
+                      {filter.label}
+                    </Action>
+                  ))}
+                </ScrollView>
+                <View style={styles.row}>
+                  {(['all', 'free', 'paid'] as const).map((value) => (
+                    <Action
+                      key={value}
+                      testID={`pilot-fees-${value}`}
+                      selected={feeFilter === value}
+                      onPress={() => {
+                        setFeeFilter(value)
+                        setSelection(null)
+                      }}
+                    >
+                      {value === 'all'
+                        ? 'All prices'
+                        : value === 'free'
+                          ? 'Recorded no fee'
+                          : 'Fee applies'}
+                    </Action>
+                  ))}
+                </View>
+                <Text>
+                  Straight-line distance to {referenceLabel}. This is not a
+                  walking route.
+                </Text>
+                {feeFilter !== 'all' && partition.unknown.length > 0 ? (
+                  <Text>
+                    {partition.unknown.length} loaded records have unknown fees
+                    and are excluded by this filter.
+                  </Text>
+                ) : null}
+                {destination ? (
+                  <Action
+                    onPress={() => {
+                      setDestination(null)
+                      setQuery('')
+                    }}
+                  >
+                    Clear destination
+                  </Action>
+                ) : null}
+                <Text selectable>
+                  Filters apply to loaded parking records. Load more to inspect
+                  additional records.
+                </Text>
+              </View>
+              <Button onPress={() => setSheet(null)}>Apply Filters</Button>
+            </ArchitecturePage>
+          </View>
+        ) : null}
+        {sheet === 'profile' ? (
+          <View
+            style={[
+              styles.fullPage,
+              { bottom: TAB_BAR_HEIGHT + insets.bottom },
+            ]}
+          >
+            <ScrollView
+              contentContainerStyle={{
+                paddingHorizontal: 23,
+                paddingTop: insets.top + 6,
+                paddingBottom: TAB_BAR_HEIGHT + insets.bottom + 24,
+              }}
+            >
+              <AccountMenu
+                onSaved={() => setSheet('saved')}
+                onPreferences={() => setSheet('filters')}
+                onTools={() => setSheet('sources')}
+                toolsLabel="Map information"
+              />
+            </ScrollView>
+          </View>
+        ) : null}
+        {sheet === 'results' ? (
+          <View
+            testID="pilot-list-page"
+            style={[
+              styles.fullPage,
+              { bottom: TAB_BAR_HEIGHT + insets.bottom },
+            ]}
+          >
+            <DiscoveryHeader
+              searchTestID="pilot-search-open"
+              listTestID="pilot-results"
+              top={insets.top}
+              query={destination?.name || ''}
+              onSearch={() => setSheet('search')}
+              onList={() => setSheet('results')}
+            />
+            <View
+              style={{ paddingTop: insets.top + SEARCH_HEADER_HEIGHT, flex: 1 }}
+            >
+              <View style={styles.listHeading}>
+                <Text style={styles.listTitle}>{city} parking in view</Text>
+                <Text style={styles.listSubtitle}>{status}</Text>
+                {mode === 'candidate_research' ? (
+                  <Text style={styles.warning}>
+                    Restricted research. Visitor access and entrances are
+                    unconfirmed.
+                  </Text>
+                ) : null}
+              </View>
+              <FlatList
+                data={ranked}
+                keyExtractor={({ record }) => record.id}
+                contentContainerStyle={{
+                  paddingHorizontal: 27,
+                  paddingBottom: 100,
+                }}
+                keyboardShouldPersistTaps="handled"
+                renderItem={({
+                  item: { record: item, straightLineMeters },
+                }) => (
+                  <Pressable
+                    testID={`pilot-record-${item.id}`}
+                    accessibilityRole="button"
+                    onPress={() => {
+                      chooseRecord(item.id)
+                      setTarget({
+                        coordinate: item.representativePoint,
+                        zoom: 17,
+                      })
+                    }}
+                    style={styles.listRecord}
+                  >
+                    <View style={styles.parkingBadge}>
+                      <Text style={styles.parkingLetter}>P</Text>
+                    </View>
+                    <View style={{ flex: 1, minWidth: 0 }}>
+                      <Text style={styles.listTitle} numberOfLines={1}>
+                        {item.officialName ||
+                          item.descriptiveLabel ||
+                          item.name}
+                      </Text>
+                      <Text style={styles.listSubtitle} numberOfLines={1}>
+                        {pilotTypeLabel(item.featureType, mode)} ·{' '}
+                        {item.accessClass || 'Access unknown'}
+                      </Text>
+                      <Text style={styles.listSubtitle} numberOfLines={1}>
+                        {straightLineMeters === null
+                          ? 'Distance unknown'
+                          : `${detailDistance(straightLineMeters) ?? 'Distance unknown'} straight-line to ${referenceLabel}`}{' '}
+                        · Fees: {item.fees || 'Unknown'}
+                      </Text>
+                      {item.descriptiveLabel && !item.officialName ? (
+                        <Text style={styles.listSubtitle}>
+                          Descriptive label; official name unknown.
+                        </Text>
+                      ) : null}
+                    </View>
+                  </Pressable>
+                )}
+                ListEmptyComponent={
+                  <Text selectable>
+                    {parking.status === 'loading'
+                      ? 'Loading records…'
+                      : parking.status === 'error'
+                        ? parking.error
+                        : 'No loaded records match this filter.'}
+                  </Text>
+                }
+                ListFooterComponent={
+                  <View style={styles.content}>
+                    {parking.next ? (
+                      <Action
+                        onPress={() => {
+                          void loadMore()
+                        }}
+                        disabled={parking.status === 'loading'}
+                        testID="pilot-load-more"
+                      >
+                        Load more parking
+                      </Action>
+                    ) : null}
+                    {parking.error ? (
+                      <View style={styles.content}>
+                        <Text selectable style={styles.error}>
+                          {parking.error}
+                        </Text>
+                        <Action onPress={() => setRefresh((n) => n + 1)}>
+                          Retry parking results
+                        </Action>
+                      </View>
+                    ) : null}
+                    {category !== 'all' || feeFilter !== 'all' ? (
+                      <Action
+                        onPress={() => {
+                          setCategory('all')
+                          setFeeFilter('all')
+                        }}
+                      >
+                        Clear filters
+                      </Action>
+                    ) : null}
+                  </View>
+                }
+              />
+            </View>
+            <View style={styles.viewSwitch}>
+              <View style={styles.selectedView}>
+                <Text style={styles.selectedViewText}>List</Text>
+              </View>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Show parking map"
+                onPress={() => setSheet(null)}
+                style={styles.mapView}
+              >
+                <Text style={styles.viewText}>Map</Text>
+              </Pressable>
+            </View>
+          </View>
+        ) : null}
+        {sheet === 'search' ? (
+          <View style={[styles.fullPage, { bottom: 0 }]}>
+            <ArchitecturePage
+              scrollable={false}
+              title="Search parking"
+              subtitle={`Find a destination in ${city}.`}
+              onBack={backPanel}
+            >
+              <View style={styles.content}>
+                <TextInput
+                  testID="pilot-destination-search"
+                  accessibilityLabel="Search city destinations"
+                  value={query}
+                  onChangeText={(value) => {
+                    setQuery(value)
+                    setDestination(null)
+                  }}
+                  maxLength={100}
+                  placeholder="Destination name"
+                  style={[
+                    styles.input,
+                    {
+                      minHeight: 63,
+                      fontFamily: architectureFonts.regular,
+                      fontSize: 16,
+                    },
+                  ]}
+                />
+                <Text selectable>
+                  A destination is a map reference, not parking identity or
+                  permission to park.
+                </Text>
+              </View>
+              <FlatList
+                data={
+                  destinations.key === searchKey
+                    ? destinations.records.filter(
+                        (d) =>
+                          mode !== 'public' ||
+                          (d.publicationApproved &&
+                            Date.parse(d.reviewDueAt || '') > clock),
+                      )
+                    : []
+                }
+                keyExtractor={(item) => item.id}
+                keyboardShouldPersistTaps="handled"
+                contentContainerStyle={styles.content}
+                renderItem={({ item }) => (
+                  <Pressable
+                    testID={`pilot-destination-${item.id}`}
+                    accessibilityRole="button"
+                    style={[
+                      styles.record,
+                      {
+                        minHeight: 84,
+                        borderWidth: 1,
+                        borderColor: colors.border,
+                        borderRadius: 14,
+                        marginBottom: 15,
+                      },
+                    ]}
+                    onPress={() => {
+                      setDestination(item)
+                      setSelection(null)
+                      setTarget({ coordinate: item.coordinate, zoom: 16 })
+                      setBounds({
+                        west: item.coordinate[0] - 0.01,
+                        south: item.coordinate[1] - 0.01,
+                        east: item.coordinate[0] + 0.01,
+                        north: item.coordinate[1] + 0.01,
+                      })
+                      setSheet(null)
+                    }}
+                  >
+                    <Text style={styles.status}>{item.name}</Text>
+                    <Text>
+                      {item.category} · {item.source.attribution}
+                    </Text>
+                  </Pressable>
+                )}
+                ListEmptyComponent={
+                  <Text selectable>
+                    {destinations.key !== searchKey ||
+                    destinations.status === 'loading'
+                      ? 'Searching this city…'
+                      : destinations.status === 'error'
+                        ? destinations.error
+                        : 'No approved destinations match. Try another name or browse the city map.'}
+                  </Text>
+                }
+                ListFooterComponent={
+                  <View style={styles.content}>
+                    {destinations.next ? (
+                      <Action
+                        onPress={() => {
+                          void loadMoreDestinations()
+                        }}
+                        disabled={destinations.status === 'loading'}
+                      >
+                        More destinations
+                      </Action>
+                    ) : null}
+                    {destinations.status === 'error' ? (
+                      <Action
+                        testID="pilot-search-retry"
+                        onPress={() => setRefresh((n) => n + 1)}
+                      >
+                        Retry search
+                      </Action>
+                    ) : null}
+                  </View>
+                }
+              />
+            </ArchitecturePage>
+          </View>
+        ) : null}
+        {(sheet === 'detail' || sheet === 'entrance') && selected ? (
+          <PilotParkingDetails
+            entranceOpen={sheet === 'entrance'}
+            onEntrance={() => setSheet('entrance')}
+            onEntranceBack={backPanel}
+            record={selected}
+            publicMode={mode === 'public'}
+            entrance={pilotNavigationEntrance(selected, mode, clock)}
+            canNavigate={
+              Boolean(pilotNavigationEntrance(selected, mode, clock)) &&
+              !connectivity.offline &&
+              cachedAt === null &&
+              selection?.cachedAt == null
+            }
+            busy={navBusy}
+            favorite={saved.items.some(
+              (item) => item.key === pilotSavedKey(selected, city),
+            )}
+            saveDisabled={saved.status !== 'ready' || saved.busy}
+            onSave={() => {
+              void saved.toggle(selected, city, mode, clock)
+            }}
+            onDirections={() => {
+              void directions(selected)
+            }}
+            onBack={backPanel}
+          >
             <Text selectable>
               Official name: {selected.officialName || 'Unknown'}
             </Text>
@@ -1176,35 +1464,6 @@ export default function PilotDiscovery({
               {selected.hours || 'Unknown'}
             </Text>
             <Text selectable>No live availability information.</Text>
-            <ParkingGallery
-              identityKey={parkingPhotoIdentityKey({
-                id: selected.id,
-                sourceUrl: selected.source.url,
-              })}
-              photos={parkingPhotos({
-                id: selected.id,
-                sourceUrl: selected.source.url,
-              })}
-            />
-            <Text>
-              Only location-matched, licensed parking photos are shown. Missing
-              imagery does not establish the condition of this location.
-            </Text>
-            {mode === 'public' ? (
-              <Action
-                testID="pilot-favorite"
-                disabled={saved.status !== 'ready' || saved.busy}
-                onPress={() => {
-                  void saved.toggle(selected, city, mode, clock)
-                }}
-              >
-                {saved.items.some(
-                  (item) => item.key === pilotSavedKey(selected, city),
-                )
-                  ? 'Remove saved parking'
-                  : 'Save parking'}
-              </Action>
-            ) : null}
             {saved.error ? (
               <Text accessibilityRole="alert" style={styles.error}>
                 {saved.error}
@@ -1283,22 +1542,6 @@ export default function PilotDiscovery({
               Directions open Google Maps and share only the reviewed entrance
               coordinate. Approval is checked again before opening.
             </Text>
-            <Action
-              testID="pilot-directions"
-              disabled={
-                !pilotNavigationEntrance(selected, mode, clock) ||
-                navBusy ||
-                connectivity.offline ||
-                cachedAt !== null
-              }
-              onPress={() => {
-                void directions(selected)
-              }}
-            >
-              {navBusy
-                ? 'Checking current permission…'
-                : 'Open reviewed entrance in Maps'}
-            </Action>
             {!pilotNavigationEntrance(selected, mode, clock) ? (
               <Text selectable>
                 Navigation unavailable: a current reviewed entrance, visitor
@@ -1330,276 +1573,532 @@ export default function PilotDiscovery({
                 {parking.error}
               </Text>
             ) : null}
-          </ScrollView>
-        </ModalSheet>
-      ) : null}
-      {sheet === 'sources' ? (
-        <ModalSheet title="Map information" onClose={() => setSheet(null)}>
-          <ScrollView contentContainerStyle={styles.content}>
-            <Text>
-              Parkey helps you discover parking. It does not offer bookings or
-              guarantee parking space. Saved places and your parked-car pin stay
-              on this device. Analytics collection is disabled pending privacy
-              and release review.
-            </Text>
-            {allowLegacy ? (
-              <Action
-                onPress={() => {
-                  publicMode()
-                  onOpenLegacy()
-                }}
-              >
-                Original Poblacion map
-              </Action>
-            ) : null}
-            <Text selectable>
-              City of Manila and Mandaluyong City are founder-selected pilot
-              areas. This does not establish demand or parking scarcity.
-            </Text>
-            <Text selectable>
-              {parking.notice ||
-                'Approved parking and restricted research use separate server projections. No research record is automatically published.'}
-            </Text>
-            <Text selectable>
-              Source geometry is a research anchor. It is never a confirmed
-              vehicle entrance. Nearby destination descriptions do not establish
-              parking identity.
-            </Text>
-            {[
-              ...new Set(
-                records.map(
-                  (record) =>
-                    `${record.source.attribution} · ${record.source.license}`,
-                ),
-              ),
-            ].map((value) => (
-              <Text selectable key={value}>
-                {value}
-              </Text>
-            ))}
-            <Text selectable>
-              Original records and review decisions remain in their original
-              archives. Unknown facts remain unknown.
-            </Text>
-          </ScrollView>
-        </ModalSheet>
-      ) : null}
-      {sheet === 'saved' ? (
-        <ModalSheet title="Saved places" onClose={() => setSheet(null)}>
-          <FlatList
-            data={saved.items}
-            keyExtractor={(item) => item.key}
-            contentContainerStyle={styles.content}
-            ListHeaderComponent={
+            <AppearanceButton />
+          </PilotParkingDetails>
+        ) : null}
+        {sheet === 'sources' ? (
+          <ModalSheet title="Map information" onClose={backPanel}>
+            <ScrollView contentContainerStyle={styles.content}>
               <View style={styles.content}>
-                <Text>
-                  Kept on this device only. Saved parking labels are reminders,
-                  not current access or entrance approval. Open the saved area
-                  to load current public details.
-                </Text>
-                <Action
-                  disabled={
-                    local.status !== 'ready' ||
-                    local.busy ||
-                    location.status === 'locating'
-                  }
-                  onPress={() => {
-                    void saveParked()
-                  }}
-                >
-                  {location.status === 'locating'
-                    ? 'Finding your location…'
-                    : 'Save where I parked'}
-                </Action>
-                {local.state.parked ? (
-                  <View style={styles.content}>
-                    <Text>
-                      Your car · Saved{' '}
-                      {new Date(local.state.parked.savedAt).toLocaleString()}
-                    </Text>
+                <View style={styles.row}>
+                  {pilotCities.map((value) => (
                     <Action
-                      onPress={() => {
-                        const point = local.state.parked?.coordinate
-                        if (point) {
-                          setTarget({ coordinate: point, zoom: 17 })
-                          setSheet(null)
-                        }
-                      }}
+                      key={value}
+                      selected={city === value}
+                      onPress={() => chooseCity(value)}
+                      testID={`pilot-city-${value}`}
                     >
-                      Show parked location
+                      {value === 'Manila'
+                        ? 'City of Manila'
+                        : 'Mandaluyong City'}
                     </Action>
-                    <Action
-                      onPress={() => {
-                        const point = local.state.parked?.coordinate
-                        if (point)
-                          void Linking.openURL(
-                            `https://www.google.com/maps/dir/?api=1&destination=${point[1]},${point[0]}&travelmode=walking`,
-                          ).catch(() =>
-                            setSavedError(
-                              'Maps could not be opened. Try again.',
-                            ),
-                          )
-                      }}
-                    >
-                      Walk back in Maps
-                    </Action>
-                    <Action
-                      disabled={local.busy}
-                      onPress={() => {
-                        void local.park(null)
-                      }}
-                    >
-                      Clear parked location
-                    </Action>
-                  </View>
-                ) : null}
-                {saved.status === 'loading' ? (
-                  <ActivityIndicator accessibilityLabel="Loading saved places" />
-                ) : null}
-                {saved.error || savedError || local.error ? (
-                  <Text accessibilityRole="alert" style={styles.error}>
-                    {saved.error || savedError || local.error}
-                  </Text>
-                ) : null}
-                {saved.status === 'error' ? (
+                  ))}
+                </View>
+                {candidateResearchEnabled ? (
                   <View style={styles.row}>
                     <Action
-                      onPress={() => {
-                        void saved.retry()
-                      }}
+                      selected={mode === 'public'}
+                      onPress={publicMode}
+                      testID="pilot-mode-public"
                     >
-                      Retry saved places
+                      Approved parking
                     </Action>
                     <Action
-                      onPress={() => {
-                        void saved.clear()
-                      }}
+                      selected={mode === 'candidate_research'}
+                      onPress={() => setSheet('access')}
+                      testID="pilot-mode-candidate"
                     >
-                      Clear damaged saved places
+                      Candidate research
                     </Action>
                   </View>
                 ) : null}
-                {local.status === 'error' ? (
-                  <View style={styles.content}>
-                    <Text>
-                      Retry loading your saved car location. Clearing damaged
-                      data also removes previous favorites and recent places;
-                      city parking favorites remain saved separately.
-                    </Text>
-                    <Action
-                      disabled={local.busy}
-                      onPress={() => {
-                        void local.retry()
-                      }}
-                    >
-                      Retry parked location
-                    </Action>
-                    <Action
-                      disabled={local.busy}
-                      onPress={() => {
-                        void local.clear()
-                      }}
-                    >
-                      Clear saved car and previous saved places
-                    </Action>
-                  </View>
+                <Action
+                  onPress={() => setSheet('search')}
+                  testID="pilot-search-open"
+                >
+                  {destination
+                    ? `Near ${destination.name}`
+                    : 'Search destinations in this city'}
+                </Action>
+                <View style={styles.row}>
+                  <Action
+                    onPress={() => {
+                      void location.locate().then((point) => {
+                        if (point) setTarget({ coordinate: point, zoom: 16 })
+                      })
+                    }}
+                    testID="pilot-location"
+                  >
+                    {location.status === 'locating'
+                      ? 'Locating…'
+                      : 'My location'}
+                  </Action>
+                  <Action onPress={() => chooseCity(city)}>City center</Action>
+                  <Action onPress={() => router.push('/account')}>
+                    Account
+                  </Action>
+                  <Action
+                    onPress={() => {
+                      setSelection(null)
+                      setRefresh((n) => n + 1)
+                    }}
+                    testID="pilot-refresh"
+                  >
+                    Refresh
+                  </Action>
+                </View>
+                {mode === 'candidate_research' ? (
+                  <Text
+                    testID="pilot-candidate-warning"
+                    selectable
+                    style={styles.warning}
+                  >
+                    Restricted research. Unverified source observations; visitor
+                    access, names and entrances are unconfirmed. Navigation is
+                    disabled.
+                  </Text>
+                ) : null}
+                {authMessage ? (
+                  <Text selectable style={styles.warning}>
+                    {authMessage}
+                  </Text>
                 ) : null}
               </View>
-            }
-            ListEmptyComponent={
-              saved.status === 'ready' ? (
-                <Text>
-                  No saved parking yet. Save an approved parking record from its
-                  details.
-                </Text>
-              ) : undefined
-            }
-            renderItem={({ item }) => (
-              <View style={styles.record}>
+
+              <SettingsLinks />
+              <Text>
+                Parkey helps you discover parking. It does not offer bookings or
+                guarantee parking space. Saved places and your parked-car pin
+                stay on this device. Analytics collection is disabled pending
+                privacy and release review.
+              </Text>
+              {allowLegacy ? (
                 <Action
-                  onPress={() => showSavedArea(item)}
-                >{`${item.name} · ${item.city} · Show saved area`}</Action>
-                <Text>
-                  {pilotTypeLabel(item.featureType)} · Last saved label; current
-                  details must be loaded.
-                </Text>
-                <Action
-                  disabled={saved.busy}
                   onPress={() => {
-                    void saved.remove(item.key)
+                    publicMode()
+                    onOpenLegacy()
                   }}
                 >
-                  Remove saved place
+                  Original Poblacion map
                 </Action>
+              ) : null}
+              <Text selectable>
+                City of Manila and Mandaluyong City are founder-selected pilot
+                areas. This does not establish demand or parking scarcity.
+              </Text>
+              <Text selectable>
+                {parking.notice ||
+                  'Approved parking and restricted research use separate server projections. No research record is automatically published.'}
+              </Text>
+              <Text selectable>
+                Source geometry is a research anchor. It is never a confirmed
+                vehicle entrance. Nearby destination descriptions do not
+                establish parking identity.
+              </Text>
+              {[
+                ...new Set(
+                  records.map(
+                    (record) =>
+                      `${record.source.attribution} · ${record.source.license}`,
+                  ),
+                ),
+              ].map((value) => (
+                <Text selectable key={value}>
+                  {value}
+                </Text>
+              ))}
+              <Text selectable>
+                Original records and review decisions remain in their original
+                archives. Unknown facts remain unknown.
+              </Text>
+            </ScrollView>
+          </ModalSheet>
+        ) : null}
+        {sheet === 'saved' ? (
+          saved.status === 'ready' &&
+          local.status === 'ready' &&
+          saved.items.length === 0 &&
+          !showSavedTools ? (
+            <View style={[styles.fullPage, { bottom: 0 }]}>
+              <EmptySavedPage
+                onExplore={() => setSheet(null)}
+                onTools={() => setShowSavedTools(true)}
+              />
+            </View>
+          ) : (
+            <View
+              style={[
+                styles.fullPage,
+                { bottom: 0, paddingTop: insets.top + 12 },
+              ]}
+            >
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  gap: 8,
+                  paddingHorizontal: 20,
+                  paddingBottom: 16,
+                }}
+              >
+                <IconButton
+                  icon="back"
+                  label="Close Saved places"
+                  onPress={backPanel}
+                />
+                <Text
+                  accessibilityRole="header"
+                  style={{
+                    fontFamily: architectureFonts.extraBold,
+                    fontSize: 28,
+                  }}
+                >
+                  Saved parking
+                </Text>
               </View>
-            )}
-          />
-        </ModalSheet>
-      ) : null}
-    </View>
+              <FlatList
+                data={saved.items}
+                keyExtractor={(item) => item.key}
+                contentContainerStyle={styles.content}
+                ListFooterComponent={
+                  <View style={styles.content}>
+                    <Text>
+                      Kept on this device only. Saved parking labels are
+                      reminders, not current access or entrance approval. Open
+                      the saved area to load current public details.
+                    </Text>
+                    <Action
+                      disabled={
+                        local.status !== 'ready' ||
+                        local.busy ||
+                        location.status === 'locating'
+                      }
+                      onPress={() => {
+                        void saveParked()
+                      }}
+                    >
+                      {location.status === 'locating'
+                        ? 'Finding your location…'
+                        : 'Save where I parked'}
+                    </Action>
+                    {local.state.parked ? (
+                      <View style={styles.content}>
+                        <Text>
+                          Your car · Saved{' '}
+                          {new Date(
+                            local.state.parked.savedAt,
+                          ).toLocaleString()}
+                        </Text>
+                        <Action
+                          onPress={() => {
+                            const point = local.state.parked?.coordinate
+                            if (point) {
+                              setTarget({ coordinate: point, zoom: 17 })
+                              setSheet(null)
+                            }
+                          }}
+                        >
+                          Show parked location
+                        </Action>
+                        <Action
+                          onPress={() => {
+                            const point = local.state.parked?.coordinate
+                            if (point)
+                              void Linking.openURL(
+                                `https://www.google.com/maps/dir/?api=1&destination=${point[1]},${point[0]}&travelmode=walking`,
+                              ).catch(() =>
+                                setSavedError(
+                                  'Maps could not be opened. Try again.',
+                                ),
+                              )
+                          }}
+                        >
+                          Walk back in Maps
+                        </Action>
+                        <Action
+                          disabled={local.busy}
+                          onPress={() => {
+                            void local.park(null)
+                          }}
+                        >
+                          Clear parked location
+                        </Action>
+                      </View>
+                    ) : null}
+                    {saved.status === 'loading' ? (
+                      <ActivityIndicator accessibilityLabel="Loading saved places" />
+                    ) : null}
+                    {saved.error || savedError || local.error ? (
+                      <Text accessibilityRole="alert" style={styles.error}>
+                        {saved.error || savedError || local.error}
+                      </Text>
+                    ) : null}
+                    {saved.status === 'error' ? (
+                      <View style={styles.row}>
+                        <Action
+                          onPress={() => {
+                            void saved.retry()
+                          }}
+                        >
+                          Retry saved places
+                        </Action>
+                        <Action
+                          onPress={() => {
+                            void saved.clear()
+                          }}
+                        >
+                          Clear damaged saved places
+                        </Action>
+                      </View>
+                    ) : null}
+                    {local.status === 'error' ? (
+                      <View style={styles.content}>
+                        <Text>
+                          Retry loading your saved car location. Clearing
+                          damaged data also removes previous favorites and
+                          recent places; city parking favorites remain saved
+                          separately.
+                        </Text>
+                        <Action
+                          disabled={local.busy}
+                          onPress={() => {
+                            void local.retry()
+                          }}
+                        >
+                          Retry parked location
+                        </Action>
+                        <Action
+                          disabled={local.busy}
+                          onPress={() => {
+                            void local.clear()
+                          }}
+                        >
+                          Clear saved car and previous saved places
+                        </Action>
+                      </View>
+                    ) : null}
+                  </View>
+                }
+                ListEmptyComponent={
+                  saved.status === 'ready' ? (
+                    <Text>
+                      No saved parking yet. Save an approved parking record from
+                      its details.
+                    </Text>
+                  ) : undefined
+                }
+                renderItem={({ item }) => (
+                  <View
+                    style={[
+                      styles.record,
+                      {
+                        borderWidth: 1,
+                        borderColor: colors.border,
+                        borderRadius: 18,
+                        marginBottom: 16,
+                        padding: 20,
+                        gap: 16,
+                      },
+                    ]}
+                  >
+                    <Action
+                      onPress={() => showSavedArea(item)}
+                    >{`${item.name} · ${item.city} · Show saved area`}</Action>
+                    <Text>
+                      {pilotTypeLabel(item.featureType)} · Last saved label;
+                      current details must be loaded.
+                    </Text>
+                    <Action
+                      disabled={saved.busy}
+                      onPress={() => {
+                        void saved.remove(item.key)
+                      }}
+                    >
+                      Remove saved place
+                    </Action>
+                  </View>
+                )}
+              />
+            </View>
+          )
+        ) : null}
+        {appearanceOpen ? (
+          <Modal
+            visible
+            presentationStyle="fullScreen"
+            onRequestClose={() => backPanel()}
+          >
+            <AppearanceScreen onBack={() => backPanel()} />
+          </Modal>
+        ) : null}
+      </View>
+    </AppearanceNavigation>
   )
 }
-const styles = StyleSheet.create({
-  context: {
-    gap: 8,
-    padding: 12,
-    backgroundColor: colors.soft,
-    borderRadius: 12,
-  },
-  screen: { flex: 1, backgroundColor: colors.canvas },
-  top: {
-    position: 'absolute',
-    left: 12,
-    right: 12,
-    gap: 6,
-    maxWidth: 600,
-    alignSelf: 'center',
-  },
-  bottom: {
-    position: 'absolute',
-    left: 12,
-    right: 12,
-    padding: 12,
-    gap: 8,
-    backgroundColor: colors.surface,
-    borderRadius: 16,
-    maxWidth: 600,
-    alignSelf: 'center',
-  },
-  row: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
-  action: {
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    minHeight: 44,
-    borderRadius: 14,
-  },
-  active: { backgroundColor: colors.brand, borderColor: colors.brand },
-  disabled: { opacity: 0.45 },
-  content: { padding: 16, gap: 12 },
-  status: { fontSize: 16, fontWeight: '600', color: colors.ink },
-  input: {
-    borderWidth: 1,
-    borderColor: colors.border,
-    minHeight: 48,
-    borderRadius: 12,
-    padding: 12,
-    color: colors.ink,
-    backgroundColor: colors.surface,
-  },
-  record: {
-    padding: 14,
-    gap: 6,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-  },
-  warning: {
-    color: colors.amber,
-    backgroundColor: colors.warningSurface,
-    padding: 8,
-    borderRadius: 8,
-  },
-  error: { color: colors.error },
-})
+const useStyles = createThemedStyles(({ colors }) =>
+  StyleSheet.create({
+    context: {
+      gap: 8,
+      padding: 12,
+      backgroundColor: colors.soft,
+      borderRadius: 12,
+    },
+    fullPage: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: TAB_BAR_HEIGHT,
+      backgroundColor: colors.canvas,
+    },
+    cityChoices: {
+      position: 'absolute',
+      left: 24,
+      right: 24,
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+    },
+    pilotNotices: { position: 'absolute', left: 24, right: 24, gap: 6 },
+    listHeading: {
+      paddingHorizontal: 28,
+      paddingTop: 10,
+      paddingBottom: 26,
+      gap: 18,
+    },
+    listTitle: {
+      fontFamily: architectureFonts.semibold,
+      fontSize: 18,
+      lineHeight: 24,
+      color: colors.ink,
+    },
+    listSubtitle: {
+      fontFamily: architectureFonts.medium,
+      fontSize: 12,
+      lineHeight: 18,
+      color: colors.muted,
+    },
+    listRecord: {
+      minHeight: 103,
+      borderWidth: 1,
+      borderColor: colors.border,
+      borderRadius: 14,
+      padding: 12,
+      marginBottom: 11,
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 14,
+      backgroundColor: colors.surface,
+    },
+    parkingBadge: {
+      width: 52,
+      height: 52,
+      borderRadius: 13,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: colors.brand,
+    },
+    parkingLetter: {
+      fontFamily: architectureFonts.bold,
+      fontSize: 30,
+      lineHeight: 38,
+      color: colors.onAction,
+    },
+    viewSwitch: {
+      position: 'absolute',
+      bottom: 24,
+      width: 208,
+      minHeight: 50,
+      alignSelf: 'center',
+      flexDirection: 'row',
+      alignItems: 'center',
+      padding: 4,
+      borderWidth: 1,
+      borderColor: colors.border,
+      borderRadius: 25,
+      backgroundColor: colors.canvas,
+    },
+    selectedView: {
+      flex: 1,
+      minHeight: 40,
+      borderRadius: 21,
+      backgroundColor: colors.brand,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    selectedViewText: {
+      fontFamily: architectureFonts.semibold,
+      fontSize: 15,
+      lineHeight: 22,
+      color: colors.onAction,
+    },
+    mapView: {
+      flex: 1,
+      minHeight: 40,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    viewText: {
+      fontFamily: architectureFonts.semibold,
+      fontSize: 15,
+      lineHeight: 22,
+      color: colors.ink,
+    },
+    screen: { flex: 1, backgroundColor: colors.canvas },
+    top: {
+      position: 'absolute',
+      left: 12,
+      right: 12,
+      gap: 6,
+      maxWidth: 600,
+      alignSelf: 'center',
+    },
+    bottom: {
+      position: 'absolute',
+      left: 12,
+      right: 12,
+      padding: 12,
+      gap: 8,
+      backgroundColor: colors.surface,
+      borderRadius: 16,
+      maxWidth: 600,
+      alignSelf: 'center',
+    },
+    row: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
+    action: {
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.border,
+      paddingHorizontal: 12,
+      paddingVertical: 10,
+      minHeight: 44,
+      borderRadius: 14,
+    },
+    active: { backgroundColor: colors.brand, borderColor: colors.brand },
+    disabled: { opacity: 0.45 },
+    content: { padding: 16, gap: 12 },
+    status: { fontSize: 16, fontFamily: 'OutfitBold', color: colors.ink },
+    input: {
+      borderWidth: 1,
+      borderColor: colors.border,
+      minHeight: 48,
+      borderRadius: 12,
+      padding: 12,
+      color: colors.ink,
+      backgroundColor: colors.surface,
+    },
+    record: {
+      padding: 14,
+      gap: 6,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border,
+    },
+    warning: {
+      color: colors.amber,
+      backgroundColor: colors.warningSurface,
+      padding: 8,
+      borderRadius: 8,
+    },
+    error: { color: colors.error },
+  }),
+)

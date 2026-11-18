@@ -106,6 +106,9 @@ export const reviewerToken = [
 
 export const test = base.extend({
   page: async ({ page }, use) => {
+    await page.addInitScript(() => {
+      localStorage.setItem('parkey:onboarding:v1', 'complete')
+    })
     await page.route('https://e2e.parkey.test/**', async (route) => {
       const path = new URL(route.request().url()).pathname
       if (path === '/map-style.json')

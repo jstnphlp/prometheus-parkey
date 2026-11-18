@@ -1,13 +1,22 @@
 import { useState } from 'react'
+import { Redirect } from 'expo-router'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
+import { createThemedStyles } from '../theme-provider'
 import Explore from '../discovery/explore'
-import { colors } from '../discovery/palette'
 import { pilotDiscoveryEnabled } from '../discovery/pilot-config'
 import PilotDiscovery from '../discovery/pilot-discovery'
+import { useOnboarding } from '../onboarding/provider'
 
-export default function MainDiscovery() {
+export default function IndexRoute() {
+  const { completed } = useOnboarding()
+  return completed ? <MainDiscovery /> : <Redirect href="/welcome" />
+}
+
+function MainDiscovery() {
+  const styles = useStyles()
+
   const [legacy, setLegacy] = useState(false)
   const insets = useSafeAreaInsets()
   const legacyAllowed = process.env.NODE_ENV === 'development'
@@ -35,16 +44,18 @@ export default function MainDiscovery() {
     </View>
   )
 }
-const styles = StyleSheet.create({
-  screen: { flex: 1 },
-  return: {
-    position: 'absolute',
-    alignSelf: 'center',
-    padding: 12,
-    borderRadius: 16,
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  label: { color: colors.brand, fontWeight: '600' },
-})
+const useStyles = createThemedStyles(({ colors }) =>
+  StyleSheet.create({
+    screen: { flex: 1 },
+    return: {
+      position: 'absolute',
+      alignSelf: 'center',
+      padding: 12,
+      borderRadius: 16,
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    label: { color: colors.brand, fontWeight: '600' },
+  }),
+)

@@ -4,15 +4,30 @@ test('search selects a destination, persists recents, and supports clear and und
   page,
 }) => {
   await openMap(page)
+  await page
+    .getByRole('button', { name: 'Search parking or landmark', exact: true })
+    .click()
   const query = page.getByTestId('destination-query')
   await query.fill('Poblacion')
   await expect(page.getByTestId('destination-result-0')).toContainText(
     'Poblacion Test Cafe',
   )
   await page.getByTestId('destination-result-0').click()
-  await expect(query).toHaveValue('Poblacion Test Cafe')
+  await expect(
+    page.getByRole('button', {
+      name: 'Search parking or landmark',
+      exact: true,
+    }),
+  ).toContainText('Poblacion Test Cafe')
   await expect(page).toHaveURL(/searchLng=121.0308/)
   await expect(page).not.toHaveURL(/search=1/)
+  await page
+    .getByRole('button', { name: 'Find Parking Nearby', exact: true })
+    .click()
+  await page
+    .getByRole('button', { name: 'Show parking list', exact: true })
+    .first()
+    .click()
   await expect(
     page
       .getByRole('button', {
@@ -21,7 +36,15 @@ test('search selects a destination, persists recents, and supports clear and und
       .first(),
   ).toBeVisible()
   await page.reload()
-  await expect(query).toHaveValue('Poblacion Test Cafe')
+  await expect(
+    page.getByRole('button', {
+      name: 'Search parking or landmark',
+      exact: true,
+    }),
+  ).toContainText('Poblacion Test Cafe')
+  await page
+    .getByRole('button', { name: 'Search parking or landmark', exact: true })
+    .click()
   await page
     .getByRole('button', { name: 'Clear destination search', exact: true })
     .click()
@@ -38,11 +61,9 @@ test('search selects a destination, persists recents, and supports clear and und
   await expect(page.getByTestId('destination-recent-0')).toContainText(
     'Poblacion Test Cafe',
   )
-  await page
-    .getByRole('button', { name: 'Close destination search', exact: true })
-    .click()
+  await page.getByRole('button', { name: 'Back', exact: true }).click()
   await expect(
-    page.getByRole('tab', { name: 'Map', exact: true }),
+    page.getByRole('tab', { name: 'Explore', exact: true }),
   ).toBeVisible()
 })
 
@@ -53,6 +74,9 @@ test('search reports no matches and recovers from a provider error', async ({
     route.fulfill({ json: { features: [] } }),
   )
   await openMap(page)
+  await page
+    .getByRole('button', { name: 'Search parking or landmark', exact: true })
+    .click()
   await page.getByTestId('destination-query').fill('Nowhere')
   await expect(
     page.getByRole('heading', { name: 'No places found', exact: true }),

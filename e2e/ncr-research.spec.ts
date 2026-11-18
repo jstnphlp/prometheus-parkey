@@ -36,5 +36,8 @@ test('legacy NCR route only points to separate research console; never bundles o
   await page
     .getByRole('link', { name: 'Return to Parkey mobile discovery' })
     .click()
+  await page
+    .getByRole('button', { name: 'Search parking or landmark', exact: true })
+    .click()
   await expect(page.getByTestId('destination-query')).toBeVisible()
 })

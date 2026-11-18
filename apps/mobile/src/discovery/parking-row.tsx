@@ -1,21 +1,20 @@
 import type { DiscoveryParking } from '@parkey/shared-types'
 import { StyleSheet, Text, View } from 'react-native'
 
+import { createThemedStyles } from '../theme-provider'
 import type { ParkingReference } from './model'
 import { parkingDetailData } from './parking-detail-data'
-import { reviewedParkingEntrance } from './parking-navigation'
 import { parkingRowText } from './presentation'
-import { FigmaAsset } from './figma-assets'
 import { MotionPressable } from './motion'
-import { colors, IconButton, ui } from './ui'
+import { fonts } from '../theme'
+import { useUI } from './ui'
 
-export const PARKING_ROW_HEIGHT = 96
+export const PARKING_ROW_HEIGHT = 114
 export function ParkingRow({
   parking,
   reference,
   now = new Date(),
   onPress,
-  onDirections,
   selected = false,
   testID,
 }: {
@@ -23,14 +22,17 @@ export function ParkingRow({
   reference: ParkingReference
   now?: Date
   onPress: () => void
-  onDirections: () => void
-  onFavorite: () => void
-  favorite: boolean
+  onDirections?: () => void
+  onFavorite?: () => void
+  favorite?: boolean
   disabled?: boolean
   selected?: boolean
   compact?: boolean
   testID?: string | undefined
 }) {
+  const ui = useUI()
+  const styles = useStyles()
+
   const text = parkingDetailData(parking, null, now)
   const row = parkingRowText(parking, reference, now)
   const summary = [text.meta, `${row.distance} · straight-line`]
@@ -45,59 +47,70 @@ export function ParkingRow({
         style={({ pressed }) => [styles.content, pressed && ui.pressed]}
       >
         <View style={styles.badge}>
-          <FigmaAsset name="pin" size={28} />
+          <Text style={styles.parkingLetter}>P</Text>
         </View>
         <View style={ui.flex}>
-          <Text style={ui.heading} numberOfLines={1}>
+          <Text style={styles.title} numberOfLines={1}>
             {text.title}
           </Text>
-          <Text style={ui.small} numberOfLines={1}>
+          <Text style={styles.subtitle} numberOfLines={1}>
             {summary}
           </Text>
         </View>
       </MotionPressable>
-      <IconButton
-        icon="arrow"
-        label={`Directions to ${text.title}`}
-        disabled={!reviewedParkingEntrance(parking)}
-        color={colors.surface}
-        onPress={onDirections}
-        style={styles.directions}
-      />
     </View>
   )
 }
-const styles = StyleSheet.create({
-  row: {
-    minHeight: 80,
-    height: PARKING_ROW_HEIGHT - 16,
-    marginBottom: 16,
-    padding: 12,
-    borderRadius: 28,
-    backgroundColor: colors.surface,
-    borderWidth: 2,
-    borderColor: colors.border,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  badge: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: colors.selected,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  content: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    minWidth: 0,
-    minHeight: 60,
-    gap: 8,
-    borderRadius: 12,
-  },
-  directions: { width: 44, height: 44, backgroundColor: colors.brand },
-  selected: { backgroundColor: colors.selected },
-})
+const useStyles = createThemedStyles(({ colors }) =>
+  StyleSheet.create({
+    row: {
+      minHeight: 103,
+      marginBottom: 11,
+      padding: 12,
+      borderRadius: 14,
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.border,
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 14,
+    },
+    badge: {
+      width: 52,
+      height: 52,
+      borderRadius: 14,
+      backgroundColor: colors.brand,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    content: {
+      flex: 1,
+      flexDirection: 'row',
+      alignItems: 'center',
+      minWidth: 0,
+      minHeight: 60,
+      gap: 14,
+      borderRadius: 12,
+    },
+    parkingLetter: {
+      fontFamily: fonts.bold,
+      fontSize: 30,
+      lineHeight: 38,
+      color: colors.onAction,
+    },
+    title: {
+      fontFamily: fonts.semibold,
+      fontSize: 18,
+      lineHeight: 24,
+      color: colors.ink,
+    },
+    subtitle: {
+      fontFamily: fonts.medium,
+      fontSize: 12,
+      lineHeight: 18,
+      color: colors.muted,
+      marginTop: 12,
+    },
+    selected: { backgroundColor: colors.selected },
+  }),
+)

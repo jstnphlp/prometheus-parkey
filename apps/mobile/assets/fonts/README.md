@@ -12,3 +12,12 @@ The Inter Regular and SemiBold faces are used for body text and labels. They are
 
 The web stylesheet references these bundled fonts directly; neither app needs a
 remote font service.
+
+The mobile magenta UI uses local Outfit Regular (400), Medium (500), SemiBold
+(600), Bold (700), ExtraBold (800), and Black (900). The original five weights
+come from `@expo-google-fonts/outfit` version `0.4.3`. SemiBold was retrieved from
+[Expo Google Fonts](https://github.com/expo/google-fonts/blob/master/font-packages/outfit/600SemiBold/Outfit_600SemiBold.ttf)
+on 2026-11-16. See [Outfit-OFL.txt](./Outfit-OFL.txt) and
+[Outfit-LICENSE.txt](./Outfit-LICENSE.txt). Brand marks remain unchanged local
+images; the app never downloads fonts at runtime. Existing Nunito/Inter files
+remain for other frontend consumers.

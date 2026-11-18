@@ -27,6 +27,7 @@ export type ResearchMapData = {
   clusters: NcrDiscoveryResponse['clusters']
 }
 export type NcrMapProps = {
+  accessibilityHidden?: boolean
   data: ResearchMapData | null
   selectedId: string | null
   target: { coordinate: Coordinate; zoom: number }

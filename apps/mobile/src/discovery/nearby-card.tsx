@@ -2,18 +2,20 @@ import type { DiscoveryParking } from '@parkey/shared-types'
 import { useEffect, useState } from 'react'
 import { Animated, Platform, StyleSheet, Text, View } from 'react-native'
 
+import { createThemedStyles } from '../theme-provider'
 import { FigmaAsset } from './figma-assets'
 import { MotionPressable } from './motion'
-import { colors } from './palette'
 import { parkingDetailData } from './parking-detail-data'
 import { reviewedParkingEntrance } from './parking-navigation'
 import type { ParkingReference } from './model'
 import { parkingRowText } from './presentation'
 import { ParkingStatus } from './parking-status'
-import { ui } from './ui'
+import { useUI } from './ui'
 import { useReducedMotion } from './use-reduced-motion'
 
 export function NearbyLoading() {
+  const styles = useStyles()
+
   const reduced = useReducedMotion()
   const [opacity] = useState(() => new Animated.Value(1))
   useEffect(() => {
@@ -78,6 +80,9 @@ export function NearbyCard({
   onPress: () => void
   onGo: () => void
 }) {
+  const ui = useUI()
+  const styles = useStyles()
+
   const details = parkingDetailData(parking, null, now)
   const row = parkingRowText(parking, reference, now)
   const summary = [details.meta, `${row.distance} · straight-line`]
@@ -118,30 +123,32 @@ export function NearbyCard({
   )
 }
 
-const styles = StyleSheet.create({
-  loadingStrip: {
-    flexDirection: 'row',
-    gap: 12,
-    paddingHorizontal: 16,
-    overflow: 'hidden',
-  },
-  skeleton: { backgroundColor: colors.border, borderRadius: 6 },
-  card: {
-    width: 300,
-    padding: 16,
-    borderRadius: 24,
-    backgroundColor: colors.soft,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  content: { flex: 1, minWidth: 0, gap: 6 },
-  go: {
-    width: 56,
-    height: 56,
-    borderRadius: 999,
-    backgroundColor: colors.brand,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-})
+const useStyles = createThemedStyles(({ colors }) =>
+  StyleSheet.create({
+    loadingStrip: {
+      flexDirection: 'row',
+      gap: 12,
+      paddingHorizontal: 16,
+      overflow: 'hidden',
+    },
+    skeleton: { backgroundColor: colors.border, borderRadius: 6 },
+    card: {
+      width: 300,
+      padding: 16,
+      borderRadius: 24,
+      backgroundColor: colors.soft,
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 12,
+    },
+    content: { flex: 1, minWidth: 0, gap: 6 },
+    go: {
+      width: 56,
+      height: 56,
+      borderRadius: 999,
+      backgroundColor: colors.brand,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+  }),
+)

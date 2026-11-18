@@ -1,10 +1,11 @@
 import { useState } from 'react'
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native'
 
+import { createThemedStyles } from '../theme-provider'
 import { ParkingGallery, ParkingImage } from './parking-photos'
 import { parkingPhotoIdentityKey, parkingPhotos } from './photos'
 import type { ParkingPhotoIdentity } from './photos'
-import { colors, IconButton, ui } from './ui'
+import { IconButton, useUI } from './ui'
 import { useReducedMotion } from './use-reduced-motion'
 
 /** Raw source image tags, Commons and nearby imagery never authorize a photo. */
@@ -41,6 +42,9 @@ function SpotThumbnailContent({
   name: string
   strip: boolean
 }) {
+  const ui = useUI()
+  const styles = useStyles()
+
   const [visible, setVisible] = useState(false)
   const reduced = useReducedMotion()
   if (strip)
@@ -97,18 +101,20 @@ function SpotThumbnailContent({
   )
 }
 
-const styles = StyleSheet.create({
-  strip: { paddingHorizontal: 16, paddingTop: 16, gap: 8 },
-  viewer: {
-    flex: 1,
-    justifyContent: 'center',
-    padding: 20,
-    backgroundColor: colors.backdrop,
-  },
-  card: {
-    backgroundColor: colors.surface,
-    padding: 16,
-    borderRadius: 16,
-    gap: 12,
-  },
-})
+const useStyles = createThemedStyles(({ colors }) =>
+  StyleSheet.create({
+    strip: { paddingHorizontal: 16, paddingTop: 16, gap: 8 },
+    viewer: {
+      flex: 1,
+      justifyContent: 'center',
+      padding: 20,
+      backgroundColor: colors.backdrop,
+    },
+    card: {
+      backgroundColor: colors.surface,
+      padding: 16,
+      borderRadius: 16,
+      gap: 12,
+    },
+  }),
+)

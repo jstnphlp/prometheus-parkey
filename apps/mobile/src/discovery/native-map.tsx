@@ -6,26 +6,24 @@ import {
   Map,
 } from '@maplibre/maplibre-react-native'
 import type {
+  MapRef,
   CameraRef,
   GeoJSONSourceRef,
 } from '@maplibre/maplibre-react-native'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { StyleSheet } from 'react-native'
 
-import parkingPinImage from '../../assets/figma/playful/mascot.png'
-import freePin from '../../assets/figma/playful/pin-free.png'
-import paidPin from '../../assets/figma/playful/pin-paid.png'
-import unknownPin from '../../assets/figma/playful/pin-unknown.png'
+import { useTheme } from '../theme-provider'
+import parkingPinImage from '../../assets/figma/interactive/parking-marker.png'
 import navUp from '../../assets/figma/playful/nav-up.png'
-import selectedParkingPinImage from '../../assets/figma/playful/mascot.png'
-
+import selectedParkingPinImage from '../../assets/figma/interactive/parking-marker-selected.png'
+import { placeFromFeature, placeLayer } from './places'
 import { config } from './config'
 import { createLocalMapBenchmark } from './local-map-benchmark'
 import { mapTextFont } from './map-font'
 import { routeBearing, splitRoute } from './drive-math'
 import { draftGeoJSON, parkingMapSources } from './map-data'
 import type { ParkingMapProps } from './map-types'
-import { mapColors, colors } from './palette'
 import {
   parkingLabelLayout,
   parkingLabelPaint,
@@ -36,15 +34,23 @@ import { useReducedMotion } from './use-reduced-motion'
 
 const parkingImages = {
   'parking-pin': parkingPinImage,
-  'pin-free': freePin,
-  'pin-paid': paidPin,
-  'pin-unknown': unknownPin,
   'nav-up': navUp,
   'parking-pin-selected': selectedParkingPinImage,
 }
 
 export default function NativeMap(props: ParkingMapProps) {
+  const { colors, mapColors } = useTheme()
+
   const [markMapReady] = useState(() => createLocalMapBenchmark())
+  const map = useRef<MapRef>(null)
+  const placeRequest = useRef(0)
+  useEffect(() => {
+    const request = placeRequest
+    request.current++
+    return () => {
+      request.current++
+    }
+  }, [props.onPlaceSelect, props.searching, props.drawing])
   const camera = useRef<CameraRef>(null)
   const facilities = useRef<GeoJSONSourceRef>(null)
   const previousTarget = useRef(props.target)
@@ -136,6 +142,12 @@ export default function NativeMap(props: ParkingMapProps) {
 
   return (
     <Map
+      accessible={!props.accessibilityHidden}
+      accessibilityElementsHidden={props.accessibilityHidden}
+      importantForAccessibility={
+        props.accessibilityHidden ? 'no-hide-descendants' : 'auto'
+      }
+      ref={map}
       style={StyleSheet.absoluteFill}
       mapStyle={props.night ? config.nightMapStyle : config.mapStyle}
       attribution={false}
@@ -154,7 +166,32 @@ export default function NativeMap(props: ParkingMapProps) {
           props.onPan?.()
         }
       }}
-      onPress={(event) => props.onMapPress(event.nativeEvent.lngLat)}
+      onPress={async (event) => {
+        const { point, lngLat } = event.nativeEvent
+        const request = ++placeRequest.current
+        if (props.drawing || props.searching || !props.onPlaceSelect) {
+          props.onMapPress(lngLat)
+          return
+        }
+        try {
+          const features = await map.current?.queryRenderedFeatures(
+            [
+              [point[0] - 10, point[1] - 10],
+              [point[0] + 10, point[1] + 10],
+            ],
+            { layers: [placeLayer.id] },
+          )
+          if (request !== placeRequest.current) return
+          const place = features
+            ?.map(placeFromFeature)
+            .find((item) => item !== null)
+          if (place) props.onPlaceSelect(place)
+          else props.onMapPress(lngLat)
+        } catch {
+          // A missing POI layer in a custom style must not break map interaction.
+          if (request === placeRequest.current) props.onMapPress(lngLat)
+        }
+      }}
       onRegionDidChange={(event) => {
         const {
           bounds: [west, south, east, north],
@@ -163,6 +200,7 @@ export default function NativeMap(props: ParkingMapProps) {
         props.onViewport({ west, south, east, north, zoom })
       }}
     >
+      <Layer {...placeLayer} />
       <Images images={parkingImages} />
       <Camera
         ref={camera}
@@ -217,6 +255,7 @@ export default function NativeMap(props: ParkingMapProps) {
         data={records.streets}
         onPress={(event) => {
           if (props.drawing) return
+          placeRequest.current++
           event.stopPropagation()
           const id: unknown = event.nativeEvent.features[0]?.properties?.id
           if (typeof id === 'string') props.onSelect(id)
@@ -259,6 +298,7 @@ export default function NativeMap(props: ParkingMapProps) {
         clusterMaxZoom={15}
         onPress={(event) => {
           if (props.drawing) return
+          placeRequest.current++
           event.stopPropagation()
           const feature = event.nativeEvent.features[0]
           if (props.searching && feature?.geometry.type === 'Point') {
@@ -305,7 +345,7 @@ export default function NativeMap(props: ParkingMapProps) {
               50,
               27,
             ],
-            'circle-color': colors.brandDeep,
+            'circle-color': colors.brand,
             'circle-blur': 0.5,
             'circle-opacity': 0.25,
             'circle-translate': [0, 2],
@@ -325,7 +365,7 @@ export default function NativeMap(props: ParkingMapProps) {
               50,
               24,
             ],
-            'circle-color': colors.brandDeep,
+            'circle-color': colors.brand,
             'circle-stroke-color': mapColors.casing,
             'circle-stroke-width': 3,
             'circle-opacity': 1,
@@ -361,6 +401,7 @@ export default function NativeMap(props: ParkingMapProps) {
         data={records.selected}
         onPress={(event) => {
           if (props.drawing) return
+          placeRequest.current++
           event.stopPropagation()
           const id: unknown = event.nativeEvent.features[0]?.properties?.id
           if (typeof id === 'string') props.onSelect(id)
@@ -396,7 +437,7 @@ export default function NativeMap(props: ParkingMapProps) {
           id="selected-name"
           type="symbol"
           layout={parkingLabelLayout()}
-          paint={parkingLabelPaint}
+          paint={parkingLabelPaint(colors)}
         />
       </GeoJSONSource>
       {props.userLocation ? (

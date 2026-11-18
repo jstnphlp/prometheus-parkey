@@ -1,0 +1,127 @@
+@font-face {
+  font-family: 'ParkeyOutfit';
+  src: url('../../../mobile/assets/fonts/Outfit_400Regular.ttf')
+    format('truetype');
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'ParkeyOutfit';
+  src: url('../../../mobile/assets/fonts/Outfit_800ExtraBold.ttf')
+    format('truetype');
+  font-weight: 800;
+  font-display: swap;
+}
+.confirmation-page {
+  min-height: 100svh;
+  padding: max(32px, env(safe-area-inset-top))
+    max(16px, env(safe-area-inset-right)) max(32px, env(safe-area-inset-bottom))
+    max(16px, env(safe-area-inset-left));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #840561;
+  color: #20162e;
+  font:
+    400 16px/1.5 'ParkeyOutfit',
+    Arial,
+    sans-serif;
+}
+.confirmation-page,
+.confirmation-page * {
+  box-sizing: border-box;
+}
+body:has(.confirmation-page) {
+  margin: 0;
+}
+.confirmation-card {
+  width: 100%;
+  max-width: 480px;
+  overflow: hidden;
+  border-radius: 24px;
+  background: #fff;
+}
+.confirmation-brand {
+  padding: 24px 28px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  background: #20162e;
+  color: #fff;
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: -1px;
+}
+.confirmation-brand img {
+  flex-shrink: 0;
+  object-fit: contain;
+}
+.confirmation-accent {
+  color: #00c3bc;
+}
+.confirmation-content {
+  padding: 32px 28px;
+}
+.confirmation-symbol {
+  display: flex;
+  width: 56px;
+  height: 56px;
+  margin-bottom: 24px;
+  justify-content: center;
+  align-items: center;
+  border-radius: 18px;
+  background: #fbe4f2;
+  color: #840561;
+  font-size: 28px;
+  font-weight: 800;
+}
+.confirmation-success {
+  background: #ddf6f4;
+  color: #007f88;
+}
+.confirmation-content h1 {
+  margin: 0 0 16px;
+  font-size: 32px;
+  line-height: 1.15;
+  font-weight: 800;
+  letter-spacing: -0.7px;
+  overflow-wrap: anywhere;
+}
+.confirmation-content h1:focus {
+  outline: none;
+}
+.confirmation-content p {
+  margin: 0;
+  color: #233d49;
+}
+.confirmation-button {
+  display: block;
+  width: 100%;
+  margin-top: 28px;
+  padding: 15px 20px;
+  border: 1px solid #007f88;
+  border-radius: 13px;
+  background: #00a6a7;
+  color: #20162e;
+  text-align: center;
+  text-decoration: none;
+  font:
+    800 17px/24px 'ParkeyOutfit',
+    Arial,
+    sans-serif;
+}
+.confirmation-button:focus-visible {
+  outline: 3px solid #840561;
+  outline-offset: 4px;
+}
+.confirmation-content .confirmation-small {
+  margin-top: 20px;
+  font-size: 14px;
+}
+.confirmation-footer {
+  margin: 24px 0 0;
+  color: #ffe4f2;
+  font-size: 14px;
+  text-align: center;
+}

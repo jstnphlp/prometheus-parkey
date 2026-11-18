@@ -19,6 +19,7 @@ export const config = {
     (!releaseBuild && process.env.NODE_ENV === 'development'
       ? 'https://router.project-osrm.org'
       : ''),
+  placeSearchEnabled: process.env.EXPO_PUBLIC_PLACE_SEARCH_ENABLED === 'true',
   geocoder:
     process.env.EXPO_PUBLIC_PHOTON_URL ||
     (releaseBuild ? '' : 'https://photon.komoot.io/api/'),

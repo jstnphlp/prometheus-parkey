@@ -1,0 +1,850 @@
+[
+  {
+    "screen": "16",
+    "theme": "light-magenta",
+    "figmaNodeId": "249:2286",
+    "appCapture": "docs/evidence/figma-exact/browser/light-magenta-16.png",
+    "comparison": "docs/evidence/figma-exact/comparisons/browser/light-magenta-16.jpg",
+    "maskedOsRegions": [
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
+    ],
+    "maskedDataRegions": [[113, 117, 404, 182]],
+    "retainedMapControls": []
+  },
+  {
+    "screen": "16",
+    "theme": "dark-magenta",
+    "figmaNodeId": "249:5721",
+    "appCapture": "docs/evidence/figma-exact/browser/dark-magenta-16.png",
+    "comparison": "docs/evidence/figma-exact/comparisons/browser/dark-magenta-16.jpg",
+    "maskedOsRegions": [
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
+    ],
+    "maskedDataRegions": [[113, 117, 404, 182]],
+    "retainedMapControls": []
+  },
+  {
+    "screen": "16A",
+    "theme": "light-magenta",
+    "figmaNodeId": "249:4092",
+    "appCapture": "docs/evidence/figma-exact/browser/light-magenta-16A.png",
+    "comparison": "docs/evidence/figma-exact/comparisons/browser/light-magenta-16A.jpg",
+    "maskedOsRegions": [
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
+    ],
+    "maskedDataRegions": [],
+    "retainedMapControls": []
+  },
+  {
+    "screen": "16A",
+    "theme": "dark-magenta",
+    "figmaNodeId": "249:7531",
+    "appCapture": "docs/evidence/figma-exact/browser/dark-magenta-16A.png",
+    "comparison": "docs/evidence/figma-exact/comparisons/browser/dark-magenta-16A.jpg",
+    "maskedOsRegions": [
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
+    ],
+    "maskedDataRegions": [],
+    "retainedMapControls": []
+  },
+  {
+    "screen": "17",
+    "theme": "light-magenta",
+    "figmaNodeId": "249:2625",
+    "appCapture": "docs/evidence/figma-exact/browser/light-magenta-17.png",
+    "comparison": "docs/evidence/figma-exact/comparisons/browser/light-magenta-17.jpg",
+    "maskedOsRegions": [
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
+    ],
+    "maskedDataRegions": [],
+    "retainedMapControls": []
+  },
+  {
+    "screen": "17",
+    "theme": "dark-magenta",
+    "figmaNodeId": "249:6060",
+    "appCapture": "docs/evidence/figma-exact/browser/dark-magenta-17.png",
+    "comparison": "docs/evidence/figma-exact/comparisons/browser/dark-magenta-17.jpg",
+    "maskedOsRegions": [
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
+    ],
+    "maskedDataRegions": [],
+    "retainedMapControls": []
+  },
+  {
+    "screen": "1B",
+    "theme": "light-magenta",
+    "figmaNodeId": "249:4141",
+    "appCapture": "docs/evidence/figma-exact/browser/light-magenta-1B.png",
+    "comparison": "docs/evidence/figma-exact/comparisons/browser/light-magenta-1B.jpg",
+    "maskedOsRegions": [
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
+    ],
+    "maskedDataRegions": [],
+    "retainedMapControls": []
+  },
+  {
+    "screen": "1B",
+    "theme": "dark-magenta",
+    "figmaNodeId": "249:7580",
+    "appCapture": "docs/evidence/figma-exact/browser/dark-magenta-1B.png",
+    "comparison": "docs/evidence/figma-exact/comparisons/browser/dark-magenta-1B.jpg",
+    "maskedOsRegions": [
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
+    ],
+    "maskedDataRegions": [],
+    "retainedMapControls": []
+  },
+  {
+    "screen": "2",
+    "theme": "light-magenta",
+    "figmaNodeId": "249:1662",
+    "appCapture": "docs/evidence/figma-exact/browser/light-magenta-2.png",
+    "comparison": "docs/evidence/figma-exact/comparisons/browser/light-magenta-2.jpg",
+    "maskedOsRegions": [
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
+    ],
+    "maskedDataRegions": [],
+    "retainedMapControls": []
+  },
+  {
+    "screen": "2",
+    "theme": "dark-magenta",
+    "figmaNodeId": "249:5091",
+    "appCapture": "docs/evidence/figma-exact/browser/dark-magenta-2.png",
+    "comparison": "docs/evidence/figma-exact/comparisons/browser/dark-magenta-2.jpg",
+    "maskedOsRegions": [
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
+    ],
+    "maskedDataRegions": [],
+    "retainedMapControls": []
+  },
+  {
+    "screen": "3",
+    "theme": "light-magenta",
+    "figmaNodeId": "249:1688",
+    "appCapture": "docs/evidence/figma-exact/browser/light-magenta-3.png",
+    "comparison": "docs/evidence/figma-exact/comparisons/browser/light-magenta-3.jpg",
+    "maskedOsRegions": [
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
+    ],
+    "maskedDataRegions": [],
+    "retainedMapControls": []
+  },
+  {
+    "screen": "3",
+    "theme": "dark-magenta",
+    "figmaNodeId": "249:5117",
+    "appCapture": "docs/evidence/figma-exact/browser/dark-magenta-3.png",
+    "comparison": "docs/evidence/figma-exact/comparisons/browser/dark-magenta-3.jpg",
+    "maskedOsRegions": [
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
+    ],
+    "maskedDataRegions": [],
+    "retainedMapControls": []
+  },
+  {
+    "screen": "4",
+    "theme": "light-magenta",
+    "figmaNodeId": "249:1714",
+    "appCapture": "docs/evidence/figma-exact/browser/light-magenta-4.png",
+    "comparison": "docs/evidence/figma-exact/comparisons/browser/light-magenta-4.jpg",
+    "maskedOsRegions": [
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
+    ],
+    "maskedDataRegions": [],
+    "retainedMapControls": []
+  },
+  {
+    "screen": "4",
+    "theme": "dark-magenta",
+    "figmaNodeId": "249:5143",
+    "appCapture": "docs/evidence/figma-exact/browser/dark-magenta-4.png",
+    "comparison": "docs/evidence/figma-exact/comparisons/browser/dark-magenta-4.jpg",
+    "maskedOsRegions": [
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
+    ],
+    "maskedDataRegions": [],
+    "retainedMapControls": []
+  },
+  {
+    "screen": "5",
+    "theme": "light-magenta",
+    "figmaNodeId": "249:1740",
+    "appCapture": "docs/evidence/figma-exact/browser/light-magenta-5.png",
+    "comparison": "docs/evidence/figma-exact/comparisons/browser/light-magenta-5.jpg",
+    "maskedOsRegions": [
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
+    ],
+    "maskedDataRegions": [],
+    "retainedMapControls": []
+  },
+  {
+    "screen": "5",
+    "theme": "dark-magenta",
+    "figmaNodeId": "249:5169",
+    "appCapture": "docs/evidence/figma-exact/browser/dark-magenta-5.png",
+    "comparison": "docs/evidence/figma-exact/comparisons/browser/dark-magenta-5.jpg",
+    "maskedOsRegions": [
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
+    ],
+    "maskedDataRegions": [],
+    "retainedMapControls": []
+  },
+  {
+    "screen": "20",
+    "theme": "light-magenta",
+    "figmaNodeId": "249:2862",
+    "appCapture": "docs/evidence/figma-exact/browser/light-magenta-20.png",
+    "comparison": "docs/evidence/figma-exact/comparisons/browser/light-magenta-20.jpg",
+    "maskedOsRegions": [
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
+    ],
+    "maskedDataRegions": [],
+    "retainedMapControls": []
+  },
+  {
+    "screen": "20",
+    "theme": "dark-magenta",
+    "figmaNodeId": "249:6297",
+    "appCapture": "docs/evidence/figma-exact/browser/dark-magenta-20.png",
+    "comparison": "docs/evidence/figma-exact/comparisons/browser/dark-magenta-20.jpg",
+    "maskedOsRegions": [
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
+    ],
+    "maskedDataRegions": [],
+    "retainedMapControls": []
+  },
+  {
+    "screen": "20A",
+    "theme": "light-magenta",
+    "figmaNodeId": "249:2913",
+    "appCapture": "docs/evidence/figma-exact/browser/light-magenta-20A.png",
+    "comparison": "docs/evidence/figma-exact/comparisons/browser/light-magenta-20A.jpg",
+    "maskedOsRegions": [
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
+    ],
+    "maskedDataRegions": [],
+    "retainedMapControls": []
+  },
+  {
+    "screen": "20A",
+    "theme": "dark-magenta",
+    "figmaNodeId": "249:6348",
+    "appCapture": "docs/evidence/figma-exact/browser/dark-magenta-20A.png",
+    "comparison": "docs/evidence/figma-exact/comparisons/browser/dark-magenta-20A.jpg",
+    "maskedOsRegions": [
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
+    ],
+    "maskedDataRegions": [],
+    "retainedMapControls": []
+  },
+  {
+    "screen": "21",
+    "theme": "light-magenta",
+    "figmaNodeId": "249:2964",
+    "appCapture": "docs/evidence/figma-exact/browser/light-magenta-21.png",
+    "comparison": "docs/evidence/figma-exact/comparisons/browser/light-magenta-21.jpg",
+    "maskedOsRegions": [
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
+    ],
+    "maskedDataRegions": [
+      [28, 198, 403, 225],
+      [106, 262, 391, 333],
+      [106, 376, 391, 447],
+      [106, 490, 391, 561],
+      [106, 604, 391, 675]
+    ],
+    "retainedMapControls": []
+  },
+  {
+    "screen": "21",
+    "theme": "dark-magenta",
+    "figmaNodeId": "249:6399",
+    "appCapture": "docs/evidence/figma-exact/browser/dark-magenta-21.png",
+    "comparison": "docs/evidence/figma-exact/comparisons/browser/dark-magenta-21.jpg",
+    "maskedOsRegions": [
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
+    ],
+    "maskedDataRegions": [
+      [28, 198, 403, 225],
+      [106, 262, 391, 333],
+      [106, 376, 391, 447],
+      [106, 490, 391, 561],
+      [106, 604, 391, 675]
+    ],
+    "retainedMapControls": []
+  },
+  {
+    "screen": "22",
+    "theme": "light-magenta",
+    "figmaNodeId": "249:3020",
+    "appCapture": "docs/evidence/figma-exact/browser/light-magenta-22.png",
+    "comparison": "docs/evidence/figma-exact/comparisons/browser/light-magenta-22.jpg",
+    "maskedOsRegions": [
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
+    ],
+    "maskedDataRegions": [[0, 150, 430, 744]],
+    "retainedMapControls": [
+      [25, 664, 85, 726],
+      [102, 664, 162, 726],
+      [179, 664, 239, 726]
+    ]
+  },
+  {
+    "screen": "22",
+    "theme": "dark-magenta",
+    "figmaNodeId": "249:6455",
+    "appCapture": "docs/evidence/figma-exact/browser/dark-magenta-22.png",
+    "comparison": "docs/evidence/figma-exact/comparisons/browser/dark-magenta-22.jpg",
+    "maskedOsRegions": [
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
+    ],
+    "maskedDataRegions": [[0, 150, 430, 744]],
+    "retainedMapControls": [
+      [25, 664, 85, 726],
+      [102, 664, 162, 726],
+      [179, 664, 239, 726]
+    ]
+  },
+  {
+    "screen": "22A",
+    "theme": "light-magenta",
+    "figmaNodeId": "249:3098",
+    "appCapture": "docs/evidence/figma-exact/browser/light-magenta-22A.png",
+    "comparison": "docs/evidence/figma-exact/comparisons/browser/light-magenta-22A.jpg",
+    "maskedOsRegions": [
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
+    ],
+    "maskedDataRegions": [],
+    "retainedMapControls": []
+  },
+  {
+    "screen": "22A",
+    "theme": "dark-magenta",
+    "figmaNodeId": "249:6533",
+    "appCapture": "docs/evidence/figma-exact/browser/dark-magenta-22A.png",
+    "comparison": "docs/evidence/figma-exact/comparisons/browser/dark-magenta-22A.jpg",
+    "maskedOsRegions": [
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
+    ],
+    "maskedDataRegions": [],
+    "retainedMapControls": []
+  },
+  {
+    "screen": "22B",
+    "theme": "light-magenta",
+    "figmaNodeId": "249:3144",
+    "appCapture": "docs/evidence/figma-exact/browser/light-magenta-22B.png",
+    "comparison": "docs/evidence/figma-exact/comparisons/browser/light-magenta-22B.jpg",
+    "maskedOsRegions": [
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
+    ],
+    "maskedDataRegions": [],
+    "retainedMapControls": []
+  },
+  {
+    "screen": "22B",
+    "theme": "dark-magenta",
+    "figmaNodeId": "249:6579",
+    "appCapture": "docs/evidence/figma-exact/browser/dark-magenta-22B.png",
+    "comparison": "docs/evidence/figma-exact/comparisons/browser/dark-magenta-22B.jpg",
+    "maskedOsRegions": [
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
+    ],
+    "maskedDataRegions": [],
+    "retainedMapControls": []
+  },
+  {
+    "screen": "23",
+    "theme": "light-magenta",
+    "figmaNodeId": "249:3217",
+    "appCapture": "docs/evidence/figma-exact/browser/light-magenta-23.png",
+    "comparison": "docs/evidence/figma-exact/comparisons/browser/light-magenta-23.jpg",
+    "maskedOsRegions": [
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
+    ],
+    "maskedDataRegions": [
+      [0, 150, 430, 826],
+      [41, 612, 390, 657]
+    ],
+    "retainedMapControls": [
+      [94, 473, 154, 534],
+      [171, 473, 231, 534],
+      [248, 473, 308, 534],
+      [24, 554, 406, 813]
+    ]
+  },
+  {
+    "screen": "23",
+    "theme": "dark-magenta",
+    "figmaNodeId": "249:6652",
+    "appCapture": "docs/evidence/figma-exact/browser/dark-magenta-23.png",
+    "comparison": "docs/evidence/figma-exact/comparisons/browser/dark-magenta-23.jpg",
+    "maskedOsRegions": [
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
+    ],
+    "maskedDataRegions": [
+      [0, 150, 430, 826],
+      [41, 612, 390, 657]
+    ],
+    "retainedMapControls": [
+      [94, 473, 154, 534],
+      [171, 473, 231, 534],
+      [248, 473, 308, 534],
+      [24, 554, 406, 813]
+    ]
+  },
+  {
+    "screen": "25",
+    "theme": "light-magenta",
+    "figmaNodeId": "249:3392",
+    "appCapture": "docs/evidence/figma-exact/browser/light-magenta-25.png",
+    "comparison": "docs/evidence/figma-exact/comparisons/browser/light-magenta-25.jpg",
+    "maskedOsRegions": [
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
+    ],
+    "maskedDataRegions": [
+      [0, 44, 430, 308],
+      [25, 338, 405, 392]
+    ],
+    "retainedMapControls": []
+  },
+  {
+    "screen": "25",
+    "theme": "dark-magenta",
+    "figmaNodeId": "249:6827",
+    "appCapture": "docs/evidence/figma-exact/browser/dark-magenta-25.png",
+    "comparison": "docs/evidence/figma-exact/comparisons/browser/dark-magenta-25.jpg",
+    "maskedOsRegions": [
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
+    ],
+    "maskedDataRegions": [
+      [0, 44, 430, 308],
+      [25, 338, 405, 392]
+    ],
+    "retainedMapControls": []
+  },
+  {
+    "screen": "26A",
+    "theme": "light-magenta",
+    "figmaNodeId": "249:3911",
+    "appCapture": "docs/evidence/figma-exact/browser/light-magenta-26A.png",
+    "comparison": "docs/evidence/figma-exact/comparisons/browser/light-magenta-26A.jpg",
+    "maskedOsRegions": [
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
+    ],
+    "maskedDataRegions": [],
+    "retainedMapControls": []
+  },
+  {
+    "screen": "26A",
+    "theme": "dark-magenta",
+    "figmaNodeId": "249:7350",
+    "appCapture": "docs/evidence/figma-exact/browser/dark-magenta-26A.png",
+    "comparison": "docs/evidence/figma-exact/comparisons/browser/dark-magenta-26A.jpg",
+    "maskedOsRegions": [
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
+    ],
+    "maskedDataRegions": [],
+    "retainedMapControls": []
+  },
+  {
+    "screen": "26B",
+    "theme": "light-magenta",
+    "figmaNodeId": "249:3853",
+    "appCapture": "docs/evidence/figma-exact/browser/light-magenta-26B.png",
+    "comparison": "docs/evidence/figma-exact/comparisons/browser/light-magenta-26B.jpg",
+    "maskedOsRegions": [
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
+    ],
+    "maskedDataRegions": [],
+    "retainedMapControls": []
+  },
+  {
+    "screen": "26B",
+    "theme": "dark-magenta",
+    "figmaNodeId": "249:7292",
+    "appCapture": "docs/evidence/figma-exact/browser/dark-magenta-26B.png",
+    "comparison": "docs/evidence/figma-exact/comparisons/browser/dark-magenta-26B.jpg",
+    "maskedOsRegions": [
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
+    ],
+    "maskedDataRegions": [],
+    "retainedMapControls": []
+  },
+  {
+    "screen": "28",
+    "theme": "light-magenta",
+    "figmaNodeId": "249:3649",
+    "appCapture": "docs/evidence/figma-exact/browser/light-magenta-28.png",
+    "comparison": "docs/evidence/figma-exact/comparisons/browser/light-magenta-28.jpg",
+    "maskedOsRegions": [
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
+    ],
+    "maskedDataRegions": [[20, 283, 409, 696]],
+    "retainedMapControls": []
+  },
+  {
+    "screen": "28",
+    "theme": "dark-magenta",
+    "figmaNodeId": "249:7088",
+    "appCapture": "docs/evidence/figma-exact/browser/dark-magenta-28.png",
+    "comparison": "docs/evidence/figma-exact/comparisons/browser/dark-magenta-28.jpg",
+    "maskedOsRegions": [
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
+    ],
+    "maskedDataRegions": [[20, 283, 409, 696]],
+    "retainedMapControls": []
+  },
+  {
+    "screen": "79",
+    "theme": "light-magenta",
+    "figmaNodeId": "249:4252",
+    "appCapture": "docs/evidence/figma-exact/browser/light-magenta-79.png",
+    "comparison": "docs/evidence/figma-exact/comparisons/browser/light-magenta-79.jpg",
+    "maskedOsRegions": [
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
+    ],
+    "maskedDataRegions": [],
+    "retainedMapControls": []
+  },
+  {
+    "screen": "79",
+    "theme": "dark-magenta",
+    "figmaNodeId": "249:7691",
+    "appCapture": "docs/evidence/figma-exact/browser/dark-magenta-79.png",
+    "comparison": "docs/evidence/figma-exact/comparisons/browser/dark-magenta-79.jpg",
+    "maskedOsRegions": [
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
+    ],
+    "maskedDataRegions": [],
+    "retainedMapControls": []
+  },
+  {
+    "screen": "80",
+    "theme": "light-magenta",
+    "figmaNodeId": "249:4298",
+    "appCapture": "docs/evidence/figma-exact/browser/light-magenta-80.png",
+    "comparison": "docs/evidence/figma-exact/comparisons/browser/light-magenta-80.jpg",
+    "maskedOsRegions": [
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
+    ],
+    "maskedDataRegions": [],
+    "retainedMapControls": []
+  },
+  {
+    "screen": "80",
+    "theme": "dark-magenta",
+    "figmaNodeId": "249:7737",
+    "appCapture": "docs/evidence/figma-exact/browser/dark-magenta-80.png",
+    "comparison": "docs/evidence/figma-exact/comparisons/browser/dark-magenta-80.jpg",
+    "maskedOsRegions": [
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
+    ],
+    "maskedDataRegions": [],
+    "retainedMapControls": []
+  },
+  {
+    "screen": "83",
+    "theme": "light-magenta",
+    "figmaNodeId": "249:4523",
+    "appCapture": "docs/evidence/figma-exact/browser/light-magenta-83.png",
+    "comparison": "docs/evidence/figma-exact/comparisons/browser/light-magenta-83.jpg",
+    "maskedOsRegions": [
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
+    ],
+    "maskedDataRegions": [],
+    "retainedMapControls": []
+  },
+  {
+    "screen": "83",
+    "theme": "dark-magenta",
+    "figmaNodeId": "249:7962",
+    "appCapture": "docs/evidence/figma-exact/browser/dark-magenta-83.png",
+    "comparison": "docs/evidence/figma-exact/comparisons/browser/dark-magenta-83.jpg",
+    "maskedOsRegions": [
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
+    ],
+    "maskedDataRegions": [],
+    "retainedMapControls": []
+  },
+  {
+    "screen": "84",
+    "theme": "light-magenta",
+    "figmaNodeId": "249:4563",
+    "appCapture": "docs/evidence/figma-exact/browser/light-magenta-84.png",
+    "comparison": "docs/evidence/figma-exact/comparisons/browser/light-magenta-84.jpg",
+    "maskedOsRegions": [
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
+    ],
+    "maskedDataRegions": [],
+    "retainedMapControls": []
+  },
+  {
+    "screen": "84",
+    "theme": "dark-magenta",
+    "figmaNodeId": "249:8002",
+    "appCapture": "docs/evidence/figma-exact/browser/dark-magenta-84.png",
+    "comparison": "docs/evidence/figma-exact/comparisons/browser/dark-magenta-84.jpg",
+    "maskedOsRegions": [
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
+    ],
+    "maskedDataRegions": [],
+    "retainedMapControls": []
+  },
+  {
+    "screen": "22C",
+    "theme": "light-magenta",
+    "figmaNodeId": "249:3188",
+    "appCapture": "docs/evidence/figma-exact/browser/light-magenta-22C.png",
+    "comparison": "docs/evidence/figma-exact/comparisons/browser/light-magenta-22C.jpg",
+    "maskedOsRegions": [
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
+    ],
+    "maskedDataRegions": [],
+    "retainedMapControls": []
+  },
+  {
+    "screen": "22C",
+    "theme": "dark-magenta",
+    "figmaNodeId": "249:6623",
+    "appCapture": "docs/evidence/figma-exact/browser/dark-magenta-22C.png",
+    "comparison": "docs/evidence/figma-exact/comparisons/browser/dark-magenta-22C.jpg",
+    "maskedOsRegions": [
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
+    ],
+    "maskedDataRegions": [],
+    "retainedMapControls": []
+  },
+  {
+    "screen": "27",
+    "theme": "light-magenta",
+    "figmaNodeId": "249:3570",
+    "appCapture": "docs/evidence/figma-exact/browser/light-magenta-27.png",
+    "comparison": "docs/evidence/figma-exact/comparisons/browser/light-magenta-27.jpg",
+    "maskedOsRegions": [
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
+    ],
+    "maskedDataRegions": [],
+    "retainedMapControls": []
+  },
+  {
+    "screen": "27",
+    "theme": "dark-magenta",
+    "figmaNodeId": "249:7008",
+    "appCapture": "docs/evidence/figma-exact/browser/dark-magenta-27.png",
+    "comparison": "docs/evidence/figma-exact/comparisons/browser/dark-magenta-27.jpg",
+    "maskedOsRegions": [
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
+    ],
+    "maskedDataRegions": [],
+    "retainedMapControls": []
+  },
+  {
+    "screen": "29",
+    "theme": "light-magenta",
+    "figmaNodeId": "249:3714",
+    "appCapture": "docs/evidence/figma-exact/browser/light-magenta-29.png",
+    "comparison": "docs/evidence/figma-exact/comparisons/browser/light-magenta-29.jpg",
+    "maskedOsRegions": [
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
+    ],
+    "maskedDataRegions": [[0, 121, 430, 779]],
+    "retainedMapControls": []
+  },
+  {
+    "screen": "29",
+    "theme": "dark-magenta",
+    "figmaNodeId": "249:7153",
+    "appCapture": "docs/evidence/figma-exact/browser/dark-magenta-29.png",
+    "comparison": "docs/evidence/figma-exact/comparisons/browser/dark-magenta-29.jpg",
+    "maskedOsRegions": [
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
+    ],
+    "maskedDataRegions": [[0, 121, 430, 779]],
+    "retainedMapControls": []
+  },
+  {
+    "screen": "30",
+    "theme": "light-magenta",
+    "figmaNodeId": "249:3783",
+    "appCapture": "docs/evidence/figma-exact/browser/light-magenta-30.png",
+    "comparison": "docs/evidence/figma-exact/comparisons/browser/light-magenta-30.jpg",
+    "maskedOsRegions": [
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
+    ],
+    "maskedDataRegions": [[0, 90, 430, 849]],
+    "retainedMapControls": []
+  },
+  {
+    "screen": "30",
+    "theme": "dark-magenta",
+    "figmaNodeId": "249:7222",
+    "appCapture": "docs/evidence/figma-exact/browser/dark-magenta-30.png",
+    "comparison": "docs/evidence/figma-exact/comparisons/browser/dark-magenta-30.jpg",
+    "maskedOsRegions": [
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
+    ],
+    "maskedDataRegions": [[0, 90, 430, 849]],
+    "retainedMapControls": []
+  },
+  {
+    "screen": "6",
+    "theme": "light-magenta",
+    "figmaNodeId": "249:1787",
+    "appCapture": "docs/evidence/figma-exact/browser/light-magenta-6.png",
+    "comparison": "docs/evidence/figma-exact/comparisons/browser/light-magenta-6.jpg",
+    "maskedOsRegions": [
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
+    ],
+    "maskedDataRegions": [],
+    "retainedMapControls": []
+  },
+  {
+    "screen": "6",
+    "theme": "dark-magenta",
+    "figmaNodeId": "249:5216",
+    "appCapture": "docs/evidence/figma-exact/browser/dark-magenta-6.png",
+    "comparison": "docs/evidence/figma-exact/comparisons/browser/dark-magenta-6.jpg",
+    "maskedOsRegions": [
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
+    ],
+    "maskedDataRegions": [],
+    "retainedMapControls": []
+  },
+  {
+    "screen": "18",
+    "theme": "light-magenta",
+    "figmaNodeId": "249:2733",
+    "appCapture": "docs/evidence/figma-exact/browser/light-magenta-18.png",
+    "comparison": "docs/evidence/figma-exact/comparisons/browser/light-magenta-18.jpg",
+    "maskedOsRegions": [
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
+    ],
+    "maskedDataRegions": [],
+    "retainedMapControls": []
+  },
+  {
+    "screen": "18",
+    "theme": "dark-magenta",
+    "figmaNodeId": "249:6168",
+    "appCapture": "docs/evidence/figma-exact/browser/dark-magenta-18.png",
+    "comparison": "docs/evidence/figma-exact/comparisons/browser/dark-magenta-18.jpg",
+    "maskedOsRegions": [
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
+    ],
+    "maskedDataRegions": [],
+    "retainedMapControls": []
+  },
+  {
+    "screen": "1",
+    "theme": "light-magenta",
+    "figmaNodeId": "249:1658",
+    "appCapture": "docs/evidence/figma-exact/browser/light-magenta-1.png",
+    "comparison": "docs/evidence/figma-exact/comparisons/browser/light-magenta-1.jpg",
+    "maskedOsRegions": [
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
+    ],
+    "maskedDataRegions": [],
+    "retainedMapControls": []
+  },
+  {
+    "screen": "1",
+    "theme": "dark-magenta",
+    "figmaNodeId": "249:5087",
+    "appCapture": "docs/evidence/figma-exact/browser/dark-magenta-1.png",
+    "comparison": "docs/evidence/figma-exact/comparisons/browser/dark-magenta-1.jpg",
+    "maskedOsRegions": [
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
+    ],
+    "maskedDataRegions": [],
+    "retainedMapControls": []
+  },
+  {
+    "screen": "26",
+    "theme": "light-magenta",
+    "figmaNodeId": "249:3515",
+    "appCapture": "docs/evidence/figma-exact/browser/light-magenta-26.png",
+    "comparison": "docs/evidence/figma-exact/comparisons/browser/light-magenta-26.jpg",
+    "maskedOsRegions": [
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
+    ],
+    "maskedDataRegions": [],
+    "retainedMapControls": []
+  },
+  {
+    "screen": "26",
+    "theme": "dark-magenta",
+    "figmaNodeId": "249:6952",
+    "appCapture": "docs/evidence/figma-exact/browser/dark-magenta-26.png",
+    "comparison": "docs/evidence/figma-exact/comparisons/browser/dark-magenta-26.jpg",
+    "maskedOsRegions": [
+      [0, 0, 430, 44],
+      [0, 898, 430, 932]
+    ],
+    "maskedDataRegions": [],
+    "retainedMapControls": []
+  }
+]

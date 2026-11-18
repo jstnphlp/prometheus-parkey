@@ -1,10 +1,12 @@
 import { StyleSheet, Text } from 'react-native'
 
-import { colors } from './palette'
+import { createThemedStyles } from '../theme-provider'
 import type { SpotDetails } from './parking-detail-data'
 import { fonts } from './typography'
 
 export function ParkingStatus({ details }: { details: SpotDetails }) {
+  const styles = useStyles()
+
   const free = details.fee === 'Free'
   return (
     <Text
@@ -15,19 +17,21 @@ export function ParkingStatus({ details }: { details: SpotDetails }) {
   )
 }
 
-const styles = StyleSheet.create({
-  chip: {
-    alignSelf: 'flex-start',
-    overflow: 'hidden',
-    borderRadius: 999,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    fontFamily: fonts.bold,
-    fontSize: 12,
-    lineHeight: 14.4,
-    color: colors.muted,
-    backgroundColor: colors.soft,
-  },
-  free: { backgroundColor: colors.successSurface, color: colors.success },
-  unknown: { backgroundColor: colors.warningSurface, color: colors.amber },
-})
+const useStyles = createThemedStyles(({ colors }) =>
+  StyleSheet.create({
+    chip: {
+      alignSelf: 'flex-start',
+      overflow: 'hidden',
+      borderRadius: 999,
+      paddingHorizontal: 12,
+      paddingVertical: 6,
+      fontFamily: fonts.bold,
+      fontSize: 12,
+      lineHeight: 14.4,
+      color: colors.muted,
+      backgroundColor: colors.soft,
+    },
+    free: { backgroundColor: colors.successSurface, color: colors.success },
+    unknown: { backgroundColor: colors.warningSurface, color: colors.amber },
+  }),
+)

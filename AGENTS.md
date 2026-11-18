@@ -102,3 +102,15 @@ ambiguities or stale snapshots; do not repeatedly fetch the entire canvas.
 Treat exported Figma mock content as a design reference, never as trustworthy
 parking data or permission to bypass V1 scope, auth/data/privacy gates, or the
 existing native/web discovery integrations.
+
+## Exact Figma UI implementation directive (2026-11-17)
+
+For any follow-on Parkey magenta UI parity work, read
+[docs/FIGMA_EXACT_UI_CODEX_BRIEF.md](docs/FIGMA_EXACT_UI_CODEX_BRIEF.md)
+before editing. The user requires the **actual paired Figma layouts and
+interactive journey** (Light + Magenta / Dark + Magenta), not the existing UI
+with its colors changed. Use live Figma MCP on the specific source nodes,
+capture screenshots, and replace conflicting discovery/list/settings screen
+composition while retaining the canonical V1 data, auth and safety contract.
+Do not label an expanded legacy map sheet as Figma's dedicated List or Map
+screen, and never claim pixel parity without app-vs-Figma image evidence.

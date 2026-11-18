@@ -1,0 +1,277 @@
+[
+  {
+    "profile": "360x800 fontScale1",
+    "case": "short",
+    "emailLength": 21,
+    "fields": [
+      {
+        "id": "auth-email-address-container",
+        "label": "",
+        "bounds": "[96,857][984,1007]",
+        "length": 0,
+        "focused": "false",
+        "password": "false",
+        "selectionStart": "",
+        "selectionEnd": ""
+      },
+      {
+        "id": "auth-email-address-icon",
+        "label": "",
+        "bounds": "[144,899][210,965]",
+        "length": 0,
+        "focused": "false",
+        "password": "false",
+        "selectionStart": "",
+        "selectionEnd": ""
+      },
+      {
+        "id": "",
+        "label": "Email address",
+        "bounds": "[252,857][966,1007]",
+        "length": 21,
+        "focused": "true",
+        "password": "false",
+        "selectionStart": "19",
+        "selectionEnd": "19"
+      },
+      {
+        "id": "auth-password-container",
+        "label": "",
+        "bounds": "[96,1025][984,1175]",
+        "length": 0,
+        "focused": "false",
+        "password": "false",
+        "selectionStart": "",
+        "selectionEnd": ""
+      },
+      {
+        "id": "auth-password-icon",
+        "label": "",
+        "bounds": "[144,1067][210,1133]",
+        "length": 0,
+        "focused": "false",
+        "password": "false",
+        "selectionStart": "",
+        "selectionEnd": ""
+      },
+      {
+        "id": "",
+        "label": "Password",
+        "bounds": "[252,1025][792,1175]",
+        "length": 0,
+        "focused": "false",
+        "password": "true",
+        "selectionStart": "",
+        "selectionEnd": ""
+      }
+    ]
+  },
+  {
+    "profile": "360x800 fontScale1",
+    "case": "long",
+    "emailLength": 195,
+    "fields": [
+      {
+        "id": "auth-email-address-container",
+        "label": "",
+        "bounds": "[96,857][984,1007]",
+        "length": 0,
+        "focused": "false",
+        "password": "false",
+        "selectionStart": "",
+        "selectionEnd": ""
+      },
+      {
+        "id": "auth-email-address-icon",
+        "label": "",
+        "bounds": "[144,899][210,965]",
+        "length": 0,
+        "focused": "false",
+        "password": "false",
+        "selectionStart": "",
+        "selectionEnd": ""
+      },
+      {
+        "id": "",
+        "label": "Email address",
+        "bounds": "[252,857][966,1007]",
+        "length": 195,
+        "focused": "true",
+        "password": "false",
+        "selectionStart": "175",
+        "selectionEnd": "175"
+      },
+      {
+        "id": "auth-password-container",
+        "label": "",
+        "bounds": "[96,1025][984,1175]",
+        "length": 0,
+        "focused": "false",
+        "password": "false",
+        "selectionStart": "",
+        "selectionEnd": ""
+      },
+      {
+        "id": "auth-password-icon",
+        "label": "",
+        "bounds": "[144,1067][210,1133]",
+        "length": 0,
+        "focused": "false",
+        "password": "false",
+        "selectionStart": "",
+        "selectionEnd": ""
+      },
+      {
+        "id": "",
+        "label": "Password",
+        "bounds": "[252,1025][792,1175]",
+        "length": 0,
+        "focused": "false",
+        "password": "true",
+        "selectionStart": "",
+        "selectionEnd": ""
+      }
+    ]
+  },
+  {
+    "profile": "360x800 fontScale1",
+    "case": "maximum",
+    "emailLength": 254,
+    "fields": [
+      {
+        "id": "auth-email-address-container",
+        "label": "",
+        "bounds": "[96,857][984,1007]",
+        "length": 0,
+        "focused": "false",
+        "password": "false",
+        "selectionStart": "",
+        "selectionEnd": ""
+      },
+      {
+        "id": "auth-email-address-icon",
+        "label": "",
+        "bounds": "[144,899][210,965]",
+        "length": 0,
+        "focused": "false",
+        "password": "false",
+        "selectionStart": "",
+        "selectionEnd": ""
+      },
+      {
+        "id": "",
+        "label": "Email address",
+        "bounds": "[252,857][966,1007]",
+        "length": 254,
+        "focused": "true",
+        "password": "false",
+        "selectionStart": "236",
+        "selectionEnd": "236"
+      },
+      {
+        "id": "auth-password-container",
+        "label": "",
+        "bounds": "[96,1025][984,1175]",
+        "length": 0,
+        "focused": "false",
+        "password": "false",
+        "selectionStart": "",
+        "selectionEnd": ""
+      },
+      {
+        "id": "auth-password-icon",
+        "label": "",
+        "bounds": "[144,1067][210,1133]",
+        "length": 0,
+        "focused": "false",
+        "password": "false",
+        "selectionStart": "",
+        "selectionEnd": ""
+      },
+      {
+        "id": "",
+        "label": "Password",
+        "bounds": "[252,1025][792,1175]",
+        "length": 0,
+        "focused": "false",
+        "password": "true",
+        "selectionStart": "",
+        "selectionEnd": ""
+      }
+    ]
+  },
+  {
+    "profile": "320x640 fontScale1.5",
+    "case": "short",
+    "emailLength": 6,
+    "fields": [
+      {
+        "id": "auth-email-address-container",
+        "label": "",
+        "bounds": "[96,797][864,962]",
+        "length": 0,
+        "focused": "false",
+        "password": "false",
+        "selectionStart": "",
+        "selectionEnd": ""
+      },
+      {
+        "id": "auth-email-address-icon",
+        "label": "",
+        "bounds": "[144,847][210,913]",
+        "length": 0,
+        "focused": "false",
+        "password": "false",
+        "selectionStart": "",
+        "selectionEnd": ""
+      },
+      {
+        "id": "",
+        "label": "Email address",
+        "bounds": "[252,797][846,962]",
+        "length": 6,
+        "focused": "true",
+        "password": "false",
+        "selectionStart": "6",
+        "selectionEnd": "6"
+      }
+    ]
+  },
+  {
+    "profile": "320x640 fontScale1.5",
+    "case": "maximum",
+    "emailLength": 254,
+    "fields": [
+      {
+        "id": "auth-email-address-container",
+        "label": "",
+        "bounds": "[96,797][864,962]",
+        "length": 0,
+        "focused": "false",
+        "password": "false",
+        "selectionStart": "",
+        "selectionEnd": ""
+      },
+      {
+        "id": "auth-email-address-icon",
+        "label": "",
+        "bounds": "[144,847][210,913]",
+        "length": 0,
+        "focused": "false",
+        "password": "false",
+        "selectionStart": "",
+        "selectionEnd": ""
+      },
+      {
+        "id": "",
+        "label": "Email address",
+        "bounds": "[252,797][846,962]",
+        "length": 254,
+        "focused": "true",
+        "password": "false",
+        "selectionStart": "254",
+        "selectionEnd": "254"
+      }
+    ]
+  }
+]

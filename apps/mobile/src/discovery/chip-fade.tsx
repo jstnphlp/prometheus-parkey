@@ -1,10 +1,12 @@
 import { StyleSheet, View } from 'react-native'
 import Svg, { Defs, LinearGradient, Rect, Stop } from 'react-native-svg'
 
-import { colors } from './palette'
+import { useTheme } from '../theme-provider'
 
 /** SVG uses the same palette and rendering approach as the existing icons. */
 export function ChipFade() {
+  const { colors } = useTheme()
+
   return (
     <View pointerEvents="none" accessible={false} style={styles.edge}>
       <Svg width="100%" height="100%">

@@ -50,12 +50,12 @@ async function openFixture(page: Page, record: DiscoveryParking) {
   const loaded = page.waitForResponse(parkingRpc)
   await openMap(page, spotPath)
   await loaded
-  const handle = page.getByTestId('parking-sheet-handle')
   await expect(page.getByTestId('parking-detail-title')).toHaveText(
     record.name.startsWith('Unnamed') ? 'Garage' : record.name,
   )
-  if (!(await handle.getAttribute('aria-label'))?.includes('full'))
-    await handle.click()
+  await page
+    .getByRole('button', { name: 'View Parking Details', exact: true })
+    .click()
   await expect(page.getByTestId('parking-details-expanded')).toBeVisible()
   return page.getByTestId('parking-details-expanded')
 }
@@ -107,7 +107,7 @@ test('missing facts remain unknown and cannot authorize directions or substitute
     }),
   )
   await expect(details).toContainText('Fee unknown')
-  await expect(details).toContainText('Not recorded')
+  await expect(details).toContainText('Hours not recorded')
   await expect(details).toContainText('Entrance not mapped')
   await expect(details).toContainText('No photos yet')
   await expect(details.getByText(/Open now|Closed ·|Open 24h/)).toHaveCount(0)
@@ -197,6 +197,9 @@ for (const freshState of ['revoked', 'expired'] as const) {
         routeReads.push(request.url())
     })
     await page.getByTestId('parking-get-directions').click()
+    await page
+      .getByRole('button', { name: 'Navigate with Parkey', exact: true })
+      .click()
     const consent = page.getByRole('alertdialog', {
       name: 'Directions privacy',
     })

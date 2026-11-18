@@ -1,0 +1,35 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="101.299" height="40.55" viewBox="0 0 101.299 40.55" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Group">
+<path id="Vector" d="M0.8 32.25L3.8 21.75L15.8 19.25L22.3 6.75C23.6333 4.41667 26.8 3.25 31.8 3.25H71.8C76.1333 3.91667 80.3 6.41667 84.3 10.75L89.3 20.25L97.3 22.25C99.9667 24.25 100.967 27.4167 100.3 31.75L99.3 39.75H1.3L0.8 32.25Z" fill="url(#paint0_linear_0_52)" stroke-width="1.6" stroke-linejoin="round" stroke="#16365B"/>
+<path id="Vector_2" d="M23.3 18.75L29.8 6.75H69.8L80.8 18.75H23.3Z" fill="url(#paint1_linear_0_52)" stroke-width="1.35" stroke-linejoin="round" stroke="#102E52"/>
+<g id="Vector_3">
+<path d="M50.3 7.75V19.25ZM82.8 23.75V35.75ZM49.8 23.25V35.75Z" fill="black"/>
+<path d="M50.3 7.75V19.25M82.8 23.75V35.75M49.8 23.25V35.75" stroke-width="1.25" stroke-linejoin="round" stroke="#103A67"/>
+</g>
+<g id="Vector_4">
+<path d="M24.3 1.25H74.8Z" fill="black"/>
+<path d="M24.3 1.25H74.8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke="#1A3558"/>
+</g>
+<path id="Vector_5" opacity="0.8" d="M4.8 24.75C22.8 19.75 55.8 18.25 94.3 26.25" stroke-width="1.75" stroke-linejoin="round" stroke="#A4E1FF"/>
+<g id="Vector_6" opacity="0.45">
+<path d="M4.8 36.75H97.3Z" fill="black"/>
+<path d="M4.8 36.75H97.3" stroke-width="2.5" stroke-linejoin="round" stroke="#0C4B93"/>
+</g>
+<path id="Vector_7" d="M91.3 24.25L99.3 27.25L98.8 29.75H89.8L91.3 24.25Z" fill="#F1F9FF"/>
+<path id="Vector_8" d="M56.8 26.25H51.3C50.7477 26.25 50.3 26.6977 50.3 27.25V27.75C50.3 28.3023 50.7477 28.75 51.3 28.75H56.8C57.3523 28.75 57.8 28.3023 57.8 27.75V27.25C57.8 26.6977 57.3523 26.25 56.8 26.25Z" fill="#CFEBFF"/>
+<path id="Vector_9" d="M81.3 26.25H75.8C75.2477 26.25 74.8 26.6977 74.8 27.25V27.75C74.8 28.3023 75.2477 28.75 75.8 28.75H81.3C81.8523 28.75 82.3 28.3023 82.3 27.75V27.25C82.3 26.6977 81.8523 26.25 81.3 26.25Z" fill="#CFEBFF"/>
+<path id="Vector_10" d="M1.3 24.25L6.3 23.25V30.25L1.3 29.75V24.25Z" fill="#E95360"/>
+</g>
+<defs>
+<linearGradient id="paint0_linear_0_52" x1="0.8" y1="3.25" x2="2.70243" y2="40.3679" gradientUnits="userSpaceOnUse">
+<stop stop-color="#5DCBFF"/>
+<stop offset="0.43" stop-color="#258FF7"/>
+<stop offset="1" stop-color="#0964CD"/>
+</linearGradient>
+<linearGradient id="paint1_linear_0_52" x1="23.3" y1="6.75" x2="25.5737" y2="23.5116" gradientUnits="userSpaceOnUse">
+<stop stop-color="#6B96CD"/>
+<stop offset="0.45" stop-color="#3A5A8C"/>
+<stop offset="1" stop-color="#162E54"/>
+</linearGradient>
+</defs>
+</svg>

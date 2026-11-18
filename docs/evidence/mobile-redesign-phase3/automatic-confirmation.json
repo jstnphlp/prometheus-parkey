@@ -1,0 +1,41 @@
+{
+  "scope": "Foreground automatic signup confirmation continuation",
+  "mechanism": "real Supabase password sign-in; provider validates fresh server user and session",
+  "watch": {
+    "initialBackoffSeconds": [5, 10, 20, 30, 60],
+    "maxMinutes": 10,
+    "singleFlight": true,
+    "manualCheck": true,
+    "expectedUnconfirmedErrorShown": false
+  },
+  "credentialLifetime": "component memory only; clear on route blur, background, success, error or expiry",
+  "passwordPersistence": false,
+  "rememberSession": false,
+  "newBackendEndpoint": false,
+  "publicEmailStatusLookup": false,
+  "checks": {
+    "mobileTypecheck": "pass",
+    "authEslint": "pass",
+    "authPrettier": "pass",
+    "authTestsPassed": 44,
+    "authTestsFailed": 0,
+    "nativeReleaseBuild": "pass",
+    "apkSignature": "verified",
+    "readOnlyCodeReview": "no P1/P2 findings"
+  },
+  "nativeAcceptance": "owner reported Yes, it continued automatically after fresh signup in updated emulator and PC email confirmation",
+  "artifact": {
+    "path": "output/ncr/parkey-phase3-test.apk",
+    "bytes": 114775315,
+    "sha256": "a8c7eec7140fa0b0e8422f46843c6df74f2a6b17a91ee44f1b774b03b13eb078",
+    "previousBuild": "output/ncr/parkey-phase3-e4495cb9.apk"
+  },
+  "evidenceKind": "owner report, not a captured signed-in Account screenshot",
+  "laterNativeScreenProbe": {
+    "accountIndicatorsVisible": false,
+    "logInTextVisible": true,
+    "privateValuesPrinted": false,
+    "countedAsSignInEvidence": false
+  },
+  "backgroundResumeAcceptance": "not performed"
+}

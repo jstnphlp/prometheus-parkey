@@ -92,7 +92,8 @@ async function setup(
     throw new Error(`Unexpected fixture endpoint ${path}`)
   })
   await openMap(page)
-  await page.getByRole('tab', { name: 'You', exact: true }).click()
+  await page.getByRole('tab', { name: 'Profile', exact: true }).click()
+  await page.getByRole('button', { name: 'Device drafts', exact: true }).click()
   await page.getByRole('button', { name: 'Review report', exact: true }).click()
   await expect(
     page.getByText('Verify email to send or manage a report'),

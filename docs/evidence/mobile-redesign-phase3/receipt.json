@@ -1,0 +1,128 @@
+{
+  "phase": 3,
+  "date": "2026-11-14",
+  "branch": "codex/mobile-redesign-phase-3-polish",
+  "parentBranch": "codex/mobile-redesign-phase-2-auth",
+  "cachedParentCommit": "dbfeccc046e3068a9d96ba8732ec3d98d1daf7f2",
+  "remoteParentVerified": false,
+  "checks": {
+    "mobileTypecheck": "pass",
+    "scopedEslint": "pass",
+    "scopedPrettier": "pass",
+    "mobileTests": {
+      "passed": 299,
+      "failed": 0
+    },
+    "productionAudit": {
+      "critical": 0,
+      "high": 0,
+      "moderate": 0,
+      "low": 1,
+      "existingLowAdvisory": "deepmerge; existing repository prototype-filtering patch unchanged"
+    },
+    "nativeReleaseBuild": "pass",
+    "apkSignatureV2": "verified",
+    "workspaceWebBuild": "not run; no workspace/web configuration changes"
+  },
+  "device": {
+    "avd": "Parkey_A0_API35",
+    "serial": "emulator-5554",
+    "androidApi": 35,
+    "profiles": [
+      {
+        "logicalSize": "360x800",
+        "nativeSize": "1080x2400",
+        "fontScale": 1
+      },
+      {
+        "logicalSize": "390x844",
+        "nativeSize": "1170x2532",
+        "fontScale": 1
+      },
+      {
+        "logicalSize": "320x640",
+        "nativeSize": "960x1920",
+        "fontScale": 1.5
+      }
+    ],
+    "realKeyboard": "Gboard email keyboard",
+    "autofillService": "Google Autofill configured; actual suggestions not exercised",
+    "animatorDurationScale": 0,
+    "screenshotPixels": "Downsampled 3:1 to logical size; native originals remain local and ignored"
+  },
+  "nativeVerified": [
+    "Short/long/254-character email container and icon geometry stable with real keyboard",
+    "320x640 at 150% text: short/maximum email geometry stable",
+    "Native selection/copy/paste retains 254 characters; cursor ends at254",
+    "SVG Show/Hide password toggles secure entry",
+    "Login/Register field validation and first-invalid-field focus",
+    "System/network failure popup; Android Back; password-focus restoration",
+    "Invalid callback popup; Back; recovery actions",
+    "Route change clears stale popup",
+    "Forgot Password validation popup and focus recovery",
+    "Splash, Welcome, three onboarding screens, Login, Register, Forgot, unauthorized Reset and guest Account screenshots",
+    "Onboarding Continue and Back sequence; guest exit",
+    "Large-text onboarding Continue reachable through scrolling",
+    "Cold relaunch enters guest discovery without onboarding replay",
+    "Guest MapLibre view and Saved/search/navigation entry accessible",
+    "Pre-existing saved-car controls survive upgrades, auth attempts and onboarding completion"
+  ],
+  "baseline": {
+    "reportedResizeReproducedOnApi35": false,
+    "shortAndMaximumTextInputBounds": "[252,857][966,1007]",
+    "note": "Phase3 explicitly constrains intrinsic text sizing and verifies native container/icon geometry; iOS original-defect verification remains open"
+  },
+  "notVerified": [
+    "iOS",
+    "physical phones",
+    "manual TalkBack/VoiceOver",
+    "actual autofill-provider suggestions",
+    "positive hosted signup/email delivery/confirmation",
+    "positive hosted login/remembered-session/sign-out",
+    "positive hosted recovery/password update",
+    "remote search-result and routing completion",
+    "native secure-storage failure injection",
+    "final approved artwork animation loops"
+  ],
+  "emailDelivery": {
+    "status": "investigation paused by owner",
+    "cause": "not established",
+    "publicSettingsBeforePause": {
+      "httpStatus": 200,
+      "emailPasswordEnabled": true,
+      "emailConfirmationRequired": true,
+      "googleEnabled": false,
+      "facebookEnabled": false
+    },
+    "managementAccess": "target project absent from currently authenticated CLI account",
+    "customSmtp": "unknown",
+    "deliveryLogs": "unavailable",
+    "redirectAllowlist": "unverified",
+    "ownerInbox": "not provided",
+    "settingsChanged": false
+  },
+  "animations": {
+    "status": "owner deferred; current static Figma artwork requested instead",
+    "newArtworkGenerated": false,
+    "runtimeFigmaUrls": false
+  },
+  "artifact": {
+    "path": "output/ncr/parkey-phase3-d80ca7af.apk",
+    "bytes": 114765779,
+    "sha256": "d80ca7af9a62563cba251e7903f1400d60183e26ca735e9b6289745e30fe8072",
+    "package": "com.parkey.discovery",
+    "minSdk": 24,
+    "targetSdk": 36,
+    "architectures": ["arm64-v8a", "armeabi-v7a", "x86_64"],
+    "signing": "existing local test key; not production signing",
+    "metroRequired": false
+  },
+  "publication": {
+    "status": "blocked by GitHub Git/API TCP443 connection timeouts",
+    "prTarget": "codex/mobile-redesign-phase-2-auth",
+    "prBody": "pr-body.md",
+    "merged": false,
+    "deployed": false
+  },
+  "supersededBy": "auth-corrections.json"
+}

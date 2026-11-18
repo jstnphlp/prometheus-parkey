@@ -1,0 +1,111 @@
+{
+  "recordedAt": "2026-11-13T15:29:16.554Z",
+  "branch": "codex/mobile-redesign-phase-2-auth",
+  "baseCommit": "02888c7a09fa53e00c58c04f9244893f4c12bf56",
+  "sourceCommit": "e37212c2d839611c33a77db242546f8fc6dd9a7f",
+  "targetBranch": "feat/v1-place-discovery",
+  "figma": {
+    "fileKey": "UaU1KMJV2tMlwGB7Y1Co1g",
+    "register": "11:44",
+    "login": "11:30",
+    "requestedWelcome": "11:16 (deleted)",
+    "inspectedWelcomeReplacement": "70:333",
+    "welcomeImplementation": "Phase 1 preserved"
+  },
+  "device": {
+    "avd": "Parkey_A0_API35",
+    "platform": "Android 15 / API 35",
+    "abi": "x86_64",
+    "profiles": [
+      {
+        "logicalSize": "390x844",
+        "pixelSize": "1170x2532",
+        "densityDpi": 480,
+        "fontScale": 1
+      },
+      {
+        "logicalSize": "320x640",
+        "pixelSize": "960x1920",
+        "densityDpi": 480,
+        "fontScale": 1.5
+      }
+    ],
+    "runtime": "standalone release variant, Metro stopped",
+    "physicalPhone": false,
+    "ios": false
+  },
+  "checks": {
+    "mobileTests": {
+      "passed": 292,
+      "failed": 0,
+      "skipped": 0,
+      "authCases": 26
+    },
+    "workspaceLint": "passed",
+    "workspaceTypecheck": "passed (includes e2e/edge TypeScript only)",
+    "workspaceFormat": "passed",
+    "webBuild": "passed",
+    "nativeDebugBuild": "passed",
+    "nativeReleaseBuild": "passed",
+    "finalIncrementalRelease": "passed (57 seconds)",
+    "apkV2Signature": "verified",
+    "browserE2E": "not run",
+    "productionDependencyAudit": "passed at moderate threshold after node-forge override 1.4.1 -> 1.4.3",
+    "remainingAudit": "one low deepmerge advisory in upstream metadata; existing repository prototype-key patch retained",
+    "nativeReleaseAfterAuditPatch": "passed (16 seconds, cached runtime outputs unchanged)"
+  },
+  "androidAssertions": [
+    "registration client validation focuses first invalid input",
+    "keyboard-aware scrolling; confirm password and primary control visible above keyboard at small size",
+    "password visibility changes native password field attribute true/false/true",
+    "Remember me checkbox changes checked state",
+    "Back dismisses keyboard and navigates between account screens",
+    "real Supabase invalid credentials produce error, no session",
+    "offline login shows retry error; reconnection and retry return actual invalid-credentials error",
+    "invalid callback followed by new code on mounted callback displays checked error rather than hanging",
+    "forgot-password destination and unverified-reset guard",
+    "Back from reset guard clears local auth state and returns to login",
+    "small font-scaled field labels and scrollable controls",
+    "guest discovery usable; existing parked-car state preserved",
+    "force-stop and relaunch returns to discovery without onboarding replay",
+    "You -> Account optional opens the signed-out account screen from guest discovery"
+  ],
+  "review": {
+    "kind": "local read-only code review",
+    "findingsFixed": [
+      "corrupt-storage sign-out",
+      "offline session expiration",
+      "replacement email callbacks"
+    ],
+    "githubReview": false
+  },
+  "apk": {
+    "path": "output/ncr/parkey-phase2-test.apk",
+    "bytes": 114351318,
+    "sizeMiB": 109.1,
+    "sha256": "f2996ac331bcf8b7eb171ebcfefea6ea9715e5e610efb10db0cfb84a4053438d",
+    "package": "com.parkey.discovery",
+    "versionName": "0.1.0",
+    "versionCode": 2,
+    "minSdk": 24,
+    "targetSdk": 36,
+    "abis": ["arm64-v8a", "armeabi-v7a", "x86_64"],
+    "debuggable": false,
+    "signing": "local development test key; no store/production approval"
+  },
+  "limits": [
+    "successful hosted signup confirmation and reset emails need an owner-controlled inbox",
+    "successful hosted account login, remembered relaunch, refresh and sign-out not tested without dedicated credentials",
+    "redirect allowlist and hosted password dashboard not independently read",
+    "OAuth providers disabled; social login not implemented",
+    "native secure auth only; web discovery retained",
+    "physical phone, iOS and production release approval remain unverified"
+  ],
+  "ci": {
+    "initialValidation": "failed dependency audit; node-forge override patched",
+    "initialRun": "https://github.com/jstnphlp/prometheus-parkey/actions/runs/43454042802",
+    "pr": "https://github.com/jstnphlp/prometheus-parkey/pull/31",
+    "auditRemediation": "node-forge 1.4.3; production audit and all workspace checks passed locally"
+  },
+  "toolingValidationCommit": "b90d347aab2ed50c2bf6026bcb1e4d45ba2bdfbf"
+}

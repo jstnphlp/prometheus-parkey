@@ -36,6 +36,9 @@ test('research handoff opens only the configured external console and keeps disc
   await page
     .getByRole('link', { name: 'Return to Parkey mobile discovery' })
     .click()
+  await page
+    .getByRole('button', { name: 'Search parking or landmark', exact: true })
+    .click()
   await expect(page.getByTestId('destination-query')).toBeVisible()
   await expect(page.getByTestId('discovery-map-ready')).toBeVisible()
   expect(researchReads).toEqual([])

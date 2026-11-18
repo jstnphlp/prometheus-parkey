@@ -1,0 +1,456 @@
+{
+  "source": "Figma MCP get_design_context",
+  "retrievedAt": "2026-11-17",
+  "fileKey": "UaU1KMJV2tMlwGB7Y1Co1g",
+  "note": "Actual screenshot and generated layout-context pairs. Not full REST exports. Missing manifest frames remain unexported.",
+  "entries": [
+    {
+      "id": "16",
+      "theme": "light-magenta",
+      "nodeId": "249:2286",
+      "screenshot": "screens/light-magenta/16.png",
+      "layout": "layouts/light-magenta/16.json"
+    },
+    {
+      "id": "16",
+      "theme": "dark-magenta",
+      "nodeId": "249:5721",
+      "screenshot": "screens/dark-magenta/16.png",
+      "layout": "layouts/dark-magenta/16.json"
+    },
+    {
+      "id": "16A",
+      "theme": "light-magenta",
+      "nodeId": "249:4092",
+      "screenshot": "screens/light-magenta/16A.png",
+      "layout": "layouts/light-magenta/16A.json"
+    },
+    {
+      "id": "16A",
+      "theme": "dark-magenta",
+      "nodeId": "249:7531",
+      "screenshot": "screens/dark-magenta/16A.png",
+      "layout": "layouts/dark-magenta/16A.json"
+    },
+    {
+      "id": "17",
+      "theme": "light-magenta",
+      "nodeId": "249:2625",
+      "screenshot": "screens/light-magenta/17.png",
+      "layout": "layouts/light-magenta/17.json"
+    },
+    {
+      "id": "17",
+      "theme": "dark-magenta",
+      "nodeId": "249:6060",
+      "screenshot": "screens/dark-magenta/17.png",
+      "layout": "layouts/dark-magenta/17.json"
+    },
+    {
+      "id": "1B",
+      "theme": "light-magenta",
+      "nodeId": "249:4141",
+      "screenshot": "screens/light-magenta/1B.png",
+      "layout": "layouts/light-magenta/1B.json"
+    },
+    {
+      "id": "1B",
+      "theme": "dark-magenta",
+      "nodeId": "249:7580",
+      "screenshot": "screens/dark-magenta/1B.png",
+      "layout": "layouts/dark-magenta/1B.json"
+    },
+    {
+      "id": "2",
+      "theme": "light-magenta",
+      "nodeId": "249:1662",
+      "screenshot": "screens/light-magenta/2.png",
+      "layout": "layouts/light-magenta/2.json"
+    },
+    {
+      "id": "2",
+      "theme": "dark-magenta",
+      "nodeId": "249:5091",
+      "screenshot": "screens/dark-magenta/2.png",
+      "layout": "layouts/dark-magenta/2.json"
+    },
+    {
+      "id": "3",
+      "theme": "light-magenta",
+      "nodeId": "249:1688",
+      "screenshot": "screens/light-magenta/3.png",
+      "layout": "layouts/light-magenta/3.json"
+    },
+    {
+      "id": "3",
+      "theme": "dark-magenta",
+      "nodeId": "249:5117",
+      "screenshot": "screens/dark-magenta/3.png",
+      "layout": "layouts/dark-magenta/3.json"
+    },
+    {
+      "id": "4",
+      "theme": "light-magenta",
+      "nodeId": "249:1714",
+      "screenshot": "screens/light-magenta/4.png",
+      "layout": "layouts/light-magenta/4.json"
+    },
+    {
+      "id": "4",
+      "theme": "dark-magenta",
+      "nodeId": "249:5143",
+      "screenshot": "screens/dark-magenta/4.png",
+      "layout": "layouts/dark-magenta/4.json"
+    },
+    {
+      "id": "5",
+      "theme": "light-magenta",
+      "nodeId": "249:1740",
+      "screenshot": "screens/light-magenta/5.png",
+      "layout": "layouts/light-magenta/5.json"
+    },
+    {
+      "id": "5",
+      "theme": "dark-magenta",
+      "nodeId": "249:5169",
+      "screenshot": "screens/dark-magenta/5.png",
+      "layout": "layouts/dark-magenta/5.json"
+    },
+    {
+      "id": "20",
+      "theme": "light-magenta",
+      "nodeId": "249:2862",
+      "screenshot": "screens/light-magenta/20.png",
+      "layout": "layouts/light-magenta/20.json"
+    },
+    {
+      "id": "20",
+      "theme": "dark-magenta",
+      "nodeId": "249:6297",
+      "screenshot": "screens/dark-magenta/20.png",
+      "layout": "layouts/dark-magenta/20.json"
+    },
+    {
+      "id": "20A",
+      "theme": "light-magenta",
+      "nodeId": "249:2913",
+      "screenshot": "screens/light-magenta/20A.png",
+      "layout": "layouts/light-magenta/20A.json"
+    },
+    {
+      "id": "20A",
+      "theme": "dark-magenta",
+      "nodeId": "249:6348",
+      "screenshot": "screens/dark-magenta/20A.png",
+      "layout": "layouts/dark-magenta/20A.json"
+    },
+    {
+      "id": "21",
+      "theme": "light-magenta",
+      "nodeId": "249:2964",
+      "screenshot": "screens/light-magenta/21.png",
+      "layout": "layouts/light-magenta/21.json"
+    },
+    {
+      "id": "21",
+      "theme": "dark-magenta",
+      "nodeId": "249:6399",
+      "screenshot": "screens/dark-magenta/21.png",
+      "layout": "layouts/dark-magenta/21.json"
+    },
+    {
+      "id": "22",
+      "theme": "light-magenta",
+      "nodeId": "249:3020",
+      "screenshot": "screens/light-magenta/22.png",
+      "layout": "layouts/light-magenta/22.json"
+    },
+    {
+      "id": "22",
+      "theme": "dark-magenta",
+      "nodeId": "249:6455",
+      "screenshot": "screens/dark-magenta/22.png",
+      "layout": "layouts/dark-magenta/22.json"
+    },
+    {
+      "id": "22A",
+      "theme": "light-magenta",
+      "nodeId": "249:3098",
+      "screenshot": "screens/light-magenta/22A.png",
+      "layout": "layouts/light-magenta/22A.json"
+    },
+    {
+      "id": "22A",
+      "theme": "dark-magenta",
+      "nodeId": "249:6533",
+      "screenshot": "screens/dark-magenta/22A.png",
+      "layout": "layouts/dark-magenta/22A.json"
+    },
+    {
+      "id": "22B",
+      "theme": "light-magenta",
+      "nodeId": "249:3144",
+      "screenshot": "screens/light-magenta/22B.png",
+      "layout": "layouts/light-magenta/22B.json"
+    },
+    {
+      "id": "22B",
+      "theme": "dark-magenta",
+      "nodeId": "249:6579",
+      "screenshot": "screens/dark-magenta/22B.png",
+      "layout": "layouts/dark-magenta/22B.json"
+    },
+    {
+      "id": "23",
+      "theme": "light-magenta",
+      "nodeId": "249:3217",
+      "screenshot": "screens/light-magenta/23.png",
+      "layout": "layouts/light-magenta/23.json"
+    },
+    {
+      "id": "23",
+      "theme": "dark-magenta",
+      "nodeId": "249:6652",
+      "screenshot": "screens/dark-magenta/23.png",
+      "layout": "layouts/dark-magenta/23.json"
+    },
+    {
+      "id": "25",
+      "theme": "light-magenta",
+      "nodeId": "249:3392",
+      "screenshot": "screens/light-magenta/25.png",
+      "layout": "layouts/light-magenta/25.json"
+    },
+    {
+      "id": "25",
+      "theme": "dark-magenta",
+      "nodeId": "249:6827",
+      "screenshot": "screens/dark-magenta/25.png",
+      "layout": "layouts/dark-magenta/25.json"
+    },
+    {
+      "id": "26A",
+      "theme": "light-magenta",
+      "nodeId": "249:3911",
+      "screenshot": "screens/light-magenta/26A.png",
+      "layout": "layouts/light-magenta/26A.json"
+    },
+    {
+      "id": "26A",
+      "theme": "dark-magenta",
+      "nodeId": "249:7350",
+      "screenshot": "screens/dark-magenta/26A.png",
+      "layout": "layouts/dark-magenta/26A.json"
+    },
+    {
+      "id": "26B",
+      "theme": "light-magenta",
+      "nodeId": "249:3853",
+      "screenshot": "screens/light-magenta/26B.png",
+      "layout": "layouts/light-magenta/26B.json"
+    },
+    {
+      "id": "26B",
+      "theme": "dark-magenta",
+      "nodeId": "249:7292",
+      "screenshot": "screens/dark-magenta/26B.png",
+      "layout": "layouts/dark-magenta/26B.json"
+    },
+    {
+      "id": "28",
+      "theme": "light-magenta",
+      "nodeId": "249:3649",
+      "screenshot": "screens/light-magenta/28.png",
+      "layout": "layouts/light-magenta/28.json"
+    },
+    {
+      "id": "28",
+      "theme": "dark-magenta",
+      "nodeId": "249:7088",
+      "screenshot": "screens/dark-magenta/28.png",
+      "layout": "layouts/dark-magenta/28.json"
+    },
+    {
+      "id": "79",
+      "theme": "light-magenta",
+      "nodeId": "249:4252",
+      "screenshot": "screens/light-magenta/79.png",
+      "layout": "layouts/light-magenta/79.json"
+    },
+    {
+      "id": "79",
+      "theme": "dark-magenta",
+      "nodeId": "249:7691",
+      "screenshot": "screens/dark-magenta/79.png",
+      "layout": "layouts/dark-magenta/79.json"
+    },
+    {
+      "id": "80",
+      "theme": "light-magenta",
+      "nodeId": "249:4298",
+      "screenshot": "screens/light-magenta/80.png",
+      "layout": "layouts/light-magenta/80.json"
+    },
+    {
+      "id": "80",
+      "theme": "dark-magenta",
+      "nodeId": "249:7737",
+      "screenshot": "screens/dark-magenta/80.png",
+      "layout": "layouts/dark-magenta/80.json"
+    },
+    {
+      "id": "83",
+      "theme": "light-magenta",
+      "nodeId": "249:4523",
+      "screenshot": "screens/light-magenta/83.png",
+      "layout": "layouts/light-magenta/83.json"
+    },
+    {
+      "id": "83",
+      "theme": "dark-magenta",
+      "nodeId": "249:7962",
+      "screenshot": "screens/dark-magenta/83.png",
+      "layout": "layouts/dark-magenta/83.json"
+    },
+    {
+      "id": "84",
+      "theme": "light-magenta",
+      "nodeId": "249:4563",
+      "screenshot": "screens/light-magenta/84.png",
+      "layout": "layouts/light-magenta/84.json"
+    },
+    {
+      "id": "84",
+      "theme": "dark-magenta",
+      "nodeId": "249:8002",
+      "screenshot": "screens/dark-magenta/84.png",
+      "layout": "layouts/dark-magenta/84.json"
+    },
+    {
+      "id": "22C",
+      "theme": "light-magenta",
+      "nodeId": "249:3188",
+      "screenshot": "screens/light-magenta/22C.png",
+      "layout": "layouts/light-magenta/22C.json"
+    },
+    {
+      "id": "22C",
+      "theme": "dark-magenta",
+      "nodeId": "249:6623",
+      "screenshot": "screens/dark-magenta/22C.png",
+      "layout": "layouts/dark-magenta/22C.json"
+    },
+    {
+      "id": "27",
+      "theme": "light-magenta",
+      "nodeId": "249:3570",
+      "screenshot": "screens/light-magenta/27.png",
+      "layout": "layouts/light-magenta/27.json"
+    },
+    {
+      "id": "27",
+      "theme": "dark-magenta",
+      "nodeId": "249:7008",
+      "screenshot": "screens/dark-magenta/27.png",
+      "layout": "layouts/dark-magenta/27.json"
+    },
+    {
+      "id": "29",
+      "theme": "light-magenta",
+      "nodeId": "249:3714",
+      "screenshot": "screens/light-magenta/29.png",
+      "layout": "layouts/light-magenta/29.json"
+    },
+    {
+      "id": "29",
+      "theme": "dark-magenta",
+      "nodeId": "249:7153",
+      "screenshot": "screens/dark-magenta/29.png",
+      "layout": "layouts/dark-magenta/29.json"
+    },
+    {
+      "id": "30",
+      "theme": "light-magenta",
+      "nodeId": "249:3783",
+      "screenshot": "screens/light-magenta/30.png",
+      "layout": "layouts/light-magenta/30.json"
+    },
+    {
+      "id": "30",
+      "theme": "dark-magenta",
+      "nodeId": "249:7222",
+      "screenshot": "screens/dark-magenta/30.png",
+      "layout": "layouts/dark-magenta/30.json"
+    },
+    {
+      "id": "6",
+      "theme": "light-magenta",
+      "nodeId": "249:1787",
+      "screenshot": "screens/light-magenta/6.png",
+      "layout": "layouts/light-magenta/6.json"
+    },
+    {
+      "id": "6",
+      "theme": "dark-magenta",
+      "nodeId": "249:5216",
+      "screenshot": "screens/dark-magenta/6.png",
+      "layout": "layouts/dark-magenta/6.json"
+    },
+    {
+      "id": "18",
+      "theme": "light-magenta",
+      "nodeId": "249:2733",
+      "screenshot": "screens/light-magenta/18.png",
+      "layout": "layouts/light-magenta/18.json"
+    },
+    {
+      "id": "18",
+      "theme": "dark-magenta",
+      "nodeId": "249:6168",
+      "screenshot": "screens/dark-magenta/18.png",
+      "layout": "layouts/dark-magenta/18.json"
+    },
+    {
+      "id": "1",
+      "theme": "light-magenta",
+      "nodeId": "249:1658",
+      "screenshot": "screens/light-magenta/1.png",
+      "layout": "layouts/light-magenta/1.json"
+    },
+    {
+      "id": "1",
+      "theme": "dark-magenta",
+      "nodeId": "249:5087",
+      "screenshot": "screens/dark-magenta/1.png",
+      "layout": "layouts/dark-magenta/1.json"
+    },
+    {
+      "id": "26",
+      "theme": "light-magenta",
+      "nodeId": "249:3515",
+      "screenshot": "screens/light-magenta/26.png",
+      "layout": "layouts/light-magenta/26.json"
+    },
+    {
+      "id": "26",
+      "theme": "dark-magenta",
+      "nodeId": "249:6952",
+      "screenshot": "screens/dark-magenta/26.png",
+      "layout": "layouts/dark-magenta/26.json"
+    },
+    {
+      "id": "8",
+      "theme": "light-magenta",
+      "nodeId": "249:2015",
+      "screenshot": "screens/light-magenta/8.png",
+      "layout": "layouts/light-magenta/8.json"
+    },
+    {
+      "id": "8",
+      "theme": "dark-magenta",
+      "nodeId": "249:5446",
+      "screenshot": "screens/dark-magenta/8.png",
+      "layout": "layouts/dark-magenta/8.json"
+    }
+  ]
+}

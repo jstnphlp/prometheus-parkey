@@ -1,0 +1,30 @@
+{
+  "scope": "Successful sign-in opens main discovery rather than Your account",
+  "mainRoute": "/",
+  "accountEntryRetained": true,
+  "recoveryRoute": "/reset-password",
+  "completion": "existing useCompletion persists onboarding before navigation and clears intro stack; progress-save failure uses existing retry popup",
+  "checks": {
+    "mobileTypecheck": "pass",
+    "authEslint": "pass",
+    "changedFilePrettier": "pass",
+    "authAndOnboardingPersistenceTests": {
+      "passed": 62,
+      "failed": 0
+    },
+    "nativeReleaseBuild": "pass",
+    "apkV2Signature": "verified"
+  },
+  "sourceParent": "5ff579284ac470a97241dfe305f1c83a6a68d11e",
+  "discoveryImplementationChanged": false,
+  "authProviderOrSessionStorageChanged": false,
+  "hostedConfigurationChanged": false,
+  "deviceAcceptance": "owner reported physical-phone test of previous build reaching Account; corrected destination requires owner retest; provider-specific acceptance not supplied",
+  "apk": {
+    "path": "output/ncr/parkey-phase3-main-app-test.apk",
+    "alias": "output/ncr/parkey-phase3-test.apk",
+    "bytes": 114877270,
+    "sha256": "52d6793690a0a312d1c6cf155a9ac6bf285ca7d17b057566be263affe8e66b48",
+    "priorOAuthBuildRetained": "output/ncr/parkey-phase3-oauth-test.apk"
+  }
+}

@@ -1,0 +1,84 @@
+{
+  "kind": "local browser verification with explicit API fixtures; not hosted account evidence",
+  "results": [
+    {
+      "scenario": "confirmed",
+      "result": "pass",
+      "verificationRequests": 1
+    },
+    {
+      "scenario": "expired",
+      "result": "pass",
+      "verificationRequests": 1
+    },
+    {
+      "scenario": "invalid",
+      "result": "pass",
+      "verificationRequests": 1
+    },
+    {
+      "scenario": "network-retry",
+      "result": "pass",
+      "verificationRequests": 2
+    },
+    {
+      "scenario": "unverified",
+      "result": "pass",
+      "verificationRequests": 1
+    },
+    {
+      "scenario": "missing-token",
+      "result": "pass",
+      "verificationRequests": 0
+    }
+  ],
+  "assertions": [
+    "strictmode single verification",
+    "fragment removed before result",
+    "no token in page request",
+    "no browser cookies or local/session storage",
+    "response must contain verified email",
+    "heading receives focus",
+    "network retry",
+    "320px and200% zoom without horizontal overflow",
+    "email links use fragment token to approved origin"
+  ],
+  "hostedVerified": true,
+  "handoff": {
+    "siteZip": "output/ncr/parkey-confirmation-site.zip",
+    "bytes": 135783,
+    "sha256": "c105f9722f7ff0a0b890ecb89788c94de0806f0ec104dd0159b3d5de0020b236",
+    "domain": "parkey.promths.com",
+    "hosting": "deployed and custom domain active after explicit owner approval",
+    "emailTemplate": "saved and reload-verified after HTTPS checks",
+    "documentation": "docs/PARKEY_EMAIL_CONFIRMATION_HANDOFF.md"
+  },
+  "activation": {
+    "ownerAuthorized": true,
+    "project": "parkey-confirmation",
+    "projectAccount": "a6ec36392e06bae66c7b1b3ca8535fa2",
+    "deploymentId": "75bc27e8-c254-4a9c-888d-046438ef537e",
+    "cloudflareDeploymentStatus": "success",
+    "url": "https://parkey-confirmation.pages.dev",
+    "domain": "parkey.promths.com",
+    "domainStatus": "active",
+    "domainValidationError": null,
+    "dnsInstructions": "proxied CNAME parkey -> parkey-confirmation.pages.dev",
+    "dnsEditingByAgent": false,
+    "livePagesHostProbe": "Cloudflare1010; custom domain validation pending",
+    "brandedHostedTemplateSaved": true,
+    "actualCrossDeviceConfirmationVerified": "owner reported Email confirmed on a different device",
+    "ownerDnsRecordSaved": true,
+    "customDomainHttpsVerified": true,
+    "liveMissingTokenBrowserCheck": "pass",
+    "canonicalRedirect": {
+      "from": "/auth/confirm",
+      "to": "/",
+      "httpStatus": 308,
+      "fragmentPreserved": true
+    },
+    "subjectAndSourcePersistedOnReload": true,
+    "ownerReportedEmailReceipt": true,
+    "mobileLoginVerified": "owner reported automatic continuation in updated emulator after PC confirmation"
+  }
+}

@@ -16,6 +16,9 @@ test('favorites persist, reopen parking, and can be removed and restored', async
     page.getByRole('button', { name: 'Remove from favorites', exact: true }),
   ).toBeVisible()
   await page.goto('/?panel=saved')
+  await page
+    .getByRole('button', { name: 'Saved places and car tools', exact: true })
+    .click()
   await page.getByRole('button', { name: 'Favorites', exact: true }).click()
   const favorite = page.getByRole('button', {
     name: `${spot.name}. View parking`,
@@ -23,10 +26,16 @@ test('favorites persist, reopen parking, and can be removed and restored', async
   })
   await expect(favorite).toBeVisible()
   await page.reload()
+  await page
+    .getByRole('button', { name: 'Saved places and car tools', exact: true })
+    .click()
   await page.getByRole('button', { name: 'Favorites', exact: true }).click()
   await favorite.click()
   await expect(page.getByTestId('parking-detail-title')).toHaveText(spot.name)
   await page.goto('/?panel=saved')
+  await page
+    .getByRole('button', { name: 'Saved places and car tools', exact: true })
+    .click()
   await page.getByRole('button', { name: 'Favorites', exact: true }).click()
   await page
     .getByRole('button', {
@@ -50,6 +59,9 @@ test('viewing parking adds it to Recent', async ({ page }) => {
   await expect(page.getByTestId('parking-detail-title')).toHaveText(spot.name)
   await page.goto('/?panel=saved')
   await page
+    .getByRole('button', { name: 'Saved places and car tools', exact: true })
+    .click()
+  await page
     .getByRole('button', { name: 'Recently viewed', exact: true })
     .click()
   await expect(
@@ -69,6 +81,9 @@ test('home address can be searched, saved, and reopened after reload', async ({
 }) => {
   await openMap(page)
   await page.getByRole('tab', { name: 'Saved', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Saved places and car tools', exact: true })
+    .click()
   await page
     .getByRole('button', { name: 'Saved addresses', exact: true })
     .click()
@@ -90,6 +105,9 @@ test('home address can be searched, saved, and reopened after reload', async ({
   ).toBeVisible()
   await page.reload()
   await page
+    .getByRole('button', { name: 'Saved places and car tools', exact: true })
+    .click()
+  await page
     .getByRole('button', { name: 'Saved addresses', exact: true })
     .click()
   await page
@@ -97,9 +115,9 @@ test('home address can be searched, saved, and reopened after reload', async ({
     .click()
   await expect(page).not.toHaveURL(/panel=saved/)
   await expect(page).toHaveURL(/lng=121.0308&lat=14.5653/)
-  await expect(page.getByRole('tab', { name: 'Map', exact: true })).toHaveText(
-    'Map',
-  )
+  await expect(
+    page.getByRole('tab', { name: 'Explore', exact: true }),
+  ).toHaveText('Explore')
 })
 
 test('parked location persists, can be cleared, and supports undo', async ({
@@ -108,12 +126,18 @@ test('parked location persists, can be cleared, and supports undo', async ({
   await openMap(page)
   await page.getByRole('tab', { name: 'Saved', exact: true }).click()
   await page
+    .getByRole('button', { name: 'Saved places and car tools', exact: true })
+    .click()
+  await page
     .getByRole('button', { name: 'Save where I parked', exact: true })
     .click()
   await expect(
     page.getByRole('button', { name: 'Show on map', exact: true }),
   ).toBeVisible()
   await page.reload()
+  await page
+    .getByRole('button', { name: 'Saved places and car tools', exact: true })
+    .click()
   await expect(
     page.getByRole('button', { name: 'Show on map', exact: true }),
   ).toBeVisible()
@@ -141,6 +165,9 @@ test('denied location leaves parked location unsaved and shows recovery guidance
   await context.grantPermissions([])
   await openMap(page)
   await page.getByRole('tab', { name: 'Saved', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Saved places and car tools', exact: true })
+    .click()
   await page
     .getByRole('button', { name: 'Save where I parked', exact: true })
     .click()

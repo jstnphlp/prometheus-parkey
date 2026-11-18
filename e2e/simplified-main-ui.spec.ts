@@ -30,6 +30,14 @@ test('discovery uses a floating search, an icon-only legend, and a guest drawer 
   await expect(legend).toHaveAttribute('aria-expanded', 'false')
   await legend.click()
   await expect(legend).toHaveAttribute('aria-expanded', 'true')
+  for (const label of [
+    'Parking lot',
+    'Parking garage',
+    'Street parking',
+    'EV charging at parking',
+  ]) {
+    await expect(page.getByText(label, { exact: true })).toBeVisible()
+  }
   await expect(
     page.getByText(/Mapped places, not live\s+parking availability/),
   ).toBeVisible()

@@ -34,6 +34,8 @@ import accountRightIcon from '../../assets/figma/main-ui/accountRight.png'
 import accountLogoutIcon from '../../assets/figma/main-ui/accountLogout.png'
 import { fonts } from '../theme'
 import { createThemedStyles, useTheme } from '../theme-provider'
+import { mainMarkerImages } from './main-marker-images'
+import { mainMarkerIds } from './map-marker-style'
 import { MotionLayer, MotionPressable, MotionView } from './motion'
 
 export const MAP_CONTROLS_TOP = 24
@@ -87,6 +89,7 @@ export function MainMapControls({
   legendExpanded,
   onLegend,
   obscured,
+  pilot = false,
 }: {
   onMenu: () => void
   search: ReactNode
@@ -94,6 +97,7 @@ export function MainMapControls({
   legendExpanded: boolean
   onLegend: () => void
   obscured: boolean
+  pilot?: boolean
 }) {
   const styles = useStyles()
   const insets = useSafeAreaInsets()
@@ -120,7 +124,11 @@ export function MainMapControls({
         {search}
       </View>
       {!searching ? (
-        <MapLegend expanded={legendExpanded} onToggle={onLegend} />
+        <MapLegend
+          expanded={legendExpanded}
+          onToggle={onLegend}
+          pilot={pilot}
+        />
       ) : null}
     </View>
   )
@@ -129,12 +137,14 @@ export function MainMapControls({
 function MapLegend({
   expanded,
   onToggle,
+  pilot,
 }: {
   expanded: boolean
   onToggle: () => void
+  pilot: boolean
 }) {
   const styles = useStyles()
-  const { colors, dark } = useTheme()
+  const { colors } = useTheme()
   return (
     <View pointerEvents="box-none" style={styles.legendPosition}>
       {!expanded ? (
@@ -165,32 +175,60 @@ function MapLegend({
           <MainIcon name="legend" />
           <MainIcon name="up" color={colors.muted} />
         </Pressable>
-        <View style={styles.legendEntries}>
-          <View style={styles.legendRow}>
-            <View style={styles.marker}>
-              <Text style={styles.markerText}>P</Text>
-            </View>
-            <Text style={styles.legendLabel}>Parking location</Text>
-          </View>
-          <View style={styles.legendRow}>
-            <View style={[styles.selectedRing, { borderColor: colors.link }]}>
-              <View
-                style={[
-                  styles.marker,
-                  styles.selectedMarker,
-                  dark && { backgroundColor: colors.link },
-                ]}
-              >
-                <Text style={styles.selectedMarkerText}>P</Text>
-              </View>
-            </View>
-            <Text style={styles.legendLabel}>Selected parking</Text>
-          </View>
-        </View>
+        <MapMarkerKey pilot={pilot} />
         <Text style={styles.legendNotice}>
           Mapped places, not live{'\n'}parking availability.
         </Text>
       </MotionLayer>
+    </View>
+  )
+}
+
+const parkingLegendEntries = [
+  [mainMarkerIds.lot, 'Parking lot'],
+  [mainMarkerIds.garage, 'Parking garage'],
+  [mainMarkerIds.street, 'Street parking'],
+] as const
+const pilotLegendEntries = [
+  [mainMarkerIds.unclassified, 'Unclassified parking'],
+  [mainMarkerIds.space, 'Mapped parking space'],
+  [mainMarkerIds.entrance, 'Mapped entrance'],
+] as const
+
+export function MapMarkerKey({ pilot = false }: { pilot?: boolean }) {
+  const styles = useStyles()
+  const entries = pilot
+    ? [...parkingLegendEntries, ...pilotLegendEntries]
+    : parkingLegendEntries
+  return (
+    <View style={styles.legendEntries}>
+      {entries.map(([marker, label]) => (
+        <View key={marker} style={styles.legendRow}>
+          <Image
+            accessible={false}
+            source={mainMarkerImages[marker]}
+            style={styles.legendMarker}
+          />
+          <Text style={styles.legendLabel}>{label}</Text>
+        </View>
+      ))}
+      {pilot ? null : (
+        <View style={styles.legendRow}>
+          <View>
+            <Image
+              accessible={false}
+              source={mainMarkerImages[mainMarkerIds.lot]}
+              style={styles.legendMarker}
+            />
+            <Image
+              accessible={false}
+              source={mainMarkerImages[mainMarkerIds.charging]}
+              style={[styles.legendMarker, StyleSheet.absoluteFill]}
+            />
+          </View>
+          <Text style={styles.legendLabel}>EV charging at parking</Text>
+        </View>
+      )}
     </View>
   )
 }
@@ -626,34 +664,7 @@ const useStyles = createThemedStyles(({ colors }) =>
       color: colors.muted,
       paddingVertical: 5,
     },
-    marker: {
-      width: 32,
-      height: 32,
-      marginHorizontal: 2,
-      borderRadius: 16,
-      backgroundColor: colors.brand,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    markerText: {
-      fontFamily: fonts.bold,
-      fontSize: 17,
-      color: colors.onAction,
-    },
-    selectedRing: {
-      width: 36,
-      height: 36,
-      borderWidth: 4,
-      borderRadius: 18,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    selectedMarker: { width: 23, height: 23 },
-    selectedMarkerText: {
-      fontFamily: fonts.bold,
-      fontSize: 13,
-      color: colors.onAction,
-    },
+    legendMarker: { width: 33, height: 34 },
     details: {
       position: 'absolute',
       left: 0,

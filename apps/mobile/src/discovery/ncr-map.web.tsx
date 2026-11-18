@@ -11,9 +11,9 @@ import {
 } from 'react'
 import 'maplibre-gl/dist/maplibre-gl.css'
 
-import mainParkingPin from '../../assets/figma/main-ui/parking-marker.png'
+import { mainMarkerImages } from './main-marker-images'
 import { useTheme } from '../theme-provider'
-import { config } from './config'
+import { useMapStyle } from './use-map-style'
 import { mapTextFont } from './map-font'
 import { draftGeoJSON } from './map-data'
 import { mainParkingMarkerLayout } from './map-marker-style'
@@ -31,8 +31,9 @@ function NcrMap(props: NcrMapProps) {
   const map = useRef<Map | null>(null)
   const [loaded, setLoaded] = useState(false)
   const [simplifiedMarkers] = useState(props.simplifiedMarkers ?? false)
-  const [initialNight] = useState(props.night)
-  const night = useRef(initialNight)
+  const mapStyle = useMapStyle(props.night)
+  const [initialStyle] = useState(mapStyle)
+  const activeStyle = useRef(initialStyle)
   const draft = useMemo(
     () => draftGeoJSON(props.draftPoints ?? []),
     [props.draftPoints],
@@ -69,7 +70,7 @@ function NcrMap(props: NcrMapProps) {
     try {
       instance = new Map({
         container: container.current,
-        style: initialNight ? config.nightMapStyle : config.mapStyle,
+        style: initialStyle,
         center: initialTarget.coordinate,
         zoom: initialTarget.zoom,
         minZoom: 8.5,
@@ -82,13 +83,13 @@ function NcrMap(props: NcrMapProps) {
       return
     }
     map.current = instance
+    const markerAssets = new globalThis.Map(Object.entries(mainMarkerImages))
     if (simplifiedMarkers)
       instance.setMissingStyleImageResolver(async (name) => {
-        if (name !== 'main-parking-pin') return
+        const asset = markerAssets.get(name)
+        if (asset === undefined) return
         try {
-          const marker = await instance.loadImage(
-            Asset.fromModule(mainParkingPin).uri,
-          )
+          const marker = await instance.loadImage(Asset.fromModule(asset).uri)
           if (map.current === instance && !instance.hasImage(name))
             instance.addImage(name, marker.data, { pixelRatio: 3 })
         } catch {
@@ -305,16 +306,14 @@ function NcrMap(props: NcrMapProps) {
       instance.remove()
       map.current = null
     }
-  }, [initialTarget, initialNight, simplifiedMarkers])
+  }, [initialTarget, initialStyle, simplifiedMarkers])
 
   useEffect(() => {
-    if (night.current === props.night || !map.current) return
-    night.current = props.night
+    if (activeStyle.current === mapStyle || !map.current) return
+    activeStyle.current = mapStyle
     setLoaded(false)
-    map.current.setStyle(props.night ? config.nightMapStyle : config.mapStyle, {
-      diff: false,
-    })
-  }, [props.night])
+    map.current.setStyle(mapStyle, { diff: false })
+  }, [mapStyle])
 
   useEffect(() => {
     if (loaded)

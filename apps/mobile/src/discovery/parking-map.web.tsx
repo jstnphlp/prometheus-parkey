@@ -5,17 +5,19 @@ import { useEffect, useEffectEvent, useMemo, useRef, useState } from 'react'
 import 'maplibre-gl/dist/maplibre-gl.css'
 
 import { useTheme } from '../theme-provider'
-import mainParkingPin from '../../assets/figma/main-ui/parking-marker.png'
+import { mainMarkerImages } from './main-marker-images'
 import parkingMarker from '../../assets/figma/interactive/parking-marker.png'
 import selectedSpot from '../../assets/figma/interactive/parking-marker-selected.png'
 import navUp from '../../assets/figma/playful/nav-up.png'
-import { placeFromFeature, placeLayer } from './places'
-import { config } from './config'
+import { mapPlaceLayer, placeFromFeature, placeLayer } from './places'
+import { useMapStyle } from './use-map-style'
 import { mapTextFont } from './map-font'
 import { routeBearing, splitRoute } from './drive-math'
 import { draftGeoJSON, parkingMapSources } from './map-data'
 import type { ParkingMapProps } from './map-types'
 import {
+  chargingMarkerFilter,
+  chargingMarkerLayout,
   mainParkingMarkerLayout,
   parkingLabelLayout,
   parkingLabelPaint,
@@ -43,10 +45,9 @@ export default function ParkingMap(props: ParkingMapProps) {
   }))
   const reduced = useReducedMotion()
   const [loaded, setLoaded] = useState(false)
-  const [mapStyle] = useState(() =>
-    props.night ? config.nightMapStyle : config.mapStyle,
-  )
-  const previousNight = useRef(props.night)
+  const mapStyle = useMapStyle(props.night)
+  const [initialStyle] = useState(mapStyle)
+  const activeStyle = useRef(initialStyle)
   const nightStyle = useRef(props.night)
   const [simplifiedMarkers] = useState(props.simplifiedMarkers ?? false)
   const parking = useMemo(
@@ -164,7 +165,7 @@ export default function ParkingMap(props: ParkingMapProps) {
     try {
       instance = new Map({
         container: container.current,
-        style: mapStyle,
+        style: initialStyle,
         center: initialCamera.center,
         zoom: initialCamera.zoom,
         minZoom: 3,
@@ -179,7 +180,7 @@ export default function ParkingMap(props: ParkingMapProps) {
     instance.jumpTo(initialCamera)
     map.current = instance
     const markerAssets = new globalThis.Map<string, number>([
-      ['main-parking-pin', mainParkingPin],
+      ...Object.entries(mainMarkerImages),
       ['parking-pin', parkingMarker],
       ['parking-pin-selected', selectedSpot],
       ['nav-up', navUp],
@@ -199,7 +200,8 @@ export default function ParkingMap(props: ParkingMapProps) {
     })
     instance.on('style.load', () => {
       const night = nightStyle.current
-      if (instance.getSource(placeLayer.source)) instance.addLayer(placeLayer)
+      if (instance.getSource(placeLayer.source))
+        instance.addLayer(mapPlaceLayer(night))
       instance.addSource('route', {
         type: 'geojson',
         data: { type: 'FeatureCollection', features: [] },
@@ -360,6 +362,14 @@ export default function ParkingMap(props: ParkingMapProps) {
             'text-color': colors.surface,
           },
         })
+        if (simplifiedMarkers)
+          instance.addLayer({
+            id: selected ? 'selected-charging' : 'facilities-charging',
+            type: 'symbol',
+            source: selected ? 'selected-facility' : 'facilities',
+            filter: chargingMarkerFilter,
+            layout: chargingMarkerLayout(1),
+          })
       }
       if (!simplifiedMarkers)
         instance.addLayer({
@@ -468,17 +478,15 @@ export default function ParkingMap(props: ParkingMapProps) {
       instance.remove()
       map.current = null
     }
-  }, [initialCamera, mapStyle, simplifiedMarkers])
+  }, [initialCamera, initialStyle, simplifiedMarkers])
 
   useEffect(() => {
-    if (previousNight.current === props.night || !map.current) return
-    previousNight.current = props.night
+    if (activeStyle.current === mapStyle || !map.current) return
+    activeStyle.current = mapStyle
     nightStyle.current = props.night
     setLoaded(false)
-    map.current.setStyle(props.night ? config.nightMapStyle : config.mapStyle, {
-      diff: false,
-    })
-  }, [props.night])
+    map.current.setStyle(mapStyle, { diff: false })
+  }, [mapStyle, props.night])
 
   useEffect(() => {
     if (!loaded) return

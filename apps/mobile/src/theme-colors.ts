@@ -137,3 +137,16 @@ export const themes = {
   'dark-magenta': makeTheme('dark-magenta'),
 }
 export type ParkeyTheme = ReturnType<typeof makeTheme>
+
+export const discoveryNightMapColors = {
+  land: '#292331',
+  building: '#393142',
+  buildingOutline: '#4D4358',
+  water: '#2A3A4B',
+  park: '#34473F',
+  road: '#52495D',
+  majorRoad: '#6B6076',
+  roadOutline: '#403747',
+  label: '#EEE8F3',
+  secondaryLabel: '#D1C8DC',
+} as const

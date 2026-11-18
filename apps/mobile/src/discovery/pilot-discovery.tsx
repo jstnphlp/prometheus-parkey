@@ -1011,6 +1011,7 @@ export default function PilotDiscovery({
         {mapVisible && !reportAdjusting ? (
           <>
             <MainMapControls
+              pilot
               obscured={drawerOpen}
               searching={searching}
               legendExpanded={legendExpanded}

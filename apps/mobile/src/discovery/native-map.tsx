@@ -14,18 +14,20 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { StyleSheet } from 'react-native'
 
 import { useTheme } from '../theme-provider'
-import mainParkingPin from '../../assets/figma/main-ui/parking-marker.png'
+import { mainMarkerImages } from './main-marker-images'
 import parkingPinImage from '../../assets/figma/interactive/parking-marker.png'
 import navUp from '../../assets/figma/playful/nav-up.png'
 import selectedParkingPinImage from '../../assets/figma/interactive/parking-marker-selected.png'
-import { placeFromFeature, placeLayer } from './places'
-import { config } from './config'
+import { mapPlaceLayer, placeFromFeature, placeLayer } from './places'
+import { useNativeMapStyle } from './use-map-style'
 import { createLocalMapBenchmark } from './local-map-benchmark'
 import { mapTextFont } from './map-font'
 import { routeBearing, splitRoute } from './drive-math'
 import { draftGeoJSON, parkingMapSources } from './map-data'
 import type { ParkingMapProps } from './map-types'
 import {
+  chargingMarkerFilter,
+  chargingMarkerLayout,
   mainParkingMarkerLayout,
   parkingLabelLayout,
   parkingLabelPaint,
@@ -35,7 +37,7 @@ import { routeBounds } from './routing'
 import { useReducedMotion } from './use-reduced-motion'
 
 const parkingImages = {
-  'main-parking-pin': mainParkingPin,
+  ...mainMarkerImages,
   'parking-pin': parkingPinImage,
   'nav-up': navUp,
   'parking-pin-selected': selectedParkingPinImage,
@@ -43,6 +45,7 @@ const parkingImages = {
 
 export default function NativeMap(props: ParkingMapProps) {
   const { colors, mapColors } = useTheme()
+  const mapStyle = useNativeMapStyle(props.night)
 
   const [markMapReady] = useState(() => createLocalMapBenchmark())
   const map = useRef<MapRef>(null)
@@ -152,7 +155,7 @@ export default function NativeMap(props: ParkingMapProps) {
       }
       ref={map}
       style={StyleSheet.absoluteFill}
-      mapStyle={props.night ? config.nightMapStyle : config.mapStyle}
+      mapStyle={mapStyle}
       attribution={false}
       logo={false}
       compass={false}
@@ -203,7 +206,7 @@ export default function NativeMap(props: ParkingMapProps) {
         props.onViewport({ west, south, east, north, zoom })
       }}
     >
-      <Layer {...placeLayer} />
+      <Layer {...mapPlaceLayer(props.night)} />
       <Images images={parkingImages} />
       <Camera
         ref={camera}
@@ -402,6 +405,14 @@ export default function NativeMap(props: ParkingMapProps) {
             'text-color': colors.surface,
           }}
         />
+        {props.simplifiedMarkers ? (
+          <Layer
+            id="facilities-charging"
+            type="symbol"
+            filter={chargingMarkerFilter}
+            layout={chargingMarkerLayout(1 / 3)}
+          />
+        ) : null}
       </GeoJSONSource>
       <GeoJSONSource
         id="selected-facility"
@@ -446,7 +457,14 @@ export default function NativeMap(props: ParkingMapProps) {
             'icon-opacity-transition': { duration: 0 },
           }}
         />
-        {props.simplifiedMarkers ? null : (
+        {props.simplifiedMarkers ? (
+          <Layer
+            id="selected-charging"
+            type="symbol"
+            filter={chargingMarkerFilter}
+            layout={chargingMarkerLayout(1 / 3)}
+          />
+        ) : (
           <Layer
             id="selected-name"
             type="symbol"

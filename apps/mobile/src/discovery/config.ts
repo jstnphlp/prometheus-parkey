@@ -2,6 +2,8 @@ const releaseBuild =
   process.env.NODE_ENV === 'production' ||
   process.env.PARKEY_RELEASE_BUILD === 'true'
 
+export const defaultNightMapStyle = 'https://tiles.openfreemap.org/styles/dark'
+
 export const config = {
   // Collection is locked off until the canonical privacy/release gates pass.
   // Keep the existing adapters separate; configuration alone is not consent.
@@ -12,8 +14,7 @@ export const config = {
     process.env.EXPO_PUBLIC_MAP_STYLE_URL ||
     'https://tiles.openfreemap.org/styles/positron',
   nightMapStyle:
-    process.env.EXPO_PUBLIC_NIGHT_MAP_STYLE_URL ||
-    'https://tiles.openfreemap.org/styles/dark',
+    process.env.EXPO_PUBLIC_NIGHT_MAP_STYLE_URL || defaultNightMapStyle,
   routingUrl:
     process.env.EXPO_PUBLIC_OSRM_URL ||
     (!releaseBuild && process.env.NODE_ENV === 'development'

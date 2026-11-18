@@ -19,6 +19,8 @@ The design contexts, screenshots, sizes, and prototype connections were inspecte
 
 ## Visual comparisons
 
+The follow-up keeps the dark basemap with brighter roads and labels. The key uses matching markers for lots, garages, street parking, and recorded EV charging. [Updated Android capture](dark-map-categories.webp)
+
 - [Android map and legend in both themes](map-and-legend.webp)
 - [Android search, guest drawer, and account entry in both themes](search-drawer-account.webp)
 - [Android parking details and expanded legend in both themes](selected-parking.webp)

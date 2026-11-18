@@ -9,9 +9,9 @@ import { memo, useEffect, useMemo, useRef, useState } from 'react'
 import type { CameraRef } from '@maplibre/maplibre-react-native'
 import { StyleSheet } from 'react-native'
 
-import mainParkingPin from '../../assets/figma/main-ui/parking-marker.png'
+import { mainMarkerImages } from './main-marker-images'
 import { useTheme } from '../theme-provider'
-import { config } from './config'
+import { useNativeMapStyle } from './use-map-style'
 import { createLocalMapBenchmark } from './local-map-benchmark'
 import { mapTextFont } from './map-font'
 import { draftGeoJSON } from './map-data'
@@ -20,10 +20,9 @@ import { mainParkingMarkerLayout } from './map-marker-style'
 import { ncrMapSources } from './ncr-map-data'
 import type { NcrMapProps } from './ncr-map-data'
 
-const pilotImages = { 'main-parking-pin': mainParkingPin }
-
 function NcrMap(props: NcrMapProps) {
   const { colors, mapColors } = useTheme()
+  const mapStyle = useNativeMapStyle(props.night)
   const [markMapReady] = useState(() => createLocalMapBenchmark())
   const draft = useMemo(
     () => draftGeoJSON(props.draftPoints ?? []),
@@ -55,7 +54,7 @@ function NcrMap(props: NcrMapProps) {
       testID={loaded ? 'ncr-map-ready' : 'ncr-map-loading'}
       onDidFinishLoadingMap={() => setLoaded(true)}
       onDidFinishRenderingMapFully={markMapReady}
-      mapStyle={props.night ? config.nightMapStyle : config.mapStyle}
+      mapStyle={mapStyle}
       onPress={(event) => props.onMapPress?.(event.nativeEvent.lngLat)}
       onDidFailLoadingMap={props.onError}
       onRegionDidChange={(event) => {
@@ -66,7 +65,7 @@ function NcrMap(props: NcrMapProps) {
         props.onViewport({ west, south, east, north, zoom })
       }}
     >
-      {props.simplifiedMarkers ? <Images images={pilotImages} /> : null}
+      {props.simplifiedMarkers ? <Images images={mainMarkerImages} /> : null}
       <Camera
         ref={camera}
         minZoom={8.5}

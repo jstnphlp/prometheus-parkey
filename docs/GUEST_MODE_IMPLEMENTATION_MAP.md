@@ -2,7 +2,7 @@
 
 **Date:** 2026-11-18. **Status:** staged implementation plan only, not completed code or deployed functionality.
 **Product rules:** [guest access contract](GUEST_MODE_V1_ACCESS_CONTRACT.md); [canonical V1](V1_EXECUTION_PLAN.md); [profile survey](UX_PSYCHOLOGY_PROFILE_SETUP_CODEX_BRIEF.md) and [data contract](PROFILE_SURVEY_DATA_CONTRACT.md).
-**Base:** the currently open [PR #41](https://github.com/jstnphlp/prometheus-parkey/pull/41) branch `codex/simplified-main-ui`, itself stacked on [PR #40](https://github.com/jstnphlp/prometheus-parkey/pull/40) `codex/mandatory-profile-survey`. Open a **new implementation branch from #41** and target the #41 branch, not `main`, until stack has been merged. Re-check branch ancestry before starting.
+**Base:** [docs PR #42](https://github.com/jstnphlp/prometheus-parkey/pull/42) branch `docs/guest-mode-v1-access-20261118`, built from [simplified UI PR #41](https://github.com/jstnphlp/prometheus-parkey/pull/41) branch `codex/simplified-main-ui`, itself stacked on [survey PR #40](https://github.com/jstnphlp/prometheus-parkey/pull/40) `codex/mandatory-profile-survey`. **While PR #42 is open, branch implementation from the docs branch and target that branch** so the contracts are present in the code branch. After #42 merges into #41, branch from the updated #41 and target #41. Re-check ancestry before starting; do not target `main` prematurely.
 
 ## Current implementation facts to preserve
 
@@ -25,6 +25,9 @@ PR #40 mandatory profile survey
               |
               v
 PR #41 simplified map + left drawer
+              |
+              v
+PR #42 guest contract + implementation docs
               |
               v
 [0] Audit and baseline tests
@@ -52,7 +55,7 @@ Review + merge through the existing PR stack (not production release)
 **Goal:** avoid rewrites and avoid a branch starting from outdated `main`.
 
 1. Read `AGENTS.md`, this map, the guest contract, V1 plan/analytics, report submissions, survey brief/data contract, and `.agents/skills/ux-psychology/SKILL.md`. Inspect the current actual Figma simplified home nodes and PR #41 evidence before changing layout.
-2. `git status` / `git fetch`, inspect PRs #40/#41 and current code; do not override user changes. Branch from `codex/simplified-main-ui` if still the latest implementation head.
+2. `git status` / `git fetch`, inspect PRs #40/#41/#42 and current code; do not override user changes. Branch from `docs/guest-mode-v1-access-20261118` while #42 remains open, or from updated `codex/simplified-main-ui` after #42 merges into #41.
 3. Inventory auth states, current guest entry, account drawer actions, local saves, local drafts, Report Review/Send, enabled flags, backend contract, and tests. Create a brief discrepancy matrix against [guest contract](GUEST_MODE_V1_ACCESS_CONTRACT.md).
 4. Record baseline targeted tests and screenshots; identify external blockers, especially live email/report intake/provider behavior.
 
@@ -125,7 +128,7 @@ Minimum verification:
 - **Security/privacy:** no private data in public reads/events; no guest elevation; report token compatibility; opt-in analytics only; no personal survey upload to analytics.
 - **Checks:** targeted tests, `pnpm --filter @parkey/mobile typecheck` (or actual workspace script), scoped lint, format, focused browser E2E; follow repo `AGENTS.md` test discipline. Record actual command outputs.
 
-Deliver: one focused implementation PR **targeting `codex/simplified-main-ui`** (or new current branch if stack merged); bullet list of changed paths, screenshots paired with source Figma nodes, tests run, actual results, remaining blockers. **Do not merge/deploy without separate permission.** Do not advance V1 release gates just for guest UI completion.
+Deliver: one focused implementation PR **targeting `docs/guest-mode-v1-access-20261118` while #42 is open, otherwise the updated `codex/simplified-main-ui` after #42 merges into #41**; bullet list of changed paths, screenshots paired with source Figma nodes, tests run, actual results, remaining blockers. **Do not merge/deploy without separate permission.** Do not advance V1 release gates just for guest UI completion.
 
 ## Stage-by-stage acceptance matrix
 
@@ -143,4 +146,4 @@ Cloud synchronization of favorites, parked-car location, history or preferences 
 
 ## Ready-to-run Codex instruction
 
-> Implement Parkey V1 guest mode using `docs/GUEST_MODE_V1_ACCESS_CONTRACT.md` and this implementation map as the acceptance contracts. Read `AGENTS.md`, UX psychology skill, canonical V1 execution plan, verified report contract, and mandatory profile survey docs first. Start from the latest `codex/simplified-main-ui` branch (PR #41, stacked on #40), not `main`, unless PR ancestry has changed. Audit current code and tests before editing. Reuse the existing signed-out discovery and Supabase auth rather than creating a guest account. Preserve map/search/details/directions/filters, local favorites, parked-car and local contribution drafts without registration. Require a verified registered identity for **sending** reports and owning sent-report actions, but preserve existing report OTP/backend authorization, per-report consent and disabled service gates. Registration must route to the required four-step profile survey, with no signed-in skip and no false server success; preserve local public data during account changes. Match the simplified Figma/PR #41 UI in both magenta themes, including hamburger/search same row, collapsible icon-only legend and drawer account footer. Implement contextual dismissible auth prompts only where needed. Verify route tests, browser/native behavior and report security boundaries with actual evidence, open a focused stacked PR against PR #41, and do not merge/deploy or add cloud syncing. If a real backend dependency is unavailable, keep that action disabled, document the blocker and complete independent safe work.
+> Implement Parkey V1 guest mode using `docs/GUEST_MODE_V1_ACCESS_CONTRACT.md` and this implementation map as the acceptance contracts. Read `AGENTS.md`, UX psychology skill, canonical V1 execution plan, verified report contract, and mandatory profile survey docs first. Start from `docs/guest-mode-v1-access-20261118` (docs PR #42, based on simplified UI #41 stacked on survey #40) while #42 is open; if #42 has merged into #41, start from the updated #41 branch instead. Never start from outdated `main`. Audit current code and tests before editing. Reuse the existing signed-out discovery and Supabase auth rather than creating a guest account. Preserve map/search/details/directions/filters, local favorites, parked-car and local contribution drafts without registration. Require a verified registered identity for **sending** reports and owning sent-report actions, but preserve existing report OTP/backend authorization, per-report consent and disabled service gates. Registration must route to the required four-step profile survey, with no signed-in skip and no false server success; preserve local public data during account changes. Match the simplified Figma/PR #41 UI in both magenta themes, including hamburger/search same row, collapsible icon-only legend and drawer account footer. Implement contextual dismissible auth prompts only where needed. Verify route tests, browser/native behavior and report security boundaries with actual evidence, open a focused stacked PR against docs PR #42 while it is open (or against updated PR #41 if the docs merged), and do not merge/deploy or add cloud syncing. If a real backend dependency is unavailable, keep that action disabled, document the blocker and complete independent safe work.

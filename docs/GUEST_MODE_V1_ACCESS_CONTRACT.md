@@ -1,7 +1,7 @@
 # Parkey V1 — Guest Access and Account Feature Contract
 
 **Owner decision:** 2026-11-18. **Status:** approved product/implementation specification, **not implemented or release-verified by this document**.
-**Target stack:** [mandatory profile survey PR #40](https://github.com/jstnphlp/prometheus-parkey/pull/40) -> [simplified discovery UI PR #41](https://github.com/jstnphlp/prometheus-parkey/pull/41). Start follow-on implementation from `codex/simplified-main-ui` while those PRs are open.
+**Target stack:** [mandatory profile survey PR #40](https://github.com/jstnphlp/prometheus-parkey/pull/40) -> [simplified discovery UI PR #41](https://github.com/jstnphlp/prometheus-parkey/pull/41). The [documentation PR #42](https://github.com/jstnphlp/prometheus-parkey/pull/42) branches from #41; while #42 is open, start follow-on code from `docs/guest-mode-v1-access-20261118` so this contract is available, then target that docs branch. If #42 merges into #41, use the updated #41 branch instead.
 
 ## Authority and purpose
 

@@ -5,6 +5,7 @@ import {
   ActivityIndicator,
   BackHandler,
   Keyboard,
+  Platform,
   Text,
   View,
 } from 'react-native'
@@ -113,7 +114,7 @@ export function AccountSetupScreen() {
       (access === 'checking' && Boolean(loadedUser)))
   usePreventRemove(focused && inSetup && !saved, back)
   useEffect(() => {
-    if (!focused || (!inSetup && !leaving)) return
+    if (Platform.OS !== 'android' || !focused || (!inSetup && !leaving)) return
     const subscription = BackHandler.addEventListener(
       'hardwareBackPress',
       () => {

@@ -1,5 +1,6 @@
 import type { User } from '@supabase/supabase-js'
-import { useEffect, useRef } from 'react'
+import { useCallback, useRef } from 'react'
+import { useFocusEffect } from 'expo-router'
 import { ActivityIndicator, StyleSheet } from 'react-native'
 
 import { useTheme } from '../theme-provider'
@@ -16,11 +17,13 @@ export function SignedInRedirect({ user }: { user: User }) {
   const destination = postAuthDestination(user)
   const { finish, busy } = useCompletion(destination)
   const attempted = useRef(false)
-  useEffect(() => {
-    if (attempted.current) return
-    attempted.current = true
-    void finish()
-  }, [finish])
+  useFocusEffect(
+    useCallback(() => {
+      if (attempted.current) return
+      attempted.current = true
+      void finish()
+    }, [finish]),
+  )
   return (
     <ScreenContainer
       backgroundColor={colors.dark}

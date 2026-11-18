@@ -25,6 +25,7 @@ import { FormDropdown } from '../components/form-dropdown'
 import { useFormLayout } from '../components/form-layout'
 import {
   MotionPressable,
+  SelectionPop,
   revealStyle,
   useEntranceProgress,
 } from '../discovery/motion'
@@ -102,6 +103,7 @@ export function ProfileSetupForm({
     Partial<Record<keyof ProfileDraft, ComponentRef<typeof TextInput> | null>>
   >({})
   const fieldPositions = useRef<Partial<Record<keyof ProfileDraft, number>>>({})
+  const sectionTop = useRef(0)
   const [focusedField, setFocusedField] = useState<keyof ProfileDraft | null>(
     null,
   )
@@ -127,13 +129,19 @@ export function ProfileSetupForm({
             ? 'drivingPurpose'
             : field
     const y = fieldPositions.current[group]
-    if (typeof y === 'number')
-      scroll.current?.scrollTo({ y, animated: !reduced })
+    if (typeof y === 'number') {
+      const offset = step === 1 || step === 2 ? sectionTop.current : 0
+      scroll.current?.scrollTo({ y: offset + y, animated: !reduced })
+    }
     inputRefs.current[field]?.focus()
-  }, [issue, reduced])
+  }, [issue, reduced, step])
 
   function trackField(field: keyof ProfileDraft, event: LayoutChangeEvent) {
     fieldPositions.current[field] = event.nativeEvent.layout.y
+  }
+
+  function trackSection(event: LayoutChangeEvent) {
+    sectionTop.current = event.nativeEvent.layout.y
   }
 
   function privacyLink() {
@@ -240,10 +248,7 @@ export function ProfileSetupForm({
               key={option}
               accessibilityRole="radio"
               accessibilityLabel={option}
-              accessibilityState={{
-                checked: draft[key] === option,
-                disabled: busy,
-              }}
+              aria-checked={draft[key] === option}
               disabled={busy}
               onPress={() => onChange(key, option)}
               style={[
@@ -262,14 +267,16 @@ export function ProfileSetupForm({
                 draft[key] === option && styles.choiceSelected,
               ]}
             >
-              <Text
-                style={[
-                  styles.choiceLabel,
-                  draft[key] === option && styles.selectedLabel,
-                ]}
-              >
-                {option}
-              </Text>
+              <SelectionPop selected={draft[key] === option}>
+                <Text
+                  style={[
+                    styles.choiceLabel,
+                    draft[key] === option && styles.selectedLabel,
+                  ]}
+                >
+                  {option}
+                </Text>
+              </SelectionPop>
             </MotionPressable>
           ))}
         </View>
@@ -342,11 +349,9 @@ export function ProfileSetupForm({
               accessible
               accessibilityRole="progressbar"
               accessibilityLabel="Account setup progress"
-              accessibilityValue={{
-                min: 0,
-                max: profileStepCount,
-                now: completedCount,
-              }}
+              aria-valuemin={0}
+              aria-valuemax={profileStepCount}
+              aria-valuenow={completedCount}
               style={styles.progress}
             >
               {completed.map((done, index) => (
@@ -412,10 +417,7 @@ export function ProfileSetupForm({
                           key={label}
                           accessibilityRole="checkbox"
                           accessibilityLabel={label}
-                          accessibilityState={{
-                            checked: selected,
-                            disabled: busy,
-                          }}
+                          aria-checked={selected}
                           disabled={busy}
                           onPress={() =>
                             onChange(
@@ -458,15 +460,21 @@ export function ProfileSetupForm({
                           >
                             {label}
                           </Text>
-                          {selected ? (
-                            <View style={styles.vehicleCheck}>
+                          <View
+                            pointerEvents="none"
+                            style={[
+                              styles.vehicleCheck,
+                              { opacity: selected ? 1 : 0 },
+                            ]}
+                          >
+                            <SelectionPop selected={selected}>
                               <Icon
                                 name="check"
                                 size={18}
                                 color={colors.onAction}
                               />
-                            </View>
-                          ) : null}
+                            </SelectionPop>
+                          </View>
                         </MotionPressable>
                       )
                     })}
@@ -476,12 +484,18 @@ export function ProfileSetupForm({
               </>
             ) : null}
             {step === 1 ? (
-              <View style={{ marginTop: space(12), gap: space(29) }}>
+              <View
+                onLayout={trackSection}
+                style={{ marginTop: space(12), gap: space(29) }}
+              >
                 {(['work', 'city', 'drivingPurpose'] as const).map(aboutField)}
               </View>
             ) : null}
             {step === 2 ? (
-              <View style={{ marginTop: space(30), gap: space(78) }}>
+              <View
+                onLayout={trackSection}
+                style={{ marginTop: space(30), gap: space(78) }}
+              >
                 {habit('drivingFrequency', 'How often do you drive?')}
                 {habit('parkingDuration', 'How long do you usually park?')}
               </View>
@@ -498,10 +512,7 @@ export function ProfileSetupForm({
                       key={label}
                       accessibilityRole="checkbox"
                       accessibilityLabel={label}
-                      accessibilityState={{
-                        checked: selected,
-                        disabled: busy,
-                      }}
+                      aria-checked={selected}
                       disabled={busy}
                       onPress={() =>
                         onChange(
@@ -520,17 +531,19 @@ export function ProfileSetupForm({
                       ]}
                     >
                       <Text style={styles.preferenceLabel}>{label}</Text>
-                      <View
-                        style={[styles.checkbox, selected && styles.checked]}
-                      >
-                        {selected ? (
-                          <Icon
-                            name="check"
-                            size={22}
-                            color={colors.onAction}
-                          />
-                        ) : null}
-                      </View>
+                      <SelectionPop selected={selected}>
+                        <View
+                          style={[styles.checkbox, selected && styles.checked]}
+                        >
+                          {selected ? (
+                            <Icon
+                              name="check"
+                              size={22}
+                              color={colors.onAction}
+                            />
+                          ) : null}
+                        </View>
+                      </SelectionPop>
                     </MotionPressable>
                   )
                 })}
@@ -597,10 +610,10 @@ const useStyles = createThemedStyles(({ colors }) =>
       borderColor: colors.border,
       backgroundColor: colors.border,
     },
-    segmentDone: { backgroundColor: colors.brand, borderColor: colors.brand },
+    segmentDone: { backgroundColor: colors.link, borderColor: colors.link },
     segmentCurrent: {
       backgroundColor: colors.selected,
-      borderColor: colors.brand,
+      borderColor: colors.link,
     },
     title: {
       fontFamily: fonts.extraBold,
@@ -642,7 +655,7 @@ const useStyles = createThemedStyles(({ colors }) =>
     privacyText: {
       fontFamily: fonts.semibold,
       fontSize: 14,
-      color: colors.brand,
+      color: colors.link,
     },
     vehicleGrid: {
       flexDirection: 'row',
@@ -660,7 +673,7 @@ const useStyles = createThemedStyles(({ colors }) =>
       paddingHorizontal: 3,
     },
     vehicleSelected: {
-      borderColor: colors.brand,
+      borderColor: colors.link,
       backgroundColor: colors.selected,
     },
     vehicleLabel: {
@@ -699,7 +712,7 @@ const useStyles = createThemedStyles(({ colors }) =>
       paddingVertical: 8,
     },
     choiceSelected: {
-      borderColor: colors.brand,
+      borderColor: colors.link,
       backgroundColor: colors.selected,
     },
     choiceLabel: {

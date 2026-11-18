@@ -174,8 +174,16 @@ export function MotionView({
 export function MotionLayer({
   visible,
   style,
+  direction = 'vertical',
+  distance = 6,
+  fromOpacity = 0,
   ...props
-}: ViewProps & { visible: boolean }) {
+}: ViewProps & {
+  visible: boolean
+  direction?: 'vertical' | 'horizontal'
+  distance?: number
+  fromOpacity?: number
+}) {
   const reduced = useReducedMotion()
   const [present, setPresent] = useState(visible)
   if (visible && !present) setPresent(true)
@@ -213,7 +221,25 @@ export function MotionLayer({
       accessibilityElementsHidden={!visible}
       importantForAccessibility={visible ? 'auto' : 'no-hide-descendants'}
       pointerEvents={visible ? 'auto' : 'none'}
-      style={[style, revealStyle(progress, { distance: 6 })]}
+      style={[
+        style,
+        direction === 'vertical'
+          ? revealStyle(progress, { distance, fromOpacity })
+          : {
+              opacity: progress.interpolate({
+                inputRange: [0, 1],
+                outputRange: [fromOpacity, 1],
+              }),
+              transform: [
+                {
+                  translateX: progress.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [distance, 0],
+                  }),
+                },
+              ],
+            },
+      ]}
     />
   )
 }

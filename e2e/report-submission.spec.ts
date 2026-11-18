@@ -1,6 +1,6 @@
 import type { Page } from '@playwright/test'
 
-import { test, expect, openMap } from './fixtures'
+import { test, expect, openDrawerItem, openMap } from './fixtures'
 
 const token = 'synthetic_auth_session_private.header.signature'
 const receiptId = '22222222-2222-4222-8222-222222222222'
@@ -92,8 +92,7 @@ async function setup(
     throw new Error(`Unexpected fixture endpoint ${path}`)
   })
   await openMap(page)
-  await page.getByRole('tab', { name: 'Profile', exact: true }).click()
-  await page.getByRole('button', { name: 'Device drafts', exact: true }).click()
+  await openDrawerItem(page, 'Report parking')
   await page.getByRole('button', { name: 'Review report', exact: true }).click()
   await expect(
     page.getByText('Verify email to send or manage a report'),

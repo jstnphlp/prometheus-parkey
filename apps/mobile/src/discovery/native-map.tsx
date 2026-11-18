@@ -14,6 +14,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { StyleSheet } from 'react-native'
 
 import { useTheme } from '../theme-provider'
+import mainParkingPin from '../../assets/figma/main-ui/parking-marker.png'
 import parkingPinImage from '../../assets/figma/interactive/parking-marker.png'
 import navUp from '../../assets/figma/playful/nav-up.png'
 import selectedParkingPinImage from '../../assets/figma/interactive/parking-marker-selected.png'
@@ -25,6 +26,7 @@ import { routeBearing, splitRoute } from './drive-math'
 import { draftGeoJSON, parkingMapSources } from './map-data'
 import type { ParkingMapProps } from './map-types'
 import {
+  mainParkingMarkerLayout,
   parkingLabelLayout,
   parkingLabelPaint,
   parkingMarkerLayout,
@@ -33,6 +35,7 @@ import { routeBounds } from './routing'
 import { useReducedMotion } from './use-reduced-motion'
 
 const parkingImages = {
+  'main-parking-pin': mainParkingPin,
   'parking-pin': parkingPinImage,
   'nav-up': navUp,
   'parking-pin-selected': selectedParkingPinImage,
@@ -388,7 +391,11 @@ export default function NativeMap(props: ParkingMapProps) {
           id="facilities"
           type="symbol"
           filter={['!', ['has', 'point_count']]}
-          layout={parkingMarkerLayout(1 / 3)}
+          layout={
+            props.simplifiedMarkers
+              ? mainParkingMarkerLayout(1 / 3)
+              : parkingMarkerLayout(1 / 3)
+          }
           paint={{
             'icon-opacity': ['case', ['get', 'muted'], 0.65, 1],
             'text-opacity': ['case', ['get', 'muted'], 0.65, 1],
@@ -411,34 +418,42 @@ export default function NativeMap(props: ParkingMapProps) {
           id="selected-halo"
           type="circle"
           paint={{
-            'circle-radius': 46,
-            'circle-color': colors.brand,
-            'circle-opacity': 0.18,
+            'circle-radius': props.simplifiedMarkers ? 29 : 46,
+            'circle-color': props.simplifiedMarkers
+              ? colors.surface
+              : colors.brand,
+            'circle-opacity': props.simplifiedMarkers ? 1 : 0.18,
           }}
         />
         <Layer
           id="selected-facility"
           type="symbol"
-          layout={{
-            'icon-image': 'parking-pin-selected',
-            'icon-size': 1 / 3,
-            'icon-anchor': 'bottom',
-            'icon-allow-overlap': true,
-            'icon-ignore-placement': true,
-            'symbol-z-order': 'source',
-            'symbol-sort-key': ['get', 'sortKey'],
-          }}
+          layout={
+            props.simplifiedMarkers
+              ? mainParkingMarkerLayout(1 / 3)
+              : {
+                  'icon-image': 'parking-pin-selected',
+                  'icon-size': 1 / 3,
+                  'icon-anchor': 'bottom',
+                  'icon-allow-overlap': true,
+                  'icon-ignore-placement': true,
+                  'symbol-z-order': 'source',
+                  'symbol-sort-key': ['get', 'sortKey'],
+                }
+          }
           paint={{
             'icon-opacity': 1,
             'icon-opacity-transition': { duration: 0 },
           }}
         />
-        <Layer
-          id="selected-name"
-          type="symbol"
-          layout={parkingLabelLayout()}
-          paint={parkingLabelPaint(colors)}
-        />
+        {props.simplifiedMarkers ? null : (
+          <Layer
+            id="selected-name"
+            type="symbol"
+            layout={parkingLabelLayout()}
+            paint={parkingLabelPaint(colors)}
+          />
+        )}
       </GeoJSONSource>
       {props.userLocation ? (
         <GeoJSONSource

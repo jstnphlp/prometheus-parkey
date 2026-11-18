@@ -41,3 +41,13 @@ export const parkingLabelPaint = (colors: ParkeyTheme['colors']) =>
     'text-halo-width': 2,
     'text-halo-blur': 0.5,
   }) satisfies NonNullable<SymbolLayerSpecification['paint']>
+
+export function mainParkingMarkerLayout(scale: number) {
+  return {
+    'icon-image': 'main-parking-pin',
+    'icon-size': scale,
+    'icon-anchor': 'center',
+    'icon-allow-overlap': true,
+    'icon-ignore-placement': true,
+  } satisfies NonNullable<SymbolLayerSpecification['layout']>
+}

@@ -12,6 +12,7 @@ const getVariants = (colors: ParkeyTheme['entryColors']) =>
     cyan: { backgroundColor: colors.plum, color: colors.onAction },
     plum: { backgroundColor: colors.plum, color: colors.onAction },
     white: { backgroundColor: colors.accentSoft, color: colors.text },
+    accent: { backgroundColor: colors.accentSoft, color: colors.link },
     text: { backgroundColor: 'transparent', color: colors.link },
     plain: { backgroundColor: 'transparent', color: colors.link },
   }) as const

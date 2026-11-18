@@ -28,6 +28,10 @@ export type ResearchMapData = {
 }
 export type NcrMapProps = {
   accessibilityHidden?: boolean
+  night?: boolean
+  simplifiedMarkers?: boolean
+  draftPoints?: Coordinate[] | undefined
+  onMapPress?: (point: Coordinate) => void
   data: ResearchMapData | null
   selectedId: string | null
   target: { coordinate: Coordinate; zoom: number }

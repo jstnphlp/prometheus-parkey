@@ -26,6 +26,9 @@ export function MapInformation({
   setDrafts,
   storage,
   onStorageReady,
+  onBrowse,
+  onFilters,
+  onLocation,
   onClose,
 }: {
   samples: boolean
@@ -34,6 +37,9 @@ export function MapInformation({
   setDrafts: (drafts: ParkingContribution[]) => void
   storage: 'loading' | 'ready' | 'error'
   onStorageReady: () => void
+  onBrowse: () => void
+  onFilters: () => void
+  onLocation: () => void
   onClose: () => void
 }) {
   const { colors } = useTheme()
@@ -91,7 +97,39 @@ export function MapInformation({
         </View>
       ) : null}
       <ScrollView style={ui.sheetScroll} contentContainerStyle={styles.content}>
-        <Text style={ui.title}>Parking information</Text>
+        <Text style={ui.title}>Help & privacy</Text>
+        <View style={[ui.row, { flexWrap: 'wrap' }]}>
+          <Button secondary onPress={onBrowse}>
+            Parking list
+          </Button>
+          <Button secondary onPress={onFilters}>
+            Parking filters
+          </Button>
+          <Button secondary onPress={onLocation}>
+            My location
+          </Button>
+        </View>
+        <Link
+          href={{
+            pathname: '/settings/[section]',
+            params: { section: 'help' },
+          }}
+          style={ui.link}
+          onPress={onClose}
+        >
+          Help Center
+        </Link>
+        <Link
+          href={{
+            pathname: '/settings/[section]',
+            params: { section: 'privacy' },
+          }}
+          style={ui.link}
+          onPress={onClose}
+        >
+          Privacy & Data
+        </Link>
+        <Text style={ui.heading}>Parking information</Text>
         <Text style={ui.body}>
           Parkey maps parking facilities and street segments. We don’t track
           vacancies or guarantee parking is permitted.

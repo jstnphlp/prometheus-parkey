@@ -9,6 +9,7 @@ export type CameraTarget = { coordinate: Coordinate; revision: number }
 export type ParkingMapProps = {
   accessibilityHidden?: boolean
   night?: boolean
+  simplifiedMarkers?: boolean
   records: DiscoveryParking[]
   selectedId: string | null
   featuredId: string | null

@@ -1,0 +1,265 @@
+import { useRouter } from 'expo-router'
+import {
+  Keyboard,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  useWindowDimensions,
+  View,
+} from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
+
+import { useAuth } from '../auth/provider'
+import { profileFromUser } from '../onboarding/profile'
+import { fonts } from '../theme'
+import { createThemedStyles, useTheme } from '../theme-provider'
+import { MainIcon } from './main-map-ui'
+import { MotionLayer, MotionPressable } from './motion'
+
+export function MainDrawer({
+  open,
+  onClose,
+  onSaved,
+  onReport,
+  onAppearance,
+  onHelp,
+}: {
+  open: boolean
+  onClose: () => void
+  onSaved: () => void
+  onReport: () => void
+  onAppearance: () => void
+  onHelp: () => void
+}) {
+  const styles = useStyles()
+  const { colors, dark } = useTheme()
+  const { state } = useAuth()
+  const router = useRouter()
+  const insets = useSafeAreaInsets()
+  const { width } = useWindowDimensions()
+  const drawerWidth = Math.min(320 + insets.left, width - 48)
+  const user = state.status === 'signed-in' ? state.user : null
+  const name = user
+    ? profileFromUser(user).fullName.trim() || 'Your account'
+    : 'Explore as a guest'
+  const menu = [
+    ['bookmark', 'Saved parking', onSaved],
+    ['edit', 'Report parking', onReport],
+    ['appearance', 'Appearance', onAppearance],
+    ['help', 'Help & privacy', onHelp],
+  ] as const
+
+  function account(signOut = false) {
+    Keyboard.dismiss()
+    router.push({
+      pathname: '/account',
+      params: signOut ? { signOut: '1' } : {},
+    })
+  }
+
+  return (
+    <>
+      <MotionLayer visible={open} distance={0} style={styles.backdrop}>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Dismiss menu"
+          onPress={onClose}
+          style={StyleSheet.absoluteFill}
+        />
+      </MotionLayer>
+      <MotionLayer
+        visible={open}
+        direction="horizontal"
+        distance={-drawerWidth}
+        fromOpacity={1}
+        accessibilityViewIsModal={open}
+        style={[
+          styles.drawer,
+          {
+            width: drawerWidth,
+            paddingLeft: insets.left,
+            paddingBottom: insets.bottom + 8,
+          },
+        ]}
+        testID="main-navigation-drawer"
+      >
+        <ScrollView
+          contentContainerStyle={[
+            styles.menu,
+            { paddingTop: Math.max(76, insets.top + 36) },
+          ]}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View style={styles.header}>
+            <Text accessibilityRole="header" style={styles.title}>
+              Parkey
+            </Text>
+            <MotionPressable
+              accessibilityRole="button"
+              accessibilityLabel="Close menu"
+              onPress={onClose}
+              style={styles.close}
+            >
+              <MainIcon name="close" />
+            </MotionPressable>
+          </View>
+          <Text style={styles.eyebrow}>MENU</Text>
+          {menu.map(([icon, label, action], index) => (
+            <MotionPressable
+              key={label}
+              accessibilityRole="button"
+              onPress={() => {
+                onClose()
+                action()
+              }}
+              style={[styles.menuRow, index > 0 && styles.divider]}
+            >
+              <MainIcon name={icon} />
+              <Text style={styles.menuLabel}>{label}</Text>
+              <MainIcon
+                name="chevron"
+                color={dark ? colors.link : colors.muted}
+              />
+            </MotionPressable>
+          ))}
+        </ScrollView>
+        <View style={styles.footer}>
+          <MotionPressable
+            accessibilityRole="button"
+            onPress={() => account()}
+            style={[styles.account, styles.divider]}
+          >
+            <View style={styles.avatar}>
+              <MainIcon name="user" />
+            </View>
+            <View style={styles.accountLabels}>
+              <Text style={styles.accountLabel} numberOfLines={2}>
+                {name}
+              </Text>
+              <Text style={styles.accountSubtitle}>
+                {user ? user.email : 'Sign in only when you need an account'}
+              </Text>
+            </View>
+            <MainIcon name="chevron" color={colors.muted} />
+          </MotionPressable>
+          <MotionPressable
+            accessibilityRole="button"
+            onPress={() => account(Boolean(user))}
+            style={[styles.accountAction, styles.divider]}
+          >
+            <MainIcon name={user ? 'logout' : 'login'} />
+            <Text style={[styles.accountLabel, styles.accountLabels]}>
+              {user ? 'Log Out' : 'Sign In'}
+            </Text>
+            <MainIcon name="chevron" color={colors.muted} />
+          </MotionPressable>
+        </View>
+      </MotionLayer>
+    </>
+  )
+}
+
+const useStyles = createThemedStyles(({ colors }) =>
+  StyleSheet.create({
+    backdrop: {
+      ...StyleSheet.absoluteFill,
+      zIndex: 25,
+      backgroundColor: 'rgba(28, 20, 36, 0.46)',
+    },
+    drawer: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      bottom: 0,
+      zIndex: 26,
+      backgroundColor: colors.surface,
+    },
+    menu: { paddingHorizontal: 36, paddingBottom: 16 },
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      gap: 12,
+      marginBottom: 34,
+      marginRight: -10,
+    },
+    title: {
+      fontFamily: fonts.extraBold,
+      fontSize: 32,
+      lineHeight: 42,
+      color: colors.link,
+      flexShrink: 1,
+    },
+    close: {
+      width: 44,
+      height: 44,
+      borderRadius: 20,
+      backgroundColor: colors.selected,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    eyebrow: {
+      fontFamily: fonts.semibold,
+      fontSize: 12,
+      lineHeight: 16,
+      color: colors.muted,
+      marginBottom: 10,
+    },
+    menuRow: {
+      minHeight: 79,
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 14,
+      paddingVertical: 12,
+      marginRight: -11,
+      paddingRight: 0,
+    },
+    menuLabel: {
+      flex: 1,
+      fontFamily: fonts.medium,
+      fontSize: 17,
+      lineHeight: 24,
+      color: colors.ink,
+    },
+    divider: { borderTopWidth: 1, borderColor: colors.border },
+    footer: { marginHorizontal: 20 },
+    account: {
+      minHeight: 92,
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 14,
+      paddingVertical: 10,
+    },
+    avatar: {
+      height: 46,
+      width: 46,
+      borderRadius: 23,
+      backgroundColor: colors.selected,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    accountLabels: { flex: 1, minWidth: 0 },
+    accountLabel: {
+      fontFamily: fonts.semibold,
+      color: colors.ink,
+      fontSize: 16,
+      lineHeight: 22,
+    },
+    accountSubtitle: {
+      fontFamily: fonts.regular,
+      color: colors.muted,
+      fontSize: 12,
+      lineHeight: 18,
+      marginTop: 5,
+    },
+    accountAction: {
+      minHeight: 63,
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 14,
+      paddingLeft: 4,
+      paddingVertical: 12,
+    },
+  }),
+)

@@ -6,7 +6,6 @@ import { AboutParkey } from './about-parkey'
 import { AccountMenu } from './account-menu'
 import { HelpCenter } from './help-center'
 import { PersonalInfo } from './personal-info'
-import { BottomNavigation } from '../discovery/bottom-navigation'
 import { useArchitectureInsets } from '../components/architecture-page'
 import { ArchitecturePage } from '../components/architecture-page'
 import { useOpenAppearance } from '../components/appearance-navigation'
@@ -111,27 +110,21 @@ export function SettingsScreen() {
         contentContainerStyle={{
           paddingHorizontal: 23,
           paddingTop: insets.top + 6,
-          paddingBottom: insets.bottom + 96,
+          paddingBottom: insets.bottom + 24,
         }}
       >
+        <IconButton
+          icon="back"
+          label="Back"
+          onPress={() =>
+            router.canGoBack() ? router.back() : router.replace('/')
+          }
+        />
         <AccountMenu
           onSaved={() => router.replace('/?panel=saved')}
           onPreferences={() => router.replace('/?panel=filters')}
         />
       </ScrollView>
-      <BottomNavigation
-        selected="you"
-        bottom={insets.bottom}
-        onSelect={(tab) =>
-          router.replace(
-            tab === 'map'
-              ? '/'
-              : tab === 'saved'
-                ? '/?panel=saved'
-                : '/settings',
-          )
-        }
-      />
     </View>
   )
 }

@@ -1,12 +1,15 @@
 import type {
   Coordinate,
   NcrFeatureType,
+  ParkingContribution,
   PilotBounds,
   PilotCity,
   PilotDestination,
   PilotParking,
 } from '@parkey/shared-types'
 import { Stack, useRouter } from 'expo-router'
+import { useIsFocused } from 'expo-router/react-navigation'
+import { StatusBar } from 'expo-status-bar'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   ActivityIndicator,
@@ -14,6 +17,7 @@ import {
   AppState,
   BackHandler,
   FlatList,
+  Keyboard,
   Linking,
   Modal,
   Platform,
@@ -29,7 +33,6 @@ import {
   ArchitecturePage,
   useArchitectureInsets,
 } from '../components/architecture-page'
-import { AccountMenu } from '../settings/account-menu'
 import type { TextProps } from 'react-native'
 
 import { AppearanceButton } from '../components/appearance-button'
@@ -38,15 +41,23 @@ import { AppearanceScreen } from '../settings/settings-screen'
 import { SettingsLinks } from '../settings/settings-screen'
 import { useTheme, createThemedStyles } from '../theme-provider'
 import type { Viewport } from './model'
-import { BottomNavigation, TAB_BAR_HEIGHT } from './bottom-navigation'
+import { DiscoveryHeader, SEARCH_HEADER_HEIGHT } from './architecture-discovery'
+import { MainDrawer } from './main-drawer'
+import { useMainDrawer } from './main-drawer-state'
 import {
-  DiscoveryHeader,
-  DiscoveryMapActions,
-  DiscoveryLegend,
-  ParkingPreviewCard,
-  SEARCH_HEADER_HEIGHT,
-  MAP_LEGEND_HEIGHT,
-} from './architecture-discovery'
+  MainMapControls,
+  MapParkingPanel,
+  MapSearchField,
+  MapSearchPanel,
+  MapSearchRow,
+} from './main-map-ui'
+import type { MapParkingSummary } from './main-map-ui'
+import { DestinationSearch } from './search'
+import { config } from './config'
+import { SearchAttribution } from './search-credit'
+import type { SearchCredit } from './place-search'
+import { PilotReport, adjustPilotDraft } from './pilot-report'
+import { isCoordinate } from './model'
 import { fonts as architectureFonts } from '../theme'
 import { detailDistance } from './parking-detail-data'
 import { EmptySavedPage } from './empty-pages'
@@ -135,6 +146,10 @@ function Action({
     </Pressable>
   )
 }
+const pilotPlaceSearchEnabled =
+  config.placeSearchEnabled ||
+  Boolean(process.env.EXPO_PUBLIC_PHOTON_URL?.trim())
+
 const filters: { value: 'all' | NcrFeatureType; label: string }[] = [
   { value: 'all', label: 'All loaded' },
   { value: 'lot', label: 'Lots' },
@@ -160,9 +175,18 @@ export default function PilotDiscovery({
 
   const insets = useArchitectureInsets()
   const { height: screenHeight } = useWindowDimensions()
-  const [previewHeight, setPreviewHeight] = useState(258)
+  const focused = useIsFocused()
+  const { open: drawerOpen, setOpen: setDrawerOpen } = useMainDrawer()
+  const [legendExpanded, setLegendExpanded] = useState(false)
+  const [dismissedParking, setDismissedParking] =
+    useState<MapParkingSummary | null>(null)
+  const [reportDraft, setReportDraft] = useState<ParkingContribution | null>(
+    null,
+  )
+  const [reportPoints, setReportPoints] = useState<Coordinate[]>([])
+  const [reportAdjusting, setReportAdjusting] = useState(false)
   const [showSavedTools, setShowSavedTools] = useState(false)
-  const { colors } = useTheme()
+  const { colors, dark } = useTheme()
   const router = useRouter()
   const [city, setCity] = useState<PilotCity>('Manila')
   const [mode, setMode] = useState<PilotRequest['mode']>('public')
@@ -188,7 +212,16 @@ export default function PilotDiscovery({
     record: PilotParking
     cachedAt?: number | null
   } | null>(null)
-  const [destination, setDestination] = useState<PilotDestination | null>(null)
+  const searching = sheet === 'search' || sheet === 'city-search'
+  const citySearch =
+    sheet === 'city-search' ||
+    (sheet === 'search' &&
+      (!pilotPlaceSearchEnabled || mode === 'candidate_research'))
+  const [destination, setDestination] = useState<Pick<
+    PilotDestination,
+    'name' | 'coordinate'
+  > | null>(null)
+  const [searchCredit, setSearchCredit] = useState<SearchCredit | null>(null)
   const [query, setQuery] = useState('')
   const [refresh, setRefresh] = useState(0)
   const [clock, setClock] = useState(Date.now())
@@ -259,8 +292,26 @@ export default function PilotDiscovery({
   }, [mode, connectivity.offline, setSheet])
 
   useEffect(() => {
-    if (Platform.OS === 'web') return
+    if (Platform.OS === 'web' || !focused) return
     const listener = BackHandler.addEventListener('hardwareBackPress', () => {
+      if (drawerOpen) {
+        setDrawerOpen(false)
+        return true
+      }
+      if (
+        legendExpanded &&
+        (sheet === null || sheet === 'preview') &&
+        !appearanceOpen
+      ) {
+        setLegendExpanded(false)
+        return true
+      }
+      if (sheet === 'preview') setSelection(null)
+      if (reportAdjusting) {
+        setReportAdjusting(false)
+        return true
+      }
+      if (searching) Keyboard.dismiss()
       if (appearanceOpen) {
         backPanel()
         return true
@@ -271,11 +322,38 @@ export default function PilotDiscovery({
       return true
     })
     return () => listener.remove()
-  }, [sheet, appearanceOpen, backPanel])
+  }, [
+    sheet,
+    appearanceOpen,
+    backPanel,
+    drawerOpen,
+    focused,
+    legendExpanded,
+    searching,
+    reportAdjusting,
+    setDrawerOpen,
+  ])
 
   useEffect(() => {
     if (Platform.OS !== 'web') return
     const escape = (event: KeyboardEvent) => {
+      if (!focused) return
+      if (event.key === 'Escape' && !event.defaultPrevented) {
+        if (drawerOpen) {
+          event.preventDefault()
+          setDrawerOpen(false)
+          return
+        }
+        if (
+          legendExpanded &&
+          (sheet === null || sheet === 'preview') &&
+          !appearanceOpen
+        ) {
+          event.preventDefault()
+          setLegendExpanded(false)
+          return
+        }
+      }
       if (
         event.key !== 'Escape' ||
         event.defaultPrevented ||
@@ -302,7 +380,15 @@ export default function PilotDiscovery({
       window.removeEventListener('keydown', escape)
       window.removeEventListener('popstate', clearReviewerDraft)
     }
-  }, [sheet, appearanceOpen, backPanel])
+  }, [
+    sheet,
+    appearanceOpen,
+    backPanel,
+    drawerOpen,
+    focused,
+    legendExpanded,
+    setDrawerOpen,
+  ])
   const accessFailed = useCallback(
     (error: unknown) => {
       if (error instanceof PilotAccessError && mode === 'public') {
@@ -450,17 +536,13 @@ export default function PilotDiscovery({
       key: searchKey,
       records: [],
       next: null,
-      status: !pilotConfig.ready
-        ? 'error'
-        : sheet === 'search'
-          ? 'loading'
-          : 'ready',
+      status: !pilotConfig.ready ? 'error' : citySearch ? 'loading' : 'ready',
       error: pilotConfig.ready
         ? ''
         : pilotConfig.configurationError ||
           'Destination search is unavailable.',
     })
-    if (sheet !== 'search' || !pilotConfig.ready) return () => requests.cancel()
+    if (!citySearch || !pilotConfig.ready) return () => requests.cancel()
     const timer = setTimeout(() => {
       void fetchPilotPage(
         pilotConfig,
@@ -496,7 +578,7 @@ export default function PilotDiscovery({
       clearTimeout(timer)
       requests.cancel()
     }
-  }, [searchKey, sheet, refresh, request, city, query, accessFailed])
+  }, [searchKey, citySearch, refresh, request, city, query, accessFailed])
   const cacheNow = Date.now()
   const cacheCurrent =
     cachedAt === null ||
@@ -563,17 +645,23 @@ export default function PilotDiscovery({
     }),
     [visible, mode],
   )
-  const updateViewport = useCallback((viewport: Viewport) => {
-    const next = {
-      west: Math.round(viewport.west * 100000) / 100000,
-      south: Math.round(viewport.south * 100000) / 100000,
-      east: Math.round(viewport.east * 100000) / 100000,
-      north: Math.round(viewport.north * 100000) / 100000,
-    }
-    setBounds((previous) =>
-      JSON.stringify(previous) === JSON.stringify(next) ? previous : next,
-    )
-  }, [])
+  const lastViewport = useRef(bounds)
+  const updateViewport = useCallback(
+    (viewport: Viewport) => {
+      const next = {
+        west: Math.round(viewport.west * 100000) / 100000,
+        south: Math.round(viewport.south * 100000) / 100000,
+        east: Math.round(viewport.east * 100000) / 100000,
+        north: Math.round(viewport.north * 100000) / 100000,
+      }
+      lastViewport.current = next
+      if (searching || drawerOpen || appearanceOpen) return
+      setBounds((previous) =>
+        JSON.stringify(previous) === JSON.stringify(next) ? previous : next,
+      )
+    },
+    [searching, drawerOpen, appearanceOpen],
+  )
   const clusterTarget = useCallback(
     (coordinate: Coordinate) => setTarget({ coordinate, zoom: 16 }),
     [],
@@ -588,6 +676,7 @@ export default function PilotDiscovery({
     setTarget({ coordinate: pilotAreas[next].coordinate, zoom: 13 })
     setSelection(null)
     setDestination(null)
+    setSearchCredit(null)
     setQuery('')
     setCategory('all')
     setFeeFilter('all')
@@ -602,6 +691,7 @@ export default function PilotDiscovery({
     setDraftToken('')
     setSelection(null)
     setDestination(null)
+    setSearchCredit(null)
     setAuthMessage('')
     setSheet(null)
   }
@@ -740,6 +830,7 @@ export default function PilotDiscovery({
     (id: string) => {
       const record = visible.find((item) => item.id === id)
       if (!record || !pilotRecordCanDisplay(record, request.mode)) return
+      setDismissedParking(null)
       setSelection({ key: pilotSelectionKey(request), record, cachedAt })
       setSheet('preview')
     },
@@ -794,164 +885,266 @@ export default function PilotDiscovery({
     fromOpacity: 0.86,
   })
   const status = !pilotConfig.ready
-    ? pilotConfig.configurationError ||
-      'Pilot discovery has not been configured.'
+    ? 'Parking discovery is unavailable.'
     : parking.key !== key || (parking.status === 'loading' && !records.length)
       ? 'Loading this city…'
       : `${visible.length} loaded ${mode === 'public' ? 'approved records' : 'research observations'}`
+  const parkingSummary = selected
+    ? {
+        id: selected.id,
+        title:
+          selected.officialName || selected.descriptiveLabel || selected.name,
+        subtitle: `${pilotTypeLabel(selected.featureType)} · ${selected.source.attribution}`,
+        rates: selected.fees ?? undefined,
+        hours: selected.hours ?? undefined,
+        access:
+          selected.accessClass === 'unknown'
+            ? undefined
+            : selected.accessClass.replaceAll('_', ' '),
+        directionsAvailable: Boolean(
+          pilotNavigationEntrance(selected, mode, clock) &&
+          !navBusy &&
+          !connectivity.offline &&
+          cachedAt === null &&
+          selection?.cachedAt == null,
+        ),
+      }
+    : null
+  const displayedParking = parkingSummary ?? dismissedParking
+  const mapVisible =
+    (sheet === null ||
+      sheet === 'preview' ||
+      searching ||
+      ((sheet === 'detail' || sheet === 'entrance') && !selected)) &&
+    !appearanceOpen
+  const pilotDestinations =
+    destinations.key === searchKey
+      ? destinations.records.filter(
+          (entry) =>
+            mode !== 'public' ||
+            (entry.publicationApproved &&
+              Date.parse(entry.reviewDueAt || '') > clock),
+        )
+      : []
+
+  function moveToPlace(
+    place: Pick<PilotDestination, 'name' | 'coordinate'>,
+    credit: SearchCredit | null = null,
+  ) {
+    const [lng, lat] = place.coordinate
+    const inCity = (candidate: PilotCity) => {
+      const { west, east, south, north } = pilotAreas[candidate].bounds
+      return lng >= west && lng <= east && lat >= south && lat <= north
+    }
+    const matchingCity = inCity(city) ? city : pilotCities.find(inCity)
+    if (matchingCity) setCity(matchingCity)
+    setDestination(place)
+    setSearchCredit(credit)
+    setSelection(null)
+    setQuery(place.name)
+    setTarget({ coordinate: place.coordinate, zoom: 16 })
+    setBounds({
+      west: lng - 0.01,
+      south: lat - 0.01,
+      east: lng + 0.01,
+      north: lat + 0.01,
+    })
+    Keyboard.dismiss()
+    setSheet(null)
+  }
+
+  function closeSearch() {
+    Keyboard.dismiss()
+    backPanel()
+  }
+
+  function searchMapArea() {
+    setBounds(lastViewport.current)
+    setRefresh((current) => current + 1)
+  }
+
+  function reportPoint(point: Coordinate) {
+    if (!reportAdjusting || !isCoordinate(point)) return
+    setReportPoints((points) =>
+      reportDraft?.kind === 'street'
+        ? [...points, point].slice(0, 12)
+        : [point],
+    )
+  }
   return (
     <AppearanceNavigation value={openAppearance}>
       <View testID="pilot-screen" style={styles.screen}>
         <Stack.Screen
           options={{ headerShown: false, title: 'Parkey discovery' }}
         />
+        <StatusBar style={dark ? 'light' : 'dark'} />
         <View
           testID="pilot-map"
-          style={[
-            StyleSheet.absoluteFill,
-            {
-              top: insets.top + SEARCH_HEADER_HEIGHT,
-              bottom:
-                TAB_BAR_HEIGHT +
-                insets.bottom +
-                (sheet === 'preview' && selected ? 0 : MAP_LEGEND_HEIGHT),
-            },
-          ]}
+          style={StyleSheet.absoluteFill}
+          pointerEvents={
+            drawerOpen || (!mapVisible && !reportAdjusting) ? 'none' : 'auto'
+          }
         >
           <NcrMap
             accessibilityHidden={
-              appearanceOpen ||
-              (sheet !== null &&
-                sheet !== 'preview' &&
-                !((sheet === 'detail' || sheet === 'entrance') && !selected))
+              drawerOpen || (!mapVisible && !reportAdjusting)
             }
+            night={dark}
+            simplifiedMarkers
+            draftPoints={reportAdjusting ? reportPoints : undefined}
             data={pilotConfig.ready ? mapData : null}
             selectedId={selected?.id || null}
             target={target}
             onViewport={updateViewport}
-            onSelect={chooseRecord}
+            onSelect={(id) => {
+              if (searching) closeSearch()
+              else if (!reportAdjusting) chooseRecord(id)
+            }}
+            onMapPress={(point) => {
+              if (reportAdjusting) reportPoint(point)
+              else if (searching) closeSearch()
+            }}
             onCluster={clusterTarget}
             onError={mapError}
           />
         </View>
-        {sheet === null ||
-        sheet === 'preview' ||
-        ((sheet === 'detail' || sheet === 'entrance') && !selected) ? (
+        {mapVisible && !reportAdjusting ? (
           <>
-            <DiscoveryHeader
-              searchTestID="pilot-search-open"
-              listTestID="pilot-results"
-              top={insets.top}
-              query={destination?.name || ''}
-              onSearch={() => setSheet('search')}
-              onList={() => setSheet('results')}
-            />
-            <View
-              style={[
-                styles.cityChoices,
-                { top: insets.top + SEARCH_HEADER_HEIGHT + 8 },
-              ]}
-            >
-              {pilotCities.map((value) => (
-                <Action
-                  key={value}
-                  selected={city === value}
-                  onPress={() => chooseCity(value)}
-                  testID={`pilot-city-${value}`}
-                >
-                  {value === 'Manila' ? 'City of Manila' : 'Mandaluyong City'}
-                </Action>
-              ))}
-              <IconButton
-                testID="pilot-refresh"
-                icon="undo"
-                label="Refresh parking"
-                onPress={() => {
-                  setSelection(null)
-                  setRefresh((value) => value + 1)
-                }}
-              />
-            </View>
-            <DiscoveryMapActions
-              bottom={
-                TAB_BAR_HEIGHT +
-                insets.bottom +
-                (sheet === 'preview' && selected
-                  ? previewHeight + 34
-                  : MAP_LEGEND_HEIGHT + 20)
-              }
-              selected={sheet === 'preview' && !!selected}
-              locating={location.status === 'locating'}
-              onList={() => setSheet('results')}
-              onFilters={() => setSheet('filters')}
-              onLocate={() => {
-                void location.locate().then((point) => {
-                  if (point) setTarget({ coordinate: point, zoom: 16 })
-                })
+            <MainMapControls
+              obscured={drawerOpen}
+              searching={searching}
+              legendExpanded={legendExpanded}
+              onLegend={() => setLegendExpanded((expanded) => !expanded)}
+              onMenu={() => {
+                if (searching) closeSearch()
+                setDrawerOpen(true)
               }}
+              search={
+                citySearch ||
+                !pilotPlaceSearchEnabled ||
+                mode === 'candidate_research' ? (
+                  <View pointerEvents="box-none">
+                    <MapSearchField
+                      active={searching}
+                      query={query}
+                      maxLength={100}
+                      triggerID="pilot-search-open"
+                      inputID="pilot-destination-search"
+                      onOpen={() => setSheet('search')}
+                      onClose={closeSearch}
+                      onClear={() => setQuery('')}
+                      onChangeText={setQuery}
+                    />
+                    {searching ? (
+                      <MapSearchPanel
+                        maxHeight={Math.min(
+                          340,
+                          Math.max(120, screenHeight - 188),
+                        )}
+                      >
+                        <MapSearchRow
+                          label="Search this map area"
+                          onPress={() => {
+                            closeSearch()
+                            searchMapArea()
+                          }}
+                        />
+                        {destinations.status === 'error' ? (
+                          <>
+                            <Text accessibilityRole="alert">
+                              {destinations.error}
+                            </Text>
+                            <MapSearchRow
+                              label="Retry search"
+                              testID="pilot-search-retry"
+                              icon="search"
+                              onPress={() => setRefresh((value) => value + 1)}
+                            />
+                          </>
+                        ) : destinations.key !== searchKey ||
+                          destinations.status === 'loading' ? (
+                          <Text accessibilityLiveRegion="polite">
+                            Searching this city…
+                          </Text>
+                        ) : !pilotDestinations.length ? (
+                          <Text>No approved destinations match.</Text>
+                        ) : null}
+                        {pilotDestinations.map((entry) => (
+                          <MapSearchRow
+                            key={entry.id}
+                            label={entry.name}
+                            description={`${entry.category} · ${entry.source.attribution}`}
+                            testID={`pilot-destination-${entry.id}`}
+                            onPress={() => moveToPlace(entry)}
+                          />
+                        ))}
+                        {destinations.next ? (
+                          <MapSearchRow
+                            label="More destinations"
+                            onPress={() => void loadMoreDestinations()}
+                          />
+                        ) : null}
+                      </MapSearchPanel>
+                    ) : null}
+                  </View>
+                ) : (
+                  <DestinationSearch
+                    layout="map"
+                    triggerID="pilot-search-open"
+                    active={searching}
+                    query={query}
+                    center={target.coordinate}
+                    onQuery={setQuery}
+                    onActive={(active) =>
+                      active ? setSheet('search') : closeSearch()
+                    }
+                    onSelect={(found) => moveToPlace(found, found.attribution)}
+                    onSearchArea={searchMapArea}
+                    onLocate={() => void location.locate()}
+                    onSaved={() => setSheet('saved')}
+                  />
+                )
+              }
             />
-            {sheet === 'preview' && selected ? (
-              <ParkingPreviewCard
-                parkingId={selected.id}
-                title={
-                  selected.officialName ||
-                  selected.descriptiveLabel ||
-                  selected.name
-                }
-                bottom={TAB_BAR_HEIGHT + insets.bottom + 14}
-                onHeightChange={setPreviewHeight}
-                maxHeight={Math.max(
-                  200,
-                  screenHeight -
-                    insets.top -
-                    SEARCH_HEADER_HEIGHT -
-                    TAB_BAR_HEIGHT -
-                    insets.bottom -
-                    110,
+            {displayedParking ? (
+              <MapParkingPanel
+                record={displayedParking}
+                open={Boolean(
+                  parkingSummary && sheet === 'preview' && !drawerOpen,
                 )}
-                favorite={saved.items.some(
-                  (item) => item.key === pilotSavedKey(selected, city),
-                )}
-                disabled={
-                  mode !== 'public' || saved.status !== 'ready' || saved.busy
-                }
-                canDirections={
-                  !!pilotNavigationEntrance(selected, mode, clock) &&
-                  !navBusy &&
-                  !connectivity.offline &&
-                  cachedAt === null
-                }
-                onSave={() => {
-                  void saved.toggle(selected, city, mode, clock)
+                onClose={() => {
+                  setDismissedParking(parkingSummary)
+                  setSelection(null)
+                  backPanel()
                 }}
-                onDetails={() => setSheet('detail')}
+                onMore={() => setSheet('detail')}
                 onDirections={() => {
-                  void directions(selected)
+                  if (selected) void directions(selected)
                 }}
               />
-            ) : (
-              <DiscoveryLegend
-                bottom={TAB_BAR_HEIGHT + insets.bottom}
-                onInfo={() => setSheet('sources')}
-              />
-            )}
-            {mode === 'candidate_research' ||
-            parking.status !== 'ready' ||
-            !records.length ||
-            connectivity.offline ||
-            cachedAt !== null ||
-            mapFailed ||
-            authMessage ||
-            location.status === 'denied' ||
-            location.status === 'error' ||
-            !pilotConfig.ready ? (
+            ) : null}
+            {searchCredit && !searching && !selected ? (
+              <View
+                style={[styles.searchCredit, { bottom: insets.bottom + 12 }]}
+              >
+                <SearchAttribution credit={searchCredit} />
+              </View>
+            ) : null}
+            {!searching &&
+            !reportAdjusting &&
+            sheet !== 'preview' &&
+            (mode === 'candidate_research' ||
+              parking.status !== 'ready' ||
+              !records.length ||
+              connectivity.offline ||
+              cachedAt !== null ||
+              mapFailed ||
+              authMessage ||
+              location.status === 'denied' ||
+              location.status === 'error' ||
+              !pilotConfig.ready) ? (
               <>
-                <View
-                  style={[
-                    styles.pilotNotices,
-                    { top: insets.top + SEARCH_HEADER_HEIGHT + 68 },
-                  ]}
-                >
+                <View style={[styles.pilotNotices, { top: insets.top + 120 }]}>
                   {authMessage ? (
                     <Text accessibilityRole="alert" style={styles.warning}>
                       {authMessage}
@@ -1028,23 +1221,6 @@ export default function PilotDiscovery({
               </>
             ) : null}
           </>
-        ) : null}
-        {sheet !== 'filters' ? (
-          <BottomNavigation
-            bottom={insets.bottom}
-            selected={
-              sheet === 'saved'
-                ? 'saved'
-                : sheet === 'profile' || sheet === 'sources'
-                  ? 'you'
-                  : 'map'
-            }
-            onSelect={(tab) =>
-              setSheet(
-                tab === 'saved' ? 'saved' : tab === 'you' ? 'profile' : null,
-              )
-            }
-          />
         ) : null}
         {sheet === 'access' && candidateResearchEnabled ? (
           <ModalSheet
@@ -1161,42 +1337,13 @@ export default function PilotDiscovery({
             <Button onPress={() => setSheet(null)}>Apply Filters</Button>
           </ArchitecturePage>
         </MotionLayer>
-        {sheet === 'profile' ? (
-          <MotionView
-            duration={160}
-            distance={0}
-            fromOpacity={0.86}
-            style={[
-              styles.fullPage,
-              { bottom: TAB_BAR_HEIGHT + insets.bottom },
-            ]}
-          >
-            <ScrollView
-              contentContainerStyle={{
-                paddingHorizontal: 23,
-                paddingTop: insets.top + 6,
-                paddingBottom: TAB_BAR_HEIGHT + insets.bottom + 24,
-              }}
-            >
-              <AccountMenu
-                onSaved={() => setSheet('saved')}
-                onPreferences={() => setSheet('filters')}
-                onTools={() => setSheet('sources')}
-                toolsLabel="Map information"
-              />
-            </ScrollView>
-          </MotionView>
-        ) : null}
         {sheet === 'results' ? (
           <MotionView
             duration={220}
             distance={4}
             fromOpacity={0.8}
             testID="pilot-list-page"
-            style={[
-              styles.fullPage,
-              { bottom: TAB_BAR_HEIGHT + insets.bottom },
-            ]}
+            style={[styles.fullPage, { bottom: 0 }]}
           >
             <DiscoveryHeader
               searchTestID="pilot-search-open"
@@ -1329,122 +1476,6 @@ export default function PilotDiscovery({
               </Pressable>
             </View>
           </MotionView>
-        ) : null}
-        {sheet === 'search' ? (
-          <View style={[styles.fullPage, { bottom: 0 }]}>
-            <ArchitecturePage
-              scrollable={false}
-              title="Search parking"
-              subtitle={`Find a destination in ${city}.`}
-              onBack={backPanel}
-            >
-              <View style={styles.content}>
-                <TextInput
-                  testID="pilot-destination-search"
-                  accessibilityLabel="Search city destinations"
-                  value={query}
-                  onChangeText={(value) => {
-                    setQuery(value)
-                    setDestination(null)
-                  }}
-                  maxLength={100}
-                  placeholder="Destination name"
-                  style={[
-                    styles.input,
-                    {
-                      minHeight: 63,
-                      fontFamily: architectureFonts.regular,
-                      fontSize: 16,
-                    },
-                  ]}
-                />
-                <Text selectable>
-                  A destination is a map reference, not parking identity or
-                  permission to park.
-                </Text>
-              </View>
-              <FlatList
-                data={
-                  destinations.key === searchKey
-                    ? destinations.records.filter(
-                        (d) =>
-                          mode !== 'public' ||
-                          (d.publicationApproved &&
-                            Date.parse(d.reviewDueAt || '') > clock),
-                      )
-                    : []
-                }
-                keyExtractor={(item) => item.id}
-                keyboardShouldPersistTaps="handled"
-                contentContainerStyle={styles.content}
-                renderItem={({ item }) => (
-                  <Pressable
-                    testID={`pilot-destination-${item.id}`}
-                    accessibilityRole="button"
-                    style={[
-                      styles.record,
-                      {
-                        minHeight: 84,
-                        borderWidth: 1,
-                        borderColor: colors.border,
-                        borderRadius: 14,
-                        marginBottom: 15,
-                      },
-                    ]}
-                    onPress={() => {
-                      setDestination(item)
-                      setSelection(null)
-                      setTarget({ coordinate: item.coordinate, zoom: 16 })
-                      setBounds({
-                        west: item.coordinate[0] - 0.01,
-                        south: item.coordinate[1] - 0.01,
-                        east: item.coordinate[0] + 0.01,
-                        north: item.coordinate[1] + 0.01,
-                      })
-                      setSheet(null)
-                    }}
-                  >
-                    <Text style={styles.status}>{item.name}</Text>
-                    <Text>
-                      {item.category} · {item.source.attribution}
-                    </Text>
-                  </Pressable>
-                )}
-                ListEmptyComponent={
-                  <Text selectable>
-                    {destinations.key !== searchKey ||
-                    destinations.status === 'loading'
-                      ? 'Searching this city…'
-                      : destinations.status === 'error'
-                        ? destinations.error
-                        : 'No approved destinations match. Try another name or browse the city map.'}
-                  </Text>
-                }
-                ListFooterComponent={
-                  <View style={styles.content}>
-                    {destinations.next ? (
-                      <Action
-                        onPress={() => {
-                          void loadMoreDestinations()
-                        }}
-                        disabled={destinations.status === 'loading'}
-                      >
-                        More destinations
-                      </Action>
-                    ) : null}
-                    {destinations.status === 'error' ? (
-                      <Action
-                        testID="pilot-search-retry"
-                        onPress={() => setRefresh((n) => n + 1)}
-                      >
-                        Retry search
-                      </Action>
-                    ) : null}
-                  </View>
-                }
-              />
-            </ArchitecturePage>
-          </View>
         ) : null}
         {(sheet === 'detail' || sheet === 'entrance') && selected ? (
           <PilotParkingDetails
@@ -1638,8 +1669,10 @@ export default function PilotDiscovery({
                   </View>
                 ) : null}
                 <Action
-                  onPress={() => setSheet('search')}
-                  testID="pilot-search-open"
+                  onPress={() => {
+                    setQuery('')
+                    setSheet('city-search')
+                  }}
                 >
                   {destination
                     ? `Near ${destination.name}`
@@ -1690,6 +1723,26 @@ export default function PilotDiscovery({
                 ) : null}
               </View>
 
+              <Action onPress={() => setSheet('results')}>Parking list</Action>
+              <Action onPress={() => setSheet('filters')}>
+                Parking filters
+              </Action>
+              {[
+                ['help', 'Help Center'],
+                ['privacy', 'Privacy & Data'],
+              ].map(([section, label]) => (
+                <Action
+                  key={section}
+                  onPress={() =>
+                    router.push({
+                      pathname: '/settings/[section]',
+                      params: { section: section ?? '' },
+                    })
+                  }
+                >
+                  {label ?? ''}
+                </Action>
+              ))}
               <SettingsLinks />
               <Text>
                 Parkey helps you discover parking. It does not offer bookings or
@@ -1950,6 +2003,65 @@ export default function PilotDiscovery({
             </Animated.View>
           )
         ) : null}
+        {sheet === 'report' &&
+          (reportAdjusting ? (
+            <View style={[styles.reportAdjust, { bottom: insets.bottom + 12 }]}>
+              <Text style={styles.status}>
+                {reportDraft?.kind === 'street'
+                  ? 'Tap along the street to mark at least two points.'
+                  : 'Tap the map to place the parking pin.'}
+              </Text>
+              <Text>
+                {reportPoints.length
+                  ? `${reportPoints.length} selected`
+                  : 'No points selected'}
+              </Text>
+              <Button
+                disabled={
+                  reportPoints.length < (reportDraft?.kind === 'street' ? 2 : 1)
+                }
+                onPress={() => {
+                  if (reportDraft)
+                    setReportDraft(adjustPilotDraft(reportDraft, reportPoints))
+                  setReportAdjusting(false)
+                }}
+              >
+                Use selected location
+              </Button>
+              <Button secondary onPress={() => setReportAdjusting(false)}>
+                Back to draft
+              </Button>
+            </View>
+          ) : (
+            <PilotReport
+              point={[
+                (bounds.west + bounds.east) / 2,
+                (bounds.south + bounds.north) / 2,
+              ]}
+              adjusted={reportDraft}
+              onAdjust={(draft) => {
+                setReportDraft(draft)
+                setReportPoints([])
+                setReportAdjusting(true)
+              }}
+              onClose={() => {
+                setReportDraft(null)
+                backPanel()
+              }}
+            />
+          ))}
+        <MainDrawer
+          open={drawerOpen}
+          onClose={() => setDrawerOpen(false)}
+          onSaved={() => setSheet('saved')}
+          onReport={() => {
+            if (mode !== 'public') publicMode()
+            setReportDraft(null)
+            setSheet('report')
+          }}
+          onAppearance={openAppearance}
+          onHelp={() => setSheet('sources')}
+        />
         {appearanceOpen ? (
           <Modal
             visible
@@ -1976,7 +2088,7 @@ const useStyles = createThemedStyles(({ colors }) =>
       top: 0,
       left: 0,
       right: 0,
-      bottom: TAB_BAR_HEIGHT,
+      bottom: 0,
       backgroundColor: colors.canvas,
     },
     cityChoices: {
@@ -2071,6 +2183,22 @@ const useStyles = createThemedStyles(({ colors }) =>
       fontSize: 15,
       lineHeight: 22,
       color: colors.ink,
+    },
+    searchCredit: {
+      position: 'absolute',
+      left: 20,
+      paddingHorizontal: 10,
+      backgroundColor: colors.surface,
+      borderRadius: 14,
+    },
+    reportAdjust: {
+      position: 'absolute',
+      left: 20,
+      right: 20,
+      backgroundColor: colors.surface,
+      borderRadius: 20,
+      padding: 16,
+      gap: 12,
     },
     screen: { flex: 1, backgroundColor: colors.canvas },
     top: {

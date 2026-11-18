@@ -146,8 +146,10 @@ export default function NativeMap(props: ParkingMapProps) {
     [route, props.navigation],
   )
 
+  // Compose the map and its overlays together to avoid Android surface flicker.
   return (
     <Map
+      androidView="texture"
       accessible={!props.accessibilityHidden}
       accessibilityElementsHidden={props.accessibilityHidden}
       importantForAccessibility={

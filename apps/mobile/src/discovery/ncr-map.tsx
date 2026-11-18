@@ -38,8 +38,10 @@ function NcrMap(props: NcrMapProps) {
       zoom: props.target.zoom,
     })
   }, [props.target])
+  // Compose the map and its overlays together to avoid Android surface flicker.
   return (
     <Map
+      androidView="texture"
       accessible={!props.accessibilityHidden}
       accessibilityElementsHidden={props.accessibilityHidden}
       importantForAccessibility={
@@ -141,21 +143,13 @@ function NcrMap(props: NcrMapProps) {
         }}
       >
         {props.simplifiedMarkers ? (
-          <>
-            <Layer
-              id="ncr-selected-ring"
-              type="circle"
-              filter={['==', ['get', 'id'], props.selectedId || '']}
-              layout={{ visibility }}
-              paint={{ 'circle-radius': 29, 'circle-color': colors.surface }}
-            />
-            <Layer
-              id="ncr-parking-markers"
-              type="symbol"
-              filter={['!', ['has', 'point_count']]}
-              layout={{ ...mainParkingMarkerLayout(1 / 3), visibility }}
-            />
-          </>
+          <Layer
+            id="ncr-selected-ring"
+            type="circle"
+            filter={['==', ['get', 'id'], props.selectedId || '']}
+            layout={{ visibility }}
+            paint={{ 'circle-radius': 29, 'circle-color': colors.surface }}
+          />
         ) : (
           <Layer
             id="ncr-points"
@@ -188,6 +182,14 @@ function NcrMap(props: NcrMapProps) {
             }}
           />
         )}
+        {props.simplifiedMarkers ? (
+          <Layer
+            id="ncr-parking-markers"
+            type="symbol"
+            filter={['!', ['has', 'point_count']]}
+            layout={{ ...mainParkingMarkerLayout(1 / 3), visibility }}
+          />
+        ) : null}
         <Layer
           id="ncr-destination-labels"
           type="symbol"

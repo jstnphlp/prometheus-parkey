@@ -192,11 +192,25 @@ export async function openSpot(page: Page, details = true) {
   }
 }
 
-export async function expandResults(page: Page) {
+export async function openDrawerItem(
+  page: Page,
+  name:
+    | 'Saved parking'
+    | 'Report parking'
+    | 'Appearance'
+    | 'Help & privacy'
+    | 'Sign In',
+) {
+  await page.getByRole('button', { name: 'Open menu', exact: true }).click()
   await page
-    .getByRole('button', { name: 'Show parking list', exact: true })
-    .first()
+    .getByTestId('main-navigation-drawer')
+    .getByRole('button', { name, exact: true })
     .click()
+}
+
+export async function expandResults(page: Page) {
+  await openDrawerItem(page, 'Help & privacy')
+  await page.getByRole('button', { name: 'Parking list', exact: true }).click()
   await expect(page.getByTestId('parking-list-page')).toBeVisible()
 }
 

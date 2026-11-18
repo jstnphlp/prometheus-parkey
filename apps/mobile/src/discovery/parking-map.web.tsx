@@ -5,16 +5,20 @@ import { useEffect, useEffectEvent, useMemo, useRef, useState } from 'react'
 import 'maplibre-gl/dist/maplibre-gl.css'
 
 import { useTheme } from '../theme-provider'
+import { mainMarkerImages } from './main-marker-images'
 import parkingMarker from '../../assets/figma/interactive/parking-marker.png'
 import selectedSpot from '../../assets/figma/interactive/parking-marker-selected.png'
 import navUp from '../../assets/figma/playful/nav-up.png'
-import { placeFromFeature, placeLayer } from './places'
-import { config } from './config'
+import { mapPlaceLayer, placeFromFeature, placeLayer } from './places'
+import { useMapStyle } from './use-map-style'
 import { mapTextFont } from './map-font'
 import { routeBearing, splitRoute } from './drive-math'
 import { draftGeoJSON, parkingMapSources } from './map-data'
 import type { ParkingMapProps } from './map-types'
 import {
+  chargingMarkerFilter,
+  chargingMarkerLayout,
+  mainParkingMarkerLayout,
   parkingLabelLayout,
   parkingLabelPaint,
   parkingMarkerLayout,
@@ -41,11 +45,11 @@ export default function ParkingMap(props: ParkingMapProps) {
   }))
   const reduced = useReducedMotion()
   const [loaded, setLoaded] = useState(false)
-  // Explore remounts the renderer when the navigation theme changes.
-  const [mapStyle] = useState(() =>
-    props.night ? config.nightMapStyle : config.mapStyle,
-  )
-  const [night] = useState(props.night ?? false)
+  const mapStyle = useMapStyle(props.night)
+  const [initialStyle] = useState(mapStyle)
+  const activeStyle = useRef(initialStyle)
+  const nightStyle = useRef(props.night)
+  const [simplifiedMarkers] = useState(props.simplifiedMarkers ?? false)
   const parking = useMemo(
     () => parkingMapSources(props.records, props.selectedId, props.featuredId),
     [props.records, props.selectedId, props.featuredId],
@@ -56,6 +60,7 @@ export default function ParkingMap(props: ParkingMapProps) {
   )
   const { top, bottom } = props.cameraPadding
   const status = useEffectEvent(props.onStatus)
+  const moveStarted = useEffectEvent(() => props.onMoveStart?.())
   const pressed = useEffectEvent(
     (event: {
       point: { x: number; y: number }
@@ -161,7 +166,7 @@ export default function ParkingMap(props: ParkingMapProps) {
     try {
       instance = new Map({
         container: container.current,
-        style: mapStyle,
+        style: initialStyle,
         center: initialCamera.center,
         zoom: initialCamera.zoom,
         minZoom: 3,
@@ -176,6 +181,7 @@ export default function ParkingMap(props: ParkingMapProps) {
     instance.jumpTo(initialCamera)
     map.current = instance
     const markerAssets = new globalThis.Map<string, number>([
+      ...Object.entries(mainMarkerImages),
       ['parking-pin', parkingMarker],
       ['parking-pin-selected', selectedSpot],
       ['nav-up', navUp],
@@ -193,8 +199,10 @@ export default function ParkingMap(props: ParkingMapProps) {
         if (map.current === instance) status('error')
       }
     })
-    instance.on('load', () => {
-      if (instance.getSource(placeLayer.source)) instance.addLayer(placeLayer)
+    instance.on('style.load', () => {
+      const night = nightStyle.current
+      if (instance.getSource(placeLayer.source))
+        instance.addLayer(mapPlaceLayer(night))
       instance.addSource('route', {
         type: 'geojson',
         data: { type: 'FeatureCollection', features: [] },
@@ -311,9 +319,13 @@ export default function ParkingMap(props: ParkingMapProps) {
         type: 'circle',
         source: 'selected-facility',
         paint: {
-          'circle-radius': 46,
-          'circle-color': colors.brand,
-          'circle-opacity': 0.18,
+          'circle-radius': simplifiedMarkers ? 29 : 46,
+          'circle-color': simplifiedMarkers
+            ? night
+              ? '#30243D'
+              : '#FFFFFF'
+            : colors.brand,
+          'circle-opacity': simplifiedMarkers ? 1 : 0.18,
         },
       })
       instance.addLayer({
@@ -334,29 +346,40 @@ export default function ParkingMap(props: ParkingMapProps) {
           type: 'symbol',
           source: selected ? 'selected-facility' : 'facilities',
           filter: ['!', ['has', 'point_count']],
-          layout: selected
-            ? {
-                'icon-image': 'parking-pin-selected',
-                'icon-size': 1,
-                'icon-anchor': 'bottom',
-                'icon-allow-overlap': true,
-                'icon-ignore-placement': true,
-              }
-            : parkingMarkerLayout(1),
+          layout: simplifiedMarkers
+            ? mainParkingMarkerLayout(1)
+            : selected
+              ? {
+                  'icon-image': 'parking-pin-selected',
+                  'icon-size': 1,
+                  'icon-anchor': 'bottom',
+                  'icon-allow-overlap': true,
+                  'icon-ignore-placement': true,
+                }
+              : parkingMarkerLayout(1),
           paint: {
             'icon-opacity': ['case', ['get', 'muted'], 0.65, 1],
             'text-opacity': ['case', ['get', 'muted'], 0.65, 1],
             'text-color': colors.surface,
           },
         })
+        if (simplifiedMarkers)
+          instance.addLayer({
+            id: selected ? 'selected-charging' : 'facilities-charging',
+            type: 'symbol',
+            source: selected ? 'selected-facility' : 'facilities',
+            filter: chargingMarkerFilter,
+            layout: chargingMarkerLayout(1),
+          })
       }
-      instance.addLayer({
-        id: 'selected-name',
-        type: 'symbol',
-        source: 'selected-facility',
-        layout: parkingLabelLayout(),
-        paint: parkingLabelPaint(colors),
-      })
+      if (!simplifiedMarkers)
+        instance.addLayer({
+          id: 'selected-name',
+          type: 'symbol',
+          source: 'selected-facility',
+          layout: parkingLabelLayout(),
+          paint: parkingLabelPaint(colors),
+        })
       for (const [id, color, radius] of [
         ['user', mapColors.user, 10],
         ['destination', mapColors.destination, 8],
@@ -445,6 +468,7 @@ export default function ParkingMap(props: ParkingMapProps) {
       moved()
     })
     instance.on('click', pressed)
+    instance.on('movestart', moveStarted)
     instance.on('moveend', moved)
     instance.on('dragstart', panned)
     instance.on('zoomstart', (event) => {
@@ -456,7 +480,15 @@ export default function ParkingMap(props: ParkingMapProps) {
       instance.remove()
       map.current = null
     }
-  }, [initialCamera, mapStyle, night])
+  }, [initialCamera, initialStyle, simplifiedMarkers])
+
+  useEffect(() => {
+    if (activeStyle.current === mapStyle || !map.current) return
+    activeStyle.current = mapStyle
+    nightStyle.current = props.night
+    setLoaded(false)
+    map.current.setStyle(mapStyle, { diff: false })
+  }, [mapStyle, props.night])
 
   useEffect(() => {
     if (!loaded) return
@@ -545,7 +577,7 @@ export default function ParkingMap(props: ParkingMapProps) {
     map.current?.getSource<GeoJSONSource>('draft')?.setData(draft)
   }, [loaded, draft])
   useEffect(() => {
-    if (!loaded) return
+    if (!loaded || !map.current?.getLayer('user-dot')) return
     const remaining =
       props.route && props.navigation
         ? splitRoute(props.route, props.navigation.along).remaining

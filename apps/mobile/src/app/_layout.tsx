@@ -9,6 +9,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { AuthProvider, useAuth } from '../auth/provider'
 import { discoveryDestination } from '../auth/setup-access'
 import { PopupProvider } from '../components/popup-provider'
+import { MainDrawerProvider } from '../discovery/main-drawer-state'
 import { initializeTelemetry } from '../discovery/telemetry'
 import { OnboardingProvider, useOnboarding } from '../onboarding/provider'
 import { SplashScreen } from '../onboarding/splash-screen'
@@ -30,7 +31,9 @@ export default function RootLayout() {
           <AuthProvider>
             <PopupProvider>
               <WalkthroughMotionProvider>
-                <RootNavigator />
+                <MainDrawerProvider>
+                  <RootNavigator />
+                </MainDrawerProvider>
               </WalkthroughMotionProvider>
             </PopupProvider>
           </AuthProvider>

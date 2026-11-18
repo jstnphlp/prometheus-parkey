@@ -1,7 +1,13 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 
-import { samePilotRecords, uniquePilotRecords } from './pilot-performance.ts'
+import { PUBLIC_PILOT_CACHE_TTL_MS } from './pilot-cache.ts'
+import { pilotAreas, pilotSelectionKey } from './pilot-client.ts'
+import {
+  retainedPilotSnapshotTime,
+  samePilotRecords,
+  uniquePilotRecords,
+} from './pilot-performance.ts'
 
 const record = (id, observation = id, url = null, kind = 'osm') => ({
   id,
@@ -9,6 +15,53 @@ const record = (id, observation = id, url = null, kind = 'osm') => ({
   source: { kind, url },
   name: 'Shared label',
   representativePoint: [121, 14],
+})
+
+test('retained map markers expire and never cross a city or access scope', () => {
+  const request = {
+    city: 'Manila',
+    mode: 'public',
+    bounds: pilotAreas.Manila.bounds,
+    token: null,
+  }
+  const snapshot = { scope: pilotSelectionKey(request), receivedAt: 1000 }
+  assert.equal(retainedPilotSnapshotTime(snapshot, request, 1001), 1000)
+  assert.equal(
+    retainedPilotSnapshotTime(
+      snapshot,
+      request,
+      1000 + PUBLIC_PILOT_CACHE_TTL_MS,
+    ),
+    null,
+  )
+  assert.equal(
+    retainedPilotSnapshotTime(
+      snapshot,
+      { ...request, city: 'Mandaluyong' },
+      1001,
+    ),
+    null,
+  )
+  const research = { ...request, mode: 'candidate_research', token: 'reviewer' }
+  assert.equal(
+    retainedPilotSnapshotTime(
+      { ...snapshot, scope: pilotSelectionKey(research) },
+      research,
+      1001,
+    ),
+    null,
+  )
+  assert.equal(
+    retainedPilotSnapshotTime(
+      snapshot,
+      {
+        ...request,
+        bounds: { ...request.bounds, east: request.bounds.west + 1 },
+      },
+      1001,
+    ),
+    null,
+  )
 })
 
 test('clock-only filtering reuses exact record references without hiding changed facts', () => {

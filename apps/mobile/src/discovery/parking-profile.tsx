@@ -111,6 +111,7 @@ export function ParkingTile({
 }
 
 export function ParkingProfile({
+  reportOnly = false,
   local,
   drafts,
   storage,
@@ -122,6 +123,7 @@ export function ParkingProfile({
   onPreferences,
   onAdd,
 }: {
+  reportOnly?: boolean
   onAdd: () => void
   onSaved: () => void
   onPreferences: () => void
@@ -147,16 +149,23 @@ export function ParkingProfile({
         contentContainerStyle={{
           paddingHorizontal: 23,
           paddingTop: insets.top + 6,
-          paddingBottom: insets.bottom + TAB_BAR_HEIGHT + 24,
+          paddingBottom:
+            insets.bottom + (reportOnly ? 24 : TAB_BAR_HEIGHT + 24),
         }}
       >
-        <AccountMenu
-          onSaved={onSaved}
-          onPreferences={onPreferences}
-          onTools={() => setToolsOpen((value) => !value)}
-          hasDeviceDrafts={drafts.length > 0}
-        />
-        {toolsOpen ? (
+        {reportOnly ? (
+          <Text accessibilityRole="header" style={ui.title}>
+            Report parking
+          </Text>
+        ) : (
+          <AccountMenu
+            onSaved={onSaved}
+            onPreferences={onPreferences}
+            onTools={() => setToolsOpen((value) => !value)}
+            hasDeviceDrafts={drafts.length > 0}
+          />
+        )}
+        {reportOnly || toolsOpen ? (
           <>
             <Button secondary onPress={onAdd}>
               Add a spot

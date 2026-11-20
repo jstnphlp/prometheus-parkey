@@ -170,3 +170,31 @@ Preserve the exact Figma light/dark-magenta style with smooth accessible motion.
 This owner decision supersedes older profile handoffs that described those
 steps as optional or deferred, but does **not** authorize deployments, fake
 backend behavior, changes to V1 parking discovery rules, or unrelated features.
+
+## Guest discovery access contract — owner directive (2026-11-18)
+
+For any work involving guest access, accounts, the simplified discovery UI, local
+saved parking, contribution drafts, or report submission, read
+[docs/GUEST_MODE_V1_ACCESS_CONTRACT.md](docs/GUEST_MODE_V1_ACCESS_CONTRACT.md)
+and [docs/GUEST_MODE_IMPLEMENTATION_MAP.md](docs/GUEST_MODE_IMPLEMENTATION_MAP.md)
+alongside the mandatory survey, security, report, and UX psychology contracts.
+
+**Guest means the existing signed-out local experience**: map, destination search,
+published parking details, filters, directions, local favorites/parked-car
+position, and local add/correction drafts all remain available without an
+account. **Do not** create fake guest identities, arbitrary discovery quotas,
+a second map experience, account gates on public discovery, or pretend device
+saves are cloud-synced. The simplified UI (PR #41) keeps the shared left
+hamburger/search row, collapsible icon-only legend, compact marker details and
+account entry pinned to the drawer footer in Light/Dark + Magenta.
+
+Require verified registered identity only for actually account-bound actions,
+particularly sending and managing private submitted reports; the existing
+report-specific OTP session and backend ownership checks must be audited rather
+than bypassed. Local report drafting stays open to guests; live sending stays
+disabled when the service is unavailable. After registration, the **four-step
+mandatory profile survey** still gates signed-in discovery; explicit sign-out
+may return an incomplete registrant to independent guest discovery.
+No auto-upload, fake report success, silent analytics, backend deployments, or
+cross-device sync is authorized by the guest contract. Use staged PRs on the
+current simplified UI stack, and verify real behavior before claiming completion.
